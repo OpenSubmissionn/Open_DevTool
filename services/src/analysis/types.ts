@@ -96,6 +96,50 @@ export interface ParsedInstruction {
 }
 
 /**
+ * Decoded SPL Token instruction placeholder shape.
+ */
+export interface TokenInstruction {
+  /** Human-readable instruction name (for example: transfer, mintTo). */
+  instructionName: string;
+  /** Source token account, when applicable. */
+  source?: string;
+  /** Destination token account, when applicable. */
+  destination?: string;
+  /** Token mint address, when applicable. */
+  mint?: string;
+  /** Authority account, when applicable. */
+  authority?: string;
+  /** Raw amount as string to avoid precision loss. */
+  amount?: string;
+  /** Token decimals, when applicable. */
+  decimals?: number;
+  /** Raw encoded instruction data. */
+  rawData?: string;
+}
+
+/**
+ * Decoded System Program instruction placeholder shape.
+ */
+export interface SystemInstruction {
+  /** Human-readable instruction name (for example: transfer, createAccount). */
+  instructionName: string;
+  /** Source account public key, when applicable. */
+  fromPubkey?: string;
+  /** Destination account public key, when applicable. */
+  toPubkey?: string;
+  /** New account public key, when applicable. */
+  newAccountPubkey?: string;
+  /** Amount in lamports, when applicable. */
+  lamports?: number;
+  /** Space allocation in bytes, when applicable. */
+  space?: number;
+  /** Owner program id, when applicable. */
+  owner?: string;
+  /** Raw encoded instruction data. */
+  rawData?: string;
+}
+
+/**
  * Parsed transaction containing instructions and execution metadata.
  */
 export interface ParsedTransaction {
