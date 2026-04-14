@@ -1,0 +1,232 @@
+{
+  "11111111111111111111111111111111": {
+    "name": "System Program",
+    "category": "system",
+    "description": "Native Solana program for basic operations like transfers"
+  },
+  "TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4": {
+    "name": "Token Program",
+    "category": "token",
+    "description": "SPL Token Program for managing fungible tokens"
+  },
+  "TokenzQdBbjFD8asSL5Syl1QCNnkwQB5ppg59X7zzd": {
+    "name": "Token 2022",
+    "category": "token",
+    "description": "Enhanced SPL Token Program (Token 2022)"
+  },
+  "ATokenGPvbdGVqstVQmcLsNZAqeEjlCoquUnMHksregister": {
+    "name": "Associated Token Program",
+    "category": "token",
+    "description": "Creates and manages associated token accounts"
+  },
+  "metaqbxxUerdq28cj1RbAqWwTZzEQkFqoPqstorm11": {
+    "name": "Metaplex Metadata",
+    "category": "nft",
+    "description": "Metaplex program for NFT metadata"
+  },
+  "CMF1VWv5gstCdAyKEW1PCzEpZ6W6u3wTLVgcsJBPCkE": {
+    "name": "Mercurial Stable Swap",
+    "category": "defi",
+    "description": "Stablecoin swap program"
+  },
+  "whirLbMiicVdio4KfUqkEB69t3mW3MRBst5xe5gKP5": {
+    "name": "Orca Whirlpool",
+    "category": "defi",
+    "description": "Orca's concentrated liquidity AMM"
+  },
+  "9W959DqNokrwQmGdVSDyxBYeP3C6PGYQ8p8JnxoYAC5": {
+    "name": "Raydium AMM",
+    "category": "defi",
+    "description": "Raydium's automated market maker"
+  },
+  "2wSEBjDkYvznzYgMVHjJMJ3abYhrErnypQstD5ctum5e": {
+    "name": "Raydium AcceleRaytor",
+    "category": "defi",
+    "description": "Raydium's liquidity bootstrap program"
+  },
+  "JUP4Fb2cqiRUcaTHwBZfi0s5QDcUUy5ESt8Msc2KbY9": {
+    "name": "Jupiter",
+    "category": "defi",
+    "description": "Jupiter's routing and limit order platform"
+  },
+  "11111111111111111111111111111112": {
+    "name": "System Program (Alternate)",
+    "category": "system",
+    "description": "Alternative system program identifier"
+  },
+  "SysvarRent111111111111111111111111111111111": {
+    "name": "Sysvar Rent",
+    "category": "system",
+    "description": "Solana sysvar for rent calculation"
+  },
+  "SysvarC1ock11111111111111111111111111111111": {
+    "name": "Sysvar Clock",
+    "category": "system",
+    "description": "Solana sysvar for current time"
+  },
+  "SysvarS1otHashes11111111111111111111111111": {
+    "name": "Sysvar Slot Hashes",
+    "category": "system",
+    "description": "Solana sysvar for recent slot hashes"
+  },
+  "Vote111111111111111111111111111111111111111": {
+    "name": "Vote Program",
+    "category": "system",
+    "description": "Solana validator voting program"
+  },
+  "Stake11111111111111111111111111111111111111": {
+    "name": "Stake Program",
+    "category": "system",
+    "description": "Solana staking program"
+  },
+  "9upNsvzsq5546Knipdqj6D89r3MtFuB8P2dhRjgJ5QA": {
+    "name": "Magic Eden",
+    "category": "nft",
+    "description": "Magic Eden's NFT marketplace"
+  },
+  "mmrx4U3XeEoTwtXUbCkoriQYodmzvTRNosstaD96Cc8": {
+    "name": "Marinade Finance",
+    "category": "defi",
+    "description": "Liquid staking solution"
+  },
+  "7vfCXTUcvP2B2VNVWhZhJwVBlURZf3SW6kVLaH9DqNA": {
+    "name": "Orca Program",
+    "category": "defi",
+    "description": "Orca's main DEX program"
+  },
+  "DESJms6LSoEVQvzaESZgzKMVnCn3z54McqUfVrFWN1d": {
+    "name": "Desmos",
+    "category": "defi",
+    "description": "Desmos options protocol"
+  },
+  "675kPX9MHTjS2zt1qrXjVnYYtYL1xy1nSfNVVEtoU93": {
+    "name": "Serum DEX V3",
+    "category": "defi",
+    "description": "Serum's decentralized exchange"
+  },
+  "9xQeWvG816bUx9EPjHmaT23sSdzS7aWXokPSRsLP1m6": {
+    "name": "Magic Eden Launchpad",
+    "category": "nft",
+    "description": "Magic Eden's launchpad program"
+  },
+  "MangoCzJ36AjZyKwVj3VnYU4GTonjfVEnJmvvWaxLac": {
+    "name": "Mango Markets",
+    "category": "defi",
+    "description": "Margin trading program"
+  },
+  "4MangoMjqJ2PiemjHeJVAVCL7SNVxxQdhopnSRegc59": {
+    "name": "Mango Markets V4",
+    "category": "defi",
+    "description": "Mango Markets v4 program"
+  },
+  "TSLvdd1pWpHVjahSpsvCXUbgwsL3JAcvokwaKt1eNm": {
+    "name": "Tensor Swap",
+    "category": "nft",
+    "description": "Tensor's NFT swap program"
+  },
+  "NeonVMyRemXswfQwVv1PwubKYH8642aid6PQcNqqz6": {
+    "name": "Neon EVM",
+    "category": "system",
+    "description": "Ethereum compatibility layer"
+  },
+  "PhoeEVqwLPLrSGv8mZBVVQe4vy9b7uTXe9nyx6LCpEh": {
+    "name": "Phoenix DEX",
+    "category": "defi",
+    "description": "High-frequency DEX program"
+  },
+  "9LzCMqDL7YAUS8p6TC1sTCKaiiohVWcSJ7PJqxMqKWc": {
+    "name": "DragonSyrup",
+    "category": "defi",
+    "description": "DragonSyrup yield farming"
+  },
+  "BonfireTYvbnSJduc2jd6LssBVJYyJ5X8jB3XVCT88": {
+    "name": "Bonfire",
+    "category": "defi",
+    "description": "Token launch platform"
+  },
+  "BkXQmSvvqVHqFvXaC8PkNHh9ZR1R5p5HfBXNf3xDCDk": {
+    "name": "Switchboard V2",
+    "category": "oracle",
+    "description": "Switchboard oracle feeds"
+  },
+  "o1a3ktPhzCu66PWGz7VAB2dYz5NFWdKiS64Npsz0kE": {
+    "name": "Orao Network",
+    "category": "oracle",
+    "description": "Orao randomness oracle"
+  },
+  "HZwNJhUXd7SLsZGsPLkUNz7JRCzsJzdJdar8DvDfcn5": {
+    "name": "Marinade Stake Pool",
+    "category": "defi",
+    "description": "Marinade's stake pool program"
+  },
+  "LiquidStackProgrammt1LqyQTFoVV8P6arbYvxWta": {
+    "name": "Liquid Staking",
+    "category": "defi",
+    "description": "Generic liquid staking program"
+  },
+  "CDJWUqTcYTVAWHVxy5g9k3TAYbro3HBJDmPVCee5LDp": {
+    "name": "Cope Finance",
+    "category": "defi",
+    "description": "Perpetual futures trading"
+  },
+  "DooarChvZnJnKY1pfPrMCxkMxFhpxa9gNE5PwcDVpGq": {
+    "name": "Dooar Swap",
+    "category": "defi",
+    "description": "Dooar's swap program"
+  },
+  "TokenSZQn353U16ShVu8Fm4K1DjsnGjjUtQKvE8qTjE": {
+    "name": "Token-2022",
+    "category": "token",
+    "description": "Token-2022 implementation"
+  },
+  "lifErm4xnfq5r8RXFhsKhzXR8s2JBXrE9G4LqJ9AKq": {
+    "name": "Lifer Token",
+    "category": "token",
+    "description": "Lifer protocol"
+  },
+  "HyFw9JnwRj6LSaKyHuUkTwAzEMvfEBCx6AyKJXZPYzc": {
+    "name": "Hydra Protocol",
+    "category": "defi",
+    "description": "Hydra DeFi protocol"
+  },
+  "5ocnV1qiCgXio7D8WuKb87CFmaohyDeimjHQUtFj5qm": {
+    "name": "Pyth Oracle",
+    "category": "oracle",
+    "description": "Pyth price feeds"
+  },
+  "8ihFLu7TKU1s1gdLhaWXf4notification1111111111": {
+    "name": "Magic Eden Notifications",
+    "category": "nft",
+    "description": "Magic Eden notification system"
+  },
+  "TokenProgramUtm24VcnFmRz39UNJCpFDrMXe9JaJmQy": {
+    "name": "Token Program Extension",
+    "category": "token",
+    "description": "Extended token functionality"
+  },
+  "BPFLoaderUpgradeab1e11111111111111111111111": {
+    "name": "BPF Loader v3",
+    "category": "system",
+    "description": "Upgradeable program loader"
+  },
+  "BPFLoader1111111111111111111111111111111111": {
+    "name": "BPF Loader v2",
+    "category": "system",
+    "description": "Program loader"
+  },
+  "Memo1UhkJRoHwwSTUgrKG4DBeLEEkwsSWV3ryCBvAQo": {
+    "name": "Memo Program",
+    "category": "system",
+    "description": "Solana memo program"
+  },
+  "ComputeBudget111111111111111111111111111111": {
+    "name": "Compute Budget",
+    "category": "system",
+    "description": "Compute budget management"
+  },
+  "AddressLookupTab1e1111111111111111111111111": {
+    "name": "Address Lookup Table",
+    "category": "system",
+    "description": "Lookup table for addresses"
+  }
+}
