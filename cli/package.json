@@ -1,0 +1,22 @@
+{
+  "name": "cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/commander": "^2.12.0",
+    "@types/dotenv": "^6.1.1",
+    "@types/node": "^25.6.0"
+  },
+  "dependencies": {
+    "commander": "^4.1.1",
+    "dotenv": "^17.4.2"
+  }
+}
