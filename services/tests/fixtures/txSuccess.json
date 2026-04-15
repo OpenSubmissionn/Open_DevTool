@@ -1,0 +1,22 @@
+{
+  "slot": 455482060,
+  "meta": {
+    "err": null,
+    "computeUnitsConsumed": 150,
+    "logMessages": [
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success"
+    ],
+    "postBalances": [998995, 1001000],
+    "preBalances": [1000000, 1000000]
+  },
+  "transaction": {
+    "signatures": ["successSignatureExample1234567890"],
+    "message": {
+      "accountKeys": [
+        "5wnFS3wDn7LqdhzvGU9LJdE57Y76v81GZ1hRPNgVLVqz",
+        "FvyDaNUauFxd5eX4pAR4GzALijQtSdCj7ivnRh81uasv"
+      ]
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "slot": 455482063,
+  "meta": {
+    "err": { "InstructionError": [0, { "Custom": 11 }] },
+    "computeUnitsConsumed": 56317,
+    "logMessages": [
+      "Program 5P1hRzb17urFFM2Eb6ZQDsnsD5qs9g9YnF2AVEv6GDh9 invoke [1]",
+      "Program 5P1hRzb17urFFM2Eb6ZQDsnsD5qs9g9YnF2AVEv6GDh9 consumed 56317 of 200000 compute units",
+      "Program 5P1hRzb17urFFM2Eb6ZQDsnsD5qs9g9YnF2AVEv6GDh9 failed: custom program error: 0xb"
+    ],
+    "postBalances": [1000000, 1000000],
+    "preBalances": [1000000, 1000000]
+  },
+  "transaction": {
+    "signatures": ["failedSignatureExample1234567890"]
+  }
+}
