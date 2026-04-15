@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { fetchTransaction } from './rpc';
-import txSuccess from '../../tests/fixtures/txSuccess.json';
-import txFailed from '../../tests/fixtures/txFailed.json';
+import { fetchTransaction } from '../../src/solana/rpc';
+import txSuccess from '../fixtures/txSuccess.json';
+import txFailed from '../fixtures/txFailed.json';
 
 describe('RPC Fetcher', () => {
   
