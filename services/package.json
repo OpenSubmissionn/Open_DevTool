@@ -7,6 +7,9 @@
     "build": "tsup src/index.ts",
     "dev": "tsup --watch src/index.ts",
     "test": "vitest",
+    "test:unit": "vitest run --config vitest.config.ts --exclude tests/integration/**",
+    "test:integration": "vitest run --config vitest.config.ts tests/integration",
+    "coverage": "vitest run --config vitest.config.ts --coverage",
     "lint": "eslint src/",
     "type-check": "tsc --noEmit"
   },
@@ -20,6 +23,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^4.1.4",
     "eslint": "^8.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0",
