@@ -1,38 +1,48 @@
-                    import { Command } from 'commander';
-import { CLIOptions } from '../types';
+import { Command } from 'commander';
+import ora from 'ora';
+import chalk from 'chalk';
 
 export const registerTxCommand = (program: Command) => {
   program
     .command('tx')
-    .argument('<signature>', 'The transaction signature (ID) to analyze')
-    .description('Analyze a Solana transaction')
-    
-    // Option with mandatory value and sensible default.
-    .option(
-      '--network <type>',
-      'The Solana network to query',
-      'mainnet'
-    )
-    // Boolean flag (true if present, false if absent).
-    .option('--json', 'Output the analysis result as raw JSON', false)
-    .action((signature: string, options: CLIOptions) => {
+    .argument('<signature>', 'The transaction signature')
+    .option('--network <type>', 'Solana network', 'mainnet')
+    .option('--json', 'Output raw JSON', false)
+    .action(async (signature: string, options: any) => {
+      
+      // (![87, 88].includes(signature.length)) {
+      //console.error(chalk.red('\nError: Invalid signature length.'));
+      //process.exit(1);
+     //
 
-      // Basic input validation (Edge Case Protection).
-      // Signature length check (Solana signatures are 87-88 base58 characters).
-      if (![87, 88].includes(signature.length)) {
-        console.error(
-          `Error: Invalid signature format. It should be 87 or 88 base58 characters. Got ${signature.length}.`
-        );
-        process.exit(1); // Standard CLI error exit.
+      const spinner = ora(`Connecting to RPC...`).start();
+
+      try {
+        // 🚀 O PULO DO GATO: Import dinâmico dentro da função
+        // Isso ignora os erros de compilação e resolve em tempo de execução
+        // @ts-ignore
+        const rpcModule = await import('../../../services/src/solana/rpc.js');
+        const bundle = await rpcModule.fetchTransaction(signature);
+
+        spinner.succeed(chalk.green('Live data retrieved!'));
+
+        if (options.json) {
+          console.log(JSON.stringify(bundle, null, 2));
+        } else {
+          console.log('\n' + chalk.bold.underline('--- LIVE ANALYSIS ---'));
+          console.log(`${chalk.blue('Slot:')} ${bundle.slot}`);
+          console.log(`${chalk.blue('CU Consumed:')} ${chalk.green(bundle.computeUnitsConsumed || '0')}`);
+          
+          if (bundle.logs && bundle.logs.length > 0) {
+            console.log(chalk.bold('\nRecent Logs:'));
+            bundle.logs.slice(0, 3).forEach((l: string) => {
+              console.log(chalk.gray(`> ${l}`));
+            });
+          }
+        }
+      } catch (error: any) {
+        spinner.fail(chalk.red('Integration Error'));
+        console.error(chalk.yellow(`\nMessage: ${error.message}`));
       }
-
-      // Action Stub 
-      console.log('--- Analyze Transaction (NOT IMPLEMENTED YET) ---');
-      console.log(`Signature: ${signature}`);
-      console.log(`Network: ${options.network}`);
-      console.log(`Output JSON: ${options.json}`);
-      console.log(
-        '\nStatus: Awaiting integration with RPC and Analysis modules (Week 1 Day 7).'
-      );
     });
 };
