@@ -1,4 +1,5 @@
 // services/src/analysis/types.ts
+import { ParsedTransactionWithMeta } from '@solana/web3.js';
 
 /**
  * Represents the token balance of an account before or after a transaction.
@@ -50,7 +51,7 @@ export interface RawTransactionBundle {
   /** Slot where the transaction was confirmed. */
   slot: number;
   /** Block timestamp, or null if unavailable. */
-  blockTime: number | null;
+  blockTime: number | null | undefined;
   /** Full transaction payload in versioned format. */
   transaction: unknown;
   /** Raw log messages emitted during execution. */
@@ -60,17 +61,19 @@ export interface RawTransactionBundle {
   /** SOL balances for accounts after execution. */
   postBalances: number[];
   /** Token balances before execution. */
-  preTokenBalances: TokenBalance[];
+  preTokenBalances: any[];
   /** Token balances after execution. */
-  postTokenBalances: TokenBalance[];
+  postTokenBalances: any[];
   /** Inner instructions reported by the transaction. */
-  innerInstructions: InnerInstruction[];
+  innerInstructions: any[];
   /** Total compute units consumed, when available. */
   computeUnitsConsumed: number | null;
   /** Execution error returned by the transaction, if any. */
   err: object | string | null;
   /** Account public keys included in the transaction. */
-  accountKeys: string[];
+  accountKeys: any[];
+  /** Raw Solana RPC response kept for debugging and advanced inspection. */
+  rawResponse?: ParsedTransactionWithMeta;
 }
 
 /**

@@ -1,21 +1,6 @@
 import { ParsedTransactionWithMeta } from '@solana/web3.js';
 import { getConnection, withRetry } from './connection';
-
-
-export interface RawTransactionBundle {
-  signature: string;
-  slot: number;
-  blockTime: number | null | undefined;
-  logs: string[] | null;
-  computeUnitsConsumed: number | undefined;
-  preBalances: number[];
-  postBalances: number[];
-  preTokenBalances: any[] | null | undefined;
-  postTokenBalances: any[] | null | undefined;
-  innerInstructions: any[] | null | undefined;
-  accountKeys: any[];
-  rawResponse: ParsedTransactionWithMeta;
-}
+import { RawTransactionBundle } from '../analysis/types';
 
 
 export const fetchTransaction = async (signature: string): Promise<RawTransactionBundle> => {
@@ -36,13 +21,15 @@ export const fetchTransaction = async (signature: string): Promise<RawTransactio
     signature,
     slot: tx.slot,
     blockTime: tx.blockTime,
-    logs: tx.meta?.logMessages || [],
-    computeUnitsConsumed: tx.meta?.computeUnitsConsumed,
+    transaction: tx.transaction,
+    logMessages: tx.meta?.logMessages || [],
+    computeUnitsConsumed: tx.meta?.computeUnitsConsumed || null,
     preBalances: tx.meta?.preBalances || [],
     postBalances: tx.meta?.postBalances || [],
-    preTokenBalances: tx.meta?.preTokenBalances,
-    postTokenBalances: tx.meta?.postTokenBalances,
-    innerInstructions: tx.meta?.innerInstructions,
+    preTokenBalances: tx.meta?.preTokenBalances || [],
+    postTokenBalances: tx.meta?.postTokenBalances || [],
+    innerInstructions: tx.meta?.innerInstructions || [],
+    err: tx.meta?.err || null,
     accountKeys: tx.transaction.message.accountKeys,
     rawResponse: tx,
   };
