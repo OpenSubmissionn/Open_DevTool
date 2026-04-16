@@ -1,0 +1,10 @@
+[
+  "Program log: Instruction: Program1",
+  "Program log: consumed 10000 of 200000 compute units",
+  "Program log: Instruction: Program2",
+  "Program log: consumed 25000 of 200000 compute units",
+  "Program log: Instruction: Program3",
+  "Program log: consumed 5000 of 200000 compute units",
+  "Program log: Instruction: Program4",
+  "Program log: consumed 40000 of 200000 compute units"
+]
