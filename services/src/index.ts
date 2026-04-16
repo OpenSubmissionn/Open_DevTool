@@ -1,4 +1,5 @@
 export * from "./analysis/types";
+export * from "./analysis/accountDiff";
 export {
   getProgramName,
   getProgramInfo,
