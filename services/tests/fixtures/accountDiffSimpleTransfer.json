@@ -1,0 +1,38 @@
+{
+  "signature": "simple-transfer-signature",
+  "slot": 455500000,
+  "blockTime": 1713130000,
+  "transaction": {
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 1
+      }
+    }
+  },
+  "logMessages": [
+    "Program 11111111111111111111111111111111 invoke [1]",
+    "Program 11111111111111111111111111111111 success"
+  ],
+  "preBalances": [
+    2000000,
+    1000000,
+    1
+  ],
+  "postBalances": [
+    1895000,
+    1100000,
+    1
+  ],
+  "preTokenBalances": [],
+  "postTokenBalances": [],
+  "innerInstructions": [],
+  "computeUnitsConsumed": 150,
+  "err": null,
+  "accountKeys": [
+    "Signer1111111111111111111111111111111111",
+    "Receiver11111111111111111111111111111111",
+    "Readonly11111111111111111111111111111111"
+  ]
+}
