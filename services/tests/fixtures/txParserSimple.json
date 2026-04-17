@@ -1,0 +1,29 @@
+{
+  "signature": "tx-parser-simple-signature",
+  "slot": 455700001,
+  "blockTime": 1713131111,
+  "transaction": {
+    "message": {
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [0, 1],
+          "data": "AQID"
+        }
+      ]
+    }
+  },
+  "logMessages": [],
+  "preBalances": [1000000, 500000, 1],
+  "postBalances": [995000, 505000, 1],
+  "preTokenBalances": [],
+  "postTokenBalances": [],
+  "innerInstructions": [],
+  "computeUnitsConsumed": 150,
+  "err": null,
+  "accountKeys": [
+    "Signer1111111111111111111111111111111111",
+    "Receiver11111111111111111111111111111111",
+    "11111111111111111111111111111111"
+  ]
+}
