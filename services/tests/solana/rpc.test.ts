@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { fetchTransaction } from './rpc';
-import * as connectionModule from './connection';
+import { fetchTransaction } from '../../src/solana/rpc';
+import * as connectionModule from '../../src/solana/connection';
 import txSuccess from '../../tests/fixtures/txSuccess.json';
 import txFailed from '../../tests/fixtures/txFailed.json';
 

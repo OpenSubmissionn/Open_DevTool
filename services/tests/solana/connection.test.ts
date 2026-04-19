@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { getConnection, withRetry } from './connection';
+import { getConnection, withRetry } from '../../src/solana/connection';
 
 describe('Solana Connection & Retry Logic', () => {
   it('should fetch the current slot', async () => {
