@@ -1,11 +1,29 @@
+/** cuProfiler short explanation:
+ * Profiles compute unit (CU) usage from transaction log messages.
+ *
+ * It computes:
+ * - Total CU consumed across matched log lines
+ * - Total CU limit across matched log lines
+ * - Per-instruction CU entries with utilization percent
+ * - Bottleneck instruction (highest CU consumer)
+ *
+ * Returns aggregate CU metrics plus instruction-level details.
+ */
+
 import { CUProfile, CUEntry } from "./types"; 
 
 export function profileCU(logMessages: string[]): CUProfile {
+  // Running totals for transaction-level CU metrics.
   let totalConsumed = 0;
   let totalLimit = 0;
+
+  // Captures each parsed CU entry from the logs.
   const perInstruction: CUEntry[] = [];
+
+  // Tracks the highest CU consumer found so far.
   let bottleneck: CUEntry | null = null;
 
+  // Matches log lines like: "consumed X of Y compute units".
   const cuRegex = /consumed (\d+) of (\d+) compute units/;
 
   for (const log of logMessages) {
@@ -17,6 +35,7 @@ export function profileCU(logMessages: string[]): CUProfile {
       totalConsumed += consumed;
       totalLimit += limit;
 
+      // Program metadata is not extracted in this step yet.
       const currentEntry: CUEntry = {
         cuConsumed: consumed,
         cuLimit: limit,
@@ -33,6 +52,7 @@ export function profileCU(logMessages: string[]): CUProfile {
     }
   }
 
+  // Prevent divide-by-zero when no CU logs are present.
   const utilizationPercent = totalLimit > 0 ? (totalConsumed / totalLimit) * 100 : 0;
 
   return {
@@ -40,6 +60,7 @@ export function profileCU(logMessages: string[]): CUProfile {
     totalLimit,
     utilizationPercent,
     perInstruction,
+    // Keep a stable fallback object to simplify consumers/tests.
     bottleneck: bottleneck || { cuConsumed: 0, cuLimit: 0, utilizationPercent: 0, programId: "N/A", programName: "N/A", depth: 0 }, // <-- CORRIGIDO
   };
 }

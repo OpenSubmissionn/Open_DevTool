@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { profileCU } from './cuProfiler';
-import cuNormalLogs from '../../tests/fixtures/cu-profiler-normal.json';
-import cuBottleneckLogs from '../../tests/fixtures/cu-profiler-bottleneck.json';
-import cuMultipleInstructionsLogs from '../../tests/fixtures/cu-profiler-multiple-instructions.json';
+import { profileCU } from '../../src/analysis/cuProfiler';
+import cuNormalLogs from '../fixtures/cu-profiler-normal.json';
+import cuBottleneckLogs from '../fixtures/cu-profiler-bottleneck.json';
+import cuMultipleInstructionsLogs from '../fixtures/cu-profiler-multiple-instructions.json';
 
 describe('CU Profiler', () => {
   it('should correctly profile CU for normal consumption', () => {
