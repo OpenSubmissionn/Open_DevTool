@@ -50,7 +50,7 @@ Short explanation of what this PR adds or changes.
 - Technical implementation detail 2
 
 ### Validation
-- List how the changes were tested.
+- List how the changes can be tested. If possible, give commands the reviewer can run to check your work.
 
 ### Related work
 - Task ID and any dependencies.

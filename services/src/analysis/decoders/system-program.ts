@@ -2,7 +2,7 @@ import type { ParsedInstruction, SystemInstruction } from "../types";
 
 /**
  * System Program instruction discriminators (u32 little-endian).
- * Reference: https://docs.solana.com/developing/clients/jsonrpc-api#systemprogram-instructions
+ * Reference: https://github.com/solana-labs/solana/blob/master/sdk/program/src/system_instruction.rs
  */
 const SYSTEM_INSTRUCTION_DISCRIMINATORS = {
 	CREATE_ACCOUNT: 0,
