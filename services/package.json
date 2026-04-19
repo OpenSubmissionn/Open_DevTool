@@ -7,6 +7,9 @@
     "build": "tsup src/index.ts",
     "dev": "tsup --watch src/index.ts",
     "test": "vitest",
+    "test:unit": "vitest run --config vitest.config.ts --exclude tests/integration/**",
+    "test:integration": "vitest run --config vitest.config.ts tests/integration",
+    "coverage": "vitest run --config vitest.config.ts --coverage",
     "lint": "eslint src/",
     "type-check": "tsc --noEmit"
   },

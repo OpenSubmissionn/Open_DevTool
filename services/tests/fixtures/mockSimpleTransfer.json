@@ -1,0 +1,40 @@
+{
+  "signature": "5mZ8H54EQcPgZFa3sPHEHgxT5xRK6x6aHk3v1j3yhoQuZc4jAfiHn1qJpM9rN9//example",
+  "slot": 1500000,
+  "blockTime": 1710000000,
+  "transaction": {
+    "signatures": [
+      "5mZ8H54EQcPgZFa3sPHEHgxT5xRK6x6aHk3v1j3yhoQuZc4jAfiHn1qJpM9rN9//example"
+    ],
+    "message": {
+      "accountKeys": [
+        "2zoF11B7hBLMRS4Q95x9vXk4T7aQk1h1Y6nF5BLse2dS",
+        "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkgG8n28kPZL7",
+        "11111111111111111111111111111111111"
+      ],
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [0, 1],
+          "data": "3BxsqK7ZV4Q"
+        }
+      ]
+    }
+  },
+  "logMessages": [
+    "Program 11111111111111111111111111111111 invoke [1]",
+    "Program 11111111111111111111111111111111 success"
+  ],
+  "preBalances": [1000000000, 500000000, 1000000000],
+  "postBalances": [999900000, 500100000, 1000000000],
+  "preTokenBalances": [],
+  "postTokenBalances": [],
+  "innerInstructions": [],
+  "computeUnitsConsumed": 120,
+  "err": null,
+  "accountKeys": [
+    "2zoF11B7hBLMRS4Q95x9vXk4T7aQk1h1Y6nF5BLse2dS",
+    "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkgG8n28kPZL7",
+    "11111111111111111111111111111111111111"
+  ]
+}
