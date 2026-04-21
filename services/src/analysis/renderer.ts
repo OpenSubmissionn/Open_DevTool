@@ -8,6 +8,7 @@ interface RenderOutput {
     signature: string;
     slot: number;
     timestamp: number | null;
+    timestampISO: string | null;
     success: boolean;
     error: any;
   };
@@ -51,20 +52,39 @@ export function renderJSON(
       ? insights
       : ((insights as InsightReport)?.insights ?? []);
 
+    const fallbackConsumed = analyzed?.cuProfile?.totalConsumed ?? (analyzed as any)?.computeUnits?.consumed ?? 0;
+    const consumed = analyzed?.raw?.computeUnitsConsumed ?? fallbackConsumed;
+    const limit = analyzed?.cuProfile?.totalLimit ?? (analyzed as any)?.computeUnits?.limit ?? 0;
+    const fallbackUtilization = analyzed?.cuProfile?.utilizationPercent ?? (analyzed as any)?.computeUnits?.utilization ?? 0;
+    const utilization = analyzed?.raw?.computeUnitsConsumed != null && limit > 0
+      ? (consumed / limit) * 100
+      : fallbackUtilization;
+
+    const timestamp = analyzed?.raw?.blockTime ?? analyzed?.parsed?.blockTime ?? (analyzed as any)?.blockTime ?? null;
+    const timestampISO = typeof timestamp === 'number' ? new Date(timestamp * 1000).toISOString() : null;
+
     const output: RenderOutput = {
       transaction: {
         signature: analyzed?.raw?.signature || analyzed?.parsed?.signature || (analyzed as any)?.signature || 'unknown',
         slot: analyzed?.raw?.slot || analyzed?.parsed?.slot || (analyzed as any)?.slot || 0,
-        timestamp: analyzed?.raw?.blockTime ?? analyzed?.parsed?.blockTime ?? (analyzed as any)?.blockTime ?? null,
+        timestamp,
+        timestampISO,
         success: analyzed?.parsed?.success ?? (analyzed?.raw ? !analyzed.raw.err : !(analyzed as any)?.error),
         error: analyzed?.raw?.err || (analyzed as any)?.error || null,
       },
       computeUnits: {
-        consumed: analyzed?.cuProfile?.totalConsumed ?? (analyzed as any)?.computeUnits?.consumed ?? 0,
-        limit: analyzed?.cuProfile?.totalLimit ?? (analyzed as any)?.computeUnits?.limit ?? 0,
-        utilization: Number(((analyzed?.cuProfile?.utilizationPercent ?? (analyzed as any)?.computeUnits?.utilization ?? 0)).toFixed(4)),
+        consumed,
+        limit,
+        utilization: Number(utilization.toFixed(4)),
       },
-      accounts: analyzed?.accountDiffs || [],
+      accounts: (analyzed?.accountDiffs || []).map((account) => {
+        const { solDelta, ...accountWithoutLegacyDelta } = account;
+        return {
+          ...accountWithoutLegacyDelta,
+          solDeltaLamports: solDelta,
+          solDeltaSOL: solDelta / 1_000_000_000,
+        };
+      }),
       insights: reportInsights.map(insight => ({
         type: insight.type || 'GENERIC',
         level: insight.severity || 'info',
