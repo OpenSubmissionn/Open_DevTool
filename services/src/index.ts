@@ -8,7 +8,7 @@ export {
 
 export * from "./analysis/accountDiff";
 export * from './analysis/txParser';
-export { ParsedLogs as ParsedLogsFromLogParser } from './analysis/logParser';
+export { ParsedLogs as ParsedLogsFromLogParser, parseLogsFromBundle } from './analysis/logParser';
 export * from './analysis/cuProfiler';
 export * from './analysis/cpiTreeBuilder';
 export * from './analysis/merger';

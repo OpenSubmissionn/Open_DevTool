@@ -1,3 +1,5 @@
+import type { AnalyzedTransaction, Insight, InsightReport } from './types';
+
 /**
  * Interfaces to ensure type safety and professional structure
  */
@@ -35,32 +37,39 @@ interface RenderOutput {
  * @param insights - Intelligence insights generated during analysis
  * @returns A strictly formatted and validated JSON string
  */
-export function renderJSON(analyzed: any, insights: any[] = []): string {
+export function renderJSON(
+  analyzed: AnalyzedTransaction,
+  insights: InsightReport | Insight[] = []
+): string {
   try {
     // Structural validation - ensures the core data exists
     if (!analyzed) {
       throw new Error("No analysis data provided to the renderer.");
     }
 
+    const reportInsights: Insight[] = Array.isArray(insights)
+      ? insights
+      : ((insights as InsightReport)?.insights ?? []);
+
     const output: RenderOutput = {
       transaction: {
-        signature: analyzed.signature || 'unknown',
-        slot: analyzed.slot || 0,
-        timestamp: analyzed.blockTime || null,
-        success: !analyzed.error,
-        error: analyzed.error || null,
+        signature: analyzed?.raw?.signature || analyzed?.parsed?.signature || (analyzed as any)?.signature || 'unknown',
+        slot: analyzed?.raw?.slot || analyzed?.parsed?.slot || (analyzed as any)?.slot || 0,
+        timestamp: analyzed?.raw?.blockTime ?? analyzed?.parsed?.blockTime ?? (analyzed as any)?.blockTime ?? null,
+        success: analyzed?.parsed?.success ?? (analyzed?.raw ? !analyzed.raw.err : !(analyzed as any)?.error),
+        error: analyzed?.raw?.err || (analyzed as any)?.error || null,
       },
       computeUnits: {
-        consumed: analyzed.computeUnits?.consumed ?? 0,
-        limit: analyzed.computeUnits?.limit ?? 0,
-        utilization: Number(analyzed.computeUnits?.utilization?.toFixed(4)) ?? 0,
+        consumed: analyzed?.cuProfile?.totalConsumed ?? (analyzed as any)?.computeUnits?.consumed ?? 0,
+        limit: analyzed?.cuProfile?.totalLimit ?? (analyzed as any)?.computeUnits?.limit ?? 0,
+        utilization: Number(((analyzed?.cuProfile?.utilizationPercent ?? (analyzed as any)?.computeUnits?.utilization ?? 0)).toFixed(4)),
       },
-      accounts: analyzed.accountDiffs || [],
-      insights: insights.map(insight => ({
+      accounts: analyzed?.accountDiffs || [],
+      insights: reportInsights.map(insight => ({
         type: insight.type || 'GENERIC',
-        level: insight.level || 'info',
+        level: insight.severity || 'info',
         message: insight.message || '',
-        details: insight.details || {},
+        details: insight.context || {},
       })),
       metadata: {
         version: "1.0.0",

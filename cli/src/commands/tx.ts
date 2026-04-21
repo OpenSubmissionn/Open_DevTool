@@ -6,22 +6,61 @@ import chalk from 'chalk';
 import { 
   fetchTransaction, 
   parseTransaction, 
+  parseLogsFromBundle,
   profileCU, 
   buildCPITree, 
   computeAccountDiffs, 
   mergeAnalysis, 
-  analyzeTransaction
+  analyzeTransaction,
+  type CPITree,
+  type ParsedLogs
 } from '@open/services';
 
-// 2. UI/Rendering logic from CLI
-import { renderJSON } from '../renderers';
+// 2. JSON rendering output
+import { renderJSON } from '@open/services';
+
+function toCPITree(trace: ReturnType<typeof buildCPITree>): CPITree {
+  const totalDepth = trace.roots.reduce((maxDepth, node) => Math.max(maxDepth, node.depth), 0);
+
+  return {
+    root: trace.roots.map((node) => ({
+      programId: node.programId,
+      programName: node.programId,
+      depth: node.depth,
+      status: node.status === 'failed' ? 'failed' : 'success',
+      cuConsumed: node.computeUnitsConsumed,
+      children: [],
+    })),
+    totalDepth,
+    nodeCount: trace.roots.length,
+  };
+}
+
+function toParsedLogs(logMessages: string[], parsed: ReturnType<typeof parseLogsFromBundle>): ParsedLogs {
+  return {
+    raw: logMessages,
+    entries: [],
+    byProgram: Object.keys(parsed.byProgram).map((programId) => ({
+      programId,
+      programName: programId,
+      entries: [],
+      cuConsumed: parsed.byProgram[programId]?.consumed,
+    })),
+    errors: parsed.errors.map((error) => ({
+      raw: error,
+      type: 'failed',
+      message: error,
+    })),
+    totalLines: parsed.totalLines,
+  };
+}
 
 export const registerTxCommand = (program: Command) => {
   program
     .command('tx <signature>')
     .description('Full analysis of a Solana transaction')
     .option('--network <type>', 'Solana network (mainnet/devnet)', 'mainnet')
-    .option('--json', 'Output results in structured JSON format', true)
+    .option('--json', 'Output results in structured JSON format', false)
     .action(async (signature: string, options: any) => {
       
       // Basic signature validation
@@ -39,20 +78,21 @@ export const registerTxCommand = (program: Command) => {
 
         // Step 2: Running parallel analysis modules
         spinner.text = chalk.cyan('Parsing logs and compute units...');
-        // Note: Check if parseTransaction is receiving the correct bundle type
-        const parsedLogs = parseTransaction(rawBundle!); 
+        const parsedTx = parseTransaction(rawBundle);
+        const parsedLogSummary = parseLogsFromBundle(rawBundle.logMessages);
         const cuProfile = profileCU(rawBundle.logMessages);
-        const cpiTree = buildCPITree(rawBundle.logMessages);
+        const cpiTrace = buildCPITree(rawBundle.logMessages);
+        const cpiTree = toCPITree(cpiTrace);
         const accountDiffs = computeAccountDiffs(rawBundle);
 
         // Step 3: Merging all data
         const analyzed = mergeAnalysis(
           rawBundle,
-          parsedLogs,
+          parsedTx,
           cuProfile,
-          cpiTree as any,
+          cpiTree,
           accountDiffs,
-          rawBundle!.logMessages as any
+          toParsedLogs(rawBundle.logMessages, parsedLogSummary)
         );
 
         // Step 4: Rule-based Intelligence
