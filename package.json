@@ -8,10 +8,10 @@
     "dev": "npm run dev -w cli",
     "build": "npm run build --workspaces",
     "test": "vitest",
-    "test:unit": "npm run test:unit --workspace @open-dev/services",
-    "test:integration": "npm run test:integration --workspace @open-dev/services",
+    "test:unit": "npm run test:unit --workspace @open/services",
+    "test:integration": "npm run test:integration --workspace @open/services",
     "test:all": "npm run test:unit && npm run test:integration",
-    "coverage": "npm run coverage --workspace @open-dev/services",
+    "coverage": "npm run coverage --workspace @open/services",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"**/*.ts\""
       

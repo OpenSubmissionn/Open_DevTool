@@ -9,6 +9,8 @@ interface RenderOutput {
     slot: number;
     timestamp: number | null;
     timestampISO: string | null;
+    feeLamports: number;
+    feeSOL: number;
     success: boolean;
     error: any;
   };
@@ -63,12 +65,17 @@ export function renderJSON(
     const timestamp = analyzed?.raw?.blockTime ?? analyzed?.parsed?.blockTime ?? (analyzed as any)?.blockTime ?? null;
     const timestampISO = typeof timestamp === 'number' ? new Date(timestamp * 1000).toISOString() : null;
 
+    const feeLamports = analyzed?.parsed?.fee ?? (analyzed as any)?.fee ?? 0;
+
     const output: RenderOutput = {
       transaction: {
         signature: analyzed?.raw?.signature || analyzed?.parsed?.signature || (analyzed as any)?.signature || 'unknown',
         slot: analyzed?.raw?.slot || analyzed?.parsed?.slot || (analyzed as any)?.slot || 0,
         timestamp,
         timestampISO,
+        fee: feeLamports,
+        feeLamports,
+        feeSOL: feeLamports / 1_000_000_000,
         success: analyzed?.parsed?.success ?? (analyzed?.raw ? !analyzed.raw.err : !(analyzed as any)?.error),
         error: analyzed?.raw?.err || (analyzed as any)?.error || null,
       },
