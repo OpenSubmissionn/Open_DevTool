@@ -46,6 +46,7 @@ export interface InnerInstruction {
  * Raw transaction data bundle before any analysis.
  */
 export interface RawTransactionBundle {
+  logs(logs: any): unknown;
   /** Unique transaction signature. */
   signature: string;
   /** Slot where the transaction was confirmed. */
