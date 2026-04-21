@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "rootDir": "src",
-    "outDir": "./dist",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "paths": {
+      "@open/services": ["../services/src/index.ts"]
+    },
     "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "ignoreDeprecations": "5.0",
-    "types": ["node"] 
+    "rootDir": "../"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "bin/**/*"]
 }

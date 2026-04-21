@@ -4,6 +4,7 @@
   "description": "CLI debugger visual para transações Solana",
   "main": "index.js",
   "scripts": {
+    "dev:cli": "tsx cli/bin/open.ts", 
     "dev": "npm run dev -w cli",
     "build": "npm run build --workspaces",
     "test": "vitest",
@@ -13,6 +14,7 @@
     "coverage": "npm run coverage --workspace @open-dev/services",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"**/*.ts\""
+      
   },
   "keywords": [],
   "author": "Nicole",
