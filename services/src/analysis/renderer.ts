@@ -1,7 +1,7 @@
 import type { AnalyzedTransaction, Insight, InsightReport } from './types';
 
 /**
- * Interfaces to ensure type safety and professional structure
+ * Output payload shape for JSON rendering.
  */
 interface RenderOutput {
   transaction: {
@@ -32,18 +32,17 @@ interface RenderOutput {
 }
 
 /**
- * Renders the analysis result and insights into a professional, 
- * structured JSON format suitable for CLI export or Frontend consumption.
- * * @param analyzed - The processed transaction data from the Engine
- * @param insights - Intelligence insights generated during analysis
- * @returns A strictly formatted and validated JSON string
+ * Build CLI JSON output from analyzed transaction data and insights.
+ * @param analyzed Processed transaction analysis result.
+ * @param insights Insight report or raw insight list.
+ * @returns Pretty-printed JSON string.
  */
 export function renderJSON(
   analyzed: AnalyzedTransaction,
   insights: InsightReport | Insight[] = []
 ): string {
   try {
-    // Structural validation - ensures the core data exists
+    // Guard against invalid input.
     if (!analyzed) {
       throw new Error("No analysis data provided to the renderer.");
     }
@@ -52,6 +51,7 @@ export function renderJSON(
       ? insights
       : ((insights as InsightReport)?.insights ?? []);
 
+    // Prefer canonical CU from RPC meta; fallback to profiler totals.
     const fallbackConsumed = analyzed?.cuProfile?.totalConsumed ?? (analyzed as any)?.computeUnits?.consumed ?? 0;
     const consumed = analyzed?.raw?.computeUnitsConsumed ?? fallbackConsumed;
     const limit = analyzed?.cuProfile?.totalLimit ?? (analyzed as any)?.computeUnits?.limit ?? 0;
@@ -78,6 +78,7 @@ export function renderJSON(
         utilization: Number(utilization.toFixed(4)),
       },
       accounts: (analyzed?.accountDiffs || []).map((account) => {
+        // Replace legacy SOL delta with explicit units.
         const { solDelta, ...accountWithoutLegacyDelta } = account;
         return {
           ...accountWithoutLegacyDelta,
@@ -94,13 +95,13 @@ export function renderJSON(
       metadata: {
         version: "1.0.0",
         generatedAt: new Date().toISOString(),
-        engine: "OPEN-Insight-Engine-God-Mode" // Aquele toque de autoridade
+        engine: "OPEN-Insight-Engine-God-Mode" 
       }
     };
 
     return JSON.stringify(output, null, 2);
   } catch (error) {
-    // Professional error wrapping
+    // Return machine-readable render errors.
     return JSON.stringify({
       error: "Render Error",
       message: error instanceof Error ? error.message : "Unknown error occurred during rendering",
