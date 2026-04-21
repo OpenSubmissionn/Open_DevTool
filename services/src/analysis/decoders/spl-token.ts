@@ -32,6 +32,9 @@ export function decodeSPLInstruction(ix: ParsedInstruction): TokenInstruction | 
       case 3: // Transfer
         return decodeTransfer(dataBuffer, ix.accounts);
 
+      case 12: // TransferChecked
+        return decodeTransferChecked(dataBuffer, ix.accounts);
+
       case 8: // MintTo
         return decodeMintTo(dataBuffer, ix.accounts);
 
@@ -80,7 +83,7 @@ function convertParsedToTokenInstruction(parsed: any): TokenInstruction | null {
     mint: info.mint,
     authority: info.authority,
     amount: info.tokenAmount?.amount || info.amount,
-    decimals: info.tokenAmount?.decimals,
+    decimals: info.tokenAmount?.decimals ?? info.decimals,
   };
 }
 
@@ -100,6 +103,31 @@ function decodeTransfer(data: Buffer, accounts: ParsedInstruction['accounts']): 
     destination: accounts[1], // Token account (to)
     authority: accounts[2], // Owner/signer
     amount: amount,
+  };
+}
+
+/**
+ * Decode TransferChecked instruction (type 12)
+ * Structure:
+ * - byte 0: instruction type (12)
+ * - bytes 1-8: amount (u64, little-endian)
+ * - byte 9: decimals (u8)
+ */
+function decodeTransferChecked(
+  data: Buffer,
+  accounts: ParsedInstruction['accounts']
+): TokenInstruction {
+  const amount = data.length >= 9 ? data.readBigUInt64LE(1).toString() : '0';
+  const decimals = data.length >= 10 ? data[9] : undefined;
+
+  return {
+    instructionName: 'transferChecked',
+    source: accounts[0],
+    mint: accounts[1],
+    destination: accounts[2],
+    authority: accounts[3],
+    amount,
+    decimals,
   };
 }
 

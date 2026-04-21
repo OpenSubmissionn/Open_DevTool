@@ -85,6 +85,73 @@ describe('decodeSPLInstruction', () => {
     });
   });
 
+  describe('TransferChecked instruction', () => {
+    it('should decode TransferChecked (type 12) instruction', () => {
+      const amountBuffer = Buffer.alloc(8);
+      amountBuffer.writeBigUInt64LE(BigInt(2500000), 0);
+
+      const dataBuffer = Buffer.concat([
+        Buffer.from([12]), // TransferChecked type
+        amountBuffer,
+        Buffer.from([6]), // decimals
+      ]);
+      const data = dataBuffer.toString('base64');
+
+      const ix: ParsedInstruction = {
+        programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+        programName: 'Token Program',
+        data,
+        accounts: ['source123', 'mint456', 'dest789', 'auth000'],
+        depth: 0,
+        innerInstructions: [],
+      };
+
+      const result = decodeSPLInstruction(ix);
+
+      expect(result?.instructionName).toBe('transferChecked');
+      expect(result?.amount).toBe('2500000');
+      expect(result?.decimals).toBe(6);
+      expect(result?.source).toBe('source123');
+      expect(result?.mint).toBe('mint456');
+      expect(result?.destination).toBe('dest789');
+      expect(result?.authority).toBe('auth000');
+    });
+
+    it('should handle pre-decoded TransferChecked', () => {
+      const ix: ParsedInstruction = {
+        programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+        programName: 'Token Program',
+        data: '',
+        accounts: [],
+        depth: 0,
+        innerInstructions: [],
+        parsed: {
+          type: 'transferChecked',
+          info: {
+            source: 'sourceA',
+            destination: 'destB',
+            mint: 'mintC',
+            authority: 'authD',
+            tokenAmount: {
+              amount: '1200000',
+              decimals: 6,
+            },
+          },
+        },
+      };
+
+      const result = decodeSPLInstruction(ix);
+
+      expect(result?.instructionName).toBe('transferChecked');
+      expect(result?.amount).toBe('1200000');
+      expect(result?.decimals).toBe(6);
+      expect(result?.source).toBe('sourceA');
+      expect(result?.destination).toBe('destB');
+      expect(result?.mint).toBe('mintC');
+      expect(result?.authority).toBe('authD');
+    });
+  });
+
   describe('Burn instruction', () => {
     it('should decode Burn (type 9) instruction', () => {
       const amountBuffer = Buffer.alloc(8);
