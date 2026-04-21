@@ -161,7 +161,8 @@ function decodeBurn(data: Buffer, accounts: ParsedInstruction['accounts']): Toke
   return {
     instructionName: 'burn',
     source: accounts[0], // Token account being burned
-    authority: accounts[1], // Owner/signer
+    mint: accounts[1], // Token mint
+    authority: accounts[2], // Owner/signer
     amount: amount,
   };
 }

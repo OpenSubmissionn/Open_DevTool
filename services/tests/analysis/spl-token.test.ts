@@ -164,7 +164,7 @@ describe('decodeSPLInstruction', () => {
         programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
         programName: 'Token Program',
         data,
-        accounts: ['source123', 'owner456'],
+        accounts: ['source123', 'mint456', 'owner789'],
         depth: 0,
         innerInstructions: [],
       };
@@ -174,7 +174,8 @@ describe('decodeSPLInstruction', () => {
       expect(result?.instructionName).toBe('burn');
       expect(result?.amount).toBe('25');
       expect(result?.source).toBe('source123');
-      expect(result?.authority).toBe('owner456');
+      expect(result?.mint).toBe('mint456');
+      expect(result?.authority).toBe('owner789');
     });
   });
 
