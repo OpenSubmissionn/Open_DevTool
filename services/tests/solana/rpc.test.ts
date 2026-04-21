@@ -64,8 +64,8 @@ describe('RPC Fetcher', () => {
     expect(result.logMessages).toEqual([]);
     expect(result.preBalances).toEqual([]);
     expect(result.postBalances).toEqual([]);
-    expect(result.preTokenBalances).toBeUndefined();
-    expect(result.postTokenBalances).toBeUndefined();
+    expect(result.preTokenBalances).toEqual([]);
+    expect(result.postTokenBalances).toEqual([]);
     expect(result.innerInstructions).toEqual([]);
     expect(result.accountKeys).toEqual(['dummyKey']);
 
