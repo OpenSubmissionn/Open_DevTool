@@ -96,6 +96,11 @@ export interface ParsedInstruction {
   depth: number;
   /** Inner instructions nested inside this instruction. */
   innerInstructions: ParsedInstruction[];
+  /** Pre-decoded instruction data from Solana RPC. */
+  parsed?: {
+    type: string;
+    info?: Record<string, any>;
+  };
 }
 
 /**
