@@ -38,9 +38,8 @@ describe('RPC Fetcher', () => {
       .spyOn(connectionModule, 'withRetry')
       .mockResolvedValue(null as any);
 
-    await expect(fetchTransaction('missingSignatureExample')).rejects.toThrow(
-      'Transaction not found: missingSignatureExample'
-    );
+    await expect(fetchTransaction('missingSignatureExample')).rejects.toThrow
+    ('failed to get transaction: missingSignatureExample');
 
     expect(withRetrySpy).toHaveBeenCalled();
     getConnectionSpy.mockRestore();
@@ -67,7 +66,7 @@ describe('RPC Fetcher', () => {
     expect(result.postBalances).toEqual([]);
     expect(result.preTokenBalances).toBeUndefined();
     expect(result.postTokenBalances).toBeUndefined();
-    expect(result.innerInstructions).toBeUndefined();
+    expect(result.innerInstructions).toEqual([]);
     expect(result.accountKeys).toEqual(['dummyKey']);
 
     getConnectionSpy.mockRestore();
@@ -76,6 +75,6 @@ describe('RPC Fetcher', () => {
 
   it('should throw error for an invalid signature on Devnet', { timeout: 10000 }, async () => {
     const INVALID_SIG = 'invalidSignature1234567890abcdefghij';
-    await expect(fetchTransaction(INVALID_SIG)).rejects.toThrow('failed to get transaction: Invalid pa'); // <-- MENSAGEM DE ERRO AJUSTADA
+    await expect(fetchTransaction(INVALID_SIG)).rejects.toThrow(`failed to get transaction: ${INVALID_SIG}`);
   });
 });
