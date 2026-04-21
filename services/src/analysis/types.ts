@@ -304,6 +304,8 @@ export interface ParsedLogs {
  * Complete analysis result for a transaction.
  */
 export interface AnalyzedTransaction {
+  success: any;
+  signature: any;
   /** Original raw transaction data. */
   raw: RawTransactionBundle;
   /** Parsed and structured transaction data. */

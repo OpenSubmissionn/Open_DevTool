@@ -1,7 +1,8 @@
 import { Command } from 'commander';
 import ora from 'ora';
 import chalk from 'chalk';
-// Import strictly from the services workspace
+
+// 1. Core logic from Services (using the alias we configured)
 import { 
   fetchTransaction, 
   parseTransaction, 
@@ -9,9 +10,11 @@ import {
   buildCPITree, 
   computeAccountDiffs, 
   mergeAnalysis, 
-  analyzeTransaction, 
-  renderJSON 
-} from '../../../services/src/index';
+  analyzeTransaction
+} from '@open/services';
+
+// 2. UI/Rendering logic from CLI
+import { renderJSON } from '../renderers';
 
 export const registerTxCommand = (program: Command) => {
   program
@@ -36,8 +39,9 @@ export const registerTxCommand = (program: Command) => {
 
         // Step 2: Running parallel analysis modules
         spinner.text = chalk.cyan('Parsing logs and compute units...');
-        const parsedLogs = parseTransaction(rawBundle!);
-        const cuProfile = profileCU(rawBundle.logMessages)
+        // Note: Check if parseTransaction is receiving the correct bundle type
+        const parsedLogs = parseTransaction(rawBundle!); 
+        const cuProfile = profileCU(rawBundle.logMessages);
         const cpiTree = buildCPITree(rawBundle.logMessages);
         const accountDiffs = computeAccountDiffs(rawBundle);
 
@@ -49,7 +53,6 @@ export const registerTxCommand = (program: Command) => {
           cpiTree as any,
           accountDiffs,
           rawBundle!.logMessages as any
-
         );
 
         // Step 4: Rule-based Intelligence
@@ -58,8 +61,9 @@ export const registerTxCommand = (program: Command) => {
 
         spinner.succeed(chalk.green('Analysis Complete!'));
 
-        // Step 5: Render (Default to JSON as per Week 1 goals)
-        const finalOutput = renderJSON(analyzed, insightsReport.insights);
+        // Step 5: Render (Using the CLI renderer we just populated)
+        // Pass the full report or just insights array as needed by your renderJSON
+        const finalOutput = renderJSON(analyzed, insightsReport);
         
         console.log(finalOutput);
 
@@ -70,3 +74,4 @@ export const registerTxCommand = (program: Command) => {
       }
     });
 };
+
