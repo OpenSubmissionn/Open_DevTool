@@ -4,6 +4,7 @@
   "description": "OPEN - Solana Observability and CU Analysis CLI",
   "main": "bin/open.ts",
   "scripts": {
+    "build": "tsup bin/open.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:cli": "tsx bin/open.ts"
   },
