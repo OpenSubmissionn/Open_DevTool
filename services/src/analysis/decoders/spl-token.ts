@@ -6,28 +6,28 @@ import { Buffer } from 'buffer';
  * Returns null if instruction is not SPL Token related or cannot be decoded.
  */
 export function decodeSPLInstruction(ix: ParsedInstruction): TokenInstruction | null {
-  // Se já vem decodificado, converte para nosso formato
+  // If instruction is already parsed by RPC, convert to local format.
   if (ix.parsed) {
     return convertParsedToTokenInstruction(ix.parsed);
   }
 
-  // Se não tem data, não consegue decodificar
+  // No raw data means there is nothing to decode.
   if (!ix.data) {
     return null;
   }
 
   try {
-    // Decodificar base64 para Buffer
+    // Decode base64 payload into a binary buffer.
     const dataBuffer = Buffer.from(ix.data, 'base64');
 
     if (dataBuffer.length < 1) {
       return null;
     }
 
-    // Primeiro byte = tipo de instrução SPL Token
+    // First byte identifies SPL Token instruction type.
     const instructionType = dataBuffer[0];
 
-    // Decodificar baseado no tipo
+    // Route decoding by instruction type.
     switch (instructionType) {
       case 3: // Transfer
         return decodeTransfer(dataBuffer, ix.accounts);
@@ -51,7 +51,7 @@ export function decodeSPLInstruction(ix: ParsedInstruction): TokenInstruction | 
         return decodeInitializeMint(dataBuffer, ix.accounts);
 
       default:
-        // Tipo desconhecido, retorna com dados brutos
+        // Unknown type: return raw payload for downstream inspection.
         return {
           instructionName: 'unknown',
           rawData: ix.data,
