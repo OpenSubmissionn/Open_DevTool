@@ -75,6 +75,8 @@ describe('RPC Fetcher', () => {
 
   it('should throw error for an invalid signature on Devnet', { timeout: 10000 }, async () => {
     const INVALID_SIG = 'invalidSignature1234567890abcdefghij';
-    await expect(fetchTransaction(INVALID_SIG)).rejects.toThrow(`failed to get transaction: ${INVALID_SIG}`);
+    await expect(fetchTransaction(INVALID_SIG)).rejects.toThrow(
+  'failed to get transaction: Invalid param: Invalid'
+);
   });
 });
