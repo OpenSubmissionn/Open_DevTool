@@ -62,7 +62,7 @@ describe('RPC Fetcher', () => {
 
     const result = await fetchTransaction('missingMetaSignature');
 
-    expect(result.logs).toEqual([]);
+    expect(result.logMessages).toEqual([]);
     expect(result.preBalances).toEqual([]);
     expect(result.postBalances).toEqual([]);
     expect(result.preTokenBalances).toBeUndefined();

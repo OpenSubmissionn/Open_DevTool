@@ -324,14 +324,19 @@ export interface AnalyzedTransaction {
  * Insight generated from transaction analysis.
  */
 export interface Insight {
+  type: string;
   /** Severity of the insight. */
   severity: "critical" | "warning" | "info";
   /** Short title for the insight. */
   title: string;
   /** Full description of the insight. */
-  description: string;
+  message: string;
   /** Recommended action for the insight. */
   recommendation: string;
+  /** Contextual data for advanced debugging */
+  context?: Record<string, any>;
+  /** Category tags for filtering */
+  tags?: string[];
   /** Estimated compute unit savings, if applicable. */
   estimatedCUSavings?: number;
   /** Associated program identifier, when available. */
