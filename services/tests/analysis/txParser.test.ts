@@ -240,6 +240,59 @@ describe('parseTransaction', () => {
     expect(parsed.instructions[0].innerInstructions[0].cuConsumed).toBe(30);
   });
 
+  it('recursively parses nested inner instructions and preserves deeper CPI depth', () => {
+    const parentProgramId = 'ParentProgram1111111111111111111111111111';
+    const childProgramId = 'ChildProgram11111111111111111111111111111';
+
+    const bundle = createBundleWithLogs({
+      signature: 'nested-cpi-signature',
+      transaction: {
+        message: {
+          instructions: [
+            {
+              programIdIndex: 1,
+              accounts: [0],
+              data: '',
+            },
+          ],
+        },
+      },
+      innerInstructions: [
+        {
+          index: 0,
+          instructions: [
+            {
+              programIdIndex: 2,
+              accounts: [1],
+              data: '',
+              innerInstructions: [
+                {
+                  programIdIndex: 2,
+                  accounts: [2],
+                  data: '',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      accountKeys: [
+        'SignerNested111111111111111111111111111111',
+        parentProgramId,
+        childProgramId,
+      ],
+    });
+
+    const parsed = parseTransaction(bundle);
+
+    expect(parsed.instructions).toHaveLength(1);
+    expect(parsed.instructions[0].depth).toBe(0);
+    expect(parsed.instructions[0].innerInstructions).toHaveLength(1);
+    expect(parsed.instructions[0].innerInstructions[0].depth).toBe(1);
+    expect(parsed.instructions[0].innerInstructions[0].innerInstructions).toHaveLength(1);
+    expect(parsed.instructions[0].innerInstructions[0].innerInstructions[0].depth).toBe(2);
+  });
+
   it('attributes CU in invocation order for repeated program calls at the same depth', () => {
     const programId = 'OrderProgram111111111111111111111111111111';
 

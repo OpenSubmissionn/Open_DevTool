@@ -1,26 +1,69 @@
 # Open
+
 A transaction profiler and visual debugger for Solana.
 
-[npm] [TypeScript] [Solana]
-
 ## What is Open?
-Open turns any Solana transaction signature into a fully decoded execution profile — CU flame graph, CPI call tree, account state diffs, structured logs, and an insight layer that flags bottlenecks.
+
+Open takes any Solana transaction signature and turns it into a fully decoded execution profile — showing compute unit usage, CPI call trees, account state changes, and an insight layer that flags bottlenecks automatically.
+
+## Team Members: 
+<table align="center">
+  <tr>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/ana-cristina-jardim/">
+        <img src="docs/assets/anacristina.jpg"
+        style="width:120px; height:120px; object-fit:cover; border-radius:8px;"
+        alt="Ana Cristina Jardim"/><br>
+        <sub><b>Ana Cristina Jardim</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/ana-j%C3%BAlia-ribeiro/">
+        <img src="docs/assets/anajulia.jpg"
+        style="width:120px; height:120px; object-fit:cover; border-radius:8px;"
+        alt="Ana Júlia Ribeiro"/><br>
+        <sub><b>Ana Júlia Ribeiro</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/emanuelly-dias-2a0480305/">
+        <img src="docs/assets/emanuelly.jpg"
+        style="width:120px; height:120px; object-fit:cover; border-radius:8px;"
+        alt="Emanuelly Cantarelli Dias"/><br>
+        <sub><b>Emanuelly Cantarelli Dias</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/mirela-bianchi-608601254/">
+        <img src="docs/assets/mirela.jpg"
+        style="width:120px; height:120px; object-fit:cover; border-radius:8px;"
+        alt="Mirela Schneider Bianchi"/><br>
+        <sub><b>Mirela Schneider Bianchi</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/nicolezanin/">
+        <img src="docs/assets/nicole.jpg"
+        style="width:120px; height:120px; object-fit:cover; border-radius:8px;"
+        alt="Nicole Zanin Silva"/><br>
+        <sub><b>Nicole Zanin Silva</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
 
 ## Installation
+
 ```bash
-# Clone the repo
 git clone https://github.com/Mirelasbianchi/open.git
 cd open
-
-# Install dependencies
 npm install
-
-# Build (from root)
 npm run build
 ```
 
-## Quickstart — 3 examples
-Example 1 — Analyze a transaction (JSON output):
+## Quickstart
+
+Example 1 — Full analysis as JSON:
 ```bash
 npm run dev:cli -- tx <YOUR_TX_SIGNATURE> --json
 ```
@@ -30,43 +73,42 @@ Example 2 — Analyze on devnet:
 npm run dev:cli -- tx <YOUR_TX_SIGNATURE> --network devnet
 ```
 
-Example 3 — Use a custom RPC endpoint:
+Example 3 — Custom RPC endpoint:
 ```bash
 npm run dev:cli -- tx <YOUR_TX_SIGNATURE> --rpc https://your-rpc-url.com
 ```
 
 ## CLI flags
+
 | Flag | Type | Default | Description |
-| --- | --- | --- | --- |
+|------|------|---------|-------------|
 | `--json` | boolean | false | Output full analysis as JSON |
-| `--network` | "mainnet" \| "devnet" | "mainnet" | Solana network to use |
-| `--rpc` | string | — | Custom RPC URL (overrides --network) |
+| `--network` | mainnet or devnet | mainnet | Solana network to use |
+| `--rpc` | string | — | Custom RPC URL, overrides --network |
 | `--verbose` | boolean | false | Enable debug output |
 | `--output` | string | — | Save output to a file path |
 
 ## Project structure
-```
-cli/       - CLI entrypoint and command layer
-services/  - Solana data fetch, analysis, and decoder services
-docs/      - Architecture and development documentation
-programs/  - on-chain program definitions and fixtures
-web/       - web UI and visualization tooling
-```
+
+open/
+├── cli/        # CLI entry point and terminal renderer
+├── services/   # Analysis engine, RPC layer, decoders
+├── docs/       # Architecture and program registry docs
+├── programs/   # On-chain program code
+└── web/        # Web frontend
 
 ## Development
+
 ```bash
-# Run tests
 npm run test:all
-
-# Run coverage
 npm run coverage
-
-# Lint
 npm run lint
 ```
 
 ## Contributing
+
 See CONTRIBUTING.md for guidelines.
 
 ## License
+
 MIT

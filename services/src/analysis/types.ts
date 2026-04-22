@@ -293,14 +293,14 @@ export interface ProgramLog {
  * Structured parsed logs for a transaction.
  */
 export interface ParsedLogs {
-  /** Raw log lines emitted by transaction execution. */
-  raw: string[];
-  /** Parsed log entries extracted from the logs. */
-  entries: LogEntry[];
+  /** Raw log lines emitted by transaction execution, when preserved. */
+  raw?: string[];
+  /** Parsed log entries extracted from the logs, when available. */
+  entries?: LogEntry[];
   /** Logs grouped by program. */
-  byProgram: ProgramLog[];
-  /** Error log entries identified during parsing. */
-  errors: LogEntry[];
+  byProgram: Record<string, any>;
+  /** Error messages identified during parsing. */
+  errors: string[];
   /** Total number of log lines processed. */
   totalLines: number;
 }
