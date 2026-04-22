@@ -16,9 +16,10 @@ const truncate = (str: string, start = 8, end = 8) => {
  * 1. HEADER COMPONENT
  * Focused on technical clarity and fee data from Task 2.3.
  */
-const Header = ({ signature, success, slot, fee }: { signature: string, success: boolean, slot: number, fee?: number }) => {
+const Header = ({ signature, success, slot, fee, network }: { signature: string, success: boolean, slot: number, fee?: number, network: 'mainnet' | 'devnet' }) => {
   const statusColor = success ? 'green' : 'red';
   const displayFee = fee !== undefined ? (fee / 1e9).toFixed(6) : 'N/A';
+  const networkLabel = network.toUpperCase();
 
   return (
     <Box flexDirection="column" marginBottom={1}>
@@ -26,7 +27,7 @@ const Header = ({ signature, success, slot, fee }: { signature: string, success:
       <Box justifyContent="space-between">
         <Text color="cyan" bold>OPEN INSIGHT [CLI v0.1.0]</Text>
         <Box>
-          <Text backgroundColor="blue" color="white"> MAINNET </Text>
+          <Text backgroundColor="blue" color="white"> {networkLabel} </Text>
           <Text backgroundColor="gray" color="white"> SLOT: {slot || 'N/A'} </Text>
         </Box>
       </Box>
@@ -57,20 +58,26 @@ const Header = ({ signature, success, slot, fee }: { signature: string, success:
 export const TerminalRenderer: React.FC<{ 
   analyzed: AnalyzedTransaction; 
   insights: InsightReport; 
-}> = ({ analyzed, insights }) => {
+  network?: 'mainnet' | 'devnet';
+}> = ({ analyzed, insights, network = 'devnet' }) => {
+  const signature = analyzed.signature || analyzed.raw?.signature || analyzed.parsed?.signature || 'N/A';
+  const slot = (analyzed as any).slot || (analyzed as any).parsed?.slot || analyzed.raw?.slot || 0;
+  const fee = (analyzed as any).fee || (analyzed as any).feeLamports || (analyzed as any).parsed?.fee;
+
   return (
     <Box flexDirection="column" paddingX={2} paddingY={1} minWidth={80}>
       
       {/* TOP SECTION: HEADER */}
       <Header 
-        signature={analyzed.signature} 
+        signature={signature} 
         success={analyzed.success} 
         /* * Safely accessing slot and fee. 
          * Using 'as any' to bypass TypeScript strict interface checks 
          * in case these properties are nested or missing in the current type definition.
          */
-        slot={(analyzed as any).slot || (analyzed as any).parsed?.slot || 0}
-        fee={(analyzed as any).fee || (analyzed as any).feeLamports || (analyzed as any).parsed?.fee} 
+        slot={slot}
+        fee={fee}
+        network={network}
       />
 
       {/* MIDDLE SECTION: DATA DISPLAY */}

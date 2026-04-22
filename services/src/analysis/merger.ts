@@ -22,6 +22,8 @@ export function mergeAnalysis(
   logs: ParsedLogs,
 ): AnalyzedTransaction {
   return {
+    signature: parsed.signature,
+    success: parsed.success,
     raw,
     parsed,
     cuProfile,

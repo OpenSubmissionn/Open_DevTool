@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import React from 'react';
 import { render } from 'ink';
 import { TerminalRenderer } from '../renderers/terminal';
+import type { CLIOptions } from '../types';
 
 // 1. Core logic from Services
 import { 
@@ -62,14 +63,15 @@ export const registerTxCommand = (program: Command) => {
   program
     .command('tx <signature>')
     .description('Full analysis of a Solana transaction')
-    .option('--network <type>', 'Solana network (mainnet/devnet)', 'mainnet')
+    .option('--network <type>', 'Solana network (mainnet/devnet)', 'devnet')
     .option('--json', 'Output results in structured JSON format', false)
     .action(async (signature: string, options: any) => {
       
       // Basic signature validation
       if (![87, 88].includes(signature.length)) {
         console.error(chalk.red('\nError: Invalid transaction signature.'));
-        process.exit(1);
+        process.exitCode = 1;
+        return;
       }
 
       const spinner = ora(`Initializing Open Insight Pipeline...`).start();
@@ -77,7 +79,8 @@ export const registerTxCommand = (program: Command) => {
       try {
         // Step 1: Fetch raw data
         spinner.text = chalk.cyan('Fetching transaction bundle from RPC...');
-        const rawBundle = await fetchTransaction(signature);
+        const selectedNetwork = (options.network || 'mainnet') as CLIOptions['network'];
+        const rawBundle = await fetchTransaction(signature, selectedNetwork);
 
         // Step 2: Running parallel analysis modules
         spinner.text = chalk.cyan('Parsing logs and compute units...');
@@ -114,7 +117,8 @@ export const registerTxCommand = (program: Command) => {
           render(
             React.createElement(TerminalRenderer, {
               analyzed: analyzed as any,
-              insights: insightsReport as any
+              insights: insightsReport as any,
+              network: selectedNetwork,
             })
           );
         }
@@ -122,7 +126,7 @@ export const registerTxCommand = (program: Command) => {
       } catch (error: any) {
         spinner.fail(chalk.red('Pipeline Crash'));
         console.error(chalk.yellow(`\nDetail: ${error.message}`));
-        process.exit(1);
+        process.exitCode = 1;
       }
     });
 };

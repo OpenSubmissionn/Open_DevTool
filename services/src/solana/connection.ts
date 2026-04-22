@@ -5,7 +5,8 @@ dotenv.config();
 
 // URLs de conexão
 const HELIUS_RPC_URL = process.env.HELIUS_RPC_URL;
-const PUBLIC_RPC_URL = 'https://api.devnet.solana.com'; // Fallback público para Devnet
+const DEVNET_RPC_URL = 'https://api.devnet.solana.com';
+const MAINNET_RPC_URL = 'https://api.mainnet-beta.solana.com';
 
 const MAX_RETRIES = 3;
 const INITIAL_BACKOFF = 1000;
@@ -14,16 +15,16 @@ const INITIAL_BACKOFF = 1000;
  * Retorna uma instância de conexão com a Solana.
  * Prioridade: 1. URL customizada | 2. Helius RPC | 3. Public RPC (Fallback )
  */
-export const getConnection = (rpcUrl?: string): Connection => {
+export const getConnection = (rpcUrl?: string, network: 'mainnet' | 'devnet' = 'devnet'): Connection => {
   // Aqui está a lógica de fallback que faltava
-  const url = rpcUrl || HELIUS_RPC_URL || PUBLIC_RPC_URL;
+  const url = rpcUrl || HELIUS_RPC_URL || (network === 'mainnet' ? MAINNET_RPC_URL : DEVNET_RPC_URL);
   
   const config: ConnectionConfig = {
     commitment: 'confirmed',
     confirmTransactionInitialTimeout: 60000,
   };
 
-  console.log(`Connecting to Solana via: ${url === HELIUS_RPC_URL ? 'Helius' : 'Public/Custom'} RPC`);
+  console.log(`Connecting to Solana via: ${url === HELIUS_RPC_URL ? 'Helius' : network === 'mainnet' ? 'Mainnet' : 'Devnet'} RPC`);
   return new Connection(url, config);
 };
 
