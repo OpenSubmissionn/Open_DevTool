@@ -61,15 +61,25 @@ function toParsedLogs(logMessages: string[], parsed: ReturnType<typeof parseLogs
 
 export const registerTxCommand = (program: Command) => {
   program
-    .command('tx <signature>')
+    .command('tx <signature> [network]')
     .description('Full analysis of a Solana transaction')
-    .option('--network <type>', 'Solana network (mainnet/devnet)', 'devnet')
+    .option('--network <type>', 'Solana network (mainnet/devnet)')
     .option('--json', 'Output results in structured JSON format', false)
-    .action(async (signature: string, options: any) => {
+    .action(async (signature: string, networkArg: string | undefined, options: any) => {
       
       // Basic signature validation
       if (![87, 88].includes(signature.length)) {
         console.error(chalk.red('\nError: Invalid transaction signature.'));
+        process.exitCode = 1;
+        return;
+      }
+
+      const optionNetwork = typeof options.network === 'string' ? options.network.toLowerCase() : undefined;
+      const positionalNetwork = typeof networkArg === 'string' ? networkArg.toLowerCase() : undefined;
+      const resolvedNetwork = optionNetwork ?? positionalNetwork ?? 'devnet';
+
+      if (resolvedNetwork !== 'mainnet' && resolvedNetwork !== 'devnet') {
+        console.error(chalk.red('\nError: Invalid network. Use "mainnet" or "devnet".'));
         process.exitCode = 1;
         return;
       }
@@ -79,7 +89,7 @@ export const registerTxCommand = (program: Command) => {
       try {
         // Step 1: Fetch raw data
         spinner.text = chalk.cyan('Fetching transaction bundle from RPC...');
-        const selectedNetwork = (options.network || 'mainnet') as CLIOptions['network'];
+        const selectedNetwork = resolvedNetwork as CLIOptions['network'];
         const rawBundle = await fetchTransaction(signature, selectedNetwork);
 
         // Step 2: Running parallel analysis modules
