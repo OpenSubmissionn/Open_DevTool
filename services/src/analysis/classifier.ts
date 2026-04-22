@@ -12,6 +12,21 @@ export type TxType =
   | 'multi-program'
   | 'unknown';
 
+function getInstructionMaxDepth(instruction: ParsedTransaction['instructions'][number]): number {
+  if (instruction.innerInstructions.length === 0) {
+    return instruction.depth;
+  }
+
+  return instruction.innerInstructions.reduce(
+    (maxDepth, childInstruction) => Math.max(maxDepth, getInstructionMaxDepth(childInstruction)),
+    instruction.depth
+  );
+}
+
+function getTransactionMaxDepth(instructions: ParsedTransaction['instructions']): number {
+  return instructions.reduce((maxDepth, instruction) => Math.max(maxDepth, getInstructionMaxDepth(instruction)), 0);
+}
+
 export function classifyTransaction(parsed: ParsedTransaction): TxType {
   if (parsed.success === false) {
     return 'failed-tx';
@@ -47,20 +62,17 @@ export function classifyTransaction(parsed: ParsedTransaction): TxType {
     return 'governance-vote';
   }
 
+  const maxDepth = getTransactionMaxDepth(parsed.instructions);
+  if (maxDepth > 2) {
+    return 'deep-cpi';
+  }
+
   if (uniqueProgramIds.length > 3) {
     return 'multi-program';
   }
 
   if (parsed.instructions.length > 5) {
     return 'high-CU';
-  }
-
-  const maxDepth = Math.max(...parsed.instructions.map(inst => inst.depth));
-  const hasDeepInner = parsed.instructions.some(inst =>
-    inst.innerInstructions.some(inner => inner.innerInstructions && inner.innerInstructions.length > 0)
-  );
-  if (maxDepth > 2 || hasDeepInner) {
-    return 'deep-cpi';
   }
 
   return 'unknown';

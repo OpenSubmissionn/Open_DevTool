@@ -1,4 +1,4 @@
-import { RawTransactionBundle } from '../solana/rpc';
+import { RawTransactionBundle } from './types';
 import { AnalyzedTransaction, ParsedLogs, CUProfile, CPITree, AccountDiff } from './types';
 import { parseTransaction } from './txParser';
 
@@ -8,21 +8,18 @@ export function mergeAnalysis(
   cuProfile: CUProfile,
   cpiTree: CPITree,
   accountDiffs: AccountDiff[],
-  logs: ParsedLogs,
 ): AnalyzedTransaction {
+  const parsed = parseTransaction(bundle);
+
   return {
-    raw: {
-      ...bundle,
-      logMessages: bundle.logs ?? [],
-      err: bundle.err ?? null,
-      accountKeys: bundle.accountKeys ?? [],
-    },
-    parsed: parseTransaction(bundle),
+    signature: parsed.signature,
+    success: parsed.success,
+    raw: bundle,
+    parsed,
     cuProfile,
     cpiTree,
     accountDiffs,
     logs,
-    txType: undefined,
   };
 }
 

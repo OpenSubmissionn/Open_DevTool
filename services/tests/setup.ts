@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
-import { RawTransactionBundle } from '../src/solana/rpc';
+import { RawTransactionBundle } from '../src/analysis/types';
 
 export const DEVNET_TX_SIGNATURE = '5j7s8K9mN2pQ3rT4uV5wX6yZ7aB8cD9eF0gH1iJ2kL3mN4oP5qR6sT7uV8wX9yZ';
 
@@ -9,7 +9,14 @@ export function mockRPCBundle(overrides: Partial<RawTransactionBundle> = {}): Ra
     signature: 'mockSignature123',
     slot: 12345678,
     blockTime: null,
-    logs: [
+    transaction: {
+      signatures: ['mockSignature123'],
+      message: {
+        accountKeys: ['11111111111111111111111111111111', 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'],
+        instructions: [],
+      },
+    },
+    logMessages: [
       'Program 11111111111111111111111111111111 invoke [1]',
       'Program log: Instruction: Transfer',
       'Program 11111111111111111111111111111111 consumed 3000 of 200000 compute units',
