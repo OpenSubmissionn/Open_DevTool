@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import { AnalyzedTransaction, InsightReport } from '@open/services';
+import { AnalyzedTransaction, InsightReport } from '../../../../services/src';
 
 /**
  * Utility to truncate long strings.
