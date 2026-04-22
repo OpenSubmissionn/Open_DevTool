@@ -43,7 +43,7 @@ const Header = ({ signature, success, slot, fee }: { signature: string, success:
           </Text>
         </Box>
         <Box marginTop={1}>
-          <Text dimColor>TRANSACTION FEE: {displayFee} SOL</Text>
+          <Text color="gray">TRANSACTION FEE: {displayFee} SOL</Text>
         </Box>
       </Box>
     </Box>
@@ -76,21 +76,21 @@ export const TerminalRenderer: React.FC<{
       {/* MIDDLE SECTION: DATA DISPLAY */}
       <Box flexDirection="column" marginY={1}>
         {/* Placeholder for CPI Tree (Task 3.3) */}
-        <Box borderStyle="single" borderDimColor paddingX={1} marginBottom={1}>
-          <Text dimColor italic>
+        <Box borderStyle="single" borderColor="gray" paddingX={1} marginBottom={1}>
+          <Text color="gray" italic>
             [ CPI TREE VIEW - PENDING TASK 3.3 ]
           </Text>
         </Box>
 
         {/* Placeholder for Account Diffs (Task 3.4) */}
         <Box paddingX={1}>
-          <Text dimColor italic>
+          <Text color="gray" italic>
             [ ACCOUNT CHANGES TABLE - PENDING TASK 3.4 ]
           </Text>
         </Box>
       </Box>
 
-    {/* BOTTOM SECTION: ACTIONABLE INSIGHTS */}
+      {/* BOTTOM SECTION: ACTIONABLE INSIGHTS */}
       <Box borderStyle="double" borderColor="yellow" paddingX={1} flexDirection="column">
         <Text color="yellow" bold>ACTIONABLE INSIGHTS</Text>
         <Box flexDirection="column" marginTop={1}>
@@ -108,14 +108,14 @@ export const TerminalRenderer: React.FC<{
               );
             })
           ) : (
-            <Text dimColor> No optimization issues detected.</Text>
+            <Text color="gray"> No optimization issues detected.</Text>
           )}
         </Box>
       </Box>
 
       {/* FOOTER */}
       <Box marginTop={1}>
-        <Text dimColor>Press Ctrl+C to exit.</Text>
+        <Text color="gray">Press Ctrl+C to exit.</Text>
       </Box>
     </Box>
   );
