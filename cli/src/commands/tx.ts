@@ -1,8 +1,11 @@
 import { Command } from 'commander';
 import ora from 'ora';
 import chalk from 'chalk';
+import React from 'react';
+import { render } from 'ink';
+import { TerminalRenderer } from '../renderers/terminal';
 
-// 1. Core logic from Services (using the alias we configured)
+// 1. Core logic from Services
 import { 
   fetchTransaction, 
   parseTransaction, 
@@ -101,11 +104,20 @@ export const registerTxCommand = (program: Command) => {
 
         spinner.succeed(chalk.green('Analysis Complete!'));
 
-        // Step 5: Render (Using the CLI renderer we just populated)
-        // Pass the full report or just insights array as needed by your renderJSON
-        const finalOutput = renderJSON(analyzed, insightsReport);
-        
-        console.log(finalOutput);
+        // Step 5: Render output based on user flags
+        if (options.json) {
+          // Output structured JSON (Task 1.6.2)
+          const finalOutput = renderJSON(analyzed, insightsReport);
+          console.log(finalOutput);
+        } else {
+          // Render Ink interactive terminal UI without JSX syntax
+          render(
+            React.createElement(TerminalRenderer, {
+              analyzed: analyzed as any,
+              insights: insightsReport as any
+            })
+          );
+        }
 
       } catch (error: any) {
         spinner.fail(chalk.red('Pipeline Crash'));
@@ -114,4 +126,3 @@ export const registerTxCommand = (program: Command) => {
       }
     });
 };
-
