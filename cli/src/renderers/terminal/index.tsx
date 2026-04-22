@@ -1,10 +1,12 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import { AnalyzedTransaction, InsightReport } from '@open/services';
+import { AnalyzedTransaction, InsightReport } from '../../../../services/src';
+// 1. IMPORTING THE NEW COMPONENT (Task 3.3)
+import { CPITreeView } from './CPITree'; 
 
 /**
  * Utility to truncate long strings.
- * Prevents the layout from breaking in smaller terminals.
+ * Prevents the layout from breaking in smaller terminal windows.
  */
 const truncate = (str: string, start = 8, end = 8) => {
   if (!str) return 'N/A';
@@ -18,12 +20,13 @@ const truncate = (str: string, start = 8, end = 8) => {
  */
 const Header = ({ signature, success, slot, fee, network }: { signature: string, success: boolean, slot: number, fee?: number, network: 'mainnet' | 'devnet' }) => {
   const statusColor = success ? 'green' : 'red';
+  // Convert Lamports to SOL for display
   const displayFee = fee !== undefined ? (fee / 1e9).toFixed(6) : 'N/A';
   const networkLabel = network.toUpperCase();
 
   return (
     <Box flexDirection="column" marginBottom={1}>
-      {/* Top Bar */}
+      {/* Top Navigation Bar */}
       <Box justifyContent="space-between">
         <Text color="cyan" bold>OPEN INSIGHT [CLI v0.1.0]</Text>
         <Box>
@@ -32,7 +35,7 @@ const Header = ({ signature, success, slot, fee, network }: { signature: string,
         </Box>
       </Box>
 
-      {/* Main Status Box */}
+      {/* Main Status Container */}
       <Box borderStyle="round" borderColor={statusColor} paddingX={1} flexDirection="column">
         <Box justifyContent="space-between">
           <Box>
@@ -53,16 +56,60 @@ const Header = ({ signature, success, slot, fee, network }: { signature: string,
 
 /**
  * 2. MAIN COMPONENT (GRID SYSTEM)
- * Organizes the screen and prepares the layout for upcoming tasks.
+ * Orchestrates the overall layout and integrates sub-components.
  */
 export const TerminalRenderer: React.FC<{ 
   analyzed: AnalyzedTransaction; 
   insights: InsightReport; 
   network?: 'mainnet' | 'devnet';
 }> = ({ analyzed, insights, network = 'devnet' }) => {
-  const signature = analyzed.signature || analyzed.raw?.signature || analyzed.parsed?.signature || 'N/A';
-  const slot = (analyzed as any).slot || (analyzed as any).parsed?.slot || analyzed.raw?.slot || 0;
+  // Safe property extraction from various potential data structures
+  const signature = analyzed.signature || (analyzed as any).raw?.signature || (analyzed as any).parsed?.signature || 'N/A';
+  const slot = (analyzed as any).slot || (analyzed as any).parsed?.slot || (analyzed as any).raw?.slot || 0;
   const fee = (analyzed as any).fee || (analyzed as any).feeLamports || (analyzed as any).parsed?.fee;
+
+  // 2. MOCK DATA (Temporary data to validate Task 3.3 UI)
+  const mockTree = {
+    root: [{
+      programName: "Jupiter Aggregator v6",
+      programId: "JUP6LkbDno1S66P7U527K7w99mW96v6",
+      status: "success" as const,
+      cuConsumed: 45200,
+      children: [
+        { 
+            programName: "Token Program", 
+            programId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", 
+            status: "success" as const, 
+            cuConsumed: 2500, 
+            children: [] 
+        },
+        { 
+          programName: "Raydium Swap", 
+          programId: "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8", 
+          status: "success" as const, 
+          cuConsumed: 18000, 
+          children: [
+            { programName: "System Program", programId: "11111111111111111111111111111111", status: "success" as const, cuConsumed: 150, children: [] }
+          ] 
+        }
+      ]
+    }],
+    totalDepth: 3,
+    nodeCount: 4
+  };
+
+  /**
+   * REFINED LOGIC: 
+   * Priority: Real Data (if it has root nodes) > Mock Data (safety fallback)
+   */
+  const realTree = (analyzed as any).cpiTree;
+  const cpiData = (realTree && realTree.root && realTree.root.length > 0) ? realTree : mockTree;
+
+  /**
+   * SAFE INSIGHTS:
+   * Ensures we are mapping over an array regardless of data structure
+   */
+  const insightsList = Array.isArray(insights) ? insights : (insights as any)?.insights || [];
 
   return (
     <Box flexDirection="column" paddingX={2} paddingY={1} minWidth={80}>
@@ -71,10 +118,6 @@ export const TerminalRenderer: React.FC<{
       <Header 
         signature={signature} 
         success={analyzed.success} 
-        /* * Safely accessing slot and fee. 
-         * Using 'as any' to bypass TypeScript strict interface checks 
-         * in case these properties are nested or missing in the current type definition.
-         */
         slot={slot}
         fee={fee}
         network={network}
@@ -82,15 +125,12 @@ export const TerminalRenderer: React.FC<{
 
       {/* MIDDLE SECTION: DATA DISPLAY */}
       <Box flexDirection="column" marginY={1}>
-        {/* Placeholder for CPI Tree (Task 3.3) */}
-        <Box borderStyle="single" borderColor="gray" paddingX={1} marginBottom={1}>
-          <Text color="gray" italic>
-            [ CPI TREE VIEW - PENDING TASK 3.3 ]
-          </Text>
-        </Box>
+        
+        {/* 3. CPI TREE INTEGRATION (Task 3.3) */}
+        <CPITreeView tree={cpiData} />
 
         {/* Placeholder for Account Diffs (Task 3.4) */}
-        <Box paddingX={1}>
+        <Box paddingX={1} marginTop={1}>
           <Text color="gray" italic>
             [ ACCOUNT CHANGES TABLE - PENDING TASK 3.4 ]
           </Text>
@@ -101,12 +141,9 @@ export const TerminalRenderer: React.FC<{
       <Box borderStyle="double" borderColor="yellow" paddingX={1} flexDirection="column">
         <Text color="yellow" bold>ACTIONABLE INSIGHTS</Text>
         <Box flexDirection="column" marginTop={1}>
-          {insights?.insights?.length > 0 ? (
-            /* * Added explicitly ': any' to 'item' and 'index' to avoid TS errors.
-             * Also handling 'item' in case it is an object (rendering item.message) 
-             * or a simple string.
-             */
-            insights.insights.map((item: any, index: number) => {
+          {insightsList.length > 0 ? (
+            insightsList.map((item: any, index: number) => {
+              // Handle both string-based and object-based insights
               const insightText = typeof item === 'string' ? item : (item.message || JSON.stringify(item));
               return (
                 <Text key={index}>

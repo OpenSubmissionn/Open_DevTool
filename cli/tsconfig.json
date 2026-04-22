@@ -5,7 +5,8 @@
     "jsx": "react",
     "moduleResolution": "Bundler",
     "paths": {
-      "@open/services": ["../services/src/index.ts"]
+      "@open/services": ["../services/src/"],
+      "@open/services/*": ["../services/src/*"]
     },
     "strict": false,
     "esModuleInterop": true,
