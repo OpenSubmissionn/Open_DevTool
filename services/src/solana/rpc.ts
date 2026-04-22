@@ -5,8 +5,11 @@ import { RawTransactionBundle } from '../analysis/types';
  * Fetches a transaction from the Solana blockchain and maps it to a RawTransactionBundle.
  * Includes defensive checks to ensure arrays are never undefined.
  */
-export const fetchTransaction = async (signature: string): Promise<RawTransactionBundle> => {
-  const connection = getConnection();
+export const fetchTransaction = async (
+  signature: string,
+  network: 'mainnet' | 'devnet' = 'devnet'
+): Promise<RawTransactionBundle> => {
+  const connection = getConnection(undefined, network);
 
   const tx = await withRetry(() =>
     connection.getParsedTransaction(signature, {

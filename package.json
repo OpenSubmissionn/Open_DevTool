@@ -4,7 +4,7 @@
   "description": "CLI debugger visual para transações Solana",
   "main": "index.js",
   "scripts": {
-    "dev:cli": "tsx cli/bin/open.ts", 
+    "cli": "tsx cli/bin/open.ts",
     "dev": "npm run dev -w cli",
     "build": "npm run build --workspaces",
     "test": "vitest",
@@ -14,7 +14,6 @@
     "coverage": "npm run coverage --workspace @open/services",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"**/*.ts\""
-      
   },
   "keywords": [],
   "author": "Nicole",
@@ -27,6 +26,7 @@
   ],
   "devDependencies": {
     "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "eslint": "^8.57.0",
@@ -36,5 +36,11 @@
     "tsx": "^4.7.1",
     "typescript": "^5.4.2",
     "vitest": "^4.1.4"
+  },
+  "dependencies": {
+    "ink": "^3.2.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "yoga-layout": "^2.0.0"
   }
 }

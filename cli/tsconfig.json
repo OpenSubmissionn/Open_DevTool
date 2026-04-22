@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
+    "jsx": "react",
     "moduleResolution": "Bundler",
     "paths": {
       "@open/services": ["../services/src/index.ts"]
