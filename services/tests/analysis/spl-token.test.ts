@@ -3,12 +3,23 @@ import { decodeSPLInstruction } from '../../src/analysis/decoders/spl-token';
 import type { ParsedInstruction } from '../../src/analysis/types';
 import { Buffer } from 'buffer';
 
+function encodeU64LE(value: bigint): Buffer {
+  const bytes = Buffer.alloc(8);
+  let current = value;
+
+  for (let i = 0; i < 8; i += 1) {
+    bytes[i] = Number(current & 0xffn);
+    current >>= 8n;
+  }
+
+  return bytes;
+}
+
 describe('decodeSPLInstruction', () => {
   describe('Transfer instruction', () => {
     it('should decode Transfer (type 3) instruction', () => {
       // Criar buffer: type 3 + amount 100
-      const amountBuffer = Buffer.alloc(8);
-      amountBuffer.writeBigUInt64LE(BigInt(100), 0);
+      const amountBuffer = encodeU64LE(100n);
 
       const dataBuffer = Buffer.concat([
         Buffer.from([3]), // Transfer type
@@ -37,8 +48,7 @@ describe('decodeSPLInstruction', () => {
 
     it('should handle large amounts (100 USDC with 6 decimals)', () => {
       // 100 USDC = 100_000_000 lamports (6 decimals)
-      const amountBuffer = Buffer.alloc(8);
-      amountBuffer.writeBigUInt64LE(BigInt(100_000_000), 0);
+      const amountBuffer = encodeU64LE(100_000_000n);
 
       const dataBuffer = Buffer.concat([Buffer.from([3]), amountBuffer]);
       const data = dataBuffer.toString('base64');
@@ -60,8 +70,7 @@ describe('decodeSPLInstruction', () => {
 
   describe('MintTo instruction', () => {
     it('should decode MintTo (type 8) instruction', () => {
-      const amountBuffer = Buffer.alloc(8);
-      amountBuffer.writeBigUInt64LE(BigInt(50), 0);
+      const amountBuffer = encodeU64LE(50n);
 
       const dataBuffer = Buffer.concat([Buffer.from([8]), amountBuffer]);
       const data = dataBuffer.toString('base64');
@@ -87,8 +96,7 @@ describe('decodeSPLInstruction', () => {
 
   describe('TransferChecked instruction', () => {
     it('should decode TransferChecked (type 12) instruction', () => {
-      const amountBuffer = Buffer.alloc(8);
-      amountBuffer.writeBigUInt64LE(BigInt(2500000), 0);
+      const amountBuffer = encodeU64LE(2500000n);
 
       const dataBuffer = Buffer.concat([
         Buffer.from([12]), // TransferChecked type
@@ -154,8 +162,7 @@ describe('decodeSPLInstruction', () => {
 
   describe('Burn instruction', () => {
     it('should decode Burn (type 9) instruction', () => {
-      const amountBuffer = Buffer.alloc(8);
-      amountBuffer.writeBigUInt64LE(BigInt(25), 0);
+      const amountBuffer = encodeU64LE(25n);
 
       const dataBuffer = Buffer.concat([Buffer.from([9]), amountBuffer]);
       const data = dataBuffer.toString('base64');
@@ -264,8 +271,7 @@ describe('decodeSPLInstruction', () => {
   describe('Edge cases', () => {
     it('should handle very large token amounts', () => {
       // Max u64: 18,446,744,073,709,551,615
-      const amountBuffer = Buffer.alloc(8);
-      amountBuffer.writeBigUInt64LE(BigInt('9999999999999999'), 0);
+      const amountBuffer = encodeU64LE(9999999999999999n);
 
       const dataBuffer = Buffer.concat([Buffer.from([3]), amountBuffer]);
       const data = dataBuffer.toString('base64');
@@ -284,8 +290,7 @@ describe('decodeSPLInstruction', () => {
     });
 
     it('should handle zero amounts', () => {
-      const amountBuffer = Buffer.alloc(8);
-      amountBuffer.writeBigUInt64LE(BigInt(0), 0);
+      const amountBuffer = encodeU64LE(0n);
 
       const dataBuffer = Buffer.concat([Buffer.from([3]), amountBuffer]);
       const data = dataBuffer.toString('base64');

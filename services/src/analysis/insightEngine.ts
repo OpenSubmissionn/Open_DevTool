@@ -4,6 +4,16 @@ import {
   InsightReport 
 } from './types';
 
+const getCanonicalConsumed = (tx: AnalyzedTransaction): number =>
+  tx.raw?.computeUnitsConsumed ?? tx.cuProfile.totalConsumed;
+
+const getCanonicalUtilizationPercent = (tx: AnalyzedTransaction): number => {
+  if (tx.cuProfile.totalLimit <= 0) {
+    return tx.cuProfile.utilizationPercent;
+  }
+  return (getCanonicalConsumed(tx) / tx.cuProfile.totalLimit) * 100;
+};
+
 /**
  * TASK 1.6.1 - INSIGHT ENGINE (GOD MODE)
  * Core diagnostic system that transforms raw execution data into actionable intelligence.
@@ -49,18 +59,19 @@ const checkCUBottleneck = (tx: AnalyzedTransaction): Insight | null => {
  * Rule 3: Detects overallocation of compute units to optimize fees.
  */
 const checkCUWaste = (tx: AnalyzedTransaction): Insight | null => {
-  const wasted = tx.cuProfile.totalLimit - tx.cuProfile.totalConsumed;
+  const consumed = getCanonicalConsumed(tx);
+  const wasted = tx.cuProfile.totalLimit - consumed;
   const wastePercent = (wasted / tx.cuProfile.totalLimit) * 100;
 
   if (wastePercent < 50 || tx.cuProfile.totalLimit <= 200000) return null;
 
-  const suggestedLimit = Math.ceil(tx.cuProfile.totalConsumed * 1.1);
+  const suggestedLimit = Math.ceil(consumed * 1.1);
 
   return {
     type: 'CU_WASTE',
     severity: 'info',
     title: 'Compute Unit Over-allocation',
-    message: `Transaction requested high limits but only used ${tx.cuProfile.totalConsumed.toLocaleString()} CUs (${wastePercent.toFixed(1)}% waste).`,
+    message: `Transaction requested high limits but only used ${consumed.toLocaleString()} CUs (${wastePercent.toFixed(1)}% waste).`,
     recommendation: `Set Compute Budget to ~${suggestedLimit.toLocaleString()} CUs to lower fees and improve priority.`,
     tags: ['cost', 'optimization'],
     estimatedCUSavings: wasted
@@ -71,13 +82,14 @@ const checkCUWaste = (tx: AnalyzedTransaction): Insight | null => {
  * Rule 4: Budget Exceeded Risk (>90% utilization)
  */
 const checkBudgetRisk = (tx: AnalyzedTransaction): Insight | null => {
-  if (tx.cuProfile.utilizationPercent < 90) return null;
+  const utilizationPercent = getCanonicalUtilizationPercent(tx);
+  if (utilizationPercent < 90) return null;
 
   return {
     type: 'BUDGET_RISK',
     severity: 'warning',
     title: 'Near Compute Budget Limit',
-    message: `Transaction used ${tx.cuProfile.utilizationPercent.toFixed(1)}% of its CU limit, risking random failures.`,
+    message: `Transaction used ${utilizationPercent.toFixed(1)}% of its CU limit, risking random failures.`,
     recommendation: 'Slightly increase the compute budget limit or optimize high-cost instructions.',
     tags: ['performance', 'risk']
   };
@@ -125,6 +137,6 @@ export const analyzeTransaction = (tx: AnalyzedTransaction): InsightReport => {
   return {
     primaryBottleneck: insights[0] || null,
     insights,
-    totalEstimatedSavings: tx.cuProfile.totalLimit - tx.cuProfile.totalConsumed
+    totalEstimatedSavings: tx.cuProfile.totalLimit - getCanonicalConsumed(tx)
   };
 };

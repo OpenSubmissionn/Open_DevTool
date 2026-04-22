@@ -7,7 +7,8 @@ export function mergeAnalysis(
   logs: ParsedLogs,
   cuProfile: CUProfile,
   cpiTree: CPITree,
-  accountDiffs: AccountDiff[]
+  accountDiffs: AccountDiff[],
+  logs: ParsedLogs,
 ): AnalyzedTransaction {
   return {
     raw: {
