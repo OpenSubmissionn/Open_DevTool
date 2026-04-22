@@ -138,14 +138,25 @@ function resolveAccounts(instruction: UnknownRecord, accountKeys: string[]): str
 }
 
 // Builds a normalized ParsedInstruction node with depth metadata.
-function parseInstruction(
+function getNestedInnerInstructions(instruction: UnknownRecord): UnknownRecord[] {
+	if (!Array.isArray(instruction.innerInstructions)) {
+		return [];
+	}
+
+	return instruction.innerInstructions.filter(isRecord);
+}
+
+// Parses an instruction and any nested CPI children attached to it.
+function parseInstructionTree(
 	instruction: UnknownRecord,
 	accountKeys: string[],
-	depth: number
+	depth: number,
+	rawChildren: UnknownRecord[] = []
 ): ParsedInstruction {
 	const programId = resolveProgramId(instruction, accountKeys);
 	const accounts = resolveAccounts(instruction, accountKeys);
 	const data = normalizeDataToHex(instruction.data);
+	const childInstructions = rawChildren.length > 0 ? rawChildren : getNestedInnerInstructions(instruction);
 
 	return {
 		programId,
@@ -153,7 +164,9 @@ function parseInstruction(
 		accounts,
 		data,
 		depth,
-		innerInstructions: [],
+		innerInstructions: childInstructions.map((childInstruction) =>
+			parseInstructionTree(childInstruction, accountKeys, depth + 1)
+		),
 	};
 }
 
@@ -255,15 +268,7 @@ export function parseTransaction(bundle: RawTransactionBundle): ParsedTransactio
 	const innerInstructionMap = getInnerInstructionMap(bundle.innerInstructions);
 
 	const parsedInstructions: ParsedInstruction[] = outerInstructions.map((instruction, index) => {
-		const parsed = parseInstruction(instruction, accountKeys, 0);
-		const innerInstructions = innerInstructionMap.get(index) ?? [];
-
-		// Inner instructions are attached under their parent outer instruction.
-		parsed.innerInstructions = innerInstructions.map((innerInstruction) =>
-			parseInstruction(innerInstruction, accountKeys, 1)
-		);
-
-		return parsed;
+		return parseInstructionTree(instruction, accountKeys, 0, innerInstructionMap.get(index) ?? []);
 	});
 
 	// CU attribution is optional: if logs are missing, instructions remain without cuConsumed.

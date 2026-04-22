@@ -1,35 +1,25 @@
-import { 
-  RawTransactionBundle, 
-  ParsedTransaction, 
-  CUProfile, 
-  CPITree, 
-  AccountDiff, 
-  ParsedLogs, 
-  AnalyzedTransaction 
-} from './types';
-
-/**
- * Consolidates all analysis modules into a single unified AnalyzedTransaction object.
- * This acts as the final data structure that fuels the CLI renderers and the Insight Engine.
- */
+import { RawTransactionBundle } from './types';
+import { AnalyzedTransaction, ParsedLogs, CUProfile, CPITree, AccountDiff } from './types';
+import { parseTransaction } from './txParser';
 
 export function mergeAnalysis(
-  raw: RawTransactionBundle,
-  parsed: ParsedTransaction,
+  bundle: RawTransactionBundle,
+  logs: ParsedLogs,
   cuProfile: CUProfile,
   cpiTree: CPITree,
   accountDiffs: AccountDiff[],
-  logs: ParsedLogs,
 ): AnalyzedTransaction {
+  const parsed = parseTransaction(bundle);
+
   return {
-    raw,
+    signature: parsed.signature,
+    success: parsed.success,
+    raw: bundle,
     parsed,
     cuProfile,
     cpiTree,
     accountDiffs,
     logs,
-    // txType will be populated later by the Transaction Classifier (Task 2.5)
-    txType: undefined 
   };
 }
 
