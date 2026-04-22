@@ -6,6 +6,52 @@ A transaction profiler and visual debugger for Solana.
 
 Open takes any Solana transaction signature and turns it into a fully decoded execution profile — showing compute unit usage, CPI call trees, account state changes, and an insight layer that flags bottlenecks automatically.
 
+## Team Members: 
+<table align="center">
+  <tr>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/ana-cristina-jardim/">
+        <img src="docs/assets/anacristina.jpg"
+        style="width:120px; height:120px; object-fit:cover; border-radius:8px;"
+        alt="Ana Cristina Jardim"/><br>
+        <sub><b>Ana Cristina Jardim</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/ana-j%C3%BAlia-ribeiro/">
+        <img src="docs/assets/anajulia.jpg"
+        style="width:120px; height:120px; object-fit:cover; border-radius:8px;"
+        alt="Ana Júlia Ribeiro"/><br>
+        <sub><b>Ana Júlia Ribeiro</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/emanuelly-dias-2a0480305/">
+        <img src="docs/assets/emanuelly.jpg"
+        style="width:120px; height:120px; object-fit:cover; border-radius:8px;"
+        alt="Emanuelly Cantarelli Dias"/><br>
+        <sub><b>Emanuelly Cantarelli Dias</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/mirela-bianchi-608601254/">
+        <img src="docs/assets/mirela.jpg"
+        style="width:120px; height:120px; object-fit:cover; border-radius:8px;"
+        alt="Mirela Schneider Bianchi"/><br>
+        <sub><b>Mirela Schneider Bianchi</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/nicolezanin/">
+        <img src="docs/assets/nicole.jpg"
+        style="width:120px; height:120px; object-fit:cover; border-radius:8px;"
+        alt="Nicole Zanin Silva"/><br>
+        <sub><b>Nicole Zanin Silva</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
+
 ## Installation
 
 ```bash
