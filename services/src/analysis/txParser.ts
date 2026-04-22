@@ -13,6 +13,7 @@
  */
 
 import { getProgramName } from '../solana/programs';
+import { buildCPITree, type ExecutionSnapshot } from './cpiTreeBuilder';
 import type { ParsedInstruction, ParsedTransaction, RawTransactionBundle } from './types';
 
 type UnknownRecord = Record<string, unknown>;
@@ -169,11 +170,86 @@ function inferFee(bundle: RawTransactionBundle): number {
 	return Math.max(preBalance - postBalance, 0);
 }
 
+// Prefers already-normalized logs in the bundle and falls back to raw RPC logs.
+function getBundleLogMessages(bundle: RawTransactionBundle): string[] {
+	if (Array.isArray(bundle.logMessages)) {
+		return bundle.logMessages.filter((log): log is string => typeof log === 'string');
+	}
+
+	const rpcLogs = bundle.rawResponse?.meta?.logMessages;
+	if (Array.isArray(rpcLogs)) {
+		return rpcLogs.filter((log): log is string => typeof log === 'string');
+	}
+
+	return [];
+}
+
+// Converts a hierarchical execution trace into a flat list while preserving order.
+function flattenExecutionSnapshots(nodes: ExecutionSnapshot[]): ExecutionSnapshot[] {
+	const flattened: ExecutionSnapshot[] = [];
+
+	for (const node of nodes) {
+		flattened.push(node);
+		flattened.push(...flattenExecutionSnapshots(node.children));
+	}
+
+	return flattened;
+}
+
+// Uses program + depth to disambiguate repeated invokes in different CPI levels.
+function buildAttributionKey(programId: string, depth: number): string {
+	return `${programId}::${depth}`;
+}
+
+// Builds CU queues keyed by programId::depth so multiple invokes keep their original order.
+function buildCUQueues(logMessages: string[]): Map<string, number[]> {
+	const queues = new Map<string, number[]>();
+
+	if (logMessages.length === 0) {
+		return queues;
+	}
+
+	const trace = buildCPITree(logMessages);
+	const snapshots = flattenExecutionSnapshots(trace.roots);
+
+	for (const snapshot of snapshots) {
+		if (typeof snapshot.computeUnitsConsumed !== 'number') {
+			continue;
+		}
+
+		// CPI tree depth starts at 1 for outer instructions, parser depth starts at 0.
+		const normalizedDepth = Math.max(snapshot.depth - 1, 0);
+		const key = buildAttributionKey(snapshot.programId, normalizedDepth);
+		const existingQueue = queues.get(key) ?? [];
+		existingQueue.push(snapshot.computeUnitsConsumed);
+		queues.set(key, existingQueue);
+	}
+
+	return queues;
+}
+
+// Walks parsed instructions and consumes one CU value per matching invocation.
+function attributeCUToInstructionTree(instructions: ParsedInstruction[], queues: Map<string, number[]>): void {
+	for (const instruction of instructions) {
+		const key = buildAttributionKey(instruction.programId, instruction.depth);
+		const queue = queues.get(key);
+
+		if (queue && queue.length > 0) {
+			instruction.cuConsumed = queue.shift();
+		}
+
+		if (instruction.innerInstructions.length > 0) {
+			attributeCUToInstructionTree(instruction.innerInstructions, queues);
+		}
+	}
+}
+
 export function parseTransaction(bundle: RawTransactionBundle): ParsedTransaction {
 	if (!bundle.signature || typeof bundle.signature !== 'string') {
 		throw new Error('Invalid transaction bundle: missing signature');
 	}
 
+	// Account keys are normalized once and reused for both outer and inner instructions.
 	const accountKeys = (bundle.accountKeys ?? []).map((accountKey) => normalizeAccountKey(accountKey));
 	const outerInstructions = getOuterInstructions(bundle);
 	const innerInstructionMap = getInnerInstructionMap(bundle.innerInstructions);
@@ -189,6 +265,11 @@ export function parseTransaction(bundle: RawTransactionBundle): ParsedTransactio
 
 		return parsed;
 	});
+
+	// CU attribution is optional: if logs are missing, instructions remain without cuConsumed.
+	const logMessages = getBundleLogMessages(bundle);
+	const cuQueues = buildCUQueues(logMessages);
+	attributeCUToInstructionTree(parsedInstructions, cuQueues);
 
 	return {
 		signature: bundle.signature,

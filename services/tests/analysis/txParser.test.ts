@@ -5,6 +5,29 @@ import simpleFixture from '../fixtures/txParserSimple.json';
 import complexFixture from '../fixtures/txParserComplex.json';
 
 describe('parseTransaction', () => {
+  function createBundleWithLogs(overrides: Partial<RawTransactionBundle>): RawTransactionBundle {
+    return {
+      signature: 'cu-attribution-signature',
+      slot: 455700010,
+      blockTime: 1713134444,
+      transaction: {
+        message: {
+          instructions: [],
+        },
+      },
+      logMessages: [],
+      preBalances: [1000],
+      postBalances: [1000],
+      preTokenBalances: [],
+      postTokenBalances: [],
+      innerInstructions: [],
+      computeUnitsConsumed: null,
+      err: null,
+      accountKeys: [],
+      ...overrides,
+    };
+  }
+
   it('parses a simple transaction instruction and resolves program metadata', () => {
     const bundle = simpleFixture as RawTransactionBundle;
 
@@ -170,5 +193,177 @@ describe('parseTransaction', () => {
     expect(parsed.success).toBe(false);
     expect(parsed.fee).toBe(7777);
     expect(parsed.instructions).toEqual([]);
+  });
+
+  it('attributes CU by program and depth when the same program appears in parent and child CPI', () => {
+    const repeatedProgramId = 'RepeatDepth1111111111111111111111111111111';
+
+    const bundle = createBundleWithLogs({
+      signature: 'cu-depth-signature',
+      transaction: {
+        message: {
+          instructions: [
+            {
+              programIdIndex: 2,
+              accounts: [0],
+              data: '',
+            },
+          ],
+        },
+      },
+      innerInstructions: [
+        {
+          index: 0,
+          instructions: [
+            {
+              programIdIndex: 2,
+              accounts: [1],
+              data: '',
+            },
+          ],
+        },
+      ],
+      accountKeys: ['SignerA111111111111111111111111111111111', 'ChildA1111111111111111111111111111111111', repeatedProgramId],
+      logMessages: [
+        `Program ${repeatedProgramId} invoke [1]`,
+        `Program ${repeatedProgramId} invoke [2]`,
+        `Program ${repeatedProgramId} consumed 30 of 200000 compute units`,
+        `Program ${repeatedProgramId} success`,
+        `Program ${repeatedProgramId} consumed 70 of 200000 compute units`,
+        `Program ${repeatedProgramId} success`,
+      ],
+    });
+
+    const parsed = parseTransaction(bundle);
+
+    expect(parsed.instructions[0].cuConsumed).toBe(70);
+    expect(parsed.instructions[0].innerInstructions[0].cuConsumed).toBe(30);
+  });
+
+  it('attributes CU in invocation order for repeated program calls at the same depth', () => {
+    const programId = 'OrderProgram111111111111111111111111111111';
+
+    const bundle = createBundleWithLogs({
+      signature: 'cu-order-signature',
+      transaction: {
+        message: {
+          instructions: [
+            { programIdIndex: 2, accounts: [0], data: '' },
+            { programIdIndex: 2, accounts: [1], data: '' },
+          ],
+        },
+      },
+      accountKeys: ['Acct0Order11111111111111111111111111111111', 'Acct1Order11111111111111111111111111111111', programId],
+      logMessages: [
+        `Program ${programId} invoke [1]`,
+        `Program ${programId} consumed 5 of 200000 compute units`,
+        `Program ${programId} success`,
+        `Program ${programId} invoke [1]`,
+        `Program ${programId} consumed 9 of 200000 compute units`,
+        `Program ${programId} success`,
+      ],
+    });
+
+    const parsed = parseTransaction(bundle);
+
+    expect(parsed.instructions[0].cuConsumed).toBe(5);
+    expect(parsed.instructions[1].cuConsumed).toBe(9);
+  });
+
+  it('leaves cuConsumed undefined when an instruction has no matching CU log', () => {
+    const programA = 'ProgramA111111111111111111111111111111111';
+    const programB = 'ProgramB111111111111111111111111111111111';
+
+    const bundle = createBundleWithLogs({
+      signature: 'cu-missing-log-signature',
+      transaction: {
+        message: {
+          instructions: [
+            { programIdIndex: 2, accounts: [0], data: '' },
+            { programIdIndex: 3, accounts: [1], data: '' },
+          ],
+        },
+      },
+      accountKeys: ['AcctA11111111111111111111111111111111111', 'AcctB11111111111111111111111111111111111', programA, programB],
+      logMessages: [
+        `Program ${programA} invoke [1]`,
+        `Program ${programA} consumed 11 of 200000 compute units`,
+        `Program ${programA} success`,
+      ],
+    });
+
+    const parsed = parseTransaction(bundle);
+
+    expect(parsed.instructions[0].cuConsumed).toBe(11);
+    expect(parsed.instructions[1].cuConsumed).toBeUndefined();
+  });
+
+  it('ignores deeper nested CPI CU when parsed instructions only include first-level inner calls', () => {
+    const outerProgram = 'Outer111111111111111111111111111111111111';
+    const innerProgram = 'Inner111111111111111111111111111111111111';
+    const deepProgram = 'Deep1111111111111111111111111111111111111';
+
+    const bundle = createBundleWithLogs({
+      signature: 'cu-nested-signature',
+      transaction: {
+        message: {
+          instructions: [{ programIdIndex: 3, accounts: [0], data: '' }],
+        },
+      },
+      innerInstructions: [
+        {
+          index: 0,
+          instructions: [{ programIdIndex: 4, accounts: [1], data: '' }],
+        },
+      ],
+      accountKeys: [
+        'OuterAcct111111111111111111111111111111111',
+        'InnerAcct111111111111111111111111111111111',
+        deepProgram,
+        outerProgram,
+        innerProgram,
+      ],
+      logMessages: [
+        `Program ${outerProgram} invoke [1]`,
+        `Program ${innerProgram} invoke [2]`,
+        `Program ${deepProgram} invoke [3]`,
+        `Program ${deepProgram} consumed 3 of 200000 compute units`,
+        `Program ${deepProgram} success`,
+        `Program ${innerProgram} consumed 20 of 200000 compute units`,
+        `Program ${innerProgram} success`,
+        `Program ${outerProgram} consumed 40 of 200000 compute units`,
+        `Program ${outerProgram} success`,
+      ],
+    });
+
+    const parsed = parseTransaction(bundle);
+
+    expect(parsed.instructions[0].cuConsumed).toBe(40);
+    expect(parsed.instructions[0].innerInstructions[0].cuConsumed).toBe(20);
+  });
+
+  it('handles failed instruction logs and still attributes consumed CU when present', () => {
+    const failedProgram = 'Failed11111111111111111111111111111111111';
+
+    const bundle = createBundleWithLogs({
+      signature: 'cu-failed-signature',
+      err: { InstructionError: [0, 'Custom'] },
+      transaction: {
+        message: {
+          instructions: [{ programIdIndex: 1, accounts: [0], data: '' }],
+        },
+      },
+      accountKeys: ['FailedAcct111111111111111111111111111111111', failedProgram],
+      logMessages: [
+        `Program ${failedProgram} invoke [1]`,
+        `Program ${failedProgram} consumed 15 of 200000 compute units`,
+        `Program ${failedProgram} failed: custom program error: 0x1`,
+      ],
+    });
+
+    const parsed = parseTransaction(bundle);
+
+    expect(parsed.success).toBe(false);
+    expect(parsed.instructions[0].cuConsumed).toBe(15);
   });
 });
