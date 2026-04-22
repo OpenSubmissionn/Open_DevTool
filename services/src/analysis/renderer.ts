@@ -9,6 +9,7 @@ interface RenderOutput {
     slot: number;
     timestamp: number | null;
     timestampISO: string | null;
+    fee: number;
     feeLamports: number;
     feeSOL: number;
     success: boolean;

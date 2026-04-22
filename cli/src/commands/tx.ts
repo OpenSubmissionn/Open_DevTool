@@ -9,7 +9,6 @@ import type { CLIOptions } from '../types';
 // 1. Core logic from Services
 import { 
   fetchTransaction, 
-  parseTransaction, 
   parseLogsFromBundle,
   profileCU, 
   buildCPITree, 
@@ -50,11 +49,7 @@ function toParsedLogs(logMessages: string[], parsed: ReturnType<typeof parseLogs
       entries: [],
       cuConsumed: parsed.byProgram[programId]?.consumed,
     })),
-    errors: parsed.errors.map((error) => ({
-      raw: error,
-      type: 'failed',
-      message: error,
-    })),
+    errors: parsed.errors,
     totalLines: parsed.totalLines,
   };
 }
@@ -94,7 +89,6 @@ export const registerTxCommand = (program: Command) => {
 
         // Step 2: Running parallel analysis modules
         spinner.text = chalk.cyan('Parsing logs and compute units...');
-        const parsedTx = parseTransaction(rawBundle);
         const parsedLogSummary = parseLogsFromBundle(rawBundle.logMessages);
         const cuProfile = profileCU(rawBundle.logMessages);
         const cpiTrace = buildCPITree(rawBundle.logMessages);
@@ -104,11 +98,10 @@ export const registerTxCommand = (program: Command) => {
         // Step 3: Merging all data
         const analyzed = mergeAnalysis(
           rawBundle,
-          parsedTx,
+          toParsedLogs(rawBundle.logMessages, parsedLogSummary),
           cuProfile,
           cpiTree,
-          accountDiffs,
-          toParsedLogs(rawBundle.logMessages, parsedLogSummary)
+          accountDiffs
         );
 
         // Step 4: Rule-based Intelligence
