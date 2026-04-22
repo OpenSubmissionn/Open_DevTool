@@ -2,56 +2,60 @@ import React from 'react';
 import { Box, Text } from 'ink';
 
 /**
- * 1. Data structure definition for a tree node.
- * Represents a single program execution within the transaction.
+ * Data structure for a tree node.
  */
 export interface CPINode {
   programId: string;
   programName: string;
   status: 'success' | 'failed';
-  cuConsumed: number;
-  children: CPINode[];
+  cuConsumed?: number; // made optional to reflect real data
+  children?: CPINode[]; // also optional for safety
 }
 
 interface CPITreeProps {
-  tree: {
-    root: CPINode[];
-    totalDepth: number;
-    nodeCount: number;
+  tree?: {
+    root?: CPINode[];
+    totalDepth?: number;
+    nodeCount?: number;
   };
 }
 
 /**
- * 2. Recursive component that renders a SINGLE tree line.
- * It handles the visual connectors (branches) and calls itself for children.
+ * Recursive component that renders a single node.
  */
-const TreeNode: React.FC<{ node: CPINode; isLast: boolean; prefix: string }> = ({ node, isLast, prefix }) => {
-  // Box-drawing characters for tree visualization
+const TreeNode: React.FC<{
+  node: CPINode;
+  isLast: boolean;
+  prefix: string;
+}> = ({ node, isLast, prefix }) => {
   const connector = isLast ? '└── ' : '├── ';
-  
-  // If this is the last item, the next level should have empty space; 
-  // otherwise, keep the vertical pipe for siblings below.
   const childPrefix = prefix + (isLast ? '    ' : '│   ');
-
   const statusColor = node.status === 'success' ? 'green' : 'red';
+
+  // Safe CU formatting
+  const cu = (node.cuConsumed ?? 0).toLocaleString();
 
   return (
     <Box flexDirection="column">
-      {/* Current Execution Line */}
+      {/* Current line */}
       <Box>
         <Text color="gray">{prefix}{connector}</Text>
-        <Text color={statusColor}>{node.status === 'success' ? '✓ ' : '✗ '}</Text>
-        <Text bold color="white">{node.programName} </Text>
-        <Text color="gray">({node.cuConsumed.toLocaleString()} CU)</Text>
+        <Text color={statusColor}>
+          {node.status === 'success' ? '✓ ' : '✗ '}
+        </Text>
+        <Text bold color="white">
+          {node.programName || 'Unknown Program'}{' '}
+        </Text>
+        <Text color="gray">({cu} CU)</Text>
       </Box>
 
-      {/* Children Rendering (Recursion) */}
-      {node.children && node.children.map((child, index) => (
-        <TreeNode 
-          key={index} 
-          node={child} 
-          isLast={index === node.children.length - 1} 
-          prefix={childPrefix} 
+      {/* Children */}
+      {node.children?.map((child, index) => (
+        <TreeNode
+          key={index}
+          node={child}
+          isLast={index === node.children!.length - 1}
+          prefix={childPrefix}
         />
       ))}
     </Box>
@@ -59,28 +63,32 @@ const TreeNode: React.FC<{ node: CPINode; isLast: boolean; prefix: string }> = (
 };
 
 /**
- * 3. Main Exported Component
- * Wraps the tree in a styled box for the terminal output.
+ * Main component
  */
 export const CPITreeView: React.FC<CPITreeProps> = ({ tree }) => {
-  // Safety check for empty or missing data
-  if (!tree || !tree.root || tree.root.length === 0) {
-    return <Text color="gray" italic> [ No CPI data available ]</Text>;
+  if (!tree?.root || tree.root.length === 0) {
+    return <Text color="gray" italic>[ No CPI data available ]</Text>;
   }
 
   return (
-    <Box flexDirection="column" borderStyle="single" borderColor="gray" paddingX={1}>
+    <Box
+      flexDirection="column"
+      borderStyle="single"
+      borderColor="gray"
+      paddingX={1}
+    >
       <Box marginBottom={1}>
-        <Text color="cyan" bold>CPI CALL TREE</Text>
+        <Text color="cyan" bold>
+          CPI CALL TREE
+        </Text>
       </Box>
-      
-      {/* Start rendering from the root nodes */}
+
       {tree.root.map((node, index) => (
-        <TreeNode 
-          key={index} 
-          node={node} 
-          isLast={index === tree.root.length - 1} 
-          prefix="" 
+        <TreeNode
+          key={index}
+          node={node}
+          isLast={index === tree.root.length - 1}
+          prefix=""
         />
       ))}
     </Box>
