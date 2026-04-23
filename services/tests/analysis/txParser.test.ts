@@ -105,7 +105,7 @@ describe('parseTransaction', () => {
     });
   });
 
-  it('supports parsed-style instructions and account key object variants', () => {
+  it('supports parsed-style instructions and account key object variants', async () => {
     const bundle: RawTransactionBundle = {
       signature: 'parsed-shape-signature',
       slot: 455700003,
@@ -146,7 +146,7 @@ describe('parseTransaction', () => {
       ],
     };
 
-    const parsed = parseTransaction(bundle);
+    const parsed = await parseTransaction(bundle);
 
     expect(parsed.blockTime).toBeNull();
     expect(parsed.instructions).toHaveLength(2);
@@ -161,7 +161,7 @@ describe('parseTransaction', () => {
     expect(parsed.instructions[1].programName).toBe('System Program');
   });
 
-  it('returns safe defaults when instruction/message payload is missing', () => {
+  it('returns safe defaults when instruction/message payload is missing', async () => {
     const bundle: RawTransactionBundle = {
       signature: 'missing-message-signature',
       slot: 455700004,
@@ -188,14 +188,14 @@ describe('parseTransaction', () => {
       } as never,
     };
 
-    const parsed = parseTransaction(bundle);
+    const parsed = await parseTransaction(bundle);
 
     expect(parsed.success).toBe(false);
     expect(parsed.fee).toBe(7777);
     expect(parsed.instructions).toEqual([]);
   });
 
-  it('attributes CU by program and depth when the same program appears in parent and child CPI', () => {
+  it('attributes CU by program and depth when the same program appears in parent and child CPI', async () => {
     const repeatedProgramId = 'RepeatDepth1111111111111111111111111111111';
 
     const bundle = createBundleWithLogs({
@@ -234,13 +234,13 @@ describe('parseTransaction', () => {
       ],
     });
 
-    const parsed = parseTransaction(bundle);
+    const parsed = await parseTransaction(bundle);
 
     expect(parsed.instructions[0].cuConsumed).toBe(70);
     expect(parsed.instructions[0].innerInstructions[0].cuConsumed).toBe(30);
   });
 
-  it('recursively parses nested inner instructions and preserves deeper CPI depth', () => {
+  it('recursively parses nested inner instructions and preserves deeper CPI depth', async () => {
     const parentProgramId = 'ParentProgram1111111111111111111111111111';
     const childProgramId = 'ChildProgram11111111111111111111111111111';
 
@@ -283,7 +283,7 @@ describe('parseTransaction', () => {
       ],
     });
 
-    const parsed = parseTransaction(bundle);
+    const parsed = await parseTransaction(bundle);
 
     expect(parsed.instructions).toHaveLength(1);
     expect(parsed.instructions[0].depth).toBe(0);
@@ -293,7 +293,7 @@ describe('parseTransaction', () => {
     expect(parsed.instructions[0].innerInstructions[0].innerInstructions[0].depth).toBe(2);
   });
 
-  it('attributes CU in invocation order for repeated program calls at the same depth', () => {
+  it('attributes CU in invocation order for repeated program calls at the same depth', async () => {
     const programId = 'OrderProgram111111111111111111111111111111';
 
     const bundle = createBundleWithLogs({
@@ -317,13 +317,13 @@ describe('parseTransaction', () => {
       ],
     });
 
-    const parsed = parseTransaction(bundle);
+    const parsed = await parseTransaction(bundle);
 
     expect(parsed.instructions[0].cuConsumed).toBe(5);
     expect(parsed.instructions[1].cuConsumed).toBe(9);
   });
 
-  it('leaves cuConsumed undefined when an instruction has no matching CU log', () => {
+  it('leaves cuConsumed undefined when an instruction has no matching CU log', async () => {
     const programA = 'ProgramA111111111111111111111111111111111';
     const programB = 'ProgramB111111111111111111111111111111111';
 
@@ -345,13 +345,13 @@ describe('parseTransaction', () => {
       ],
     });
 
-    const parsed = parseTransaction(bundle);
+    const parsed = await parseTransaction(bundle);
 
     expect(parsed.instructions[0].cuConsumed).toBe(11);
     expect(parsed.instructions[1].cuConsumed).toBeUndefined();
   });
 
-  it('ignores deeper nested CPI CU when parsed instructions only include first-level inner calls', () => {
+  it('ignores deeper nested CPI CU when parsed instructions only include first-level inner calls', async () => {
     const outerProgram = 'Outer111111111111111111111111111111111111';
     const innerProgram = 'Inner111111111111111111111111111111111111';
     const deepProgram = 'Deep1111111111111111111111111111111111111';
@@ -389,13 +389,13 @@ describe('parseTransaction', () => {
       ],
     });
 
-    const parsed = parseTransaction(bundle);
+    const parsed = await parseTransaction(bundle);
 
     expect(parsed.instructions[0].cuConsumed).toBe(40);
     expect(parsed.instructions[0].innerInstructions[0].cuConsumed).toBe(20);
   });
 
-  it('handles failed instruction logs and still attributes consumed CU when present', () => {
+  it('handles failed instruction logs and still attributes consumed CU when present', async () => {
     const failedProgram = 'Failed11111111111111111111111111111111111';
 
     const bundle = createBundleWithLogs({
@@ -414,7 +414,7 @@ describe('parseTransaction', () => {
       ],
     });
 
-    const parsed = parseTransaction(bundle);
+    const parsed = await parseTransaction(bundle);
 
     expect(parsed.success).toBe(false);
     expect(parsed.instructions[0].cuConsumed).toBe(15);
