@@ -96,7 +96,7 @@ export const registerTxCommand = (program: Command) => {
         const accountDiffs = computeAccountDiffs(rawBundle);
 
         // Step 3: Merging all data
-        const analyzed = mergeAnalysis(
+        const analyzed = await mergeAnalysis(
           rawBundle,
           toParsedLogs(rawBundle.logMessages, parsedLogSummary),
           cuProfile,
@@ -106,7 +106,7 @@ export const registerTxCommand = (program: Command) => {
 
         // Step 4: Rule-based Intelligence
         spinner.text = chalk.cyan('Generating actionable insights...');
-        const insightsReport = analyzeTransaction(analyzed);
+        const insightsReport = await analyzeTransaction(analyzed);
 
         spinner.succeed(chalk.green('Analysis Complete!'));
 
