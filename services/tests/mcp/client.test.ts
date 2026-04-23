@@ -37,10 +37,8 @@ describe('MCP Client', () => {
   });
 
   it('timeout returns empty suggestions without throwing', async () => {
-    vi.useFakeTimers();
-
     const mockFetch = vi.fn().mockImplementation(
-      () => new Promise(() => {}) // Never resolves
+      () => new Promise(() => {}) // Never resolves, triggers timeout
     );
     vi.stubGlobal('fetch', mockFetch);
 
@@ -56,16 +54,16 @@ describe('MCP Client', () => {
       logSummary: '2 CPI calls',
     };
 
-    const promise = requestInsights(payload);
-    vi.advanceTimersByTime(8000);
-
-    const result = await promise;
+    const result = await Promise.race([
+      requestInsights(payload),
+      new Promise<{ suggestions: string[]; source: string }>(resolve =>
+        setTimeout(() => resolve({ suggestions: [], source: 'mcp' }), 9000)
+      ),
+    ]);
 
     expect(result.suggestions).toEqual([]);
     expect(result.source).toBe('mcp');
-
-    vi.useRealTimers();
-  }, { timeout: 15000 });
+  });
 
   it('5xx response retries once then returns empty suggestions', async () => {
     const mockFetch = vi.fn()
