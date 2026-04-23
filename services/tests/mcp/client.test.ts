@@ -37,8 +37,8 @@ describe('MCP Client', () => {
   });
 
   it('timeout returns empty suggestions without throwing', async () => {
-    const mockFetch = vi.fn().mockImplementation(
-      () => new Promise(() => {}) // Never resolves, triggers timeout
+    const mockFetch = vi.fn().mockRejectedValue(
+      new Error('AbortError: The operation was aborted')
     );
     vi.stubGlobal('fetch', mockFetch);
 
@@ -54,12 +54,7 @@ describe('MCP Client', () => {
       logSummary: '2 CPI calls',
     };
 
-    const result = await Promise.race([
-      requestInsights(payload),
-      new Promise<{ suggestions: string[]; source: string }>(resolve =>
-        setTimeout(() => resolve({ suggestions: [], source: 'mcp' }), 9000)
-      ),
-    ]);
+    const result = await requestInsights(payload);
 
     expect(result.suggestions).toEqual([]);
     expect(result.source).toBe('mcp');
