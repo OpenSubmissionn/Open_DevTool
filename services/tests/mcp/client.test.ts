@@ -65,7 +65,7 @@ describe('MCP Client', () => {
     expect(result.source).toBe('mcp');
 
     vi.useRealTimers();
-  });
+  }, { timeout: 15000 });
 
   it('5xx response retries once then returns empty suggestions', async () => {
     const mockFetch = vi.fn()

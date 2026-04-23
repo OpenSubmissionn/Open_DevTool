@@ -19,8 +19,8 @@ describe('Cost Analyzer', () => {
 
   it('SOL transfer — preBalances [1_000_000, 500_000], postBalances [995_000, 1_000_000] (index 0 is fee payer, skip) — expect 1 transfer with correct uiAmount in SOL', () => {
     const bundle = mockRPCBundle({
-      preBalances: [1_000_000, 500_000],
-      postBalances: [995_000, 1_000_000],
+      preBalances: [1_000_000_000, 500_000_000], // 1 SOL, 0.5 SOL
+      postBalances: [999_500_000_000, 1_000_000_000], // 0.9995 SOL, 1 SOL
       preTokenBalances: [],
       postTokenBalances: [],
       accountKeys: ['11111111111111111111111111111111', 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'],
@@ -28,46 +28,48 @@ describe('Cost Analyzer', () => {
 
     const result = analyzeCosts(bundle, 150, 1000);
 
-    // Should only have 1 transfer (index 1: 500_000 -> 1_000_000, delta = 500_000)
+    // Should have transfers: index 0 (fee -500_000, skip) and index 1 (+500_000_000 lamports = 0.5 SOL)
     expect(result.transfers).toHaveLength(1);
     expect(result.transfers[0].token).toBe('SOL');
-    expect(result.transfers[0].uiAmount).toBeCloseTo(0.5, 9); // 500_000 / 1_000_000_000
+    expect(result.transfers[0].uiAmount).toBeCloseTo(0.5, 9); // 500_000_000 / 1_000_000_000
     expect(result.transfers[0].to).toBe('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
   });
 
   it('spam detection — create a token transfer with uiAmount > 1_000_000 and unknown mint — expect isSpamSuspect: true', () => {
-    const unknownMint = 'UnknownMint11111111111111111111111111111111';
+    const unknownMint = 'SpamMintAddress11111111111111111111111111';
     const bundle = mockRPCBundle({
       preTokenBalances: [
         {
-          accountIndex: 0,
+          accountIndex: 1,
           mint: unknownMint,
           uiTokenAmount: {
-            amount: '1000000000000000', // 1_000_000 with 9 decimals = huge amount
-            decimals: 9,
-            uiAmount: 1000000,
+            amount: '0',
+            decimals: 6,
+            uiAmount: 0,
           },
         },
       ],
       postTokenBalances: [
         {
-          accountIndex: 0,
+          accountIndex: 1,
           mint: unknownMint,
           uiTokenAmount: {
-            amount: '2000000000000000',
-            decimals: 9,
-            uiAmount: 2000000,
+            amount: '2000000000000', // 2 trillion base units with 6 decimals = 2 billion UI amount
+            decimals: 6,
+            uiAmount: 2000000000,
           },
         },
       ],
       preBalances: [1_000_000_000],
       postBalances: [1_000_000_000],
+      accountKeys: ['11111111111111111111111111111111', 'SPAMAccount1111111111111111111111111111111'],
     });
 
     const result = analyzeCosts(bundle, null, 1000);
 
     expect(result.transfers).toHaveLength(1);
     expect(result.transfers[0].isSpamSuspect).toBe(true);
+    expect(result.transfers[0].uiAmount).toBeGreaterThan(1000000);
   });
 
   it('CU cost formula — bundle with computeUnitsConsumed: 100_000, microLamportsPerCU: 1000, solPriceUSD: 200 — expect correct fees', () => {

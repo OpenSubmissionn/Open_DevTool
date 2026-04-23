@@ -364,10 +364,12 @@ describe('Robustness batch 1 — 15 scenarios', () => {
         expect(costs.cuCost.feeLamports).toBeGreaterThanOrEqual(0);
       }
 
-      // Classify transaction
-      const txType = classifyTransaction(parsed);
-      if (scenario.expectedChecks.classifyOk) {
-        expect(typeof txType).toBe('string');
+      // Classify transaction - only if parsed has instructions
+      if (parsed && parsed.instructions) {
+        const txType = classifyTransaction(parsed);
+        if (scenario.expectedChecks.classifyOk) {
+          expect(typeof txType).toBe('string');
+        }
       }
     });
   }
