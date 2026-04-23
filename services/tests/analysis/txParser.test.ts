@@ -28,10 +28,10 @@ describe('parseTransaction', () => {
     };
   }
 
-  it('parses a simple transaction instruction and resolves program metadata', () => {
+  it('parses a simple transaction instruction and resolves program metadata', async () => {
     const bundle = simpleFixture as RawTransactionBundle;
 
-    const parsed = parseTransaction(bundle);
+    const parsed = await parseTransaction(bundle);
 
     expect(parsed.signature).toBe('tx-parser-simple-signature');
     expect(parsed.slot).toBe(455700001);
@@ -53,10 +53,10 @@ describe('parseTransaction', () => {
     expect(parsed.instructions[0].innerInstructions).toEqual([]);
   });
 
-  it('builds inner instruction tree and decodes data as hex in complex transaction', () => {
+  it('builds inner instruction tree and decodes data as hex in complex transaction', async () => {
     const bundle = complexFixture as RawTransactionBundle;
 
-    const parsed = parseTransaction(bundle);
+    const parsed = await parseTransaction(bundle);
 
     expect(parsed.instructions).toHaveLength(2);
 

@@ -3,7 +3,7 @@ import { mergeAnalysis } from '../../src/analysis/merger';
 import { mockRPCBundle } from '../setup';
 
 describe('mergeAnalysis', () => {
-  it('should merge analysis into AnalyzedTransaction', () => {
+  it('should merge analysis into AnalyzedTransaction', async () => {
     const bundle = mockRPCBundle();
     const logs = { byProgram: {}, errors: [], totalLines: 4 };
     const cuProfile = { totalConsumed: 3000, totalLimit: 200000, utilizationPercent: 1.5, perInstruction: [], bottleneck: null };
