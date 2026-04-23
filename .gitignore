@@ -4,3 +4,14 @@ dist/
 *.log
 package-lock.json
 **/coverage/
+# External Claude skill submodules
+.agents/skills/ext/
+CLAUDE.local.md
+
+# Untracked files
+.agents/
+.env.example
+.gitmodules
+.mcp.json
+CLAUDE.md
+
