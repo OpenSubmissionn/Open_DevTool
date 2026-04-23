@@ -10,7 +10,7 @@ describe('mergeAnalysis', () => {
     const cpiTree = { root: [], totalDepth: 0, nodeCount: 0 };
     const accountDiffs: any[] = [];
 
-    const result = mergeAnalysis(bundle, logs, cuProfile, cpiTree, accountDiffs);
+    const result = await mergeAnalysis(bundle, logs, cuProfile, cpiTree, accountDiffs);
 
     expect(result.raw.signature).toBe('mockSignature123');
     expect(result.cuProfile.totalConsumed).toBeGreaterThanOrEqual(0);
