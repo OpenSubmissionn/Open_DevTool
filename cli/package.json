@@ -1,0 +1,31 @@
+{
+  "name": "open-cli",
+  "version": "0.1.0",
+  "description": "OPEN - Solana Observability and CU Analysis CLI",
+  "main": "bin/open.ts",
+  "scripts": {
+    "build": "tsup bin/open.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:cli": "tsx bin/open.ts"
+  },
+  "keywords": [
+    "solana",
+    "cli",
+    "observability",
+    "cu"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/dotenv": "^6.1.1",
+    "@types/node": "^20.11.19",
+    "tsx": "^4.7.1"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.98.4",
+    "commander": "^11.1.0",
+    "dotenv": "^16.6.1",
+    "ora": "^9.3.0"
+  }
+}

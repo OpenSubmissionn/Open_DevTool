@@ -1,0 +1,87 @@
+{
+  "signature": "complex-swap-signature",
+  "slot": 455500100,
+  "blockTime": 1713130100,
+  "transaction": {
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 1
+      }
+    }
+  },
+  "logMessages": [
+    "Program SwapExample11111111111111111111111111111 invoke [1]",
+    "Program SwapExample11111111111111111111111111111 success"
+  ],
+  "preBalances": [
+    5000000,
+    2039280,
+    2039280,
+    1
+  ],
+  "postBalances": [
+    4995000,
+    2039280,
+    2039280,
+    1
+  ],
+  "preTokenBalances": [
+    {
+      "accountIndex": 1,
+      "mint": "USDC111111111111111111111111111111111111",
+      "owner": "SignerSwap11111111111111111111111111111111",
+      "uiTokenAmount": {
+        "amount": "1500000",
+        "decimals": 6,
+        "uiAmount": 1.5,
+        "uiAmountString": "1.5"
+      }
+    },
+    {
+      "accountIndex": 2,
+      "mint": "RAY1111111111111111111111111111111111111",
+      "owner": "SignerSwap11111111111111111111111111111111",
+      "uiTokenAmount": {
+        "amount": "200000",
+        "decimals": 6,
+        "uiAmount": 0.2,
+        "uiAmountString": "0.2"
+      }
+    }
+  ],
+  "postTokenBalances": [
+    {
+      "accountIndex": 1,
+      "mint": "USDC111111111111111111111111111111111111",
+      "owner": "SignerSwap11111111111111111111111111111111",
+      "uiTokenAmount": {
+        "amount": "500000",
+        "decimals": 6,
+        "uiAmount": 0.5,
+        "uiAmountString": "0.5"
+      }
+    },
+    {
+      "accountIndex": 2,
+      "mint": "RAY1111111111111111111111111111111111111",
+      "owner": "SignerSwap11111111111111111111111111111111",
+      "uiTokenAmount": {
+        "amount": "1200000",
+        "decimals": 6,
+        "uiAmount": 1.2,
+        "uiAmountString": "1.2"
+      }
+    }
+  ],
+  "innerInstructions": [],
+  "computeUnitsConsumed": 56000,
+  "err": null,
+  "accountKeys": [
+    "SignerSwap11111111111111111111111111111111",
+    "UserUsdcToken1111111111111111111111111111",
+    "UserRayToken11111111111111111111111111111",
+    "ReadonlyProgram11111111111111111111111111"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "signature": "8fH3c2LwJ6pZ4dXk1sN8aG5eV9qM7uR2yB1xC6tWjUoP3mE4nR7vA9cZzX5yJ0wK1",
+  "slot": 1500300,
+  "blockTime": 1710002000,
+  "transaction": {
+    "signatures": [
+      "8fH3c2LwJ6pZ4dXk1sN8aG5eV9qM7uR2yB1xC6tWjUoP3mE4nR7vA9cZzX5yJ0wK1"
+    ],
+    "message": {
+      "accountKeys": [
+        "2zoF11B7hBLMRS4Q95x9vXk4T7aQk1h1Y6nF5BLse2dS",
+        "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkgG8n28kPZL7",
+        "11111111111111111111111111111111111"
+      ],
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [0, 1],
+          "data": "4LmG9F0qYzP"
+        }
+      ]
+    }
+  },
+  "logMessages": [
+    "Program 5P1hRzb17urFFM2Eb6ZQDsnsD5qs9g9YnF2AVEv6GDh9 invoke [1]",
+    "Program 5P1hRzb17urFFM2Eb6ZQDsnsD5qs9g9YnF2AVEv6GDh9 consumed 56317 of 200000 compute units",
+    "Program 5P1hRzb17urFFM2Eb6ZQDsnsD5qs9g9YnF2AVEv6GDh9 failed: custom program error: 0xb"
+  ],
+  "preBalances": [1000000000, 1000000000, 1000000000],
+  "postBalances": [1000000000, 1000000000, 1000000000],
+  "preTokenBalances": [],
+  "postTokenBalances": [],
+  "innerInstructions": [],
+  "computeUnitsConsumed": 56317,
+  "err": { "InstructionError": [0, { "Custom": 11 }] },
+  "accountKeys": [
+    "2zoF11B7hBLMRS4Q95x9vXk4T7aQk1h1Y6nF5BLse2dS",
+    "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkgG8n28kPZL7",
+    "11111111111111111111111111111111111"
+  ]
+}

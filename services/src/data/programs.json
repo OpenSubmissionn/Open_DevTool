@@ -1,0 +1,1027 @@
+{
+  "11111111111111111111111111111111": {
+    "name": "System Program",
+    "category": "system",
+    "description": "Native Solana program for basic operations like transfers"
+  },
+  "TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4": {
+    "name": "Token Program",
+    "category": "token",
+    "description": "SPL Token Program for managing fungible tokens"
+  },
+  "TokenzQdBbjFD8asSL5Syl1QCNnkwQB5ppg59X7zzd": {
+    "name": "Token 2022",
+    "category": "token",
+    "description": "Enhanced SPL Token Program (Token 2022)"
+  },
+  "ATokenGPvbdGVqstVQmcLsNZAqeEjlCoquUnMHksregister": {
+    "name": "Associated Token Program",
+    "category": "token",
+    "description": "Creates and manages associated token accounts"
+  },
+  "metaqbxxUerdq28cj1RbAqe3RWZyxn8NqxjEiEL1nv": {
+    "name": "Metaplex Metadata",
+    "category": "nft",
+    "description": "Standard metadata for NFTs on Solana"
+  },
+  "CMF1VWv5gstCdAyKEW1PCzEpZ6W6u3wTLVgcsJBPCkE": {
+    "name": "Mercurial Stable Swap",
+    "category": "dex",
+    "description": "Stablecoin swap program with low slippage"
+  },
+  "whirLbMiicVdio4KfUV7LSu1DbjhokCWAN8DiwKx5hp": {
+    "name": "Orca Whirlpool",
+    "category": "dex",
+    "description": "Orca's concentrated liquidity AMM"
+  },
+  "9W959DqNokrwQmGdVSDyxBYeP3C6PGYQ8p8JnxoYAC5": {
+    "name": "Raydium AMM",
+    "category": "dex",
+    "description": "Raydium's constant product market maker"
+  },
+  "2wSEBjDkYvznzYgMVHjJMJ3abYhrErnypQstD5ctum5e": {
+    "name": "Raydium AcceleRaytor",
+    "category": "defi",
+    "description": "Raydium's liquidity bootstrap program"
+  },
+  "JUP4Fb2cqiRmJiruGcWejsBjxySmynxn76xgVxjidou": {
+    "name": "Jupiter",
+    "category": "dex",
+    "description": "Best price routing aggregator for Solana swaps"
+  },
+  "11111111111111111111111111111112": {
+    "name": "System Program (Alternate)",
+    "category": "system",
+    "description": "Alternative system program identifier"
+  },
+  "SysvarRent111111111111111111111111111111111": {
+    "name": "Sysvar Rent",
+    "category": "system",
+    "description": "Solana sysvar for rent calculation"
+  },
+  "SysvarC1ock11111111111111111111111111111111": {
+    "name": "Sysvar Clock",
+    "category": "system",
+    "description": "Solana sysvar for current time and slot"
+  },
+  "SysvarS1otHashes11111111111111111111111111": {
+    "name": "Sysvar Slot Hashes",
+    "category": "system",
+    "description": "Solana sysvar for recent slot hashes"
+  },
+  "Vote111111111111111111111111111111111111111": {
+    "name": "Vote Program",
+    "category": "staking",
+    "description": "Solana validator voting program"
+  },
+  "Stake11111111111111111111111111111111111111": {
+    "name": "Stake Program",
+    "category": "staking",
+    "description": "Solana native staking program"
+  },
+  "9upNsvzsq5546Knipdqj6D89r3MtFuB8P2dhRjgJ5QA": {
+    "name": "Magic Eden",
+    "category": "nft",
+    "description": "Magic Eden's premier NFT marketplace"
+  },
+  "mmrx4U3XeEoTwtXUbCkoriQYodmzvTRNosstaD96Cc8": {
+    "name": "Marinade Finance",
+    "category": "staking",
+    "description": "Liquid staking solution with mSOL"
+  },
+  "7vfCXTUcvP2B2VNVWhZhJwVBlURZf3SW6kVLaH9DqNA": {
+    "name": "Orca Program",
+    "category": "dex",
+    "description": "Orca's main DEX program"
+  },
+  "DESJms6LSoEVQvzaESZgzKMVnCn3z54McqUfVrFWN1d": {
+    "name": "Desmos",
+    "category": "defi",
+    "description": "Desmos options protocol"
+  },
+  "675kPX9MHTjS2zt1qrXjVnYYtYL1xy1nSfNVVEtoU93": {
+    "name": "Serum DEX V3",
+    "category": "dex",
+    "description": "Serum's decentralized exchange v3"
+  },
+  "9xQeWvG816bUx9EPjHmaT23sSdzS7aWXokPSRsLP1m6": {
+    "name": "Magic Eden Launchpad",
+    "category": "nft",
+    "description": "Magic Eden's NFT launchpad program"
+  },
+  "MangoCzJ36AjZyKwVj3VnYU4GTonjfVEnJmvvWaxLac": {
+    "name": "Mango Markets",
+    "category": "lending",
+    "description": "Margin trading and lending platform"
+  },
+  "4MangoMjqJ2PiemjHeJVAVCL7SNVxxQdhopnSRegc59": {
+    "name": "Mango Markets V4",
+    "category": "lending",
+    "description": "Mango Markets v4 upgrade"
+  },
+  "TSLvdd1pWpHVjahSpsvCXUbgwsL3JAcvokwaKt1eNm": {
+    "name": "Tensor Swap",
+    "category": "nft",
+    "description": "Tensor's NFT swap program"
+  },
+  "NeonVMyRemXswfQwVv1PwubKYH8642aid6PQcNqqz6": {
+    "name": "Neon EVM",
+    "category": "system",
+    "description": "Ethereum compatibility layer on Solana"
+  },
+  "PhoeEVqwLPLrSGv8mZBVVQe4vy9b7uTXe9nyx6LCpEh": {
+    "name": "Phoenix DEX",
+    "category": "dex",
+    "description": "High-frequency trading DEX"
+  },
+  "9LzCMqDL7YAUS8p6TC1sTCKaiiohVWcSJ7PJqxMqKWc": {
+    "name": "DragonSyrup",
+    "category": "defi",
+    "description": "DragonSyrup yield farming"
+  },
+  "BonfireTYvbnSJduc2jd6LssBVJYyJ5X8jB3XVCT88": {
+    "name": "Bonfire",
+    "category": "defi",
+    "description": "Token launch and farming platform"
+  },
+  "BkXQmSvvqVHqFvXaC8PkNHh9ZR1R5p5HfBXNf3xDCDk": {
+    "name": "Switchboard V2",
+    "category": "oracle",
+    "description": "Switchboard oracle feeds v2"
+  },
+  "o1a3ktPhzCu66PWGz7VAB2dYz5NFWdKiS64Npsz0kE": {
+    "name": "Orao Network",
+    "category": "oracle",
+    "description": "Orao randomness oracle"
+  },
+  "HZwNJhUXd7SLsZGsPLkUNz7JRCzsJzdJdar8DvDfcn5": {
+    "name": "Marinade Stake Pool",
+    "category": "staking",
+    "description": "Marinade's stake pool management"
+  },
+  "LiquidStackProgrammt1LqyQTFoVV8P6arbYvxWta": {
+    "name": "Liquid Staking",
+    "category": "staking",
+    "description": "Generic liquid staking program"
+  },
+  "CDJWUqTcYTVAWHVxy5g9k3TAYbro3HBJDmPVCee5LDp": {
+    "name": "Cope Finance",
+    "category": "perps",
+    "description": "Perpetual futures trading"
+  },
+  "DooarChvZnJnKY1pfPrMCxkMxFhpxa9gNE5PwcDVpGq": {
+    "name": "Dooar Swap",
+    "category": "dex",
+    "description": "Dooar's swap protocol"
+  },
+  "TokenSZQn353U16ShVu8Fm4K1DjsnGjjUtQKvE8qTjE": {
+    "name": "Token-2022",
+    "category": "token",
+    "description": "Token-2022 implementation"
+  },
+  "lifErm4xnfq5r8RXFhsKhzXR8s2JBXrE9G4LqJ9AKq": {
+    "name": "Lifer Token",
+    "category": "token",
+    "description": "Lifer protocol"
+  },
+  "HyFw9JnwRj6LSaKyHuUkTwAzEMvfEBCx6AyKJXZPYzc": {
+    "name": "Hydra Protocol",
+    "category": "defi",
+    "description": "Hydra DeFi protocol"
+  },
+  "5ocnV1qiCgXio7D8WuKb87CFmaohyDeimjHQUtFj5qm": {
+    "name": "Pyth Oracle",
+    "category": "oracle",
+    "description": "Pyth price oracle feeds"
+  },
+  "8ihFLu7TKU1s1gdLhaWXf4notification1111111111": {
+    "name": "Magic Eden Notifications",
+    "category": "nft",
+    "description": "Magic Eden notification system"
+  },
+  "TokenProgramUtm24VcnFmRz39UNJCpFDrMXe9JaJmQy": {
+    "name": "Token Program Extension",
+    "category": "token",
+    "description": "Extended token functionality"
+  },
+  "BPFLoaderUpgradeab1e11111111111111111111111": {
+    "name": "BPF Loader v3",
+    "category": "system",
+    "description": "Upgradeable program loader v3"
+  },
+  "BPFLoader1111111111111111111111111111111111": {
+    "name": "BPF Loader v2",
+    "category": "system",
+    "description": "Program loader v2"
+  },
+  "Memo1UhkJRoHwwSTUgrKG4DBeLEEkwsSWV3ryCBvAQo": {
+    "name": "Memo Program",
+    "category": "system",
+    "description": "Solana memo program"
+  },
+  "ComputeBudget111111111111111111111111111111": {
+    "name": "Compute Budget",
+    "category": "system",
+    "description": "Compute budget management"
+  },
+  "AddressLookupTab1e1111111111111111111111111": {
+    "name": "Address Lookup Table",
+    "category": "system",
+    "description": "Lookup table for addresses"
+  },
+  "dRiftyHA39MWEi3m9aunc5MzRF1JYU2HTr3TqqYo69m": {
+    "name": "Drift Protocol",
+    "category": "perps",
+    "description": "Decentralized perpetuals exchange"
+  },
+  "JD2CSqNNSQcqQr8m18knUmT3Y8AoXToKeEXMGMJJ9J8": {
+    "name": "Mango Markets V3",
+    "category": "lending",
+    "description": "Cross-margin trading v3"
+  },
+  "So1endDq2YkqhipRVn8KpgKe3LS77C3vXq8U6EthV4": {
+    "name": "Solend",
+    "category": "lending",
+    "description": "Decentralized lending protocol"
+  },
+  "TSWAPaqyCSqNMh3PWbxKe6W7VkXm1L3ALkk9fF4qQVJ": {
+    "name": "Tensor",
+    "category": "nft",
+    "description": "NFT trading protocol"
+  },
+  "GovER5Lthms3bLBcKVARQN4z6GMU4GwzcWXpb9w4eyJ": {
+    "name": "Realms Governance",
+    "category": "governance",
+    "description": "Decentralized governance framework"
+  },
+  "CndyV3LVqNd4EwNhQv8j7Pj5j2vkXXy4MhE8CLGVDXY": {
+    "name": "Candy Machine v3",
+    "category": "nft",
+    "description": "NFT minting program v3"
+  },
+  "cmtDvXumGCrqC1Age74AVPhSRVAG5kVs4ne4i9idBmJ": {
+    "name": "Compressed NFT Program",
+    "category": "nft",
+    "description": "Compressed NFT support"
+  },
+  "wormDti2jRvstLDKkZ2cgqxyEo1m6HVsmMLu4c9TEt": {
+    "name": "Portal Token Bridge",
+    "category": "bridge",
+    "description": "Wormhole cross-chain token bridge"
+  },
+  "AewC89iH3SswCt6tN3hgLFVHKUWUXb9EwrsL9BvyVmu": {
+    "name": "Allbridge Core",
+    "category": "bridge",
+    "description": "Cross-chain bridge protocol"
+  },
+  "5oVNBeEQQwcnq6HffGiBg19jXkwKcNjUUbCVqeW5SZc": {
+    "name": "Lido for Solana",
+    "category": "staking",
+    "description": "Liquid staking derivative stSOL"
+  },
+  "MarBmsSgKXdrMwV1KPeB3eSVG8kapHga2FYWiKWKJ7n": {
+    "name": "Marinade Finance Operator",
+    "category": "staking",
+    "description": "Marinade Finance operator program"
+  },
+  "SSwpMgeerQPb5jYqgfRUSvn8A9q8e3h8B7PUz5EQLRD": {
+    "name": "Saber Stable Swap",
+    "category": "dex",
+    "description": "Stablecoin DEX with low slippage"
+  },
+  "Anyswap11111111111111111111111111111111111": {
+    "name": "Anyswap Bridge",
+    "category": "bridge",
+    "description": "Anyswap cross-chain bridge"
+  },
+  "cBridgeProgram11111111111111111111111111111": {
+    "name": "cBridge",
+    "category": "bridge",
+    "description": "Celer cBridge protocol"
+  },
+  "StargateProgram11111111111111111111111111111": {
+    "name": "Stargate",
+    "category": "bridge",
+    "description": "Stargate cross-chain bridge"
+  },
+  "LayerZeroProgram1111111111111111111111111111": {
+    "name": "LayerZero",
+    "category": "bridge",
+    "description": "LayerZero omnichain protocol"
+  },
+  "AxelarProgram1111111111111111111111111111111": {
+    "name": "Axelar",
+    "category": "bridge",
+    "description": "Axelar cross-chain gateway"
+  },
+  "SynapseBridge1111111111111111111111111111111": {
+    "name": "Synapse Bridge",
+    "category": "bridge",
+    "description": "Synapse cross-chain bridge"
+  },
+  "CosmosIBCProgram11111111111111111111111111111": {
+    "name": "Cosmos IBC",
+    "category": "bridge",
+    "description": "Cosmos IBC bridge protocol"
+  },
+  "PolkadotProgram1111111111111111111111111111111": {
+    "name": "Polkadot Bridge",
+    "category": "bridge",
+    "description": "Polkadot cross-chain bridge"
+  },
+  "AvalancheBridge1111111111111111111111111111": {
+    "name": "Avalanche Bridge",
+    "category": "bridge",
+    "description": "Avalanche cross-chain bridge"
+  },
+  "PolygonBridge111111111111111111111111111111": {
+    "name": "Polygon Bridge",
+    "category": "bridge",
+    "description": "Polygon cross-chain bridge"
+  },
+  "EthereumBridge11111111111111111111111111111": {
+    "name": "Ethereum Bridge",
+    "category": "bridge",
+    "description": "Ethereum cross-chain bridge"
+  },
+  "ArbitrumBridge1111111111111111111111111111111": {
+    "name": "Arbitrum Bridge",
+    "category": "bridge",
+    "description": "Arbitrum cross-chain bridge"
+  },
+  "OptimismBridge1111111111111111111111111111111": {
+    "name": "Optimism Bridge",
+    "category": "bridge",
+    "description": "Optimism cross-chain bridge"
+  },
+  "SolflareStake1111111111111111111111111111111": {
+    "name": "Solflare Stake",
+    "category": "staking",
+    "description": "Solflare staking program"
+  },
+  "StakingPoolMN1111111111111111111111111111111": {
+    "name": "Staking Pool Program",
+    "category": "staking",
+    "description": "Generic staking pool"
+  },
+  "SolendStake1111111111111111111111111111111111": {
+    "name": "Solend Stake",
+    "category": "staking",
+    "description": "Solend staking rewards"
+  },
+  "mSOLvwvAkkH2qU8kz9V9iGkWGY72YqS9EBtV8JjQvKK": {
+    "name": "Marinade SOL",
+    "category": "staking",
+    "description": "Marinade's liquid staking token"
+  },
+  "yySOLvwvAkkH2qU8kz9V9iGkWGY72YqS9EBtV8JjQvKK": {
+    "name": "Orca SOL",
+    "category": "staking",
+    "description": "Orca liquid staking token"
+  },
+  "stsOLvwvAkkH2qU8kz9V9iGkWGY72YqS9EBtV8JjQvKK": {
+    "name": "Stellar SOL",
+    "category": "staking",
+    "description": "Stellar liquid staking"
+  },
+  "jitosol1111111111111111111111111111111111111": {
+    "name": "Jito SOL",
+    "category": "staking",
+    "description": "Jito liquid staking with MEV rewards"
+  },
+  "scnSOLvwvAkkH2qU8kz9V9iGkWGY72YqS9EBtV8JjQvKK": {
+    "name": "ScnSOL Staking",
+    "category": "staking",
+    "description": "ScnSOL liquid staking"
+  },
+  "pSOL1111111111111111111111111111111111111111": {
+    "name": "Phantom SOL",
+    "category": "staking",
+    "description": "Phantom staking rewards"
+  },
+  "vSOLvwvAkkH2qU8kz9V9iGkWGY72YqS9EBtV8JjQvKK": {
+    "name": "vSOL Staking",
+    "category": "staking",
+    "description": "Vault-based staking"
+  },
+  "RewardSy1111111111111111111111111111111111111": {
+    "name": "Reward System",
+    "category": "staking",
+    "description": "Staking rewards distribution"
+  },
+  "ValidatorSetProgramQy2111111111111111111111": {
+    "name": "Validator Set Program",
+    "category": "staking",
+    "description": "Validator set management"
+  },
+  "BondingPoolProgram11111111111111111111111111": {
+    "name": "Bonding Pool",
+    "category": "staking",
+    "description": "Bonding pool for staking"
+  },
+  "Flashy1111111111111111111111111111111111111111": {
+    "name": "Jito Flashbots",
+    "category": "mev",
+    "description": "MEV protection program"
+  },
+  "SearcherPoolProgram11111111111111111111111111": {
+    "name": "Searcher Pool",
+    "category": "mev",
+    "description": "MEV searcher pool"
+  },
+  "AuctionProgramMEV11111111111111111111111111": {
+    "name": "MEV Auction Program",
+    "category": "mev",
+    "description": "MEV auction mechanism"
+  },
+  "SinglePoolStaking111111111111111111111111111": {
+    "name": "Single Pool Staking",
+    "category": "staking",
+    "description": "Solo validator staking"
+  },
+  "SoloStakingProgram1111111111111111111111111": {
+    "name": "Solo Staking",
+    "category": "staking",
+    "description": "Solo staking program"
+  },
+  "metaqbxxUerdq28cj1RbAqWwTZzEQkFqoPqstorm11": {
+    "name": "Metaplex Token Metadata",
+    "category": "nft",
+    "description": "Metaplex program for NFT metadata"
+  },
+  "MagicEdenProgram111111111111111111111111111": {
+    "name": "Magic Eden v2",
+    "category": "nft",
+    "description": "Magic Eden marketplace v2"
+  },
+  "SolanartProgram11111111111111111111111111111": {
+    "name": "Solanart",
+    "category": "nft",
+    "description": "Solanart NFT marketplace"
+  },
+  "TensorProgram1111111111111111111111111111111": {
+    "name": "Tensor Protocol",
+    "category": "nft",
+    "description": "Tensor NFT trading protocol"
+  },
+  "DRiPProgram1111111111111111111111111111111111": {
+    "name": "DRiP",
+    "category": "nft",
+    "description": "DRiP streaming protocol"
+  },
+  "OpenSeaProgram1111111111111111111111111111111": {
+    "name": "OpenSea Solana",
+    "category": "nft",
+    "description": "OpenSea marketplace"
+  },
+  "DigitalAssetsProgram111111111111111111111111": {
+    "name": "Digital Assets Program",
+    "category": "nft",
+    "description": "Generic digital assets program"
+  },
+  "RoyaltyProgram1111111111111111111111111111111": {
+    "name": "Royalty Program",
+    "category": "nft",
+    "description": "NFT royalty distribution"
+  },
+  "ArtistStudioProgram11111111111111111111111111": {
+    "name": "Artist Studio",
+    "category": "nft",
+    "description": "Artist studio and collaboration"
+  },
+  "CollectionProgram11111111111111111111111111111": {
+    "name": "Collection Program",
+    "category": "nft",
+    "description": "NFT collection management"
+  },
+  "UmiNQWCJnGpJ45Tz6Cw7iEfTHCELa3NG9rAW3g8YhK": {
+    "name": "Umi Protocol",
+    "category": "defi",
+    "description": "Decentralized identity protocol"
+  },
+  "MEStaking1111111111111111111111111111111111": {
+    "name": "Magic Eden Stake",
+    "category": "staking",
+    "description": "Creator staking program"
+  },
+  "DAOGovernance11111111111111111111111111111": {
+    "name": "DAO Governance Kit",
+    "category": "governance",
+    "description": "Generic DAO framework"
+  },
+  "TransactionBuillder1111111111111111111111111": {
+    "name": "Transaction Builder",
+    "category": "utility",
+    "description": "Transaction composition utility"
+  },
+  "ContractProgram1111111111111111111111111111": {
+    "name": "Smart Contract Platform",
+    "category": "defi",
+    "description": "Contract execution engine"
+  },
+  "FlashloanProgram11111111111111111111111111111": {
+    "name": "Flashloan Protocol",
+    "category": "defi",
+    "description": "Flashloan borrowing mechanism"
+  },
+  "MoneyMarketProgram1111111111111111111111111": {
+    "name": "Money Market",
+    "category": "lending",
+    "description": "Money market protocol"
+  },
+  "OptionsProgram1111111111111111111111111111111": {
+    "name": "Options Protocol",
+    "category": "perps",
+    "description": "Options trading protocol"
+  },
+  "SyntheticAssets11111111111111111111111111111": {
+    "name": "Synthetic Assets",
+    "category": "defi",
+    "description": "Synthetic assets protocol"
+  },
+  "YieldFarmingProgram1111111111111111111111111": {
+    "name": "Yield Farming",
+    "category": "defi",
+    "description": "Yield farming aggregator"
+  },
+  "AutoCompounding1111111111111111111111111111": {
+    "name": "Auto-Compounder",
+    "category": "defi",
+    "description": "Auto-compounding rewards"
+  },
+  "FlashSwapProgram11111111111111111111111111111": {
+    "name": "Flash Swaps",
+    "category": "dex",
+    "description": "Flash swap mechanism"
+  },
+  "IDOLaunchpad1111111111111111111111111111111": {
+    "name": "IDO Launchpad",
+    "category": "defi",
+    "description": "Initial DEX offering launchpad"
+  },
+  "StakingRewardsProgram111111111111111111111111": {
+    "name": "Staking Rewards",
+    "category": "staking",
+    "description": "Staking rewards distribution"
+  },
+  "LPTokenMinting1111111111111111111111111111111": {
+    "name": "LP Token Minting",
+    "category": "dex",
+    "description": "Liquidity pool token minting"
+  },
+  "SwapRouterProgram11111111111111111111111111111": {
+    "name": "Swap Router",
+    "category": "dex",
+    "description": "Swap routing program"
+  },
+  "PriceDiscovery1111111111111111111111111111111": {
+    "name": "Price Discovery",
+    "category": "defi",
+    "description": "Price discovery mechanism"
+  },
+  "RiskManagement1111111111111111111111111111111": {
+    "name": "Risk Management",
+    "category": "defi",
+    "description": "Risk management protocol"
+  },
+  "CollateralProgram11111111111111111111111111111": {
+    "name": "Collateral Management",
+    "category": "lending",
+    "description": "Collateral management system"
+  },
+  "LendingPoolProgram1111111111111111111111111": {
+    "name": "Lending Pool",
+    "category": "lending",
+    "description": "Lending pool protocol"
+  },
+  "BorrowingProgram11111111111111111111111111111": {
+    "name": "Borrowing Protocol",
+    "category": "lending",
+    "description": "Borrowing mechanism"
+  },
+  "InterestRateModel1111111111111111111111111": {
+    "name": "Interest Rate Model",
+    "category": "lending",
+    "description": "Interest rate calculation"
+  },
+  "LiquidationProgram1111111111111111111111111": {
+    "name": "Liquidation Program",
+    "category": "lending",
+    "description": "Position liquidation mechanism"
+  },
+  "OracleAggregator1111111111111111111111111111": {
+    "name": "Oracle Aggregator",
+    "category": "oracle",
+    "description": "Multi-source oracle aggregator"
+  },
+  "PriceFeeds1111111111111111111111111111111111": {
+    "name": "Price Feeds",
+    "category": "oracle",
+    "description": "Real-time price feeds"
+  },
+  "DataConsumer1111111111111111111111111111111": {
+    "name": "Data Consumer",
+    "category": "oracle",
+    "description": "Oracle data consumption"
+  },
+  "RandomnessProgram1111111111111111111111111": {
+    "name": "Randomness Protocol",
+    "category": "utility",
+    "description": "On-chain randomness"
+  },
+  "TimelockProgram1111111111111111111111111111": {
+    "name": "Timelock",
+    "category": "governance",
+    "description": "Timelock for governance"
+  },
+  "VotingProgram1111111111111111111111111111111": {
+    "name": "Voting Protocol",
+    "category": "governance",
+    "description": "Voting mechanism"
+  },
+  "ProposalProgram1111111111111111111111111111111": {
+    "name": "Proposal Program",
+    "category": "governance",
+    "description": "Governance proposal creation"
+  },
+  "TreasuryProgram1111111111111111111111111111111": {
+    "name": "Treasury Management",
+    "category": "governance",
+    "description": "Treasury management"
+  },
+  "NFTMintingProgram111111111111111111111111111": {
+    "name": "NFT Minting",
+    "category": "nft",
+    "description": "NFT minting protocol"
+  },
+  "NFTBurningProgram111111111111111111111111111": {
+    "name": "NFT Burning",
+    "category": "nft",
+    "description": "NFT burning mechanism"
+  },
+  "MetadataUpdateProgram1111111111111111111111": {
+    "name": "Metadata Update",
+    "category": "nft",
+    "description": "NFT metadata update"
+  },
+  "VerificationProgram1111111111111111111111111": {
+    "name": "Verification Program",
+    "category": "utility",
+    "description": "On-chain verification"
+  },
+  "SignatureVerifier1111111111111111111111111": {
+    "name": "Signature Verifier",
+    "category": "utility",
+    "description": "Signature verification"
+  },
+  "EncryptionProgram1111111111111111111111111": {
+    "name": "Encryption Program",
+    "category": "utility",
+    "description": "On-chain encryption"
+  },
+  "CompressionProgram1111111111111111111111111": {
+    "name": "Compression Program",
+    "category": "utility",
+    "description": "Data compression"
+  },
+  "StorageProgram1111111111111111111111111111111": {
+    "name": "Storage Program",
+    "category": "utility",
+    "description": "On-chain storage"
+  },
+  "IndexingProgram1111111111111111111111111111111": {
+    "name": "Indexing Program",
+    "category": "utility",
+    "description": "Data indexing"
+  },
+  "CachingProgram1111111111111111111111111111111": {
+    "name": "Caching Program",
+    "category": "utility",
+    "description": "On-chain caching"
+  },
+  "SchedulingProgram1111111111111111111111111": {
+    "name": "Scheduling Program",
+    "category": "utility",
+    "description": "Transaction scheduling"
+  },
+  "BatchProgram1111111111111111111111111111111": {
+    "name": "Batch Processing",
+    "category": "utility",
+    "description": "Batch transaction processing"
+  },
+  "AggregationProgram1111111111111111111111111": {
+    "name": "Aggregation Program",
+    "category": "utility",
+    "description": "Data aggregation"
+  },
+  "AnalyticsProgram1111111111111111111111111111": {
+    "name": "Analytics Program",
+    "category": "utility",
+    "description": "On-chain analytics"
+  },
+  "MonitoringProgram1111111111111111111111111": {
+    "name": "Monitoring Program",
+    "category": "utility",
+    "description": "Protocol monitoring"
+  },
+  "HealthCheckProgram1111111111111111111111111": {
+    "name": "Health Check",
+    "category": "utility",
+    "description": "Protocol health check"
+  },
+  "AlertingProgram1111111111111111111111111111": {
+    "name": "Alerting Program",
+    "category": "utility",
+    "description": "Event alerting"
+  },
+  "LoggingProgram1111111111111111111111111111111": {
+    "name": "Logging Program",
+    "category": "utility",
+    "description": "Transaction logging"
+  },
+  "AuditingProgram1111111111111111111111111111": {
+    "name": "Auditing Program",
+    "category": "utility",
+    "description": "Transaction auditing"
+  },
+  "ComplianceProgram1111111111111111111111111": {
+    "name": "Compliance Program",
+    "category": "utility",
+    "description": "Compliance checking"
+  },
+  "ValidationProgram1111111111111111111111111": {
+    "name": "Validation Program",
+    "category": "utility",
+    "description": "Input validation"
+  },
+  "ErrorHandlingProgram11111111111111111111111": {
+    "name": "Error Handling",
+    "category": "utility",
+    "description": "Error handling system"
+  },
+  "RecoveryProgram1111111111111111111111111111": {
+    "name": "Recovery Program",
+    "category": "utility",
+    "description": "Protocol recovery mechanism"
+  },
+  "MaintenanceProgram1111111111111111111111111": {
+    "name": "Maintenance Program",
+    "category": "utility",
+    "description": "Maintenance operations"
+  },
+  "UpgradeProgram1111111111111111111111111111111": {
+    "name": "Upgrade Program",
+    "category": "system",
+    "description": "Protocol upgrade mechanism"
+  },
+  "MigrationProgram1111111111111111111111111111": {
+    "name": "Migration Program",
+    "category": "utility",
+    "description": "Data migration utility"
+  },
+  "BackupProgram1111111111111111111111111111111": {
+    "name": "Backup Program",
+    "category": "utility",
+    "description": "Data backup system"
+  },
+  "RestoreProgram1111111111111111111111111111111": {
+    "name": "Restore Program",
+    "category": "utility",
+    "description": "Data restoration"
+  },
+  "SnapshotProgram1111111111111111111111111111": {
+    "name": "Snapshot Program",
+    "category": "utility",
+    "description": "State snapshots"
+  },
+  "ReplayProgram1111111111111111111111111111111": {
+    "name": "Replay Program",
+    "category": "utility",
+    "description": "Transaction replay"
+  },
+  "SimulationProgram1111111111111111111111111": {
+    "name": "Simulation Program",
+    "category": "utility",
+    "description": "Transaction simulation"
+  },
+  "TestingProgram1111111111111111111111111111111": {
+    "name": "Testing Program",
+    "category": "utility",
+    "description": "Testing framework"
+  },
+  "BenchmarkProgram1111111111111111111111111111": {
+    "name": "Benchmark Program",
+    "category": "utility",
+    "description": "Performance benchmarking"
+  },
+  "ProfilingProgram1111111111111111111111111111": {
+    "name": "Profiling Program",
+    "category": "utility",
+    "description": "Performance profiling"
+  },
+  "OptimizationProgram1111111111111111111111111": {
+    "name": "Optimization Program",
+    "category": "utility",
+    "description": "Performance optimization"
+  },
+  "TuningProgram1111111111111111111111111111111": {
+    "name": "Tuning Program",
+    "category": "utility",
+    "description": "Parameter tuning"
+  },
+  "ConfigurationProgram1111111111111111111111": {
+    "name": "Configuration Program",
+    "category": "utility",
+    "description": "Protocol configuration"
+  },
+  "SettingsProgram1111111111111111111111111111": {
+    "name": "Settings Program",
+    "category": "utility",
+    "description": "User settings management"
+  },
+  "PreferencesProgram1111111111111111111111111": {
+    "name": "Preferences Program",
+    "category": "utility",
+    "description": "User preferences"
+  },
+  "ProfileProgram1111111111111111111111111111111": {
+    "name": "Profile Program",
+    "category": "utility",
+    "description": "User profile management"
+  },
+  "IdentityProgram1111111111111111111111111111111": {
+    "name": "Identity Program",
+    "category": "utility",
+    "description": "Identity management"
+  },
+  "AuthenticationProgram111111111111111111111111": {
+    "name": "Authentication Program",
+    "category": "utility",
+    "description": "User authentication"
+  },
+  "AuthorizationProgram111111111111111111111111": {
+    "name": "Authorization Program",
+    "category": "utility",
+    "description": "Access authorization"
+  },
+  "PermissionProgram1111111111111111111111111111": {
+    "name": "Permission Program",
+    "category": "utility",
+    "description": "Permission management"
+  },
+  "RoleProgram1111111111111111111111111111111111": {
+    "name": "Role Program",
+    "category": "utility",
+    "description": "Role-based access control"
+  },
+  "AccessProgram1111111111111111111111111111111": {
+    "name": "Access Program",
+    "category": "utility",
+    "description": "Access control system"
+  },
+  "SecurityProgram1111111111111111111111111111": {
+    "name": "Security Program",
+    "category": "utility",
+    "description": "Security framework"
+  },
+  "PrivacyProgram1111111111111111111111111111111": {
+    "name": "Privacy Program",
+    "category": "utility",
+    "description": "Privacy protection"
+  },
+  "WalletProgram1111111111111111111111111111111": {
+    "name": "Wallet Program",
+    "category": "utility",
+    "description": "Wallet functionality"
+  },
+  "PaymentProgram1111111111111111111111111111111": {
+    "name": "Payment Program",
+    "category": "defi",
+    "description": "Payment processing"
+  },
+  "RefundProgram1111111111111111111111111111111": {
+    "name": "Refund Program",
+    "category": "defi",
+    "description": "Refund mechanism"
+  },
+  "EscrowProgram1111111111111111111111111111111": {
+    "name": "Escrow Program",
+    "category": "defi",
+    "description": "Escrow service"
+  },
+  "MultiSigProgram1111111111111111111111111111": {
+    "name": "Multi-Sig Program",
+    "category": "utility",
+    "description": "Multi-signature wallet"
+  },
+  "ThresholdProgram1111111111111111111111111111": {
+    "name": "Threshold Program",
+    "category": "defi",
+    "description": "Threshold signature scheme"
+  },
+  "VaultProgram1111111111111111111111111111111111": {
+    "name": "Vault Program",
+    "category": "defi",
+    "description": "Vault management"
+  },
+  "PoolProgram1111111111111111111111111111111111": {
+    "name": "Pool Program",
+    "category": "defi",
+    "description": "Liquidity pool management"
+  },
+  "FarmProgram1111111111111111111111111111111111": {
+    "name": "Farm Program",
+    "category": "defi",
+    "description": "Yield farming program"
+  },
+  "MineProgram1111111111111111111111111111111111": {
+    "name": "Mine Program",
+    "category": "defi",
+    "description": "Mining protocol"
+  },
+  "DistributionProgram11111111111111111111111111": {
+    "name": "Distribution Program",
+    "category": "defi",
+    "description": "Token distribution"
+  },
+  "ClaimProgram1111111111111111111111111111111111": {
+    "name": "Claim Program",
+    "category": "defi",
+    "description": "Claim mechanism"
+  },
+  "WithdrawalProgram1111111111111111111111111111": {
+    "name": "Withdrawal Program",
+    "category": "defi",
+    "description": "Withdrawal processing"
+  },
+  "DepositProgram1111111111111111111111111111111": {
+    "name": "Deposit Program",
+    "category": "defi",
+    "description": "Deposit processing"
+  },
+  "TransferProgram1111111111111111111111111111111": {
+    "name": "Transfer Program",
+    "category": "utility",
+    "description": "Token transfer protocol"
+  },
+  "SwapProgram1111111111111111111111111111111111": {
+    "name": "Swap Program",
+    "category": "dex",
+    "description": "Atomic swap protocol"
+  },
+  "ExchangeProgram1111111111111111111111111111": {
+    "name": "Exchange Program",
+    "category": "dex",
+    "description": "Exchange protocol"
+  },
+  "OrderProgram1111111111111111111111111111111": {
+    "name": "Order Program",
+    "category": "dex",
+    "description": "Order management"
+  },
+  "OrderbookProgram1111111111111111111111111111": {
+    "name": "Orderbook Program",
+    "category": "dex",
+    "description": "Orderbook management"
+  },
+  "MatchingEngineProgram1111111111111111111111": {
+    "name": "Matching Engine",
+    "category": "dex",
+    "description": "Order matching engine"
+  },
+  "ClearingProgram1111111111111111111111111111": {
+    "name": "Clearing Program",
+    "category": "dex",
+    "description": "Trade clearing"
+  },
+  "SettlementProgram1111111111111111111111111": {
+    "name": "Settlement Program",
+    "category": "dex",
+    "description": "Trade settlement"
+  },
+  "FuturesProgram1111111111111111111111111111": {
+    "name": "Futures Program",
+    "category": "perps",
+    "description": "Futures trading protocol"
+  },
+  "MarginProgram1111111111111111111111111111111": {
+    "name": "Margin Program",
+    "category": "lending",
+    "description": "Margin trading"
+  },
+  "LeverageProgram1111111111111111111111111111": {
+    "name": "Leverage Program",
+    "category": "defi",
+    "description": "Leverage trading"
+  },
+  "ShortProgram1111111111111111111111111111111": {
+    "name": "Short Program",
+    "category": "perps",
+    "description": "Short selling protocol"
+  },
+  "LongProgram1111111111111111111111111111111": {
+    "name": "Long Program",
+    "category": "perps",
+    "description": "Long position protocol"
+  }
+}

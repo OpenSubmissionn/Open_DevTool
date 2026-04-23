@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "jsx": "react",
+    "moduleResolution": "Bundler",
+    "paths": {
+      "@open/services": ["../services/src/"],
+      "@open/services/*": ["../services/src/*"]
+    },
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "ignoreDeprecations": "5.0",
+    "rootDir": "../"
+  },
+  "include": ["src/**/*", "bin/**/*"]
+}
