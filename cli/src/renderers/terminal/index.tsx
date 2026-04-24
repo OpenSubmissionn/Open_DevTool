@@ -9,7 +9,7 @@ import { CPITreeView } from './CPITree';
 import { AccountsTable } from './AccountsTable';
 
 /**
- * Utility to truncate long strings
+ * Utility to truncate long strings for display
  */
 const truncate = (str: string, start = 8, end = 8) => {
   if (!str) return 'N/A';
@@ -19,6 +19,7 @@ const truncate = (str: string, start = 8, end = 8) => {
 
 /**
  * HEADER COMPONENT
+ * Displays signature, status, slot, fee, and network
  */
 const Header = ({
   signature,
@@ -43,14 +44,14 @@ const Header = ({
         <Text color="cyan" bold>
           OPEN INSIGHT [CLI v0.1.0]
         </Text>
+
         <Box>
           <Text backgroundColor="blue" color="white">
-            {' '}
-            {networkLabel}{' '}
+            {' '}{networkLabel}{' '}
           </Text>
+
           <Text backgroundColor="gray" color="white">
-            {' '}
-            SLOT: {slot || 'N/A'}{' '}
+            {' '}SLOT: {slot || 'N/A'}{' '}
           </Text>
         </Box>
       </Box>
@@ -66,13 +67,16 @@ const Header = ({
             <Text bold>SIGNATURE: </Text>
             <Text>{truncate(signature, 16, 16)}</Text>
           </Box>
+
           <Text color={statusColor} bold>
             {success ? 'SUCCESS' : 'FAILED'}
           </Text>
         </Box>
 
         <Box marginTop={1}>
-          <Text color="gray">TRANSACTION FEE: {displayFee} SOL</Text>
+          <Text color="gray">
+            TRANSACTION FEE: {displayFee} SOL
+          </Text>
         </Box>
       </Box>
     </Box>
@@ -87,6 +91,10 @@ export const TerminalRenderer: React.FC<{
   insights: InsightReport;
   network?: 'mainnet' | 'devnet';
 }> = ({ analyzed, insights, network = 'devnet' }) => {
+
+  /**
+   * SAFELY EXTRACT CORE FIELDS
+   */
   const signature =
     analyzed.signature ||
     (analyzed as any).raw?.signature ||
@@ -105,21 +113,14 @@ export const TerminalRenderer: React.FC<{
     (analyzed as any).parsed?.fee;
 
   /**
-   * REAL CPI TREE
-   * Mock removido! Agora forçamos o uso dos dados reais para evitar falsos positivos nos testes.
+   * DATA SOURCES
    */
   const cpiData = (analyzed as any).cpiTree;
 
-  /**
-   * INSIGHTS SAFE HANDLING
-   */
   const insightsList = Array.isArray(insights)
     ? insights
     : (insights as any)?.insights || [];
 
-  /**
-   * ACCOUNT DIFFS (Task 3.4)
-   */
   const accountDiffs = (analyzed as any).accountDiffs || [];
 
   return (
@@ -137,17 +138,15 @@ export const TerminalRenderer: React.FC<{
       {/* MAIN SECTION */}
       <Box flexDirection="column" marginY={1}>
         
-        {/* CPI TREE (Task 3.3) */}
+        {/* CPI TREE */}
         <CPITreeView tree={cpiData} />
 
-        {/* ACCOUNTS TABLE (Task 3.4) */}
+        {/* ACCOUNTS TABLE */}
         <Box paddingX={1} marginTop={1} flexDirection="column">
           <Text bold>ACCOUNT CHANGES</Text>
-          <Text>
-            {AccountsTable({
-              accounts: accountDiffs,
-            })}
-          </Text>
+
+          {/* IMPORTANT: render as component, not string */}
+          <AccountsTable accounts={accountDiffs} />
         </Box>
 
       </Box>
@@ -180,7 +179,6 @@ export const TerminalRenderer: React.FC<{
             })
           ) : (
             <Text color="gray">
-              {' '}
               No optimization issues detected.
             </Text>
           )}
@@ -194,4 +192,3 @@ export const TerminalRenderer: React.FC<{
     </Box>
   );
 };
-
