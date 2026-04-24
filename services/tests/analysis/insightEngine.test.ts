@@ -115,4 +115,35 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
     expect(report.insights[0].type).toBe('EXECUTION_FAILURE');
     expect(report.insights[1].type).toBe('BUDGET_RISK');
   });
+
+  it('should report low-confidence CU attribution for diagnostics', () => {
+    const mockTx = {
+      parsed: {
+        success: true,
+        cuAttribution: {
+          totalNodes: 3,
+          matchedNodes: 2,
+          unmatchedNodes: 1,
+          unmatchedCUEntries: 2,
+          ambiguousKeys: 1,
+          confidence: 0.45,
+          doubleAttributionCount: 0,
+          traceTruncated: false,
+        },
+      },
+      cuProfile: {
+        totalConsumed: 50000,
+        totalLimit: 200000,
+        utilizationPercent: 25,
+      },
+      cpiTree: { totalDepth: 1 },
+    } as unknown as AnalyzedTransaction;
+
+    const report = analyzeTransaction(mockTx);
+    const qualityInsight = report.insights.find((insight) => insight.type === 'CU_ATTRIBUTION_LOW_CONFIDENCE');
+
+    expect(qualityInsight).toBeDefined();
+    expect(qualityInsight?.severity).toBe('warning');
+    expect(qualityInsight?.context?.confidence).toBe(0.45);
+  });
 });
