@@ -23,22 +23,35 @@ import { renderJSON } from '@open/services';
 import { renderTerminal } from '../renderers/terminal/renderer';
  
 function toCPITree(trace: ReturnType<typeof buildCPITree>): CPITree {
-  const totalDepth = trace.roots.reduce(
-    (maxDepth, node) => Math.max(maxDepth, node.depth),
-    0
-  );
+  const toNode = (node: (typeof trace.roots)[number]): CPITree['root'][number] => ({
+    programId: node.programId,
+    programName: node.programId,
+    depth: node.depth,
+    status: node.status === 'success' ? 'success' : 'failed',
+    cuConsumed: node.computeUnitsConsumed,
+    children: node.children.map(toNode),
+  });
+
+  const visit = (
+    node: (typeof trace.roots)[number],
+    acc: { maxDepth: number; count: number }
+  ): void => {
+    acc.maxDepth = Math.max(acc.maxDepth, node.depth);
+    acc.count += 1;
+    for (const child of node.children) {
+      visit(child, acc);
+    }
+  };
+
+  const metrics = { maxDepth: 0, count: 0 };
+  for (const root of trace.roots) {
+    visit(root, metrics);
+  }
  
   return {
-    root: trace.roots.map((node) => ({
-      programId: node.programId,
-      programName: node.programId,
-      depth: node.depth,
-      status: node.status === 'failed' ? 'failed' : 'success',
-      cuConsumed: node.computeUnitsConsumed,
-      children: [],
-    })),
-    totalDepth,
-    nodeCount: trace.roots.length,
+    root: trace.roots.map(toNode),
+    totalDepth: metrics.maxDepth,
+    nodeCount: metrics.count,
   };
 }
  

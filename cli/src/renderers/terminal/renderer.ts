@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import Table from 'cli-table3';
 import { AnalyzedTransaction, InsightReport, AccountDiff } from '../../../../services/src';
+import { buildCPITree, type ExecutionSnapshot, type ExecutionTrace } from '../../../../services/src/analysis/cpiTreeBuilder';
  
 const WIDTH = 145;
  
@@ -38,6 +39,143 @@ const formatToken = (tokenDeltas: any[]) => {
 };
  
 const line = (char = '─') => char.repeat(WIDTH);
+
+type CPINodeView = {
+  programId: string;
+  programName?: string;
+  depth?: number;
+  status: 'success' | 'failed' | 'truncated';
+  cuConsumed?: number;
+  children?: CPINodeView[];
+};
+
+type BottleneckTarget = {
+  programId: string;
+  cuConsumed: number;
+  depth?: number;
+};
+
+function toNodeViewFromTrace(snapshot: ExecutionSnapshot): CPINodeView {
+  return {
+    programId: snapshot.programId,
+    programName: snapshot.programId,
+    depth: snapshot.depth,
+    status: snapshot.status,
+    cuConsumed: snapshot.computeUnitsConsumed,
+    children: snapshot.children.map(toNodeViewFromTrace),
+  };
+}
+
+function resolveExecutionTrace(analyzed: AnalyzedTransaction): ExecutionTrace | null {
+  const rawLogs = (analyzed as any)?.raw?.logMessages;
+  if (Array.isArray(rawLogs) && rawLogs.length > 0) {
+    return buildCPITree(rawLogs);
+  }
+
+  return null;
+}
+
+function collectBottleneckTarget(analyzed: AnalyzedTransaction): BottleneckTarget | null {
+  const profileProgram = (analyzed as any)?.cuProfile?.bottleneck?.programId;
+  const profileCU = (analyzed as any)?.cuProfile?.bottleneck?.cuConsumed;
+  if (typeof profileProgram === 'string' && !profileProgram.toLowerCase().includes('unknown')) {
+    return {
+      programId: profileProgram,
+      cuConsumed: typeof profileCU === 'number' ? profileCU : 0,
+    };
+  }
+
+  const trace = resolveExecutionTrace(analyzed);
+  if (!trace) {
+    return null;
+  }
+
+  let bestTarget: BottleneckTarget | null = null;
+  let maxCU = -1;
+
+  const visit = (node: ExecutionSnapshot) => {
+    const nodeCU = node.computeUnitsConsumed ?? -1;
+    if (nodeCU > maxCU) {
+      maxCU = nodeCU;
+      bestTarget = {
+        programId: node.programId,
+        cuConsumed: nodeCU,
+        depth: node.depth,
+      };
+    }
+
+    for (const child of node.children) {
+      visit(child);
+    }
+  };
+
+  for (const root of trace.roots) {
+    visit(root);
+  }
+
+  return bestTarget;
+}
+
+export function buildCPITreeVisualLines(
+  nodes: CPINodeView[],
+  bottleneckTarget: BottleneckTarget | null,
+  prefix = '',
+  isRoot = true,
+  bottleneckState = { consumed: false }
+): string[] {
+  const output: string[] = [];
+
+  nodes.forEach((node, index) => {
+    const isLast = index === nodes.length - 1;
+    const connector = isRoot ? '' : isLast ? '└── ' : '├── ';
+    const childPrefix = isRoot ? '' : prefix + (isLast ? '    ' : '│   ');
+
+    const isFailed = node.status === 'failed' || node.status === 'truncated';
+    const matchesBottleneck =
+      bottleneckTarget !== null &&
+      !bottleneckState.consumed &&
+      node.programId === bottleneckTarget.programId &&
+      (node.cuConsumed ?? 0) === bottleneckTarget.cuConsumed &&
+      (bottleneckTarget.depth === undefined || node.depth === bottleneckTarget.depth);
+
+    const isBottleneck = matchesBottleneck;
+    if (matchesBottleneck) {
+      bottleneckState.consumed = true;
+    }
+
+    const tags: string[] = [];
+    if (isBottleneck) {
+      tags.push('BOTTLENECK');
+    }
+    if (node.status === 'failed') {
+      tags.push('FAILED');
+    }
+    if (node.status === 'truncated') {
+      tags.push('TRUNCATED');
+    }
+
+    const icon = isFailed ? '✗' : '✓';
+    const cu = (node.cuConsumed ?? 0).toLocaleString();
+    const name = node.programName || node.programId || 'Unknown Program';
+    const tagsChunk = tags.length > 0 ? ` [${tags.join('][')}]` : '';
+
+    output.push(`${prefix}${connector}${icon} ${name} (${cu} CU)${tagsChunk}`);
+
+    if (node.children && node.children.length > 0) {
+      output.push(
+        ...buildCPITreeVisualLines(
+          node.children,
+          bottleneckTarget,
+          childPrefix,
+          false,
+          bottleneckState
+        )
+      );
+    }
+  });
+
+  return output;
+}
  
 // ─── HEADER ─────────────────────────────────────────────────────────────────
  
@@ -65,35 +203,29 @@ const renderHeader = (
  
 // ─── CPI TREE ────────────────────────────────────────────────────────────────
  
-const renderCPINode = (node: any, prefix: string, isLast: boolean) => {
-  const connector = isLast ? '└── ' : '├── ';
-  const childPrefix = prefix + (isLast ? '    ' : '│   ');
-  const statusIcon = node.status === 'success' ? chalk.green('✓') : chalk.red('✗');
-  const cu = (node.cuConsumed ?? 0).toLocaleString();
- 
-  console.log(`  │ ${chalk.gray(prefix + connector)}${statusIcon} ${chalk.white.bold(node.programName || 'Unknown')} ${chalk.gray(`(${cu} CU)`)}`);
- 
-  if (node.children && node.children.length > 0) {
-    node.children.forEach((child: any, index: number) => {
-      renderCPINode(child, childPrefix, index === node.children.length - 1);
-    });
-  }
-};
- 
-const renderCPITree = (tree: any) => {
+const renderCPITree = (nodes: CPINodeView[], bottleneckTarget: BottleneckTarget | null, isTruncated: boolean) => {
   console.log('');
   console.log(`  ┌${line('─')}┐`);
   console.log(`  │ ${chalk.cyan.bold('CPI CALL TREE')}`.padEnd(WIDTH + 9) + '  │');
   console.log(`  │`.padEnd(WIDTH + 4) + '  │');
- 
-  if (!tree?.root || tree.root.length === 0) {
+
+  if (!nodes || nodes.length === 0) {
     console.log(`  │ ${chalk.gray('[ No CPI data available ]')}`.padEnd(WIDTH + 12) + '  │');
   } else {
-    tree.root.forEach((node: any, index: number) => {
-      renderCPINode(node, '', index === tree.root.length - 1);
-    });
+    const lines = buildCPITreeVisualLines(nodes, bottleneckTarget);
+
+    for (const row of lines) {
+      const isFailed = row.includes('[FAILED]') || row.includes('[TRUNCATED]');
+      const isBottleneck = row.includes('[BOTTLENECK]');
+      const colorize = isFailed ? chalk.red : isBottleneck ? chalk.magentaBright : chalk.white;
+      console.log(`  │ ${colorize(row)}`);
+    }
   }
- 
+
+  if (isTruncated) {
+    console.log(`  │ ${chalk.yellow('⚠ RPC log truncated (tree may be incomplete)')}`);
+  }
+
   console.log(`  └${line('─')}┘`);
 };
  
@@ -163,15 +295,21 @@ export const renderTerminal = (
     (analyzed as any).fee ||
     (analyzed as any).feeLamports ||
     (analyzed as any).parsed?.fee;
- 
-  const cpiData = (analyzed as any).cpiTree;
+
+  const trace = resolveExecutionTrace(analyzed);
+  const cpiNodes: CPINodeView[] = trace
+    ? trace.roots.map(toNodeViewFromTrace)
+    : (((analyzed as any).cpiTree?.root ?? []) as CPINodeView[]);
+  const isTraceTruncated = trace?.isTruncated ?? false;
+  const bottleneckTarget = collectBottleneckTarget(analyzed);
+
   const accountDiffs = (analyzed as any).accountDiffs || [];
   const insightsList = Array.isArray(insights)
     ? insights
     : (insights as any)?.insights || [];
- 
+
   renderHeader(signature, analyzed.success, slot, fee, network);
-  renderCPITree(cpiData);
+  renderCPITree(cpiNodes, bottleneckTarget, isTraceTruncated);
   renderAccountsTable(accountDiffs);
   renderInsights(insightsList);
  
