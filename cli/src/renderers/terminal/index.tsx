@@ -10,7 +10,7 @@ import { CPITreeView } from './CPITree';
 import { AccountsTable } from './AccountsTable';
 
 /**
- * Utility to truncate long strings
+ * Utility to truncate long strings for display
  */
 const truncate = (str: string, start = 8, end = 8) => {
   if (!str) return 'N/A';
@@ -20,6 +20,7 @@ const truncate = (str: string, start = 8, end = 8) => {
 
 /**
  * HEADER COMPONENT
+ * Displays signature, status, slot, fee, and network
  */
 const Header = ({
   signature,
@@ -44,10 +45,12 @@ const Header = ({
         <Text color="cyan" bold>
           OPEN INSIGHT [CLI v0.1.0]
         </Text>
+
         <Box>
           <Text backgroundColor="blue" color="white">
             {' '}{networkLabel}{' '}
           </Text>
+
           <Text backgroundColor="gray" color="white">
             {' '}SLOT: {slot || 'N/A'}{' '}
           </Text>
@@ -65,13 +68,16 @@ const Header = ({
             <Text bold>SIGNATURE: </Text>
             <Text>{truncate(signature, 16, 16)}</Text>
           </Box>
+
           <Text color={statusColor} bold>
             {success ? 'SUCCESS' : 'FAILED'}
           </Text>
         </Box>
 
         <Box marginTop={1}>
-          <Text color="gray">TRANSACTION FEE: {displayFee} SOL</Text>
+          <Text color="gray">
+            TRANSACTION FEE: {displayFee} SOL
+          </Text>
         </Box>
       </Box>
     </Box>
@@ -82,7 +88,7 @@ const Header = ({
  * Resolve the ExecutionTrace from whatever shape the analyzed object carries.
  *
  * Priority:
- *   1. analyzed.cpiTrace — already an ExecutionTrace (ideal, set this upstream)
+ *   1. analyzed.cpiTrace   — already an ExecutionTrace (ideal, set upstream)
  *   2. analyzed.logMessages — raw string[] → build the trace here
  *   3. analyzed.cpiTree?.logMessages — legacy shape
  *   4. undefined — CPITreeView renders the empty state
@@ -109,6 +115,7 @@ export const TerminalRenderer: React.FC<{
   insights: InsightReport;
   network?: 'mainnet' | 'devnet';
 }> = ({ analyzed, insights, network = 'devnet' }) => {
+
   const signature =
     analyzed.signature ||
     (analyzed as any).raw?.signature ||
@@ -155,9 +162,7 @@ export const TerminalRenderer: React.FC<{
         {/* ACCOUNTS TABLE (Task 3.4) */}
         <Box paddingX={1} marginTop={1} flexDirection="column">
           <Text bold>ACCOUNT CHANGES</Text>
-          <Text>
-            {AccountsTable({ accounts: accountDiffs })}
-          </Text>
+          <AccountsTable accounts={accountDiffs} />
         </Box>
 
       </Box>
@@ -186,7 +191,9 @@ export const TerminalRenderer: React.FC<{
               );
             })
           ) : (
-            <Text color="gray"> No optimization issues detected.</Text>
+            <Text color="gray">
+              No optimization issues detected.
+            </Text>
           )}
         </Box>
       </Box>

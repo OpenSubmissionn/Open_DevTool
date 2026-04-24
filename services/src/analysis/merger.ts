@@ -3,10 +3,10 @@ import { AnalyzedTransaction, ParsedLogs, CUProfile, CPITree, AccountDiff } from
 import { parseTransaction } from './txParser';
 
 export function mergeAnalysis(
-  bundle: RawTransactionBundle,
-  logs: ParsedLogs,
-  cuProfile: CUProfile,
-  cpiTree: CPITree,
+bundle: RawTransactionBundle,
+logs: ParsedLogs,
+cuProfile: CUProfile,
+cpiTree: CPITree,
   accountDiffs: AccountDiff[],
 ): AnalyzedTransaction {
   const parsed = parseTransaction(bundle);
@@ -22,4 +22,3 @@ export function mergeAnalysis(
     logs,
   };
 }
-
