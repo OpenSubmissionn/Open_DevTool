@@ -1,6 +1,5 @@
 import { createHash } from "crypto";
 import { BorshCoder, type Idl } from "@coral-xyz/anchor";
-import { PublicKey } from "@solana/web3.js";
 import type { ParsedInstruction } from "../types";
 import {
 	ORCA_WHIRLPOOL_IDL,
@@ -73,11 +72,9 @@ function toCamelCaseInstructionName(name: string): string {
 }
 
 function isValidPublicKey(value: string): boolean {
-	try {
-		return new PublicKey(value).toBase58() === value;
-	} catch {
-		return false;
-	}
+	// Keep validation independent from specific @solana/web3.js runtime shapes.
+	// Some versions/export styles do not expose PublicKey as a constructor.
+	return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(value);
 }
 
 function areValidAccounts(accounts: unknown): accounts is string[] {
