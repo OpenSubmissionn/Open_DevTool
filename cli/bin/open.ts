@@ -1,32 +1,31 @@
 #!/usr/bin/env node
-
-// Essential Shebang line to notify the OS to use node.
-// Located in bin/ following Node.js executable standards.
-
+ 
 import { Command } from 'commander';
 import { loadConfig } from '../src/config/loader';
 import { registerTxCommand } from '../src/commands/tx';
 import { registerConfigCommand } from '../src/commands/config';
-
-// 1. Initialize configuration (dotenv). Must occur early.
+ 
+// tsx on Windows/CommonJS runs the file twice — this blocks the second execution
+const guardKey = '__OPEN_CLI_STARTED__';
+if ((global as any)[guardKey]) process.exit(0);
+(global as any)[guardKey] = true;
+ 
+// 1. Load environment configuration early
 loadConfig();
-
-// 2. Initialize Commander program.
+ 
+// 2. Initialize CLI program
 const program = new Command();
-
-// 3. Configure basic tool metadata.
+ 
+// 3. Set CLI metadata
 program
   .name('open')
   .description('OPEN - Solana Observability and CU Analysis CLI')
-  .version('0.1.0') // Future extension: Consider importing version from package.json
-  // Define global options (verbose logging).
+  .version('0.1.0')
   .option('--verbose', 'Enable debug logging', false);
-
-// 4. Register command modules.
-// This separation keeps open.ts clean and extensible.
+ 
+// 4. Register commands
 registerTxCommand(program);
 registerConfigCommand(program);
-
-// 5. Parse command-line arguments and execute matching actions.
-// Commander automatically handles --help and unknown commands.
+ 
+// 5. Parse arguments
 program.parse(process.argv);
