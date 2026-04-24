@@ -3,16 +3,16 @@ import { buildCPITree } from '../../src/analysis/cpiTreeBuilder';
 
 describe('CPI Tree Builder', () => {
 
-  it('1. Deve processar árvore profunda com múltiplos filhos e erros mistos', () => {
+  it('1. Should process a deep tree with multiple children and mixed errors', () => {
     const massiveLogs = [
       'Program 1111 invoke [1]',
-      'Program log: Iniciando tx principal',
+      'Program log: Starting main transaction',
       'Program 2222 invoke [2]',
-      'Program log: Filho 1 processando',
+      'Program log: Child 1 processing',
       'Program 2222 consumed 500 of 200000 compute units',
       'Program 2222 success',
       'Program 3333 invoke [2]',
-      'Program log: Filho 2 abriu',
+      'Program log: Child 2 started',
       'Program 4444 invoke [3]',
       'Program data: base64/xxx=',
       'Program 4444 consumed 1000 of 200000 compute units',
@@ -50,12 +50,12 @@ describe('CPI Tree Builder', () => {
     expect(grandson.status).toBe('success');
   });
 
-  it('2. Deve marcar a árvore como truncada se os logs forem cortados pela RPC', () => {
+  it('2. Should mark the tree as truncated if logs are cut by the RPC', () => {
     const truncatedLogs = [
       'Program AAAA invoke [1]',
-      'Program log: Estamos fazendo algo pesado...',
+      'Program log: We are doing something heavy...',
       'Program BBBB invoke [2]',
-      'Program log: Vai cortar agora...',
+      'Program log: It will cut now...',
     ];
 
     const trace = buildCPITree(truncatedLogs);
@@ -66,7 +66,7 @@ describe('CPI Tree Builder', () => {
     expect(trace.roots[0].children[0].status).toBe('truncated');
   });
 
-  it('3. Deve lidar com falhas imediatas sem consumo de CU', () => {
+  it('3. Should handle immediate failures without CU consumption', () => {
     const fastFailLogs = [
       'Program FFFF invoke [1]',
       'Program FFFF failed: invalid account data',
@@ -80,11 +80,11 @@ describe('CPI Tree Builder', () => {
     expect(trace.roots[0].error?.code).toBeUndefined();
   });
 
-  it('4. Deve fechar nós abertos como truncados quando novo invoke no mesmo depth aparece', () => {
+  it('4. Should close open nodes as truncated when a new invoke at the same depth appears', () => {
     const repeatedDepthLogs = [
       'Program Root invoke [1]',
       'Program ChildA invoke [2]',
-      'Program log: child A ficou aberto',
+      'Program log: Child A stayed open',
       'Program ChildB invoke [2]',
       'Program ChildB consumed 120 of 200000 compute units',
       'Program ChildB success',
@@ -107,7 +107,7 @@ describe('CPI Tree Builder', () => {
     expect(root.children[1].status).toBe('success');
   });
 
-  it('5. Deve manter consistência em deep CPI com fechamento parcial', () => {
+  it('5. Should maintain consistency in deep CPI with partial closing', () => {
     const deepLogs = [
       'Program Root invoke [1]',
       'Program Level1 invoke [2]',
@@ -131,7 +131,7 @@ describe('CPI Tree Builder', () => {
     expect(trace.roots[0].status).toBe('success');
   });
 
-  it('6. Deve preservar partial-failure sem perder o restante da árvore', () => {
+  it('6. Should preserve partial failure without losing the rest of the tree', () => {
     const partialFailureLogs = [
       'Program Router invoke [1]',
       'Program SwapA invoke [2]',
