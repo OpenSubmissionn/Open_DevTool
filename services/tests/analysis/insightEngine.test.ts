@@ -1,20 +1,20 @@
 import { describe, it, expect } from 'vitest';
-import { analyzeTransaction } from '../../src/analysis/insightEngine';
-import { AnalyzedTransaction } from '../../src/analysis/types';
+import { analyzeTransaction, mergeInsights } from '../../src/analysis/insightEngine';
+import { AnalyzedTransaction, Insight, InsightContext, InsightProvider, ProviderInsight } from '../../src/analysis/types';
 
 describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
   
   /**
    * Rule 1: Execution Failure
    */
-  it('should detect a critical execution failure', () => {
+  it('should detect a critical execution failure', async () => {
     const mockTx = {
       parsed: { success: false },
       cuProfile: { totalConsumed: 5000, totalLimit: 200000, utilizationPercent: 2.5 },
       cpiTree: { totalDepth: 1 }
     } as unknown as AnalyzedTransaction;
 
-    const report = analyzeTransaction(mockTx);
+    const report = await analyzeTransaction(mockTx);
     expect(report.insights.some(i => i.type === 'EXECUTION_FAILURE')).toBe(true);
     expect(report.insights[0].severity).toBe('critical');
   });
@@ -22,7 +22,7 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
   /**
    * Rule 2: CU Bottleneck
    */
-  it('should identify a performance bottleneck', () => {
+  it('should identify a performance bottleneck', async () => {
     const mockTx = {
       parsed: { success: true },
       cuProfile: {
@@ -38,14 +38,14 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
       cpiTree: { totalDepth: 1 }
     } as unknown as AnalyzedTransaction;
 
-    const report = analyzeTransaction(mockTx);
+    const report = await analyzeTransaction(mockTx);
     expect(report.insights.some(i => i.type === 'CU_BOTTLENECK')).toBe(true);
   });
 
   /**
    * Rule 3: CU Waste
    */
-  it('should suggest optimization for high CU waste', () => {
+  it('should suggest optimization for high CU waste', async () => {
     const mockTx = {
       parsed: { success: true },
       cuProfile: {
@@ -56,7 +56,7 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
       cpiTree: { totalDepth: 1 }
     } as unknown as AnalyzedTransaction;
 
-    const report = analyzeTransaction(mockTx);
+    const report = await analyzeTransaction(mockTx);
     const waste = report.insights.find(i => i.type === 'CU_WASTE');
     expect(waste).toBeDefined();
     // Testamos apenas o '44' para evitar conflitos de ponto/vírgula (40k * 1.1)
@@ -66,7 +66,7 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
   /**
    * Rule 4: Budget Risk (>90%)
    */
-  it('should warn when transaction is near compute budget limit', () => {
+  it('should warn when transaction is near compute budget limit', async () => {
     const mockTx = {
       parsed: { success: true },
       cuProfile: {
@@ -77,7 +77,7 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
       cpiTree: { totalDepth: 1 }
     } as unknown as AnalyzedTransaction;
 
-    const report = analyzeTransaction(mockTx);
+    const report = await analyzeTransaction(mockTx);
     expect(report.insights.some(i => i.type === 'BUDGET_RISK')).toBe(true);
     expect(report.insights.find(i => i.type === 'BUDGET_RISK')?.severity).toBe('warning');
   });
@@ -85,14 +85,14 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
   /**
    * Rule 5: Deep CPI (Depth > 3)
    */
-  it('should detect high complexity in deep CPI trees', () => {
+  it('should detect high complexity in deep CPI trees', async () => {
     const mockTx = {
       parsed: { success: true },
       cuProfile: { totalConsumed: 10000, totalLimit: 200000, utilizationPercent: 5 },
       cpiTree: { totalDepth: 5 } // > 3
     } as unknown as AnalyzedTransaction;
 
-    const report = analyzeTransaction(mockTx);
+    const report = await analyzeTransaction(mockTx);
     expect(report.insights.some(i => i.type === 'DEEP_CPI')).toBe(true);
     expect(report.insights.find(i => i.type === 'DEEP_CPI')?.severity).toBe('info');
   });
@@ -100,7 +100,7 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
   /**
    * Logic: Ranking System
    */
-  it('should rank critical failure above all other insights', () => {
+  it('should rank critical failure above all other insights', async () => {
     const mockTx = {
       parsed: { success: false }, // Critical
       cuProfile: { 
@@ -111,8 +111,109 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
       cpiTree: { totalDepth: 5 } // Info
     } as unknown as AnalyzedTransaction;
 
-    const report = analyzeTransaction(mockTx);
+    const report = await analyzeTransaction(mockTx);
     expect(report.insights[0].type).toBe('EXECUTION_FAILURE');
     expect(report.insights[1].type).toBe('BUDGET_RISK');
+  });
+});
+describe('MCP Integration', () => {
+  it('should tag rule-based insights with source: rule', async () => {
+    const mockTx = {
+      parsed: { success: false },
+      cuProfile: { totalConsumed: 5000, totalLimit: 200000, utilizationPercent: 2.5 },
+      cpiTree: { totalDepth: 1 }
+    } as unknown as AnalyzedTransaction;
+
+    const report = await analyzeTransaction(mockTx);
+    const failureInsight = report.insights.find(i => i.type === 'EXECUTION_FAILURE');
+    expect(failureInsight?.source).toBe('rule');
+    expect(failureInsight?.codeSuggestions).toEqual([]);
+  });
+
+  it('should merge insights and create hybrid source when rule and MCP agree', () => {
+    const ruleInsights: Insight[] = [
+      {
+        type: 'CU_BOTTLENECK',
+        severity: 'critical',
+        title: 'Performance Bottleneck',
+        message: 'High CU usage',
+        recommendation: 'Optimize',
+        source: 'rule',
+        codeSuggestions: []
+      }
+    ];
+
+    const mcpInsights: ProviderInsight[] = [
+      {
+        insight: {
+          type: 'CU_BOTTLENECK',
+          severity: 'critical',
+          title: 'Performance Bottleneck',
+          message: 'High CU usage',
+          recommendation: 'Optimize',
+          source: 'mcp',
+          codeSuggestions: [{ description: 'Reduce loops', estimatedSavingsCU: 1000 }]
+        },
+        source: 'mcp'
+      }
+    ];
+
+    const merged = mergeInsights(ruleInsights, mcpInsights);
+    expect(merged).toHaveLength(1);
+    expect(merged[0].source).toBe('hybrid');
+    expect(merged[0].codeSuggestions).toEqual([{ description: 'Reduce loops', estimatedSavingsCU: 1000 }]);
+  });
+
+  it('should continue with rule-based insights when provider throws', async () => {
+    const mockTx = {
+      parsed: { success: false },
+      cuProfile: { totalConsumed: 10000, totalLimit: 200000, utilizationPercent: 5 },
+      cpiTree: { totalDepth: 1 }
+    } as unknown as AnalyzedTransaction;
+
+    const throwingProvider = {
+      fetchInsights: async (_context: InsightContext): Promise<ProviderInsight[]> => {
+        throw new Error('MCP failure');
+      }
+    } as InsightProvider;
+
+    const report = await analyzeTransaction(mockTx, [throwingProvider]);
+
+    expect(report.insights.length).toBeGreaterThan(0);
+    expect(report.insights.every(i => i.source === 'rule')).toBe(true);
+  });
+
+  it('should keep separate insights when rule and MCP disagree', () => {
+    const ruleInsights: Insight[] = [
+      {
+        type: 'CU_BOTTLENECK',
+        severity: 'critical',
+        title: 'Performance Bottleneck',
+        message: 'High CU usage',
+        recommendation: 'Optimize',
+        source: 'rule',
+        codeSuggestions: []
+      }
+    ];
+
+    const mcpInsights: ProviderInsight[] = [
+      {
+        insight: {
+          type: 'DIFFERENT_ISSUE',
+          severity: 'warning',
+          title: 'Different Issue',
+          message: 'Something else',
+          recommendation: 'Fix this',
+          source: 'mcp',
+          codeSuggestions: []
+        },
+        source: 'mcp'
+      }
+    ];
+
+    const merged = mergeInsights(ruleInsights, mcpInsights);
+    expect(merged).toHaveLength(2);
+    expect(merged[0].source).toBe('rule');
+    expect(merged[1].source).toBe('mcp');
   });
 });

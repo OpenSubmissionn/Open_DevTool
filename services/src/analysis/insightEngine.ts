@@ -1,8 +1,14 @@
 import { 
   AnalyzedTransaction, 
   Insight, 
-  InsightReport 
+  InsightReport,
+  InsightContext,
+  ProviderInsight
 } from './types';
+
+export interface InsightProvider {
+  fetchInsights(context: InsightContext): Promise<ProviderInsight[]>;
+}
 
 const getCanonicalConsumed = (tx: AnalyzedTransaction): number =>
   tx.raw?.computeUnitsConsumed ?? tx.cuProfile.totalConsumed;
@@ -32,7 +38,9 @@ const checkFailure = (tx: AnalyzedTransaction): Insight | null => {
     title: 'Critical Execution Failure',
     message: 'The transaction failed, reverting all state changes and interrupting execution flow.',
     recommendation: 'Verify account balances and ensure program constraints/guards are satisfied.',
-    tags: ['failure']
+    tags: ['failure'],
+    source: 'rule',
+    codeSuggestions: []
   };
 };
 
@@ -51,7 +59,9 @@ const checkCUBottleneck = (tx: AnalyzedTransaction): Insight | null => {
     recommendation: 'Optimize internal loops or simplify account state to reduce compute pressure.',
     tags: ['performance'],
     programId: bottleneck.programId,
-    context: { programId: bottleneck.programId }
+    context: { programId: bottleneck.programId },
+    source: 'rule',
+    codeSuggestions: []
   };
 };
 
@@ -74,7 +84,9 @@ const checkCUWaste = (tx: AnalyzedTransaction): Insight | null => {
     message: `Transaction requested high limits but only used ${consumed.toLocaleString()} CUs (${wastePercent.toFixed(1)}% waste).`,
     recommendation: `Set Compute Budget to ~${suggestedLimit.toLocaleString()} CUs to lower fees and improve priority.`,
     tags: ['cost', 'optimization'],
-    estimatedCUSavings: wasted
+    estimatedCUSavings: wasted,
+    source: 'rule',
+    codeSuggestions: []
   };
 };
 
@@ -91,7 +103,9 @@ const checkBudgetRisk = (tx: AnalyzedTransaction): Insight | null => {
     title: 'Near Compute Budget Limit',
     message: `Transaction used ${utilizationPercent.toFixed(1)}% of its CU limit, risking random failures.`,
     recommendation: 'Slightly increase the compute budget limit or optimize high-cost instructions.',
-    tags: ['performance', 'risk']
+    tags: ['performance', 'risk'],
+    source: 'rule',
+    codeSuggestions: []
   };
 };
 
@@ -107,16 +121,72 @@ const checkDeepCPI = (tx: AnalyzedTransaction): Insight | null => {
     title: 'High Execution Complexity',
     message: `Transaction has a CPI depth of ${tx.cpiTree.totalDepth}, indicating many nested program calls.`,
     recommendation: 'Deeply nested calls increase execution risk and gas costs. Consider flattening the logic.',
-    tags: ['complexity']
+    tags: ['complexity'],
+    source: 'rule',
+    codeSuggestions: []
   };
 };
 
 // --- CORE ENGINE ---
 
 /**
- * Orchestrates all diagnostic rules and ranks results by severity.
+ * Merges insights from multiple providers, tagging sources and deduplicating.
  */
-export const analyzeTransaction = (tx: AnalyzedTransaction): InsightReport => {
+export function mergeInsights(ruleInsights: Insight[], mcpInsights: ProviderInsight[]): Insight[] {
+  const allInsights: Insight[] = [];
+
+  // Add rule insights
+  allInsights.push(...ruleInsights);
+
+  // Add MCP insights
+  allInsights.push(...mcpInsights.map(pi => pi.insight));
+
+  // Create a map to track insights by type for hybrid detection
+  const insightMap = new Map<string, Insight[]>();
+
+  for (const insight of allInsights) {
+    const key = insight.type;
+    if (!insightMap.has(key)) {
+      insightMap.set(key, []);
+    }
+    insightMap.get(key)!.push(insight);
+  }
+
+  // Process each group
+  const merged: Insight[] = [];
+  for (const [type, insights] of insightMap) {
+    if (insights.length === 1) {
+      // Only one source, keep as is
+      merged.push(insights[0]);
+    } else {
+      // Multiple sources, check if they agree
+      const ruleInsight = insights.find(i => i.source === 'rule');
+      const mcpInsight = insights.find(i => i.source === 'mcp');
+
+      if (ruleInsight && mcpInsight) {
+        // Both sources agree on the same issue type
+        merged.push({
+          ...ruleInsight,
+          source: 'hybrid',
+          codeSuggestions: mcpInsight.codeSuggestions || []
+        });
+      } else {
+        // Different sources, keep both
+        merged.push(...insights);
+      }
+    }
+  }
+
+  return merged;
+}
+
+/**
+ * Orchestrates all diagnostic rules and providers, merging insights with source tagging.
+ */
+export const analyzeTransaction = async (
+  tx: AnalyzedTransaction,
+  providers: InsightProvider[] = []
+): Promise<InsightReport> => {
   // All 5 MVP Rules integrated here
   const rules = [
     checkFailure, 
@@ -126,17 +196,33 @@ export const analyzeTransaction = (tx: AnalyzedTransaction): InsightReport => {
     checkDeepCPI
   ];
 
-  const insights = rules
+  const ruleInsights = rules
     .map(rule => rule(tx))
     .filter((i): i is Insight => i !== null);
 
+  // Fetch insights from providers
+  const providerResults: ProviderInsight[] = [];
+  const context: InsightContext = { transaction: tx };
+
+  for (const provider of providers) {
+    try {
+      const insights = await provider.fetchInsights(context);
+      providerResults.push(...insights);
+    } catch (error) {
+      console.warn(`Provider ${provider.constructor.name} failed:`, error);
+    }
+  }
+
+  // Merge insights with source tagging
+  const mergedInsights = mergeInsights(ruleInsights, providerResults);
+
   // Sorting logic to ensure the user sees the most important things first
   const severityScore = { critical: 0, warning: 1, info: 2 };
-  insights.sort((a, b) => severityScore[a.severity] - severityScore[b.severity]);
+  mergedInsights.sort((a, b) => severityScore[a.severity] - severityScore[b.severity]);
 
   return {
-    primaryBottleneck: insights[0] || null,
-    insights,
+    primaryBottleneck: mergedInsights[0] || null,
+    insights: mergedInsights,
     totalEstimatedSavings: tx.cuProfile.totalLimit - getCanonicalConsumed(tx)
   };
 };

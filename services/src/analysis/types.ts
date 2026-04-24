@@ -328,6 +328,18 @@ export interface AnalyzedTransaction {
 }
 
 /**
+ * Code suggestion for optimizing the transaction.
+ */
+export interface CodeSuggestion {
+  /** Description of the suggested optimization. */
+  description: string;
+  /** Estimated compute unit savings from this suggestion. */
+  estimatedSavingsCU?: number;
+  /** Code snippet demonstrating the optimization. */
+  codeSnippet?: string;
+}
+
+/**
  * Insight generated from transaction analysis.
  */
 export interface Insight {
@@ -348,6 +360,10 @@ export interface Insight {
   estimatedCUSavings?: number;
   /** Associated program identifier, when available. */
   programId?: string;
+  /** Source of the insight. */
+  source: 'rule' | 'mcp' | 'hybrid';
+  /** Code suggestions for optimization. */
+  codeSuggestions: CodeSuggestion[];
 }
 
 /**
@@ -360,6 +376,32 @@ export interface InsightReport {
   insights: Insight[];
   /** Total estimated compute unit savings. */
   totalEstimatedSavings: number;
+}
+
+/**
+ * Context passed to insight providers for generating insights.
+ */
+export interface InsightContext {
+  /** The analyzed transaction data. */
+  transaction: AnalyzedTransaction;
+}
+
+/**
+ * Provider insight with source information.
+ */
+export interface ProviderInsight {
+  /** The insight data. */
+  insight: Insight;
+  /** Source of the insight. */
+  source: 'rule' | 'mcp';
+}
+
+/**
+ * Interface for insight providers that can generate insights from transaction context.
+ */
+export interface InsightProvider {
+  /** Fetches insights from the provider. */
+  fetchInsights(context: InsightContext): Promise<ProviderInsight[]>;
 }
 
 /**
