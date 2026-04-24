@@ -105,36 +105,10 @@ export const TerminalRenderer: React.FC<{
     (analyzed as any).parsed?.fee;
 
   /**
-   * MOCK CPI TREE (fallback)
+   * REAL CPI TREE
+   * Mock removido! Agora forçamos o uso dos dados reais para evitar falsos positivos nos testes.
    */
-  const mockTree = {
-    root: [
-      {
-        programName: 'Jupiter Aggregator v6',
-        programId: 'JUP6LkbDno1S66P7U527K7w99mW96v6',
-        status: 'success' as const,
-        cuConsumed: 45200,
-        children: [
-          {
-            programName: 'Token Program',
-            programId:
-              'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
-            status: 'success' as const,
-            cuConsumed: 2500,
-            children: [],
-          },
-        ],
-      },
-    ],
-    totalDepth: 2,
-    nodeCount: 2,
-  };
-
-  const realTree = (analyzed as any).cpiTree;
-  const cpiData =
-    realTree && realTree.root && realTree.root.length > 0
-      ? realTree
-      : mockTree;
+  const cpiData = (analyzed as any).cpiTree;
 
   /**
    * INSIGHTS SAFE HANDLING
@@ -220,3 +194,4 @@ export const TerminalRenderer: React.FC<{
     </Box>
   );
 };
+
