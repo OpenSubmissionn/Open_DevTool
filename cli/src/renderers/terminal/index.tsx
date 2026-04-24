@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 import { AnalyzedTransaction, InsightReport } from '../../../../services/src';
+import { buildCPITree } from '../../../../services/src/analysis/cpiTreeBuilder';
 
 // CPI Tree (Task 3.3)
 import { CPITreeView } from './CPITree';
@@ -84,6 +85,29 @@ const Header = ({
 };
 
 /**
+ * Resolve the ExecutionTrace from whatever shape the analyzed object carries.
+ *
+ * Priority:
+ *   1. analyzed.cpiTrace   — already an ExecutionTrace (ideal, set upstream)
+ *   2. analyzed.logMessages — raw string[] → build the trace here
+ *   3. analyzed.cpiTree?.logMessages — legacy shape
+ *   4. undefined — CPITreeView renders the empty state
+ */
+function resolveTrace(analyzed: any) {
+  if (analyzed.cpiTrace) return analyzed.cpiTrace;
+
+  const logs: string[] | undefined =
+    analyzed.logMessages ??
+    analyzed.cpiTree?.logMessages ??
+    analyzed.raw?.logMessages ??
+    analyzed.parsed?.logMessages;
+
+  if (logs && logs.length > 0) return buildCPITree(logs);
+
+  return undefined;
+}
+
+/**
  * MAIN TERMINAL RENDERER
  */
 export const TerminalRenderer: React.FC<{
@@ -92,9 +116,6 @@ export const TerminalRenderer: React.FC<{
   network?: 'mainnet' | 'devnet';
 }> = ({ analyzed, insights, network = 'devnet' }) => {
 
-  /**
-   * SAFELY EXTRACT CORE FIELDS
-   */
   const signature =
     analyzed.signature ||
     (analyzed as any).raw?.signature ||
@@ -112,10 +133,7 @@ export const TerminalRenderer: React.FC<{
     (analyzed as any).feeLamports ||
     (analyzed as any).parsed?.fee;
 
-  /**
-   * DATA SOURCES
-   */
-  const cpiData = (analyzed as any).cpiTree;
+  const trace = resolveTrace(analyzed);
 
   const insightsList = Array.isArray(insights)
     ? insights
@@ -125,7 +143,7 @@ export const TerminalRenderer: React.FC<{
 
   return (
     <Box flexDirection="column" paddingX={2} paddingY={1} minWidth={80}>
-      
+
       {/* HEADER */}
       <Header
         signature={signature}
@@ -137,15 +155,13 @@ export const TerminalRenderer: React.FC<{
 
       {/* MAIN SECTION */}
       <Box flexDirection="column" marginY={1}>
-        
-        {/* CPI TREE */}
-        <CPITreeView tree={cpiData} />
 
-        {/* ACCOUNTS TABLE */}
+        {/* CPI TREE (Task 3.3) */}
+        <CPITreeView trace={trace} />
+
+        {/* ACCOUNTS TABLE (Task 3.4) */}
         <Box paddingX={1} marginTop={1} flexDirection="column">
           <Text bold>ACCOUNT CHANGES</Text>
-
-          {/* IMPORTANT: render as component, not string */}
           <AccountsTable accounts={accountDiffs} />
         </Box>
 
@@ -158,9 +174,7 @@ export const TerminalRenderer: React.FC<{
         paddingX={1}
         flexDirection="column"
       >
-        <Text color="yellow" bold>
-          ACTIONABLE INSIGHTS
-        </Text>
+        <Text color="yellow" bold>ACTIONABLE INSIGHTS</Text>
 
         <Box flexDirection="column" marginTop={1}>
           {insightsList.length > 0 ? (
@@ -169,7 +183,6 @@ export const TerminalRenderer: React.FC<{
                 typeof item === 'string'
                   ? item
                   : item.message || JSON.stringify(item);
-
               return (
                 <Text key={index}>
                   <Text color="yellow"> - </Text>
