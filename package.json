@@ -13,7 +13,8 @@
     "test:all": "npm run test:unit && npm run test:integration",
     "coverage": "npm run coverage --workspace @open/services",
     "lint": "eslint . --ext .ts",
-    "format": "prettier --write \"**/*.ts\""
+    "format": "prettier --write \"**/*.ts\"",
+    "validate:benchmarks": "tsx scripts/validate-benchmarks.ts"
   },
   "keywords": [],
   "author": "Nicole",
