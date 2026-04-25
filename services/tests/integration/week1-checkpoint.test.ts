@@ -58,7 +58,7 @@ describe('Integration CP2: RPC → Full Analysis (devnet)', () => {
       const logs = parseLogsFromBundle(bundle.logMessages ?? []);
       const cuProfile = profileCU(bundle.logMessages ?? []);
       const cpiTree = { root: [], totalDepth: 0, nodeCount: 0 };
-      const result = mergeAnalysis(bundle, logs, cuProfile, cpiTree, []);
+      const result = await mergeAnalysis(bundle, logs, cuProfile, cpiTree, []);
 
       expect(result.parsed.signature).toBe(DEVNET_TX_SIGNATURE);
       expect(typeof result.raw).toBe('object');

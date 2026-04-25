@@ -1,0 +1,37 @@
+[
+  {
+    "operation": "transfer",
+    "framework": "Native",
+    "estimatedCU": 500,
+    "confidence": "high",
+    "source": "Solana documentation and empirical tests"
+  },
+  {
+    "operation": "transfer",
+    "framework": "Anchor",
+    "estimatedCU": 1500,
+    "confidence": "medium",
+    "source": "Community benchmarks and sample program analysis"
+  },
+  {
+    "operation": "create-account",
+    "framework": "Native",
+    "estimatedCU": 1000,
+    "confidence": "high",
+    "source": "Solana documentation"
+  },
+  {
+    "operation": "create-account",
+    "framework": "Anchor",
+    "estimatedCU": 2500,
+    "confidence": "medium",
+    "source": "Anchor framework overhead analysis"
+  },
+  {
+    "operation": "swap",
+    "framework": "Steel",
+    "estimatedCU": 40000,
+    "confidence": "low",
+    "source": "Initial projection for Steel framework, pending real data"
+  }
+]

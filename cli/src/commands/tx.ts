@@ -15,8 +15,11 @@ import {
   type CPITree,
   type ParsedLogs
 } from '@open/services';
- 
-// JSON renderer
+
+// MCP Integration
+import { McpInsightProvider } from '@open/services';
+
+// 2. JSON rendering output
 import { renderJSON } from '@open/services';
  
 // Terminal renderer (no Ink)
@@ -117,8 +120,8 @@ export const registerTxCommand = (program: Command) => {
         const cpiTrace = buildCPITree(rawBundle.logMessages);
         const cpiTree = toCPITree(cpiTrace);
         const accountDiffs = computeAccountDiffs(rawBundle);
- 
-        // Step 3: Merge
+
+        // Step 3: Merging all data
         const analyzed = await mergeAnalysis(
           rawBundle,
           toParsedLogs(rawBundle.logMessages, parsedLogSummary),
@@ -126,11 +129,12 @@ export const registerTxCommand = (program: Command) => {
           cpiTree,
           accountDiffs
         );
- 
-        // Step 4: Insights
-        spinner.text = chalk.cyan('Generating insights...');
-        const insightsReport = await analyzeTransaction(analyzed);
- 
+
+        // Step 4: Rule-based Intelligence + MCP Integration
+        spinner.text = chalk.cyan('Generating actionable insights...');
+        const mcpProvider = new McpInsightProvider();
+        const insightsReport = await analyzeTransaction(analyzed, [mcpProvider]);
+
         spinner.succeed(chalk.green('Analysis Complete!'));
  
         // Step 5: Output

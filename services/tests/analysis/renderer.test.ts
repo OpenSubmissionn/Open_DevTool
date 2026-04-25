@@ -47,7 +47,9 @@ describe('JSON Renderer - God Mode', () => {
         severity: 'info',
         title: 'Optimized CU usage',
         message: 'Optimized CU usage detected',
-        recommendation: 'No action needed'
+        recommendation: 'No action needed',
+        source: 'rule',
+        codeSuggestions: []
       }
     ];
 

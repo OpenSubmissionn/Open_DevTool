@@ -1,8 +1,14 @@
 import { 
   AnalyzedTransaction, 
   Insight, 
-  InsightReport 
+  InsightReport,
+  InsightContext,
+  ProviderInsight
 } from './types';
+
+export interface InsightProvider {
+  fetchInsights(context: InsightContext): Promise<ProviderInsight[]>;
+}
 
 const getCanonicalConsumed = (tx: AnalyzedTransaction): number =>
   tx.raw?.computeUnitsConsumed ?? tx.cuProfile.totalConsumed;
@@ -22,7 +28,7 @@ const getCanonicalUtilizationPercent = (tx: AnalyzedTransaction): number => {
 // --- DIAGNOSTIC RULES ---
 
 /**
- * Rule 1: Detects if the transaction failed.
+ * Detects if the transaction failed.
  */
 const checkFailure = (tx: AnalyzedTransaction): Insight | null => {
   if (tx.parsed.success) return null;
@@ -32,12 +38,14 @@ const checkFailure = (tx: AnalyzedTransaction): Insight | null => {
     title: 'Critical Execution Failure',
     message: 'The transaction failed, reverting all state changes and interrupting execution flow.',
     recommendation: 'Verify account balances and ensure program constraints/guards are satisfied.',
-    tags: ['failure']
+    tags: ['failure'],
+    source: 'rule',
+    codeSuggestions: []
   };
 };
 
 /**
- * Rule 2: Identifies programs consuming a disproportionate amount of compute units.
+ * Identifies programs consuming a disproportionate amount of compute units.
  */
 const checkCUBottleneck = (tx: AnalyzedTransaction): Insight | null => {
   const bottleneck = tx.cuProfile.bottleneck;
@@ -51,12 +59,14 @@ const checkCUBottleneck = (tx: AnalyzedTransaction): Insight | null => {
     recommendation: 'Optimize internal loops or simplify account state to reduce compute pressure.',
     tags: ['performance'],
     programId: bottleneck.programId,
-    context: { programId: bottleneck.programId }
+    context: { programId: bottleneck.programId },
+    source: 'rule',
+    codeSuggestions: []
   };
 };
 
 /**
- * Rule 3: Detects overallocation of compute units to optimize fees.
+ * Detects overallocation of compute units to optimize fees.
  */
 const checkCUWaste = (tx: AnalyzedTransaction): Insight | null => {
   const consumed = getCanonicalConsumed(tx);
@@ -74,12 +84,14 @@ const checkCUWaste = (tx: AnalyzedTransaction): Insight | null => {
     message: `Transaction requested high limits but only used ${consumed.toLocaleString()} CUs (${wastePercent.toFixed(1)}% waste).`,
     recommendation: `Set Compute Budget to ~${suggestedLimit.toLocaleString()} CUs to lower fees and improve priority.`,
     tags: ['cost', 'optimization'],
-    estimatedCUSavings: wasted
+    estimatedCUSavings: wasted,
+    source: 'rule',
+    codeSuggestions: []
   };
 };
 
 /**
- * Rule 4: Budget Exceeded Risk (>90% utilization)
+ * Budget Exceeded Risk (>90% utilization)
  */
 const checkBudgetRisk = (tx: AnalyzedTransaction): Insight | null => {
   const utilizationPercent = getCanonicalUtilizationPercent(tx);
@@ -91,12 +103,14 @@ const checkBudgetRisk = (tx: AnalyzedTransaction): Insight | null => {
     title: 'Near Compute Budget Limit',
     message: `Transaction used ${utilizationPercent.toFixed(1)}% of its CU limit, risking random failures.`,
     recommendation: 'Slightly increase the compute budget limit or optimize high-cost instructions.',
-    tags: ['performance', 'risk']
+    tags: ['performance', 'risk'],
+    source: 'rule',
+    codeSuggestions: []
   };
 };
 
 /**
- * Rule 5: Deep CPI (Depth > 3)
+ * Deep CPI (Depth > 3)
  */
 const checkDeepCPI = (tx: AnalyzedTransaction): Insight | null => {
   if (tx.cpiTree.totalDepth <= 3) return null;
@@ -107,12 +121,14 @@ const checkDeepCPI = (tx: AnalyzedTransaction): Insight | null => {
     title: 'High Execution Complexity',
     message: `Transaction has a CPI depth of ${tx.cpiTree.totalDepth}, indicating many nested program calls.`,
     recommendation: 'Deeply nested calls increase execution risk and gas costs. Consider flattening the logic.',
-    tags: ['complexity']
+    tags: ['complexity'],
+    source: 'rule',
+    codeSuggestions: []
   };
 };
 
 /**
- * Rule 6: Warns when CU-by-node attribution confidence is low.
+ * Warns when CU-by-node attribution confidence is low.
  */
 const checkCUAttributionQuality = (tx: AnalyzedTransaction): Insight | null => {
   const attribution = tx.parsed.cuAttribution;
@@ -139,36 +155,104 @@ const checkCUAttributionQuality = (tx: AnalyzedTransaction): Insight | null => {
       doubleAttributionCount: attribution.doubleAttributionCount,
       traceTruncated: attribution.traceTruncated,
     },
+    source: 'rule',
+    codeSuggestions: []
   };
 };
 
 // --- CORE ENGINE ---
+ /* Merges insights from multiple providers, tagging sources and deduplicating. */
+export function mergeInsights(ruleInsights: Insight[], mcpInsights: ProviderInsight[]): Insight[] {
+  const allInsights: Insight[] = [];
+
+  // Add rule insights
+  allInsights.push(...ruleInsights);
+
+  // Add MCP insights
+  allInsights.push(...mcpInsights.map(pi => pi.insight));
+
+  // Create a map to track insights by type for hybrid detection
+  const insightMap = new Map<string, Insight[]>();
+
+  for (const insight of allInsights) {
+    const key = insight.type;
+    if (!insightMap.has(key)) {
+      insightMap.set(key, []);
+    }
+    insightMap.get(key)!.push(insight);
+  }
+
+  // Process each group
+  const merged: Insight[] = [];
+  for (const [type, insights] of insightMap) {
+    if (insights.length === 1) {
+      // Only one source, keep as is
+      merged.push(insights[0]);
+    } else {
+      // Multiple sources, check if they agree
+      const ruleInsight = insights.find(i => i.source === 'rule');
+      const mcpInsight = insights.find(i => i.source === 'mcp');
+
+      if (ruleInsight && mcpInsight) {
+        // Both sources agree on the same issue type
+        merged.push({
+          ...ruleInsight,
+          source: 'hybrid',
+          codeSuggestions: mcpInsight.codeSuggestions || []
+        });
+      } else {
+        // Different sources, keep both
+        merged.push(...insights);
+      }
+    }
+  }
+
+  return merged;
+}
 
 /**
- * Orchestrates all diagnostic rules and ranks results by severity.
+ * Orchestrates all diagnostic rules and providers, merging insights with source tagging.
  */
-export const analyzeTransaction = (tx: AnalyzedTransaction): InsightReport => {
-  // All 5 MVP Rules integrated here
-  const rules = [
-    checkFailure, 
-    checkCUAttributionQuality,
-    checkCUBottleneck, 
-    checkCUWaste, 
-    checkBudgetRisk, 
-    checkDeepCPI
-  ];
+export const analyzeTransaction = async (
+  tx: AnalyzedTransaction,
+  provider?: InsightProvider
+): Promise<InsightReport> => {
+const rules = [
+  checkFailure,
+  checkCUAttributionQuality, 
+  checkCUBottleneck,
+  checkCUWaste,
+  checkBudgetRisk,
+  checkDeepCPI
+];
 
-  const insights = rules
+  const ruleInsights = rules
     .map(rule => rule(tx))
     .filter((i): i is Insight => i !== null);
 
-  // Sorting logic to ensure the user sees the most important things first
+  let providerInsights: ProviderInsight[] = [];
+  if (provider) {
+    try {
+      const context: InsightContext = { transaction: tx };
+      providerInsights = await provider.fetchInsights(context);
+    } catch (error) {
+      console.warn('Insight provider failed, falling back to rule-based insights only:', error);
+    }
+  }
+
+  const mergedInsights = mergeInsights(ruleInsights, providerInsights);
+
   const severityScore = { critical: 0, warning: 1, info: 2 };
-  insights.sort((a, b) => severityScore[a.severity] - severityScore[b.severity]);
+  mergedInsights.sort((a, b) => severityScore[a.severity] - severityScore[b.severity]);
+
+  const totalEstimatedSavings = mergedInsights.reduce(
+    (sum, i) => sum + (i.estimatedCUSavings || 0),
+    0
+  );
 
   return {
-    primaryBottleneck: insights[0] || null,
-    insights,
-    totalEstimatedSavings: tx.cuProfile.totalLimit - getCanonicalConsumed(tx)
+    primaryBottleneck: mergedInsights[0] || null,
+    insights: mergedInsights,
+    totalEstimatedSavings
   };
 };
