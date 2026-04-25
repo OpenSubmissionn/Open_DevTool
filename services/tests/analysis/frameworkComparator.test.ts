@@ -1,65 +1,84 @@
 import { describe, it, expect } from 'vitest';
 import { compareFrameworks } from '../../src/analysis/frameworkComparator';
-import { ParsedInstruction } from '../../src/analysis/types';
+import { CUProfile } from '../../src/analysis/types';
 
 describe('Framework Comparator', () => {
-  it('should suggest a more efficient native alternative for a high-CU Anchor instruction', () => {
-    // Mock a parsed instruction that represents an expensive "transfer"
-    // operation done with a framework we'll pretend is Anchor.
-    const mockAnchorInstruction: ParsedInstruction = {
-      programId: 'someprogram11111111111111111111111111111111', // A mock program ID
-      programName: 'Mock Program',
-      instructionName: 'transfer',
-      cuConsumed: 2000, // Higher than the native baseline
-      data: '02000000c800000000000000', // Mock data
-      accounts: [],
-      depth: 0,
-      innerInstructions: [],
+  it('should detect Anchor and compare against Steel and Native benchmarks', () => {
+    const logMessages = ['Program log: Instruction: Transfer'];
+    const cuProfile: CUProfile = {
+      totalConsumed: 50_000,
+      totalLimit: 0,
+      utilizationPercent: 0,
+      perInstruction: [],
+      bottleneck: null,
     };
 
-    // Define a simple mock function for this test
-    const mockDetectFramework = (programId: string) => {
-      if (programId === 'someprogram11111111111111111111111111111111') {
-        return 'Anchor';
-      }
-      return 'Unknown';
-    };
+    const result = compareFrameworks(logMessages, cuProfile);
 
-    // Pass the mock function directly as an argument
-    const result = compareFrameworks(mockAnchorInstruction, mockDetectFramework);
+    expect(result.current.framework).toBe('anchor');
+    expect(result.current.confidence).toBe(0.9);
+    expect(result.alternatives).toHaveLength(2);
 
-    // --- Assertions ---
-    expect(result).not.toBeNull();
+    expect(result.alternatives[0]).toEqual({
+      framework: 'native',
+      avgCU: 30_000,
+      deltaAbsolute: 20_000,
+      deltaPercent: 40,
+    });
 
-    if (!result) {
-      throw new Error('Test failed: result is null');
-    }
-
-    expect(result.operation).toBe('transfer');
-    expect(result.currentFramework).toBe('Anchor');
-    expect(result.currentCU).toBe(2000);
-    expect(result.alternatives).toHaveLength(1);
-
-    const nativeAlternative = result.alternatives[0];
-    expect(nativeAlternative.framework).toBe('Native');
-    expect(nativeAlternative.estimatedCU).toBe(500);
-    expect(nativeAlternative.savings).toBe(1500); // 2000 (current) - 500 (native)
-    expect(nativeAlternative.confidence).toBe('high');
+    expect(result.alternatives[1]).toEqual({
+      framework: 'steel',
+      avgCU: 40_000,
+      deltaAbsolute: 10_000,
+      deltaPercent: 20,
+    });
   });
 
-  it('should return null when no alternatives are found', () => {
-    const mockInstruction: ParsedInstruction = {
-      programId: 'someprogram11111111111111111111111111111111',
-      programName: 'Mock Program',
-      instructionName: 'some-unknown-operation',
-      cuConsumed: 10000,
-      data: '',
-      accounts: [],
-      depth: 0,
-      innerInstructions: [],
+  it('should return unknown framework with zero confidence when logMessages is empty', () => {
+    const cuProfile: CUProfile = {
+      totalConsumed: 10_000,
+      totalLimit: 0,
+      utilizationPercent: 0,
+      perInstruction: [],
+      bottleneck: null,
     };
 
-    const result = compareFrameworks(mockInstruction);
-    expect(result).toBeNull();
+    const result = compareFrameworks([], cuProfile);
+
+    expect(result.current.framework).toBe('unknown');
+    expect(result.current.confidence).toBe(0);
+    expect(result.confidence).toBe(0);
+  });
+
+  it('should guard divide-by-zero and return zero deltaPercent when totalConsumed is 0', () => {
+    const logMessages = ['Program log: steel operation completed'];
+    const cuProfile: CUProfile = {
+      totalConsumed: 0,
+      totalLimit: 0,
+      utilizationPercent: 0,
+      perInstruction: [],
+      bottleneck: null,
+    };
+
+    const result = compareFrameworks(logMessages, cuProfile);
+
+    expect(result.current.framework).toBe('steel');
+    expect(result.alternatives.every((alt) => alt.deltaPercent === 0)).toBe(true);
+  });
+
+  it('should sort alternative frameworks cheapest first', () => {
+    const logMessages = ['Program log: Instruction: Transfer'];
+    const cuProfile: CUProfile = {
+      totalConsumed: 50_000,
+      totalLimit: 0,
+      utilizationPercent: 0,
+      perInstruction: [],
+      bottleneck: null,
+    };
+
+    const result = compareFrameworks(logMessages, cuProfile);
+
+    expect(result.alternatives[0].framework).toBe('native');
+    expect(result.alternatives[1].framework).toBe('steel');
   });
 });
