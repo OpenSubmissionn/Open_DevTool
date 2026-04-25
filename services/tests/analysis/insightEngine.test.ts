@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { analyzeTransaction, InsightProvider, mergeInsights } from '../../src/analysis/insightEngine';
-import { AnalyzedTransaction, Insight } from '../../src/analysis/types';
+import { AnalyzedTransaction, Insight, ProviderInsight } from '../../src/analysis/types';
 
 describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
   
@@ -161,11 +161,16 @@ describe('Hybrid Architecture - Provider Integration', () => {
     const mockProvider: InsightProvider = {
       fetchInsights: async () => [
         {
-          type: 'EXECUTION_FAILURE',
-          severity: 'warning' as const,
-          title: 'Provider Failure Insight',
-          message: 'Provider detected failure',
-          recommendation: 'Provider recommendation'
+          insight: {
+            type: 'EXECUTION_FAILURE',
+            severity: 'warning' as const,
+            title: 'Provider Failure Insight',
+            message: 'Provider detected failure',
+            recommendation: 'Provider recommendation',
+            source: 'mcp',
+            codeSuggestions: []
+          },
+          source: 'mcp'
         }
       ]
     };
@@ -192,17 +197,24 @@ describe('Hybrid Architecture - Provider Integration', () => {
         severity: 'critical',
         title: 'Performance Bottleneck',
         message: 'High CU usage',
-        recommendation: 'Optimize'
+        recommendation: 'Optimize',
+        source: 'rule',
+        codeSuggestions: []
       }
     ];
 
-    const providerInsights: Insight[] = [
+    const providerInsights: ProviderInsight[] = [
       {
-        type: 'BUDGET_RISK',
-        severity: 'warning',
-        title: 'Budget at Risk',
-        message: 'Nearing limit',
-        recommendation: 'Increase budget'
+        insight: {
+          type: 'BUDGET_RISK',
+          severity: 'warning',
+          title: 'Budget at Risk',
+          message: 'Nearing limit',
+          recommendation: 'Increase budget',
+          source: 'mcp',
+          codeSuggestions: []
+        },
+        source: 'mcp'
       }
     ];
 
