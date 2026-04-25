@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 import { AnalyzedTransaction, InsightReport } from '../../../../services/src';
+import { buildCPITree } from '../../../../services/src/analysis/cpiTreeBuilder';
 
 // CPI Tree (Task 3.3)
 import { CPITreeView } from './CPITree';
@@ -9,7 +10,7 @@ import { CPITreeView } from './CPITree';
 import { AccountsTable } from './AccountsTable';
 
 /**
- * Utility to truncate long strings
+ * Utility to truncate long strings for display
  */
 const truncate = (str: string, start = 8, end = 8) => {
   if (!str) return 'N/A';
@@ -19,6 +20,7 @@ const truncate = (str: string, start = 8, end = 8) => {
 
 /**
  * HEADER COMPONENT
+ * Displays signature, status, slot, fee, and network
  */
 const Header = ({
   signature,
@@ -43,14 +45,14 @@ const Header = ({
         <Text color="cyan" bold>
           OPEN INSIGHT [CLI v0.1.0]
         </Text>
+
         <Box>
           <Text backgroundColor="blue" color="white">
-            {' '}
-            {networkLabel}{' '}
+            {' '}{networkLabel}{' '}
           </Text>
+
           <Text backgroundColor="gray" color="white">
-            {' '}
-            SLOT: {slot || 'N/A'}{' '}
+            {' '}SLOT: {slot || 'N/A'}{' '}
           </Text>
         </Box>
       </Box>
@@ -66,18 +68,44 @@ const Header = ({
             <Text bold>SIGNATURE: </Text>
             <Text>{truncate(signature, 16, 16)}</Text>
           </Box>
+
           <Text color={statusColor} bold>
             {success ? 'SUCCESS' : 'FAILED'}
           </Text>
         </Box>
 
         <Box marginTop={1}>
-          <Text color="gray">TRANSACTION FEE: {displayFee} SOL</Text>
+          <Text color="gray">
+            TRANSACTION FEE: {displayFee} SOL
+          </Text>
         </Box>
       </Box>
     </Box>
   );
 };
+
+/**
+ * Resolve the ExecutionTrace from whatever shape the analyzed object carries.
+ *
+ * Priority:
+ *   1. analyzed.cpiTrace   — already an ExecutionTrace (ideal, set upstream)
+ *   2. analyzed.logMessages — raw string[] → build the trace here
+ *   3. analyzed.cpiTree?.logMessages — legacy shape
+ *   4. undefined — CPITreeView renders the empty state
+ */
+function resolveTrace(analyzed: any) {
+  if (analyzed.cpiTrace) return analyzed.cpiTrace;
+
+  const logs: string[] | undefined =
+    analyzed.logMessages ??
+    analyzed.cpiTree?.logMessages ??
+    analyzed.raw?.logMessages ??
+    analyzed.parsed?.logMessages;
+
+  if (logs && logs.length > 0) return buildCPITree(logs);
+
+  return undefined;
+}
 
 /**
  * MAIN TERMINAL RENDERER
@@ -87,6 +115,7 @@ export const TerminalRenderer: React.FC<{
   insights: InsightReport;
   network?: 'mainnet' | 'devnet';
 }> = ({ analyzed, insights, network = 'devnet' }) => {
+
   const signature =
     analyzed.signature ||
     (analyzed as any).raw?.signature ||
@@ -104,53 +133,17 @@ export const TerminalRenderer: React.FC<{
     (analyzed as any).feeLamports ||
     (analyzed as any).parsed?.fee;
 
-  /**
-   * MOCK CPI TREE (fallback)
-   */
-  const mockTree = {
-    root: [
-      {
-        programName: 'Jupiter Aggregator v6',
-        programId: 'JUP6LkbDno1S66P7U527K7w99mW96v6',
-        status: 'success' as const,
-        cuConsumed: 45200,
-        children: [
-          {
-            programName: 'Token Program',
-            programId:
-              'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
-            status: 'success' as const,
-            cuConsumed: 2500,
-            children: [],
-          },
-        ],
-      },
-    ],
-    totalDepth: 2,
-    nodeCount: 2,
-  };
+  const trace = resolveTrace(analyzed);
 
-  const realTree = (analyzed as any).cpiTree;
-  const cpiData =
-    realTree && realTree.root && realTree.root.length > 0
-      ? realTree
-      : mockTree;
-
-  /**
-   * INSIGHTS SAFE HANDLING
-   */
   const insightsList = Array.isArray(insights)
     ? insights
     : (insights as any)?.insights || [];
 
-  /**
-   * ACCOUNT DIFFS (Task 3.4)
-   */
   const accountDiffs = (analyzed as any).accountDiffs || [];
 
   return (
     <Box flexDirection="column" paddingX={2} paddingY={1} minWidth={80}>
-      
+
       {/* HEADER */}
       <Header
         signature={signature}
@@ -162,18 +155,14 @@ export const TerminalRenderer: React.FC<{
 
       {/* MAIN SECTION */}
       <Box flexDirection="column" marginY={1}>
-        
+
         {/* CPI TREE (Task 3.3) */}
-        <CPITreeView tree={cpiData} />
+        <CPITreeView trace={trace} />
 
         {/* ACCOUNTS TABLE (Task 3.4) */}
         <Box paddingX={1} marginTop={1} flexDirection="column">
           <Text bold>ACCOUNT CHANGES</Text>
-          <Text>
-            {AccountsTable({
-              accounts: accountDiffs,
-            })}
-          </Text>
+          <AccountsTable accounts={accountDiffs} />
         </Box>
 
       </Box>
@@ -185,9 +174,7 @@ export const TerminalRenderer: React.FC<{
         paddingX={1}
         flexDirection="column"
       >
-        <Text color="yellow" bold>
-          ACTIONABLE INSIGHTS
-        </Text>
+        <Text color="yellow" bold>ACTIONABLE INSIGHTS</Text>
 
         <Box flexDirection="column" marginTop={1}>
           {insightsList.length > 0 ? (
@@ -196,7 +183,6 @@ export const TerminalRenderer: React.FC<{
                 typeof item === 'string'
                   ? item
                   : item.message || JSON.stringify(item);
-
               return (
                 <Text key={index}>
                   <Text color="yellow"> - </Text>
@@ -206,7 +192,6 @@ export const TerminalRenderer: React.FC<{
             })
           ) : (
             <Text color="gray">
-              {' '}
               No optimization issues detected.
             </Text>
           )}
