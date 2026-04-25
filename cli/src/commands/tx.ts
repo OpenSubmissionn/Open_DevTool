@@ -104,8 +104,8 @@ export const registerTxCommand = (program: Command) => {
         const cpiTrace = buildCPITree(rawBundle.logMessages);
         const cpiTree = toCPITree(cpiTrace);
         const accountDiffs = computeAccountDiffs(rawBundle);
- 
-        // Step 3: Merge
+
+        // Step 3: Merging all data
         const analyzed = await mergeAnalysis(
           rawBundle,
           toParsedLogs(rawBundle.logMessages, parsedLogSummary),
@@ -113,11 +113,11 @@ export const registerTxCommand = (program: Command) => {
           cpiTree,
           accountDiffs
         );
- 
-        // Step 4: Insights
-        spinner.text = chalk.cyan('Generating insights...');
+
+        // Step 4: Rule-based Intelligence
+        spinner.text = chalk.cyan('Generating actionable insights...');
         const insightsReport = await analyzeTransaction(analyzed);
- 
+
         spinner.succeed(chalk.green('Analysis Complete!'));
  
         // Step 5: Output
