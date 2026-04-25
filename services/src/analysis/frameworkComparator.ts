@@ -1,83 +1,100 @@
-import benchmarks from '../data/framework-benchmarks.json';
-import { ParsedInstruction } from './types';
+import { CUProfile } from './types';
 
-export type Confidence = 'high' | 'medium' | 'low';
+export type SolanaFramework = 'anchor' | 'steel' | 'native' | 'unknown';
 
 export interface FrameworkBenchmark {
-  operation: string;
-  framework: string;
-  estimatedCU: number;
-  confidence: Confidence;
-  source: string;
+  framework: SolanaFramework;
+  avgCU: number;
+  confidence: number;
 }
 
-export interface FrameworkComparison {
-  operation: string;
-  currentFramework: string;
-  currentCU: number;
-  alternatives: {
-    framework: string;
-    estimatedCU: number;
-    savings: number;
-    confidence: Confidence;
-  }[];
+export interface FrameworkAlternative {
+  framework: SolanaFramework;
+  avgCU: number;
+  deltaAbsolute: number;
+  deltaPercent: number;
 }
 
-// This is a placeholder for a more sophisticated framework detection logic.
-// In a real scenario, this would involve analyzing the program's IDL,
-// instruction data patterns, or other on-chain artifacts.
-function detectFramework(programId: string): string {
-  // For now, we'll use a simple hardcoded map.
-  const knownFrameworks: { [key: string]: string } = {
-    JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4: 'Jupiter V6',
-    '11111111111111111111111111111111': 'Native',
-    // Add other known program IDs and their frameworks here
-  };
-  return knownFrameworks[programId] || 'Unknown';
+export interface FrameworkComparisonResult {
+  current: FrameworkBenchmark;
+  alternatives: FrameworkAlternative[];
+  confidence: number;
 }
-// Export for testing purposes
-export { detectFramework };
-/**
- * Compares the CU consumption of an instruction against a known baseline of frameworks.
- *
- * @param instruction - The parsed instruction to verify.
- * @param detectFrameworkFn - Optional. A function to detect the framework. Used for testing.
- * @returns A comparison result with potential alternatives if available.
- */
-export function compareFrameworks(
-  instruction: ParsedInstruction,
-  detectFrameworkFn: (programId: string) => string = detectFramework
-): FrameworkComparison | null {
-  const { programId, instructionName: operation, cuConsumed } = instruction;
 
-  if (cuConsumed === undefined || !operation) {
-    return null;
+const BENCHMARK_REGISTRY: Record<SolanaFramework, number> = {
+  anchor: 50_000,
+  steel: 40_000,
+  native: 30_000,
+  unknown: 0,
+};
+
+export function detectFramework(logMessages: string[]): FrameworkBenchmark {
+  if (logMessages.length === 0) {
+    return { framework: 'unknown', avgCU: 0, confidence: 0 };
   }
 
-  const currentFramework = detectFrameworkFn(programId);
-  if (currentFramework === 'Unknown') {
-    return null;
-  }
-
-  const relevantBenchmarks = (benchmarks as FrameworkBenchmark[]).filter(
-    (b) => b.operation === operation && b.framework !== currentFramework
+  const hasAnchorPattern = logMessages.some((message) =>
+    message.includes('Program log: Instruction:')
   );
 
-  if (relevantBenchmarks.length === 0) {
-    return null;
+  if (hasAnchorPattern) {
+    return {
+      framework: 'anchor',
+      avgCU: BENCHMARK_REGISTRY.anchor,
+      confidence: 0.9,
+    };
   }
 
-  const alternatives = relevantBenchmarks.map((benchmark) => ({
-    framework: benchmark.framework,
-    estimatedCU: benchmark.estimatedCU,
-    savings: cuConsumed - benchmark.estimatedCU,
-    confidence: benchmark.confidence,
-  }));
+  const hasSteelPattern = logMessages.some((message) =>
+    message.toLowerCase().includes('program log: steel')
+  );
+
+  if (hasSteelPattern) {
+    return {
+      framework: 'steel',
+      avgCU: BENCHMARK_REGISTRY.steel,
+      confidence: 0.75,
+    };
+  }
 
   return {
-    operation,
-    currentFramework,
-    currentCU: cuConsumed,
+    framework: 'native',
+    avgCU: BENCHMARK_REGISTRY.native,
+    confidence: 0.5,
+  };
+}
+
+export function compareFrameworks(
+  logMessages: string[],
+  cuProfile: CUProfile
+): FrameworkComparisonResult {
+  const current = detectFramework(logMessages);
+  const actualCU = cuProfile.totalConsumed;
+
+  const alternatives = (Object.keys(BENCHMARK_REGISTRY) as SolanaFramework[])
+    .filter(
+      (framework) =>
+        framework !== 'unknown' && framework !== current.framework
+    )
+    .map((framework) => {
+      const avgCU = BENCHMARK_REGISTRY[framework];
+      const deltaAbsolute = actualCU - avgCU;
+      const deltaPercent = actualCU === 0
+        ? 0
+        : (deltaAbsolute / actualCU) * 100;
+
+      return {
+        framework,
+        avgCU,
+        deltaAbsolute,
+        deltaPercent,
+      };
+    })
+    .sort((a, b) => a.avgCU - b.avgCU);
+
+  return {
+    current,
     alternatives,
+    confidence: current.confidence,
   };
 }
