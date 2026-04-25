@@ -8,10 +8,12 @@ describe('Framework Comparator', () => {
     // operation done with a framework we'll pretend is Anchor.
     const mockAnchorInstruction: ParsedInstruction = {
       programId: 'someprogram11111111111111111111111111111111', // A mock program ID
-      name: 'transfer',
+      programName: 'Mock Program',
+      instructionName: 'transfer',
       cuConsumed: 2000, // Higher than the native baseline
       data: '02000000c800000000000000', // Mock data
       accounts: [],
+      depth: 0,
       innerInstructions: [],
     };
 
@@ -48,10 +50,12 @@ describe('Framework Comparator', () => {
   it('should return null when no alternatives are found', () => {
     const mockInstruction: ParsedInstruction = {
       programId: 'someprogram11111111111111111111111111111111',
-      name: 'some-unknown-operation',
+      programName: 'Mock Program',
+      instructionName: 'some-unknown-operation',
       cuConsumed: 10000,
       data: '',
       accounts: [],
+      depth: 0,
       innerInstructions: [],
     };
 

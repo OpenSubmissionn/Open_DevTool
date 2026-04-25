@@ -84,6 +84,8 @@ export interface ParsedInstruction {
   programId: string;
   /** Friendly display name for the program. */
   programName: string;
+  /** The name of the instruction, if it can be determined. */
+  instructionName?: string;
   /** Account addresses used by the instruction. */
   accounts: string[];
   /** Original encoded instruction data. */
@@ -210,7 +212,7 @@ export interface CPINode {
   /** Depth of the node in the CPI tree. */
   depth: number;
   /** Status of the CPI call. */
-  status: "success" | "failed";
+  status: 'success' | 'failed';
   /** Compute units consumed by the call. */
   cuConsumed?: number;
   /** Child CPI calls nested under this call. */
@@ -252,7 +254,7 @@ export interface AccountDiff {
   /** Affected account public key. */
   pubkey: string;
   /** Role of the account in the transaction. */
-  role: "signer" | "writable" | "readonly";
+  role: 'signer' | 'writable' | 'readonly';
   /** SOL balance delta caused by the transaction. */
   solDelta: number;
   /** Token changes associated with the account. */
@@ -266,7 +268,7 @@ export interface LogEntry {
   /** Original log text. */
   raw: string;
   /** Categorized log type. */
-  type: "invoke" | "success" | "failed" | "cu" | "msg" | "data" | "unknown";
+  type: 'invoke' | 'success' | 'failed' | 'cu' | 'msg' | 'data' | 'unknown';
   /** Program associated with the log, when identified. */
   programId?: string;
   /** Execution depth related to the log. */
@@ -333,7 +335,7 @@ export interface AnalyzedTransaction {
 export interface Insight {
   type: string;
   /** Severity of the insight. */
-  severity: "critical" | "warning" | "info";
+  severity: 'critical' | 'warning' | 'info';
   /** Short title for the insight. */
   title: string;
   /** Full description of the insight. */
@@ -369,7 +371,7 @@ export interface CLIOptions {
   /** Transaction signature used as input. */
   signature: string;
   /** Network where the transaction will be analyzed. */
-  network: "mainnet" | "devnet";
+  network: 'mainnet' | 'devnet';
   /** Optional custom RPC URL. */
   rpcUrl?: string;
   /** Whether output should be formatted as JSON. */

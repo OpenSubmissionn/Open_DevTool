@@ -1,0 +1,12 @@
+{
+  "name": "@open/scripts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate:benchmarks": "node --loader ts-node/esm ./validate-benchmarks.ts"
+  },
+  "dependencies": {
+    "ts-node": "^10.9.2"
+  }
+}

@@ -48,7 +48,7 @@ export function compareFrameworks(
   instruction: ParsedInstruction,
   detectFrameworkFn: (programId: string) => string = detectFramework
 ): FrameworkComparison | null {
-  const { programId, name: operation, cuConsumed } = instruction;
+  const { programId, instructionName: operation, cuConsumed } = instruction;
 
   if (cuConsumed === undefined || !operation) {
     return null;

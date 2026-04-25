@@ -23,7 +23,8 @@
     "cli",
     "services",
     "web",
-    "programs"
+    "programs",
+    "scripts"
   ],
   "devDependencies": {
     "@types/node": "^25.6.0",
