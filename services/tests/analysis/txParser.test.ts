@@ -321,6 +321,14 @@ describe('parseTransaction', () => {
 
     expect(parsed.instructions[0].cuConsumed).toBe(5);
     expect(parsed.instructions[1].cuConsumed).toBe(9);
+    expect(parsed.instructions[0].cuAttributionTraceOrdinal).toBe(0);
+    expect(parsed.instructions[1].cuAttributionTraceOrdinal).toBe(1);
+    expect(parsed.cuAttribution).toMatchObject({
+      matchedNodes: 2,
+      unmatchedCUEntries: 0,
+      doubleAttributionCount: 0,
+      confidence: 0.8,
+    });
   });
 
   it('leaves cuConsumed undefined when an instruction has no matching CU log', async () => {
@@ -349,6 +357,15 @@ describe('parseTransaction', () => {
 
     expect(parsed.instructions[0].cuConsumed).toBe(11);
     expect(parsed.instructions[1].cuConsumed).toBeUndefined();
+    expect(parsed.instructions[0].cuAttributionConfidence).toBe(1);
+    expect(parsed.instructions[1].cuAttributionConfidence).toBe(0);
+    expect(parsed.cuAttribution).toMatchObject({
+      matchedNodes: 1,
+      unmatchedNodes: 1,
+      unmatchedCUEntries: 0,
+      confidence: 0.5,
+      doubleAttributionCount: 0,
+    });
   });
 
   it('ignores deeper nested CPI CU when parsed instructions only include first-level inner calls', async () => {
@@ -393,6 +410,11 @@ describe('parseTransaction', () => {
 
     expect(parsed.instructions[0].cuConsumed).toBe(40);
     expect(parsed.instructions[0].innerInstructions[0].cuConsumed).toBe(20);
+    expect(parsed.cuAttribution).toMatchObject({
+      matchedNodes: 2,
+      unmatchedCUEntries: 1,
+      doubleAttributionCount: 0,
+    });
   });
 
   it('handles failed instruction logs and still attributes consumed CU when present', async () => {

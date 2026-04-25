@@ -28,7 +28,7 @@ const getCanonicalUtilizationPercent = (tx: AnalyzedTransaction): number => {
 // --- DIAGNOSTIC RULES ---
 
 /**
- * Rule 1: Detects if the transaction failed.
+ * Detects if the transaction failed.
  */
 const checkFailure = (tx: AnalyzedTransaction): Insight | null => {
   if (tx.parsed.success) return null;
@@ -45,7 +45,7 @@ const checkFailure = (tx: AnalyzedTransaction): Insight | null => {
 };
 
 /**
- * Rule 2: Identifies programs consuming a disproportionate amount of compute units.
+ * Identifies programs consuming a disproportionate amount of compute units.
  */
 const checkCUBottleneck = (tx: AnalyzedTransaction): Insight | null => {
   const bottleneck = tx.cuProfile.bottleneck;
@@ -66,7 +66,7 @@ const checkCUBottleneck = (tx: AnalyzedTransaction): Insight | null => {
 };
 
 /**
- * Rule 3: Detects overallocation of compute units to optimize fees.
+ * Detects overallocation of compute units to optimize fees.
  */
 const checkCUWaste = (tx: AnalyzedTransaction): Insight | null => {
   const consumed = getCanonicalConsumed(tx);
@@ -91,7 +91,7 @@ const checkCUWaste = (tx: AnalyzedTransaction): Insight | null => {
 };
 
 /**
- * Rule 4: Budget Exceeded Risk (>90% utilization)
+ * Budget Exceeded Risk (>90% utilization)
  */
 const checkBudgetRisk = (tx: AnalyzedTransaction): Insight | null => {
   const utilizationPercent = getCanonicalUtilizationPercent(tx);
@@ -110,7 +110,7 @@ const checkBudgetRisk = (tx: AnalyzedTransaction): Insight | null => {
 };
 
 /**
- * Rule 5: Deep CPI (Depth > 3)
+ * Deep CPI (Depth > 3)
  */
 const checkDeepCPI = (tx: AnalyzedTransaction): Insight | null => {
   if (tx.cpiTree.totalDepth <= 3) return null;
@@ -128,8 +128,40 @@ const checkDeepCPI = (tx: AnalyzedTransaction): Insight | null => {
 };
 
 /**
- * Merges insights from multiple providers, tagging sources and deduplicating.
+ * Warns when CU-by-node attribution confidence is low.
  */
+const checkCUAttributionQuality = (tx: AnalyzedTransaction): Insight | null => {
+  const attribution = tx.parsed.cuAttribution;
+  if (!attribution) return null;
+
+  if (attribution.confidence >= 0.7 && attribution.doubleAttributionCount === 0) {
+    return null;
+  }
+
+  const severity: Insight['severity'] = attribution.confidence < 0.5 ? 'warning' : 'info';
+  const confidencePercent = (attribution.confidence * 100).toFixed(1);
+
+  return {
+    type: 'CU_ATTRIBUTION_LOW_CONFIDENCE',
+    severity,
+    title: 'CU Attribution Has Reduced Confidence',
+    message: `CU by node attribution confidence is ${confidencePercent}% with ${attribution.unmatchedCUEntries} unmatched CU entries.`,
+    recommendation: 'Review CPI/inner-instruction alignment and ensure complete logs for precise per-node attribution.',
+    tags: ['quality', 'diagnostics'],
+    context: {
+      confidence: attribution.confidence,
+      unmatchedCUEntries: attribution.unmatchedCUEntries,
+      ambiguousKeys: attribution.ambiguousKeys,
+      doubleAttributionCount: attribution.doubleAttributionCount,
+      traceTruncated: attribution.traceTruncated,
+    },
+    source: 'rule',
+    codeSuggestions: []
+  };
+};
+
+// --- CORE ENGINE ---
+ /* Merges insights from multiple providers, tagging sources and deduplicating. */
 export function mergeInsights(ruleInsights: Insight[], mcpInsights: ProviderInsight[]): Insight[] {
   const allInsights: Insight[] = [];
 
@@ -185,13 +217,14 @@ export const analyzeTransaction = async (
   tx: AnalyzedTransaction,
   provider?: InsightProvider
 ): Promise<InsightReport> => {
-  const rules = [
-    checkFailure,
-    checkCUBottleneck,
-    checkCUWaste,
-    checkBudgetRisk,
-    checkDeepCPI
-  ];
+const rules = [
+  checkFailure,
+  checkCUAttributionQuality, 
+  checkCUBottleneck,
+  checkCUWaste,
+  checkBudgetRisk,
+  checkDeepCPI
+];
 
   const ruleInsights = rules
     .map(rule => rule(tx))

@@ -94,6 +94,12 @@ export interface ParsedInstruction {
   decodedData?: unknown;
   /** Compute units consumed by this instruction. */
   cuConsumed?: number;
+  /** Correlation key used to match instruction nodes against CPI execution logs. */
+  cuAttributionKey?: string;
+  /** Confidence score for CU attribution in range [0, 1]. */
+  cuAttributionConfidence?: number;
+  /** Trace-order ordinal of the matched CPI node used for CU attribution. */
+  cuAttributionTraceOrdinal?: number;
   /** Execution depth of this instruction in the CPI flow. */
   depth: number;
   /** Inner instructions nested inside this instruction. */
@@ -165,6 +171,30 @@ export interface ParsedTransaction {
   fee: number;
   /** Parsed instructions executed by the transaction. */
   instructions: ParsedInstruction[];
+  /** CU attribution quality metrics used by comparators and insight generation. */
+  cuAttribution?: CUAttributionMetrics;
+}
+
+/**
+ * Quality and consistency metrics for CU-by-node attribution.
+ */
+export interface CUAttributionMetrics {
+  /** Number of parsed instruction nodes considered for attribution. */
+  totalNodes: number;
+  /** Number of parsed nodes that received a CU value from execution logs. */
+  matchedNodes: number;
+  /** Number of parsed nodes that did not receive a CU value. */
+  unmatchedNodes: number;
+  /** Remaining CU entries in CPI logs that could not be mapped to parsed nodes. */
+  unmatchedCUEntries: number;
+  /** Number of keys where multiple nodes share the same programId and depth. */
+  ambiguousKeys: number;
+  /** Aggregated attribution confidence score in range [0, 1]. */
+  confidence: number;
+  /** Guard metric to detect accidental double attribution from the same CPI node. */
+  doubleAttributionCount: number;
+  /** Indicates if CPI logs were truncated while building the execution trace. */
+  traceTruncated: boolean;
 }
 
 /**

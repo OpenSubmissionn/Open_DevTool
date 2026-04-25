@@ -18,6 +18,22 @@ import type { ParsedInstruction, ParsedTransaction, RawTransactionBundle } from 
 
 type UnknownRecord = Record<string, unknown>;
 
+interface ParsedInstructionRef {
+  instruction: ParsedInstruction;
+  key: string;
+}
+
+interface CUAttributionEntry {
+  cuConsumed: number;
+  traceOrdinal: number;
+}
+
+interface CUQueueBuildResult {
+  queues: Map<string, CUAttributionEntry[]>;
+  keyCounts: Map<string, number>;
+  isTraceTruncated: boolean;
+}
+
 // Narrow unknown values before safe structured access.
 function isRecord(value: unknown): value is UnknownRecord {
   return typeof value === 'object' && value !== null;
@@ -217,21 +233,87 @@ function flattenExecutionSnapshots(nodes: ExecutionSnapshot[]): ExecutionSnapsho
   return flattened;
 }
 
+// Preserves parser traversal order so attribution remains deterministic for repeated keys.
+function flattenParsedInstructions(instructions: ParsedInstruction[]): ParsedInstructionRef[] {
+  const flattened: ParsedInstructionRef[] = [];
+
+  for (const instruction of instructions) {
+    flattened.push({
+      instruction,
+      key: buildAttributionKey(instruction.programId, instruction.depth),
+    });
+
+    if (instruction.innerInstructions.length > 0) {
+      flattened.push(...flattenParsedInstructions(instruction.innerInstructions));
+    }
+  }
+
+  return flattened;
+}
+
+function countAttributionKeys(keys: Iterable<string>): Map<string, number> {
+  const counts = new Map<string, number>();
+
+  for (const key of keys) {
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+
+  return counts;
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
+
+function calculateNodeAttributionConfidence(
+  parsedCount: number,
+  traceCount: number,
+  isTraceTruncated: boolean
+): number {
+  if (traceCount <= 0) {
+    return 0;
+  }
+
+  let confidence = 1;
+
+  // Same program/depth repeated across multiple nodes is deterministic but less unique.
+  if (parsedCount > 1 || traceCount > 1) {
+    confidence -= 0.2;
+  }
+
+  // Cardinality mismatch between parsed and traced nodes increases uncertainty.
+  if (parsedCount !== traceCount) {
+    confidence -= 0.25;
+  }
+
+  if (isTraceTruncated) {
+    confidence -= 0.2;
+  }
+
+  return clamp(confidence, 0, 1);
+}
+
 // Uses program + depth to disambiguate repeated invokes in different CPI levels.
 function buildAttributionKey(programId: string, depth: number): string {
   return `${programId}::${depth}`;
 }
 
 // Builds CU queues keyed by programId::depth so multiple invokes keep their original order.
-function buildCUQueues(logMessages: string[]): Map<string, number[]> {
-  const queues = new Map<string, number[]>();
-
+function buildCUQueues(logMessages: string[]): CUQueueBuildResult {
   if (logMessages.length === 0) {
-    return queues;
+    return {
+      queues: new Map<string, CUAttributionEntry[]>(),
+      keyCounts: new Map<string, number>(),
+      isTraceTruncated: false,
+    };
   }
 
   const trace = buildCPITree(logMessages);
   const snapshots = flattenExecutionSnapshots(trace.roots);
+  let traceOrdinal = 0;
+
+  const attributionQueues = new Map<string, CUAttributionEntry[]>();
+  const traceKeyCounts = new Map<string, number>();
 
   for (const snapshot of snapshots) {
     if (typeof snapshot.computeUnitsConsumed !== 'number') {
@@ -241,31 +323,88 @@ function buildCUQueues(logMessages: string[]): Map<string, number[]> {
     // CPI tree depth starts at 1 for outer instructions, parser depth starts at 0.
     const normalizedDepth = Math.max(snapshot.depth - 1, 0);
     const key = buildAttributionKey(snapshot.programId, normalizedDepth);
-    const existingQueue = queues.get(key) ?? [];
-    existingQueue.push(snapshot.computeUnitsConsumed);
-    queues.set(key, existingQueue);
+    const existingQueue = attributionQueues.get(key) ?? [];
+    existingQueue.push({
+      cuConsumed: snapshot.computeUnitsConsumed,
+      traceOrdinal,
+    });
+    attributionQueues.set(key, existingQueue);
+    traceKeyCounts.set(key, (traceKeyCounts.get(key) ?? 0) + 1);
+    traceOrdinal += 1;
   }
 
-  return queues;
+  return {
+    queues: attributionQueues,
+    keyCounts: traceKeyCounts,
+    isTraceTruncated: trace.isTruncated,
+  };
 }
 
-// Walks parsed instructions and consumes one CU value per matching invocation.
 function attributeCUToInstructionTree(
   instructions: ParsedInstruction[],
-  queues: Map<string, number[]>
-): void {
-  for (const instruction of instructions) {
-    const key = buildAttributionKey(instruction.programId, instruction.depth);
-    const queue = queues.get(key);
+  queueBuildResult: CUQueueBuildResult
+): ParsedTransaction['cuAttribution'] {
+  const flattenedInstructions = flattenParsedInstructions(instructions);
+  const parsedKeyCounts = countAttributionKeys(flattenedInstructions.map((entry) => entry.key));
+  const consumedTraceOrdinals = new Set<number>();
 
-    if (queue && queue.length > 0) {
-      instruction.cuConsumed = queue.shift();
+  let matchedNodes = 0;
+  let confidenceAccumulator = 0;
+  let doubleAttributionCount = 0;
+
+  for (const entry of flattenedInstructions) {
+    const queue = queueBuildResult.queues.get(entry.key);
+    const parsedCount = parsedKeyCounts.get(entry.key) ?? 0;
+    const traceCount = queueBuildResult.keyCounts.get(entry.key) ?? 0;
+
+    entry.instruction.cuAttributionKey = entry.key;
+
+    if (!queue || queue.length === 0) {
+      entry.instruction.cuAttributionConfidence = 0;
+      continue;
     }
 
-    if (instruction.innerInstructions.length > 0) {
-      attributeCUToInstructionTree(instruction.innerInstructions, queues);
+    const matchedCU = queue.shift()!;
+    entry.instruction.cuConsumed = matchedCU.cuConsumed;
+    entry.instruction.cuAttributionTraceOrdinal = matchedCU.traceOrdinal;
+
+    if (consumedTraceOrdinals.has(matchedCU.traceOrdinal)) {
+      doubleAttributionCount += 1;
     }
+    consumedTraceOrdinals.add(matchedCU.traceOrdinal);
+
+    const confidence = calculateNodeAttributionConfidence(
+      parsedCount,
+      traceCount,
+      queueBuildResult.isTraceTruncated
+    );
+    entry.instruction.cuAttributionConfidence = confidence;
+    confidenceAccumulator += confidence;
+    matchedNodes += 1;
   }
+
+  let unmatchedCUEntries = 0;
+  for (const queue of queueBuildResult.queues.values()) {
+    unmatchedCUEntries += queue.length;
+  }
+
+  const totalNodes = flattenedInstructions.length;
+  const ambiguousKeys = [...parsedKeyCounts.keys()].filter((key) => {
+    const parsedCount = parsedKeyCounts.get(key) ?? 0;
+    const traceCount = queueBuildResult.keyCounts.get(key) ?? 0;
+    return Math.max(parsedCount, traceCount) > 1;
+  }).length;
+
+  return {
+    totalNodes,
+    matchedNodes,
+    unmatchedNodes: totalNodes - matchedNodes,
+    unmatchedCUEntries,
+    ambiguousKeys,
+    confidence: totalNodes > 0 ? Number((confidenceAccumulator / totalNodes).toFixed(4)) : 1,
+    doubleAttributionCount,
+    traceTruncated: queueBuildResult.isTraceTruncated,
+  };
 }
 
 export function parseTransaction(bundle: RawTransactionBundle): ParsedTransaction {
@@ -291,8 +430,8 @@ export function parseTransaction(bundle: RawTransactionBundle): ParsedTransactio
 
   // CU attribution is optional: if logs are missing, instructions remain without cuConsumed.
   const logMessages = getBundleLogMessages(bundle);
-  const cuQueues = buildCUQueues(logMessages);
-  attributeCUToInstructionTree(parsedInstructions, cuQueues);
+  const queueBuildResult = buildCUQueues(logMessages);
+  const cuAttribution = attributeCUToInstructionTree(parsedInstructions, queueBuildResult);
 
   return {
     signature: bundle.signature,
@@ -301,5 +440,6 @@ export function parseTransaction(bundle: RawTransactionBundle): ParsedTransactio
     success: bundle.err == null,
     fee: inferFee(bundle),
     instructions: parsedInstructions,
+    cuAttribution,
   };
 }

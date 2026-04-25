@@ -4,9 +4,6 @@ import { AnalyzedTransaction, Insight, ProviderInsight } from '../../src/analysi
 
 describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
   
-  /**
-   * Rule 1: Execution Failure
-   */
   it('should detect a critical execution failure', async () => {
     const mockTx = {
       parsed: { success: false },
@@ -19,9 +16,6 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
     expect(report.insights[0].severity).toBe('critical');
   });
 
-  /**
-   * Rule 2: CU Bottleneck
-   */
   it('should identify a performance bottleneck', async () => {
     const mockTx = {
       parsed: { success: true },
@@ -42,9 +36,6 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
     expect(report.insights.some(i => i.type === 'CU_BOTTLENECK')).toBe(true);
   });
 
-  /**
-   * Rule 3: CU Waste
-   */
   it('should suggest optimization for high CU waste', async () => {
     const mockTx = {
       parsed: { success: true },
@@ -62,9 +53,6 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
     expect(waste?.recommendation).toContain('44');
   });
 
-  /**
-   * Rule 4: Budget Risk (>90%)
-   */
   it('should warn when transaction is near compute budget limit', async () => {
     const mockTx = {
       parsed: { success: true },
@@ -81,9 +69,6 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
     expect(report.insights.find(i => i.type === 'BUDGET_RISK')?.severity).toBe('warning');
   });
 
-  /**
-   * Rule 5: Deep CPI (Depth > 3)
-   */
   it('should detect high complexity in deep CPI trees', async () => {
     const mockTx = {
       parsed: { success: true },
@@ -96,9 +81,6 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
     expect(report.insights.find(i => i.type === 'DEEP_CPI')?.severity).toBe('info');
   });
 
-  /**
-   * Ranking System: Critical > Warning > Info
-   */
   it('should rank critical failure above all other insights', async () => {
     const mockTx = {
       parsed: { success: false },
@@ -114,13 +96,44 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
     expect(report.insights[0].type).toBe('EXECUTION_FAILURE');
     expect(report.insights[1].type).toBe('BUDGET_RISK');
   });
+
+  it('should report low-confidence CU attribution for diagnostics', async () => {
+    const mockTx = {
+      parsed: {
+        success: true,
+        cuAttribution: {
+          totalNodes: 3,
+          matchedNodes: 2,
+          unmatchedNodes: 1,
+          unmatchedCUEntries: 2,
+          ambiguousKeys: 1,
+          confidence: 0.45,
+          doubleAttributionCount: 0,
+          traceTruncated: false,
+        },
+      },
+      cuProfile: {
+        totalConsumed: 50000,
+        totalLimit: 200000,
+        utilizationPercent: 25,
+      },
+      cpiTree: { totalDepth: 1 },
+    } as unknown as AnalyzedTransaction;
+
+    const report = await analyzeTransaction(mockTx);
+    const qualityInsight = report.insights.find(
+      (insight) => insight.type === 'CU_ATTRIBUTION_LOW_CONFIDENCE'
+    );
+
+    expect(qualityInsight).toBeDefined();
+    expect(qualityInsight?.severity).toBe('warning');
+    expect(qualityInsight?.context?.confidence).toBe(0.45);
+  });
+
 });
 
 describe('Hybrid Architecture - Provider Integration', () => {
   
-  /**
-   * Fallback: No provider injected - rules-only operation
-   */
   it('should return rule-based insights when no provider is injected', async () => {
     const mockTx = {
       parsed: { success: false },
@@ -133,9 +146,6 @@ describe('Hybrid Architecture - Provider Integration', () => {
     expect(report.insights.length).toBeGreaterThan(0);
   });
 
-  /**
-   * Fallback: Provider throws error - graceful degradation
-   */
   it('should fallback to rule-based insights when provider throws an error', async () => {
     const mockProvider: InsightProvider = {
       fetchInsights: async () => {
@@ -154,9 +164,6 @@ describe('Hybrid Architecture - Provider Integration', () => {
     expect(report.insights.length).toBeGreaterThan(0);
   });
 
-  /**
-   * Merge: Deduplication by type, priority by severity
-   */
   it('should merge and deduplicate insights from rules and provider', async () => {
     const mockProvider: InsightProvider = {
       fetchInsights: async () => [
@@ -187,9 +194,6 @@ describe('Hybrid Architecture - Provider Integration', () => {
     expect(failureInsights[0].severity).toBe('critical');
   });
 
-  /**
-   * mergeInsights function: Different insight types
-   */
   it('should keep separate insights when rule and provider return different types', () => {
     const ruleInsights: Insight[] = [
       {
@@ -223,4 +227,5 @@ describe('Hybrid Architecture - Provider Integration', () => {
     expect(merged[0].type).toBe('CU_BOTTLENECK');
     expect(merged[1].type).toBe('BUDGET_RISK');
   });
+
 });
