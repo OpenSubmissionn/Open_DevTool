@@ -15,8 +15,11 @@ import {
   type CPITree,
   type ParsedLogs
 } from '@open/services';
- 
-// JSON renderer
+
+// MCP Integration
+import { McpInsightProvider } from '@open/services';
+
+// 2. JSON rendering output
 import { renderJSON } from '@open/services';
  
 // Terminal renderer (no Ink)
@@ -114,9 +117,10 @@ export const registerTxCommand = (program: Command) => {
           accountDiffs
         );
 
-        // Step 4: Rule-based Intelligence
+        // Step 4: Rule-based Intelligence + MCP Integration
         spinner.text = chalk.cyan('Generating actionable insights...');
-        const insightsReport = await analyzeTransaction(analyzed);
+        const mcpProvider = new McpInsightProvider();
+        const insightsReport = await analyzeTransaction(analyzed, [mcpProvider]);
 
         spinner.succeed(chalk.green('Analysis Complete!'));
  
