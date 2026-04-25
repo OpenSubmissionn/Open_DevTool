@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 
 // Define the expected schema for a benchmark entry
 interface Benchmark {
@@ -64,6 +65,11 @@ function validateEntry(entry: any, index: number): entry is Benchmark {
  */
 function validateBenchmarks() {
   console.log('Running benchmark schema validation...');
+
+  // --- FIX: Replace __dirname with import.meta.url for ES Module compatibility ---
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  // --- END FIX ---
 
   const filePath = path.join(
     __dirname,
