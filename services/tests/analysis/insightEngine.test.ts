@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { analyzeTransaction, mergeInsights } from '../../src/analysis/insightEngine';
-import { AnalyzedTransaction, Insight, InsightContext, InsightProvider, ProviderInsight } from '../../src/analysis/types';
+import { analyzeTransaction, InsightProvider, mergeInsights } from '../../src/analysis/insightEngine';
+import { AnalyzedTransaction, Insight } from '../../src/analysis/types';
 
 describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
   
@@ -59,8 +59,7 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
     const report = await analyzeTransaction(mockTx);
     const waste = report.insights.find(i => i.type === 'CU_WASTE');
     expect(waste).toBeDefined();
-    // Testamos apenas o '44' para evitar conflitos de ponto/vírgula (40k * 1.1)
-    expect(waste?.recommendation).toContain('44'); 
+    expect(waste?.recommendation).toContain('44');
   });
 
   /**
@@ -72,7 +71,7 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
       cuProfile: {
         totalConsumed: 185000,
         totalLimit: 200000,
-        utilizationPercent: 92.5 // > 90%
+        utilizationPercent: 92.5
       },
       cpiTree: { totalDepth: 1 }
     } as unknown as AnalyzedTransaction;
@@ -89,7 +88,7 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
     const mockTx = {
       parsed: { success: true },
       cuProfile: { totalConsumed: 10000, totalLimit: 200000, utilizationPercent: 5 },
-      cpiTree: { totalDepth: 5 } // > 3
+      cpiTree: { totalDepth: 5 }
     } as unknown as AnalyzedTransaction;
 
     const report = await analyzeTransaction(mockTx);
@@ -98,17 +97,17 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
   });
 
   /**
-   * Logic: Ranking System
+   * Ranking System: Critical > Warning > Info
    */
   it('should rank critical failure above all other insights', async () => {
     const mockTx = {
-      parsed: { success: false }, // Critical
+      parsed: { success: false },
       cuProfile: { 
         totalConsumed: 195000, 
         totalLimit: 200000, 
-        utilizationPercent: 97.5 // Warning
+        utilizationPercent: 97.5
       },
-      cpiTree: { totalDepth: 5 } // Info
+      cpiTree: { totalDepth: 5 }
     } as unknown as AnalyzedTransaction;
 
     const report = await analyzeTransaction(mockTx);
@@ -116,8 +115,13 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
     expect(report.insights[1].type).toBe('BUDGET_RISK');
   });
 });
-describe('MCP Integration', () => {
-  it('should tag rule-based insights with source: rule', async () => {
+
+describe('Hybrid Architecture - Provider Integration', () => {
+  
+  /**
+   * Fallback: No provider injected - rules-only operation
+   */
+  it('should return rule-based insights when no provider is injected', async () => {
     const mockTx = {
       parsed: { success: false },
       cuProfile: { totalConsumed: 5000, totalLimit: 200000, utilizationPercent: 2.5 },
@@ -125,95 +129,86 @@ describe('MCP Integration', () => {
     } as unknown as AnalyzedTransaction;
 
     const report = await analyzeTransaction(mockTx);
-    const failureInsight = report.insights.find(i => i.type === 'EXECUTION_FAILURE');
-    expect(failureInsight?.source).toBe('rule');
-    expect(failureInsight?.codeSuggestions).toEqual([]);
+    expect(report.insights.some(i => i.type === 'EXECUTION_FAILURE')).toBe(true);
+    expect(report.insights.length).toBeGreaterThan(0);
   });
 
-  it('should merge insights and create hybrid source when rule and MCP agree', () => {
-    const ruleInsights: Insight[] = [
-      {
-        type: 'CU_BOTTLENECK',
-        severity: 'critical',
-        title: 'Performance Bottleneck',
-        message: 'High CU usage',
-        recommendation: 'Optimize',
-        source: 'rule',
-        codeSuggestions: []
+  /**
+   * Fallback: Provider throws error - graceful degradation
+   */
+  it('should fallback to rule-based insights when provider throws an error', async () => {
+    const mockProvider: InsightProvider = {
+      fetchInsights: async () => {
+        throw new Error('Provider failed');
       }
-    ];
+    };
 
-    const mcpInsights: ProviderInsight[] = [
-      {
-        insight: {
-          type: 'CU_BOTTLENECK',
-          severity: 'critical',
-          title: 'Performance Bottleneck',
-          message: 'High CU usage',
-          recommendation: 'Optimize',
-          source: 'mcp',
-          codeSuggestions: [{ description: 'Reduce loops', estimatedSavingsCU: 1000 }]
-        },
-        source: 'mcp'
-      }
-    ];
-
-    const merged = mergeInsights(ruleInsights, mcpInsights);
-    expect(merged).toHaveLength(1);
-    expect(merged[0].source).toBe('hybrid');
-    expect(merged[0].codeSuggestions).toEqual([{ description: 'Reduce loops', estimatedSavingsCU: 1000 }]);
-  });
-
-  it('should continue with rule-based insights when provider throws', async () => {
     const mockTx = {
       parsed: { success: false },
-      cuProfile: { totalConsumed: 10000, totalLimit: 200000, utilizationPercent: 5 },
+      cuProfile: { totalConsumed: 5000, totalLimit: 200000, utilizationPercent: 2.5 },
       cpiTree: { totalDepth: 1 }
     } as unknown as AnalyzedTransaction;
 
-    const throwingProvider = {
-      fetchInsights: async (_context: InsightContext): Promise<ProviderInsight[]> => {
-        throw new Error('MCP failure');
-      }
-    } as InsightProvider;
-
-    const report = await analyzeTransaction(mockTx, [throwingProvider]);
-
+    const report = await analyzeTransaction(mockTx, mockProvider);
+    expect(report.insights.some(i => i.type === 'EXECUTION_FAILURE')).toBe(true);
     expect(report.insights.length).toBeGreaterThan(0);
-    expect(report.insights.every(i => i.source === 'rule')).toBe(true);
   });
 
-  it('should keep separate insights when rule and MCP disagree', () => {
+  /**
+   * Merge: Deduplication by type, priority by severity
+   */
+  it('should merge and deduplicate insights from rules and provider', async () => {
+    const mockProvider: InsightProvider = {
+      fetchInsights: async () => [
+        {
+          type: 'EXECUTION_FAILURE',
+          severity: 'warning' as const,
+          title: 'Provider Failure Insight',
+          message: 'Provider detected failure',
+          recommendation: 'Provider recommendation'
+        }
+      ]
+    };
+
+    const mockTx = {
+      parsed: { success: false },
+      cuProfile: { totalConsumed: 5000, totalLimit: 200000, utilizationPercent: 2.5 },
+      cpiTree: { totalDepth: 1 }
+    } as unknown as AnalyzedTransaction;
+
+    const report = await analyzeTransaction(mockTx, mockProvider);
+    const failureInsights = report.insights.filter(i => i.type === 'EXECUTION_FAILURE');
+    expect(failureInsights.length).toBe(1);
+    expect(failureInsights[0].severity).toBe('critical');
+  });
+
+  /**
+   * mergeInsights function: Different insight types
+   */
+  it('should keep separate insights when rule and provider return different types', () => {
     const ruleInsights: Insight[] = [
       {
         type: 'CU_BOTTLENECK',
         severity: 'critical',
         title: 'Performance Bottleneck',
         message: 'High CU usage',
-        recommendation: 'Optimize',
-        source: 'rule',
-        codeSuggestions: []
+        recommendation: 'Optimize'
       }
     ];
 
-    const mcpInsights: ProviderInsight[] = [
+    const providerInsights: Insight[] = [
       {
-        insight: {
-          type: 'DIFFERENT_ISSUE',
-          severity: 'warning',
-          title: 'Different Issue',
-          message: 'Something else',
-          recommendation: 'Fix this',
-          source: 'mcp',
-          codeSuggestions: []
-        },
-        source: 'mcp'
+        type: 'BUDGET_RISK',
+        severity: 'warning',
+        title: 'Budget at Risk',
+        message: 'Nearing limit',
+        recommendation: 'Increase budget'
       }
     ];
 
-    const merged = mergeInsights(ruleInsights, mcpInsights);
+    const merged = mergeInsights(ruleInsights, providerInsights);
     expect(merged).toHaveLength(2);
-    expect(merged[0].source).toBe('rule');
-    expect(merged[1].source).toBe('mcp');
+    expect(merged[0].type).toBe('CU_BOTTLENECK');
+    expect(merged[1].type).toBe('BUDGET_RISK');
   });
 });

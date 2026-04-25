@@ -127,8 +127,6 @@ const checkDeepCPI = (tx: AnalyzedTransaction): Insight | null => {
   };
 };
 
-// --- CORE ENGINE ---
-
 /**
  * Merges insights from multiple providers, tagging sources and deduplicating.
  */
@@ -199,6 +197,54 @@ export const analyzeTransaction = async (
   const ruleInsights = rules
     .map(rule => rule(tx))
     .filter((i): i is Insight => i !== null);
+}
+
+/**
+ * Merges rule-based and provider insights into a unified list.
+ * Deduplicates by insight type, prioritizing higher severity.
+ */
+export function mergeInsights(ruleInsights: Insight[], providerInsights: ProviderInsight[]): Insight[] {
+  const allInsights = [...ruleInsights, ...providerInsights];
+
+  // Group by type
+  const grouped = allInsights.reduce((acc, insight) => {
+    if (!acc[insight.type]) {
+      acc[insight.type] = [];
+    }
+    acc[insight.type].push(insight);
+    return acc;
+  }, {} as Record<string, Insight[]>);
+
+  // For each type, select the one with highest severity
+  const severityOrder = { critical: 3, warning: 2, info: 1 };
+  return Object.values(grouped).map(group => 
+    group.sort((a, b) => severityOrder[b.severity] - severityOrder[a.severity])[0]
+  );
+}
+
+/**
+ * Analyzes a transaction using rule-based insights and optional external provider.
+ * Falls back to rules-only if provider fails.
+ */
+export async function analyzeTransaction(tx: AnalyzedTransaction, provider?: InsightProvider): Promise<InsightReport> {
+  const ruleInsights = generateRuleInsights(tx);
+
+  let providerInsights: ProviderInsight[] = [];
+  if (provider) {
+    try {
+      providerInsights = await provider.fetchInsights(tx);
+    } catch (error) {
+      // Fallback: log the error and proceed with rules only
+      console.warn('Insight provider failed, falling back to rule-based insights only:', error);
+    }
+  }
+
+  const insights = mergeInsights(ruleInsights, providerInsights);
+
+  // Determine primary bottleneck: critical > warning > info, or first insight
+  const primaryBottleneck = insights.find(i => i.severity === 'critical') ||
+                           insights.find(i => i.severity === 'warning') ||
+                           insights[0] || null;
 
   // Fetch insights from providers
   const providerResults: ProviderInsight[] = [];
@@ -225,4 +271,4 @@ export const analyzeTransaction = async (
     insights: mergedInsights,
     totalEstimatedSavings: tx.cuProfile.totalLimit - getCanonicalConsumed(tx)
   };
-};
+}

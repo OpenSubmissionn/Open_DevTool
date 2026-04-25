@@ -12,7 +12,7 @@
  * Returns a ParsedTransaction with execution status and parsed instruction tree.
  */
 
-import { getProgramName } from '../solana/programs';
+import { getProgramNameSync } from '../solana/programs';
 import { buildCPITree, type ExecutionSnapshot } from './cpiTreeBuilder';
 import type { ParsedInstruction, ParsedTransaction, RawTransactionBundle } from './types';
 
@@ -152,31 +152,29 @@ function getNestedInnerInstructions(instruction: UnknownRecord): UnknownRecord[]
 }
 
 // Parses an instruction and any nested CPI children attached to it.
-async function parseInstructionTree(
-	instruction: UnknownRecord,
-	accountKeys: string[],
-	depth: number,
-	rawChildren: UnknownRecord[] = []
-): Promise<ParsedInstruction> {
-	const programId = resolveProgramId(instruction, accountKeys);
-	const accounts = resolveAccounts(instruction, accountKeys);
-	const data = normalizeDataToHex(instruction.data);
-	const childInstructions =
-		rawChildren.length > 0 ? rawChildren : getNestedInnerInstructions(instruction);
+function parseInstructionTree(
+  instruction: UnknownRecord,
+  accountKeys: string[],
+  depth: number,
+  rawChildren: UnknownRecord[] = []
+): ParsedInstruction {
+  const programId = resolveProgramId(instruction, accountKeys);
+  const accounts = resolveAccounts(instruction, accountKeys);
+  const data = normalizeDataToHex(instruction.data);
+  const childInstructions =
+    rawChildren.length > 0 ? rawChildren : getNestedInnerInstructions(instruction);
 
-	const innerInstructions = await Promise.all(
-		childInstructions.map((childInstruction) =>
-			parseInstructionTree(childInstruction, accountKeys, depth + 1)
-		)
-	);
+  const innerInstructions = childInstructions.map((childInstruction) =>
+    parseInstructionTree(childInstruction, accountKeys, depth + 1)
+  );
 
-	return {
-		programId,
-		programName: await getProgramName(programId),
-		accounts,
-		data,
-		depth,
-		innerInstructions,
+  return {
+    programId,
+    programName: getProgramNameSync(programId),
+    accounts,
+    data,
+    depth,
+    innerInstructions,
   };
 }
 
@@ -270,41 +268,38 @@ function attributeCUToInstructionTree(
   }
 }
 
-export async function parseTransaction(bundle: RawTransactionBundle): Promise<ParsedTransaction> {
-	if (!bundle.signature || typeof bundle.signature !== 'string') {
-		throw new Error('Invalid transaction bundle: missing signature');
-	}
+export function parseTransaction(bundle: RawTransactionBundle): ParsedTransaction {
+  if (!bundle.signature || typeof bundle.signature !== 'string') {
+    throw new Error('Invalid transaction bundle: missing signature');
+  }
 
-	// Account keys are normalized once and reused for both outer and inner instructions.
-	const accountKeys = (bundle.accountKeys ?? []).map((accountKey) =>
-		normalizeAccountKey(accountKey)
-	);
+  // Account keys are normalized once and reused for both outer and inner instructions.
+  const accountKeys = (bundle.accountKeys ?? []).map((accountKey) =>
+    normalizeAccountKey(accountKey)
+  );
   const outerInstructions = getOuterInstructions(bundle);
-	const innerInstructionMap = getInnerInstructionMap(bundle.innerInstructions);
+  const innerInstructionMap = getInnerInstructionMap(bundle.innerInstructions);
 
-	const parsedInstructions: ParsedInstruction[] = await Promise.all(
-		outerInstructions.map((instruction, index) => {
-			return parseInstructionTree(
-				instruction,
-				accountKeys,
-				0,
-				innerInstructionMap.get(index) ?? []
-			);
-		})
-	);
+  const parsedInstructions: ParsedInstruction[] = outerInstructions.map((instruction, index) => {
+    return parseInstructionTree(
+      instruction,
+      accountKeys,
+      0,
+      innerInstructionMap.get(index) ?? []
+    );
+  });
 
-	// CU attribution is optional: if logs are missing, instructions remain without cuConsumed.
-	const logMessages = getBundleLogMessages(bundle);
-	const cuQueues = buildCUQueues(logMessages);
-	attributeCUToInstructionTree(parsedInstructions, cuQueues);
+  // CU attribution is optional: if logs are missing, instructions remain without cuConsumed.
+  const logMessages = getBundleLogMessages(bundle);
+  const cuQueues = buildCUQueues(logMessages);
+  attributeCUToInstructionTree(parsedInstructions, cuQueues);
 
-	return {
-		signature: bundle.signature,
-		slot: bundle.slot,
-		blockTime: bundle.blockTime ?? null,
-		success: bundle.err == null,
-		fee: inferFee(bundle),
-		instructions: parsedInstructions
-	};
-	
+  return {
+    signature: bundle.signature,
+    slot: bundle.slot,
+    blockTime: bundle.blockTime ?? null,
+    success: bundle.err == null,
+    fee: inferFee(bundle),
+    instructions: parsedInstructions,
+  };
 }

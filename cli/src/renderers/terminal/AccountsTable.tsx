@@ -1,3 +1,5 @@
+import React from 'react';
+import { Text } from 'ink';
 import Table from "cli-table3";
 import chalk from "chalk";
 import { AccountDiff } from "../../../../services/src/analysis/types";
@@ -28,8 +30,10 @@ export const AccountsTable = ({ accounts }: Props) => {
     ]);
   });
 
-  return table.toString();
+  //ONLY FIX: wrap string in <Text> for Ink compatibility
+  return <Text>{table.toString()}</Text>;
 };
+
 
 // Helpers
 
