@@ -73,6 +73,15 @@ export async function getProgramName(programId: string): Promise<string> {
 }
 
 /**
+ * Synchronous program name lookup for parsing hot paths.
+ * This only uses the local registry and never performs network calls.
+ */
+export function getProgramNameSync(programId: string): string {
+  const localProgram = programsData[programId as keyof typeof programsData];
+  return localProgram?.name ?? 'Unknown Program';
+}
+
+/**
  * Get full program info (name + category + description).
  * It first checks the local JSON file and then falls back to an API call.
  *
