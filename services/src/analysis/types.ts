@@ -338,6 +338,28 @@ export interface ParsedLogs {
 }
  
 /**
+ * Transfer detected in a transaction (SOL or SPL token).
+ */
+export interface TransferInfo {
+  /** Sender account address. Empty string when direction is inbound. */
+  from: string;
+  /** Receiver account address. Empty string when direction is outbound. */
+  to: string;
+  /** Raw transfer amount as string to avoid precision loss. */
+  amount: string;
+  /** Token mint address, or 'SOL' for native transfers. */
+  token: string;
+  /** Token decimals. */
+  decimals: number;
+  /** Human-readable transfer amount. */
+  uiAmount: number;
+  /** USD value of the transfer, null when price is unavailable. */
+  usdValue: number | null;
+  /** Whether this transfer shows spam heuristic signals. */
+  isSpamSuspect: boolean;
+}
+ 
+/**
  * Compute unit execution cost broken down in lamports, SOL and USD.
  */
 export interface CUCost {
@@ -373,6 +395,8 @@ export interface AnalyzedTransaction {
   logs: ParsedLogs;
   /** CU execution cost in lamports, SOL and USD. */
   cuCost?: CUCost;
+  /** Transfers detected in the transaction. */
+  transfers?: TransferInfo[];
   /** Detected transaction type, when available. */
   txType?: string;
 }

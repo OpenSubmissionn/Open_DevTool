@@ -38,6 +38,6 @@ export async function mergeAnalysis(
     accountDiffs,
     logs,
     cuCost: costAnalysis.cuCost,
+    transfers: costAnalysis.transfers,
   };
 }
- 
