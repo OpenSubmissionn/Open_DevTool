@@ -1,6 +1,7 @@
 import { RawTransactionBundle } from './types';
 import { AnalyzedTransaction, ParsedLogs, CUProfile, CPITree, AccountDiff } from './types';
 import { parseTransaction } from './txParser';
+import { IdlCache } from '../solana/idlCache';
 
 export async function mergeAnalysis(
   bundle: RawTransactionBundle,
@@ -21,4 +22,8 @@ export async function mergeAnalysis(
     accountDiffs,
     logs,
   };
+}
+
+export interface MergeOptions {
+  idlCache?: IdlCache;
 }
