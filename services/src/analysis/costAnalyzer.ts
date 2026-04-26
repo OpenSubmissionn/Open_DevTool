@@ -20,8 +20,16 @@ export interface CostAnalysis {
 const SAFE_MINTS = new Set([
   'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
   'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', // USDT
-  'So11111111111111111111111111111111111111112', // Wrapped SOL
+  'So11111111111111111111111111111111111111112',   // Wrapped SOL
 ]);
+ 
+interface MintAggregate {
+  sender?: string;
+  receiver?: string;
+  uiAmount: number;
+  decimals: number;
+  isSpamSuspect: boolean;
+}
  
 export function analyzeCosts(
   bundle: RawTransactionBundle,
@@ -30,7 +38,7 @@ export function analyzeCosts(
 ): CostAnalysis {
   const transfers: TransferInfo[] = [];
  
-  // Analyze SPL token transfers
+  // Analyze SPL token transfers — grouped by mint to get correct from/to
   if (bundle.postTokenBalances && bundle.postTokenBalances.length > 0) {
     const preMap = new Map<number, { amount: string; decimals: number }>();
     if (bundle.preTokenBalances) {
@@ -42,37 +50,40 @@ export function analyzeCosts(
       }
     }
  
+    const byMint = new Map<string, MintAggregate>();
+ 
     for (const post of bundle.postTokenBalances) {
       const pre = preMap.get(post.accountIndex);
-      const preAmount = pre ? pre.amount : '0';
-      const postAmount = post.uiTokenAmount.amount;
+      const preAmt = BigInt(pre?.amount ?? '0');
+      const postAmt = BigInt(post.uiTokenAmount.amount);
+      const delta = postAmt - preAmt;
+ 
+      if (delta === 0n) continue;
+ 
       const decimals = post.uiTokenAmount.decimals;
+      const uiAmount = Number(delta < 0n ? -delta : delta) / Math.pow(10, decimals);
+      const isSpamSuspect = uiAmount > 1_000_000 && !SAFE_MINTS.has(post.mint);
  
-      const preBigInt = BigInt(preAmount);
-      const postBigInt = BigInt(postAmount);
-      const delta = postBigInt - preBigInt;
+      const entry: MintAggregate =
+        byMint.get(post.mint) ?? { uiAmount, decimals, isSpamSuspect };
  
-      if (delta === BigInt(0)) {
-        continue; // No change
-      }
+      if (delta < 0n) entry.sender = bundle.accountKeys[post.accountIndex];
+      else entry.receiver = bundle.accountKeys[post.accountIndex];
  
-      const absAmount = delta < BigInt(0) ? delta * BigInt(-1) : delta;
-      const uiAmount = Number(absAmount) / Math.pow(10, decimals);
+      byMint.set(post.mint, entry);
+    }
  
-      const isSpamSuspect = uiAmount > 1000000 && !SAFE_MINTS.has(post.mint);
- 
-      const transfer: TransferInfo = {
-        from: delta < BigInt(0) ? bundle.accountKeys[post.accountIndex] : '',
-        to: delta > BigInt(0) ? bundle.accountKeys[post.accountIndex] : '',
-        amount: absAmount.toString(),
-        token: post.mint,
-        decimals,
-        uiAmount,
+    for (const [mint, entry] of byMint) {
+      transfers.push({
+        from: entry.sender ?? '',
+        to: entry.receiver ?? '',
+        token: mint,
+        decimals: entry.decimals,
+        uiAmount: entry.uiAmount,
+        amount: (entry.uiAmount * Math.pow(10, entry.decimals)).toFixed(0),
         usdValue: null, // No price feed for SPL
-        isSpamSuspect,
-      };
- 
-      transfers.push(transfer);
+        isSpamSuspect: entry.isSpamSuspect,
+      });
     }
   }
  
@@ -87,11 +98,11 @@ export function analyzeCosts(
       // Only include meaningful deltas: delta > 0 (receiver) or delta < -5000 (sender, ignore fee noise)
       if (delta > 0 || delta < -5000) {
         const absAmount = Math.abs(delta);
-        const uiAmount = absAmount / 1_000_000_000; // SOL has 9 decimals
+        const uiAmount = absAmount / 1_000_000_000;
  
         const usdValue = solPriceUSD !== null ? uiAmount * solPriceUSD : null;
  
-        const transfer: TransferInfo = {
+        transfers.push({
           from: delta < 0 ? bundle.accountKeys[i] : '',
           to: delta > 0 ? bundle.accountKeys[i] : '',
           amount: absAmount.toString(),
@@ -100,9 +111,7 @@ export function analyzeCosts(
           uiAmount,
           usdValue,
           isSpamSuspect: false,
-        };
- 
-        transfers.push(transfer);
+        });
       }
     }
   }

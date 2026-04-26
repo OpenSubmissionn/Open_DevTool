@@ -1,3 +1,4 @@
+import { ComputeBudgetInstruction, ComputeBudgetProgram } from '@solana/web3.js';
 import { RawTransactionBundle } from './types';
 import { AnalyzedTransaction, ParsedLogs, CUProfile, CPITree, AccountDiff } from './types';
 import { parseTransaction } from './txParser';
@@ -9,8 +10,22 @@ function extractMicroLamportsPerCU(bundle: RawTransactionBundle): number {
  
   for (const ix of instructions) {
     if (ix?.programId?.toString() !== 'ComputeBudget111111111111111111111111111111') continue;
+ 
+    // Tenta parsed primeiro (só disponível com encoding jsonParsed)
     const price = ix?.parsed?.info?.microLamports;
     if (typeof price === 'number' && price >= 0) return price;
+ 
+    // Fallback: decodifica do data bruto
+    try {
+      const decoded = ComputeBudgetInstruction.decodeSetComputeUnitPrice({
+        programId: ComputeBudgetProgram.programId,
+        keys: [],
+        data: Buffer.from(ix.data, 'base64'),
+      });
+      return Number(decoded.microLamports);
+    } catch {
+      continue;
+    }
   }
  
   return 0;
