@@ -338,6 +338,19 @@ export interface ParsedLogs {
 }
 
 /**
+ * Represents the cost breakdown of a transaction in different units.
+ * Values are calculated from CU consumption using the fee formula:
+ * fee_lamports = (cu_consumed × micro_lamports_per_cu) / 1_000_000
+ */
+export interface CUCost {
+  cuConsumed: number;
+  microLamportsPerCU: number;
+  feeLamports: number;
+  feeSOL: number;
+  feeUSD: number | null;
+}
+
+/**
  * Complete analysis result for a transaction.
  */
 export interface AnalyzedTransaction {
@@ -349,6 +362,8 @@ export interface AnalyzedTransaction {
   parsed: ParsedTransaction;
   /** Compute unit consumption profile. */
   cuProfile: CUProfile;
+  /** Cost breakdown in lamports, SOL, and USD. */
+  cuCost?: CUCost;
   /** CPI call tree representation. */
   cpiTree: CPITree;
   /** Account differences identified in the transaction. */
