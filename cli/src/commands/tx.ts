@@ -133,7 +133,6 @@ export const registerTxCommand = (program: Command) => {
         const cpiTree = toCPITree(cpiTrace);
         const accountDiffs = computeAccountDiffs(rawBundle);
 
-        // Step 3: Merging all data
         // [NEW] idlCache is forwarded so mergeAnalysis → parseTransaction can
         //       decode Anchor instruction names without a network round-trip.
         spinner.text = chalk.cyan('Decoding instructions...');
