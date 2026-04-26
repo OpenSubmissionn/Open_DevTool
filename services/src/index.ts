@@ -12,8 +12,12 @@ export { ParsedLogs as ParsedLogsFromLogParser, parseLogsFromBundle } from './an
 export * from './analysis/cuProfiler';
 export * from './analysis/cpiTreeBuilder';
 export * from './analysis/merger';
-export * from './analysis/insightEngine';
+export { analyzeTransaction, mergeInsights } from './analysis/insightEngine';
 export * from './analysis/renderer';
 
 export * from './solana/rpc';
 export * from './solana/connection';
+
+// MCP Integration
+export * from './mcp/client';
+export * from './mcp/mcpInsightProvider';
