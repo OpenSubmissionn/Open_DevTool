@@ -6,7 +6,7 @@ import {
   IdlCache,
   fetchIdlWithCache,
   CACHE_FORMAT_VERSION,
-} from "../../src/solana/idlCache";
+} from "../../src/solana/idlcache";
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
