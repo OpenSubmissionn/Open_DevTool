@@ -2,7 +2,7 @@ import { ComputeBudgetInstruction, ComputeBudgetProgram } from '@solana/web3.js'
 import { RawTransactionBundle } from './types';
 import { AnalyzedTransaction, ParsedLogs, CUProfile, CPITree, AccountDiff } from './types';
 import { parseTransaction } from './txParser';
-import { IdlCache } from '../solana/idlCache';
+import { IdlCache } from '../solana/idlcache';
 import { analyzeCosts } from './costAnalyzer';
 
 export interface MergeOptions {
