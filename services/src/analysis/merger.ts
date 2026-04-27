@@ -1,7 +1,7 @@
 import { RawTransactionBundle } from './types';
 import { AnalyzedTransaction, ParsedLogs, CUProfile, CPITree, AccountDiff } from './types';
 import { parseTransaction } from './txParser';
-import { IdlCache } from '../solana/idlCache';
+import { IdlCache } from '../solana/idlcache';
 
 export interface MergeOptions {
   idlCache?: IdlCache;
