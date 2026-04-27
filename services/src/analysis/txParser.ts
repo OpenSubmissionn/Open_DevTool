@@ -15,7 +15,7 @@
 
 import { getProgramNameSync } from '../solana/programs';
 import { buildCPITree, type ExecutionSnapshot } from './cpiTreeBuilder';
-import { fetchIdlWithCache, IdlCache } from '../solana/idlCache';  
+import { fetchIdlWithCache, IdlCache } from '../solana/idlcache';  
 import type { ParsedInstruction, ParsedTransaction, RawTransactionBundle } from './types';
 
 // [NEW] AnchorProvider is only needed when IDL decoding is active.

@@ -83,8 +83,7 @@ export const registerTxCommand = (program: Command) => {
     .description('Full analysis of a Solana transaction')
     .option('--network <type>', 'Solana network (mainnet/devnet)')
     .option('--json', 'Output results in structured JSON format', false)
-    .option('--no-cache', 'Skip IDL cache and force network re-fetch', false) // [NEW]
-    .option('--verbose', 'Show cache hit rate and latency metrics', false)    // [NEW]
+    .option('--no-cache', 'Skip IDL cache and force network re-fetch')
     .action(async (signature: string, networkArg: string | undefined, options: any) => {
 
       // Validate signature
@@ -110,9 +109,12 @@ export const registerTxCommand = (program: Command) => {
 
       // [NEW] Create one IdlCache instance for the lifetime of this command.
       // noCache=true when --no-cache is passed; verbose=true when --verbose is passed.
+      const globalOpts = program.opts();
+      const verbose = globalOpts.verbose === true;
+      console.log('[debug] globalOpts.verbose:', globalOpts.verbose);
       const idlCache = new IdlCache({
         noCache: options.cache === false,   // commander inverts --no-cache → options.cache
-        verbose: options.verbose ?? false,
+        verbose,
       });
 
       const spinner = ora(`Initializing Open Insight Pipeline...`).start();
@@ -122,6 +124,18 @@ export const registerTxCommand = (program: Command) => {
         spinner.text = chalk.cyan('Fetching transaction bundle...');
         const selectedNetwork = resolvedNetwork as CLIOptions['network'];
         const rawBundle = await fetchTransaction(signature, selectedNetwork);
+
+        // [NEW] AnchorProvider read-only para buscar IDLs on-chain de programas desconhecidos.
+        const { Connection } = await import('@solana/web3.js');
+        const { AnchorProvider } = await import('@coral-xyz/anchor');
+        const rpcUrl = resolvedNetwork === 'mainnet'
+          ? 'https://api.mainnet-beta.solana.com'
+          : 'https://api.devnet.solana.com';
+        const anchorProvider = new AnchorProvider(
+          new Connection(rpcUrl, 'confirmed'),
+          { publicKey: null, signTransaction: async (tx: any) => tx, signAllTransactions: async (txs: any) => txs } as any,
+          { commitment: 'confirmed' }
+        );
 
         // Step 2: Analysis
         spinner.text = chalk.cyan('Parsing logs and CU...');
@@ -140,7 +154,7 @@ export const registerTxCommand = (program: Command) => {
           cuProfile,
           cpiTree,
           accountDiffs,
-          {idlCache},   
+          { idlCache, anchorProvider },  
         );
 
         // Step 4: Rule-based Intelligence + MCP Integration
@@ -149,10 +163,8 @@ export const registerTxCommand = (program: Command) => {
         const insightsReport = await analyzeTransaction(analyzed, [mcpProvider]);
 
         spinner.succeed(chalk.green('Analysis Complete!'));
-
-        // [NEW] Print cache metrics to stderr after success when --verbose.
-        if (options.verbose) {
-          idlCache.printMetrics();
+        if (verbose) {
+          process.nextTick(() => idlCache.printMetrics());
         }
 
         // Step 5: Output
@@ -168,7 +180,7 @@ export const registerTxCommand = (program: Command) => {
         console.error(chalk.yellow(`\nDetail: ${error.message}`));
 
         // [NEW] Still print metrics on error so cache behaviour is observable.
-        if (options.verbose) {
+        if (verbose) {
           idlCache.printMetrics();
         }
 

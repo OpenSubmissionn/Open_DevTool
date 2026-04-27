@@ -98,7 +98,7 @@ function sha256short(data: unknown): string {
 }
 
 function verboseLog(enabled: boolean, msg: string): void {
-  if (enabled) process.stderr.write(`[idl-cache] ${msg}\n`);
+  if (enabled) console.log(`[idl-cache] ${msg}`);
 }
 
 async function sleep(ms: number): Promise<void> {
@@ -154,6 +154,7 @@ export class IdlCache {
     this.ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
     this.noCache = options.noCache ?? false;
     this.verbose = options.verbose ?? false;
+    console.log(`[idl-cache][debug] Instanciado com verbose=${this.verbose}`);
     this.ensureCacheDirSync();
   }
 
@@ -184,6 +185,7 @@ export class IdlCache {
    * Never throws — callers always get a safe fallback.
    */
   get(programId: string): IdlCacheEntry | null {
+    console.log(`[idl-cache][debug] get() chamado para programId=${programId} | verbose=${this.verbose}`);
     if (this.noCache) {
       verboseLog(this.verbose, `bypass  ${programId} (--no-cache)`);
       return null;
@@ -331,9 +333,9 @@ export class IdlCache {
    * Called at the end of the `open tx` pipeline when --verbose is set.
    */
   printMetrics(): void {
-    process.stderr.write(
+    console.log(
       `[idl-cache] hits=${this.metrics.hits} misses=${this.metrics.misses} ` +
-        `errors=${this.metrics.errors} hit-rate=${this.metrics.hitRate()}\n`
+        `errors=${this.metrics.errors} hit-rate=${this.metrics.hitRate()}`
     );
   }
 }
