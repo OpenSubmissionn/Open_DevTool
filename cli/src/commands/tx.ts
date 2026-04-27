@@ -160,7 +160,7 @@ export const registerTxCommand = (program: Command) => {
         // Step 4: Rule-based Intelligence + MCP Integration
         spinner.text = chalk.cyan('Generating actionable insights...');
         const mcpProvider = new McpInsightProvider();
-        const insightsReport = await analyzeTransaction(analyzed, [mcpProvider]);
+        const insightsReport = await analyzeTransaction(analyzed, mcpProvider);
 
         spinner.succeed(chalk.green('Analysis Complete!'));
         if (verbose) {
