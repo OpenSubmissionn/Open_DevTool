@@ -11,10 +11,11 @@ export * from './analysis/txParser';
 export { ParsedLogs as ParsedLogsFromLogParser, parseLogsFromBundle } from './analysis/logParser';
 export * from './analysis/cuProfiler';
 export * from './analysis/cpiTreeBuilder';
+export * from './solana/idlCache';
+export type { IdlCacheOptions, FetchResult } from './solana/idlCache';
 export * from './analysis/merger';
 export { analyzeTransaction, mergeInsights } from './analysis/insightEngine';
 export * from './analysis/renderer';
-
 export * from './solana/rpc';
 export * from './solana/connection';
 

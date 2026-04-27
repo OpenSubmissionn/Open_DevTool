@@ -12,12 +12,10 @@ import {
   computeAccountDiffs,
   mergeAnalysis,
   analyzeTransaction,
+  IdlCache,
   type CPITree,
   type ParsedLogs,
-} from '@open/services';
-
-// IDL cache                                                       
-import { IdlCache } from '@open/services/solana/idlcache';          
+} from '@open/services';     
 
 // MCP Integration
 import { McpInsightProvider } from '@open/services';
@@ -142,7 +140,7 @@ export const registerTxCommand = (program: Command) => {
           cuProfile,
           cpiTree,
           accountDiffs,
-          idlCache,   
+          {idlCache},   
         );
 
         // Step 4: Rule-based Intelligence + MCP Integration
