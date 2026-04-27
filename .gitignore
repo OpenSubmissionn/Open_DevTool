@@ -9,7 +9,7 @@ package-lock.json
 CLAUDE.local.md
 
 # Untracked files
-.agents/
+.claude/
 .env.example
 .gitmodules
 .mcp.json
