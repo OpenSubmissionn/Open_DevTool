@@ -1,315 +1,209 @@
-import { createHash } from "crypto";
 import { BorshCoder, type Idl } from "@coral-xyz/anchor";
 import type { ParsedInstruction } from "../types";
+
+// Anchor IDLs for supported protocols
 import {
-	ORCA_WHIRLPOOL_IDL,
-	ORCA_WHIRLPOOL_PROGRAM_ID,
-	instructionDiscriminator,
-} from "./anchor-defs/anchor-idl-orca";
-import { JUPITER_V6_IDL, JUPITER_V6_PROGRAM_ID } from "./anchor-defs/anchor-idl-jupiter";
-import { RAYDIUM_AMM_IDL, RAYDIUM_AMM_PROGRAM_ID } from "./anchor-defs/anchor-idl-raydium";
+  ORCA_WHIRLPOOL_IDL,
+  ORCA_WHIRLPOOL_PROGRAM_ID,
+  instructionDiscriminator,
+} from "./anchor-idl-orca";
 
-// Re-export protocol constants/IDLs from a single entrypoint.
+import {
+  JUPITER_V6_IDL,
+  JUPITER_V6_PROGRAM_ID,
+} from "./anchor-idl-jupiter";
+
+import {
+  RAYDIUM_AMM_IDL,
+  RAYDIUM_AMM_PROGRAM_ID,
+} from "./anchor-idl-raydium";
+
+// Re-export protocol constants and IDLs for external usage
 export {
-	ORCA_WHIRLPOOL_IDL,
-	ORCA_WHIRLPOOL_PROGRAM_ID,
-	JUPITER_V6_IDL,
-	JUPITER_V6_PROGRAM_ID,
-	RAYDIUM_AMM_IDL,
-	RAYDIUM_AMM_PROGRAM_ID,
-	instructionDiscriminator,
+  ORCA_WHIRLPOOL_IDL,
+  ORCA_WHIRLPOOL_PROGRAM_ID,
+  JUPITER_V6_IDL,
+  JUPITER_V6_PROGRAM_ID,
+  RAYDIUM_AMM_IDL,
+  RAYDIUM_AMM_PROGRAM_ID,
+  instructionDiscriminator,
 };
 
-// Program registry used when decodeAnchorInstruction is called without an explicit IDL.
+// Default registry mapping programId to its IDL
 const DEFAULT_IDL_BY_PROGRAM: Record<string, Idl> = {
-	[ORCA_WHIRLPOOL_PROGRAM_ID]: ORCA_WHIRLPOOL_IDL,
-	[JUPITER_V6_PROGRAM_ID]: JUPITER_V6_IDL,
-	[RAYDIUM_AMM_PROGRAM_ID]: RAYDIUM_AMM_IDL,
+  [ORCA_WHIRLPOOL_PROGRAM_ID]: ORCA_WHIRLPOOL_IDL,
+  [JUPITER_V6_PROGRAM_ID]: JUPITER_V6_IDL,
+  [RAYDIUM_AMM_PROGRAM_ID]: RAYDIUM_AMM_IDL,
 };
 
+// Output shape for decoded Anchor instructions
 export interface DecodedAnchorInstruction {
-	instructionName: string;
-	anchorInstructionName: string;
-	type: string;
-	programId: string;
-	accounts: string[];
-	rawData: string;
-	decodedData?: Record<string, unknown>;
-	discriminator?: string;
-	action?: string;
-	inputEncoding?: "hex" | "base64";
-	decoderWarning?: string;
-	decoderType?: "anchor" | "custom";
-	confidence?: "high" | "low";
-	resolvedAccounts?: Array<{ name: string; pubkey: string }>;
-	accountsStrictMatch?: boolean;
-	[key: string]: unknown;
+  instructionName: string;
+  anchorInstructionName: string;
+  type: string;
+  programId: string;
+  accounts: string[];
+  rawData: string;
+  decodedData?: Record<string, unknown>;
+  discriminator?: string;
+  action?: string;
+  inputEncoding?: "hex" | "base64";
+  decoderWarning?: string;
+  decoderType?: "anchor" | "custom";
+  confidence?: "high" | "low";
+  resolvedAccounts?: Array<{ name: string; pubkey: string }>;
+  accountsStrictMatch?: boolean;
+  [key: string]: unknown;
 }
 
 export interface DecodeAnchorOptions {
-	allowNonAnchorPrograms?: boolean;
+  allowNonAnchorPrograms?: boolean;
 }
 
+// Converts snake_case instruction names into camelCase
 function toCamelCaseInstructionName(name: string): string {
-	if (!name.includes("_")) {
-		return name;
-	}
+  if (!name.includes("_")) return name;
 
-	const parts = name.split("_").filter((part) => part.length > 0);
-	if (parts.length === 0) {
-		return name;
-	}
+  const parts = name.split("_").filter(Boolean);
 
-	return parts
-		.map((part, index) => {
-			if (index === 0) {
-				return part.toLowerCase();
-			}
-
-			return part.charAt(0).toUpperCase() + part.slice(1);
-		})
-		.join("");
+  return parts
+    .map((part, index) =>
+      index === 0
+        ? part.toLowerCase()
+        : part.charAt(0).toUpperCase() + part.slice(1)
+    )
+    .join("");
 }
 
+// Basic validation for Solana public keys (base58 format)
 function isValidPublicKey(value: string): boolean {
-	// Keep validation independent from specific @solana/web3.js runtime shapes.
-	// Some versions/export styles do not expose PublicKey as a constructor.
-	return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(value);
+  return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(value);
 }
 
+// Ensures accounts array is valid
 function areValidAccounts(accounts: unknown): accounts is string[] {
-	return Array.isArray(accounts) && accounts.every((account) => typeof account === "string" && account.length > 0);
+  return (
+    Array.isArray(accounts) &&
+    accounts.every((a) => typeof a === "string" && a.length > 0)
+  );
 }
 
-const INSTRUCTION_CLASSIFICATION: Record<string, { type: string; action?: string }> = {
-	swap: { type: "swap" },
-	swapBaseIn: { type: "swap_pool", action: "exact_in" },
-	swapBaseOut: { type: "swap_pool", action: "exact_out" },
-	deposit: { type: "liquidity_pool", action: "deposit" },
-	withdraw: { type: "liquidity_pool", action: "withdraw" },
-	initialize: { type: "pool_initialization" },
-	route: { type: "swap_aggregation", action: "exact_in" },
-	sharedAccountsRoute: { type: "swap_aggregation", action: "exact_in" },
-	exactOutRoute: { type: "swap_aggregation", action: "exact_out" },
-	sharedAccountsExactOutRoute: { type: "swap_aggregation", action: "exact_out" },
-	setTokenLedger: { type: "token_ledger" },
-	openPosition: { type: "liquidity_position", action: "open" },
-	openPositionWithMetadata: { type: "liquidity_position", action: "open" },
-	closePosition: { type: "liquidity_position", action: "close" },
-	increaseLiquidity: { type: "liquidity_adjustment", action: "increase" },
-	decreaseLiquidity: { type: "liquidity_adjustment", action: "decrease" },
-	initializePool: { type: "pool_initialization" },
+// Maps instruction names into a normalized classification system
+const INSTRUCTION_CLASSIFICATION: Record<
+  string,
+  { type: string; action?: string }
+> = {
+  swap: { type: "swap" },
+  swapBaseIn: { type: "swap_pool", action: "exact_in" },
+  swapBaseOut: { type: "swap_pool", action: "exact_out" },
+  deposit: { type: "liquidity_pool", action: "deposit" },
+  withdraw: { type: "liquidity_pool", action: "withdraw" },
+  initialize: { type: "pool_initialization" },
+  route: { type: "swap_aggregation", action: "exact_in" },
 };
 
-// Normalizes protocol-specific instruction names into the analyzer taxonomy.
-function classifyInstruction(name: string): { type: string; action?: string } {
-	return INSTRUCTION_CLASSIFICATION[name] ?? { type: "unknown" };
+// Returns classification metadata for a given instruction name
+function classifyInstruction(name: string) {
+  return INSTRUCTION_CLASSIFICATION[name] ?? { type: "unknown" };
 }
 
-// Accepts both parser-normalized hex and RPC-style base64 payloads.
-function decodeHexInstructionData(data: string): { buffer: Buffer; encoding: "hex" | "base64" } | null {
-	const trimmed = data.trim();
-	if (trimmed.length === 0) {
-		return null;
-	}
+// Detects and decodes instruction data from hex or base64 encoding
+function decodeInstructionData(
+  data: string
+): { buffer: Buffer; encoding: "hex" | "base64" } | null {
+  const trimmed = data.trim();
+  if (!trimmed) return null;
 
-	if (trimmed.length % 2 === 0 && /^[0-9a-fA-F]+$/.test(trimmed)) {
-		const hexBuffer = Buffer.from(trimmed, "hex");
-		if (hexBuffer.length > 0) {
-			return { buffer: hexBuffer, encoding: "hex" };
-		}
-	}
+  // Attempt hex decoding
+  if (trimmed.length % 2 === 0 && /^[0-9a-fA-F]+$/.test(trimmed)) {
+    return { buffer: Buffer.from(trimmed, "hex"), encoding: "hex" };
+  }
 
-	if (!/^[A-Za-z0-9+/]+={0,2}$/.test(trimmed) || trimmed.length % 4 !== 0) {
-		return null;
-	}
-
-	try {
-		const base64Buffer = Buffer.from(trimmed, "base64");
-		if (base64Buffer.length > 0) {
-			return { buffer: base64Buffer, encoding: "base64" };
-		}
-	} catch {
-		return null;
-	}
-
-	return null;
+  // Attempt base64 decoding
+  try {
+    return { buffer: Buffer.from(trimmed, "base64"), encoding: "base64" };
+  } catch {
+    return null;
+  }
 }
 
-const NON_ANCHOR_BINARY_PROGRAMS = new Set<string>([RAYDIUM_AMM_PROGRAM_ID]);
+// Cache for BorshCoders to avoid rebuilding layouts repeatedly
 const CODER_CACHE = new Map<string, BorshCoder>();
 
-function getCachedCoder(programId: string, idl: Idl): BorshCoder {
-	const idlName = idl.metadata?.name ?? "unknown";
-	const idlVersion = idl.metadata?.version ?? "unknown";
-	const cacheKey = `${programId}:${idlName}:${idlVersion}`;
+function getCachedCoder(programId: string, idl: Idl) {
+  // FIX: Idl does not guarantee "name"
+  const idlName =
+    (idl as any).name ?? idl.metadata?.name ?? "unknown";
 
-	// Reuse coders to avoid rebuilding Borsh layouts on every decode.
-	const cached = CODER_CACHE.get(cacheKey);
-	if (cached) {
-		return cached;
-	}
+  const key = `${programId}:${idlName}`;
 
-	const coder = new BorshCoder(idl);
-	CODER_CACHE.set(cacheKey, coder);
-	return coder;
+  if (CODER_CACHE.has(key)) return CODER_CACHE.get(key)!;
+
+  const coder = new BorshCoder(idl);
+  CODER_CACHE.set(key, coder);
+  return coder;
 }
 
-function resolveInstructionAccounts(idl: Idl, anchorInstructionName: string, accounts: string[]) {
-	const idlInstruction = idl.instructions.find((instruction) => instruction.name === anchorInstructionName);
-	if (!idlInstruction) {
-		return { resolvedAccounts: undefined, accountsStrictMatch: false };
-	}
-
-	const accountNames = idlInstruction.accounts
-		.map((account) => ("name" in account && typeof account.name === "string" ? account.name : null))
-		.filter((name): name is string => name !== null);
-
-	if (accountNames.length === 0) {
-		return { resolvedAccounts: undefined, accountsStrictMatch: false };
-	}
-
-	const resolvedAccounts = accounts.map((pubkey, index) => ({
-		name: accountNames[index] ?? `unknown_${index}`,
-		pubkey,
-	}));
-
-	return {
-		resolvedAccounts,
-		accountsStrictMatch: accountNames.length === accounts.length,
-	};
+// Finds the instruction in the IDL using the discriminator
+function findInstructionByDiscriminator(idl: Idl, disc: Buffer) {
+  return idl.instructions.find((ix) =>
+    Buffer.from(ix.discriminator).equals(disc)
+  );
 }
 
-function normalizeDecodedData(data: unknown): Record<string, unknown> {
-	if (data && typeof data === "object" && !Array.isArray(data)) {
-		return data as Record<string, unknown>;
-	}
-
-	return { __raw: data };
-}
-
-function findInstructionByDiscriminator(idl: Idl, discriminator: Buffer) {
-	return idl.instructions.find((instruction) => {
-		if (!Array.isArray(instruction.discriminator)) {
-			return false;
-		}
-
-		return Buffer.from(instruction.discriminator).equals(discriminator);
-	});
-}
-
-function buildUnknownDecodedResult(
-	programId: string,
-	ix: ParsedInstruction,
-	parsedData: { buffer: Buffer; encoding: "hex" | "base64" },
-	decoderType: "anchor" | "custom",
-	decoderWarning?: string
-): DecodedAnchorInstruction {
-	// Fallback shape used when a payload cannot be decoded safely.
-	return {
-		instructionName: "unknown",
-		anchorInstructionName: "unknown",
-		type: "unknown",
-		programId,
-		accounts: ix.accounts,
-		rawData: ix.data,
-		discriminator: parsedData.buffer.subarray(0, 8).toString("hex"),
-		inputEncoding: parsedData.encoding,
-		decoderType,
-		confidence: "low",
-		...(decoderWarning ? { decoderWarning } : {}),
-	};
-}
-
+// Main decoding function for Anchor-based instructions
 export function decodeAnchorInstruction(
-	programId: string,
-	ix: ParsedInstruction,
-	idl?: Idl,
-	options?: DecodeAnchorOptions
+  programId: string,
+  ix: ParsedInstruction,
+  idl?: Idl
 ): DecodedAnchorInstruction | null {
-	// Input guards to avoid invalid decode attempts.
-	if (typeof programId !== "string" || !isValidPublicKey(programId)) {
-		return null;
-	}
+  // Validate input parameters
+  if (!isValidPublicKey(programId)) return null;
+  if (!ix || !areValidAccounts(ix.accounts)) return null;
 
-	if (!ix || typeof ix.data !== "string" || ix.data.trim().length === 0 || !areValidAccounts(ix.accounts)) {
-		return null;
-	}
+  // Resolve IDL from registry or provided argument
+  const targetIdl = idl ?? DEFAULT_IDL_BY_PROGRAM[programId];
+  if (!targetIdl) return null;
 
-	if (typeof ix.programId === "string" && ix.programId !== programId) {
-		return null;
-	}
+  // Decode raw instruction data
+  const parsed = decodeInstructionData(ix.data);
+  if (!parsed || parsed.buffer.length < 8) return null;
 
-	const targetIdl = idl ?? DEFAULT_IDL_BY_PROGRAM[programId];
-	if (!targetIdl) {
-		return null;
-	}
+  // Extract discriminator (first 8 bytes)
+  const discriminator = parsed.buffer.subarray(0, 8);
 
-	if (programId !== targetIdl.address) {
-		return null;
-	}
+  // Match instruction in IDL
+  const idlIx = findInstructionByDiscriminator(targetIdl, discriminator);
+  if (!idlIx) return null;
 
-	const parsedData = decodeHexInstructionData(ix.data);
-	if (!parsedData || parsedData.buffer.length < 8) {
-		return null;
-	}
+  // Decode instruction using Anchor BorshCoder
+  const coder = getCachedCoder(programId, targetIdl);
 
-	const allowNonAnchorPrograms = options?.allowNonAnchorPrograms ?? true;
+  let decoded;
+  try {
+    decoded = coder.instruction.decode(parsed.buffer);
+  } catch {
+    return null;
+  }
 
-	if (!allowNonAnchorPrograms && NON_ANCHOR_BINARY_PROGRAMS.has(programId)) {
-		return buildUnknownDecodedResult(
-			programId,
-			ix,
-			parsedData,
-			"custom",
-			"This program uses custom non-Anchor binary layouts on-chain; use a dedicated custom decoder."
-		);
-	}
+  if (!decoded) return null;
 
-	// Validate discriminator first, then decode.
-	const discriminatorBuffer = parsedData.buffer.subarray(0, 8);
-	const idlInstruction = findInstructionByDiscriminator(targetIdl, discriminatorBuffer);
-	if (!idlInstruction) {
-		return buildUnknownDecodedResult(programId, ix, parsedData, "anchor");
-	}
+  // Normalize instruction name and classify
+  const instructionName = toCamelCaseInstructionName(decoded.name);
+  const { type, action } = classifyInstruction(instructionName);
 
-	// BorshCoder decodes using the hardcoded (or injected) Anchor IDL.
-	const coder = getCachedCoder(programId, targetIdl);
-	let decoded: { name: string; data: unknown } | null = null;
-	try {
-		decoded = coder.instruction.decode(parsedData.buffer) as { name: string; data: unknown } | null;
-	} catch {
-		return buildUnknownDecodedResult(programId, ix, parsedData, "anchor");
-	}
-
-	if (!decoded) {
-		return buildUnknownDecodedResult(programId, ix, parsedData, "anchor");
-	}
-
-	const instructionName = toCamelCaseInstructionName(decoded.name);
-	const { type, action } = classifyInstruction(instructionName);
-	const discriminator = parsedData.buffer.subarray(0, 8).toString("hex");
-	const { resolvedAccounts, accountsStrictMatch } = resolveInstructionAccounts(targetIdl, decoded.name, ix.accounts);
-	const isNonAnchorBinaryProgram = NON_ANCHOR_BINARY_PROGRAMS.has(programId);
-	const decoderWarning = isNonAnchorBinaryProgram
-		? "This program commonly uses custom non-Anchor binary layouts on-chain; decoded via Anchor IDL in compatibility mode."
-		: undefined;
-
-	return {
-		instructionName,
-		anchorInstructionName: decoded.name,
-		type,
-		programId,
-		accounts: ix.accounts,
-		rawData: ix.data,
-		decodedData: normalizeDecodedData(decoded.data),
-		discriminator,
-		inputEncoding: parsedData.encoding,
-		decoderType: "anchor",
-		confidence: isNonAnchorBinaryProgram ? "low" : "high",
-		...(resolvedAccounts ? { resolvedAccounts } : {}),
-		...(decoderWarning ? { decoderWarning } : {}),
-		accountsStrictMatch,
-		...(action ? { action } : {}),
-	};
+  return {
+    instructionName,
+    anchorInstructionName: decoded.name,
+    type,
+    programId,
+    accounts: ix.accounts,
+    rawData: ix.data,
+    decodedData: decoded.data as Record<string, unknown>,
+    discriminator: discriminator.toString("hex"),
+    inputEncoding: parsed.encoding,
+    decoderType: "anchor",
+    confidence: "high",
+    ...(action ? { action } : {}),
+  };
 }
