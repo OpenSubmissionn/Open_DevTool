@@ -25,6 +25,10 @@ pnpm-debug.log*
 
 # Lockfiles (keep root, ignore nested duplicates)
 package-lock.json
+**/coverage/
+# External Claude skill submodules
+.agents/skills/ext/
+CLAUDE.local.md
 
 # Environment / secrets
 .env

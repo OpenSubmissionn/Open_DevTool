@@ -1,5 +1,5 @@
 import type { AnalyzedTransaction, Insight, InsightReport } from './types';
-
+ 
 /**
  * Output payload shape for JSON rendering.
  */
@@ -20,6 +20,23 @@ interface RenderOutput {
     limit: number;
     utilization: number;
   };
+  cuCost: {
+    cuConsumed: number;
+    microLamportsPerCU: number;
+    feeLamports: number;
+    feeSOL: number;
+    feeUSD: number | null;
+  } | null;
+  transfers: Array<{
+    from: string;
+    to: string;
+    amount: string;
+    token: string;
+    decimals: number;
+    uiAmount: number;
+    usdValue: number | null;
+    isSpamSuspect: boolean;
+  }>;
   accounts: any[];
   insights: Array<{
     type: string;
@@ -33,7 +50,7 @@ interface RenderOutput {
     engine: string;
   };
 }
-
+ 
 /**
  * Build CLI JSON output from analyzed transaction data and insights.
  * @param analyzed Processed transaction analysis result.
@@ -49,11 +66,11 @@ export function renderJSON(
     if (!analyzed) {
       throw new Error("No analysis data provided to the renderer.");
     }
-
+ 
     const reportInsights: Insight[] = Array.isArray(insights)
       ? insights
       : ((insights as InsightReport)?.insights ?? []);
-
+ 
     // Prefer canonical CU from RPC meta; fallback to profiler totals.
     const fallbackConsumed = analyzed?.cuProfile?.totalConsumed ?? (analyzed as any)?.computeUnits?.consumed ?? 0;
     const consumed = analyzed?.raw?.computeUnitsConsumed ?? fallbackConsumed;
@@ -62,12 +79,15 @@ export function renderJSON(
     const utilization = analyzed?.raw?.computeUnitsConsumed != null && limit > 0
       ? (consumed / limit) * 100
       : fallbackUtilization;
-
+ 
     const timestamp = analyzed?.raw?.blockTime ?? analyzed?.parsed?.blockTime ?? (analyzed as any)?.blockTime ?? null;
     const timestampISO = typeof timestamp === 'number' ? new Date(timestamp * 1000).toISOString() : null;
-
+ 
     const feeLamports = analyzed?.parsed?.fee ?? (analyzed as any)?.fee ?? 0;
-
+ 
+    const cuCost = analyzed?.cuCost ?? null;
+    const transfers = analyzed?.transfers ?? [];
+ 
     const output: RenderOutput = {
       transaction: {
         signature: analyzed?.raw?.signature || analyzed?.parsed?.signature || (analyzed as any)?.signature || 'unknown',
@@ -85,8 +105,26 @@ export function renderJSON(
         limit,
         utilization: Number(utilization.toFixed(4)),
       },
+      cuCost: cuCost
+        ? {
+            cuConsumed: cuCost.cuConsumed,
+            microLamportsPerCU: cuCost.microLamportsPerCU,
+            feeLamports: cuCost.feeLamports,
+            feeSOL: cuCost.feeSOL,
+            feeUSD: cuCost.feeUSD,
+          }
+        : null,
+      transfers: transfers.map((t) => ({
+        from: t.from,
+        to: t.to,
+        amount: t.amount,
+        token: t.token,
+        decimals: t.decimals,
+        uiAmount: t.uiAmount,
+        usdValue: t.usdValue,
+        isSpamSuspect: t.isSpamSuspect,
+      })),
       accounts: (analyzed?.accountDiffs || []).map((account) => {
-        // Replace legacy SOL delta with explicit units.
         const { solDelta, ...accountWithoutLegacyDelta } = account;
         return {
           ...accountWithoutLegacyDelta,
@@ -103,10 +141,10 @@ export function renderJSON(
       metadata: {
         version: "1.0.0",
         generatedAt: new Date().toISOString(),
-        engine: "OPEN-Insight-Engine-God-Mode" 
+        engine: "OPEN-Insight-Engine-God-Mode"
       }
     };
-
+ 
     return JSON.stringify(output, null, 2);
   } catch (error) {
     // Return machine-readable render errors.
