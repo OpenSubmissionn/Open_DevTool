@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Jupiter Aggregator v6",
+    "programId": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-jupiter.ts",
+    "framework": "Anchor"
+  },
+  {
+    "name": "Orca Whirlpool",
+    "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3dhpbWR",
+    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-orca.ts",
+    "framework": "Anchor"
+  },
+  {
+    "name": "Raydium Liquidity Pool v4",
+    "programId": "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
+    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-raydium.ts",
+    "framework": "Anchor"
+  },
+  {
+    "name": "SPL Token Program",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "idl": null,
+    "framework": "Native"
+  },
+  {
+    "name": "System Program",
+    "programId": "11111111111111111111111111111111",
+    "idl": null,
+    "framework": "Native"
+  }
+]

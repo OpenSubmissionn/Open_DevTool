@@ -1,3 +1,5 @@
+import type { PromptContext } from './prompts';
+
 /** Aggregate stats describing the CPI call tree shape. */
 export interface CpiTreeStructure {
   /** Maximum depth of the CPI tree. */
@@ -53,6 +55,8 @@ export interface MCPPayload {
   accountDiffSummary: string;
   parsedErrors: string[];
   logSummary: string;
+  /** Optional enriched context (framework examples, trade-offs, CU references). */
+  promptContext?: PromptContext;
   /** Aggregate metrics on the CPI tree shape. */
   cpiTreeStructure?: CpiTreeStructure;
   /** Detailed breakdown of the CU bottleneck node. */
@@ -92,27 +96,22 @@ export async function requestInsights(payload: MCPPayload): Promise<MCPInsightRe
 
       if (!response.ok) {
         if (response.status >= 500 && retryCount < 1) {
-          // Retry on 5xx
           return attempt(retryCount + 1);
         }
         console.warn(`[MCP] Degraded: HTTP ${response.status}`);
         return { suggestions: [], source: 'mcp' };
       }
 
-      const data = await response.json() as { suggestions?: string[] };
+      const data = (await response.json()) as { suggestions?: string[] };
       return { suggestions: data.suggestions ?? [], source: 'mcp' };
     } catch (error) {
       clearTimeout(timeoutId);
 
       if (retryCount < 1) {
-        // Retry on network failure
         return attempt(retryCount + 1);
       }
 
-      const errorMsg =
-        error instanceof Error
-          ? error.message
-          : String(error);
+      const errorMsg = error instanceof Error ? error.message : String(error);
       console.warn(`[MCP] Degraded: ${errorMsg}`);
       return { suggestions: [], source: 'mcp' };
     }

@@ -1,5 +1,6 @@
 import { InsightProvider, InsightContext, ProviderInsight } from '../analysis/types';
 import type { AccountDiff, CPINode, CPITree } from '../analysis/types';
+import { detectFramework } from '../analysis/frameworkComparator';
 import {
   requestInsights,
   MCPPayload,
@@ -8,11 +9,10 @@ import {
   DetailedAccountDiff,
   SimilarPattern,
 } from './client';
+import { buildPromptContext } from './prompts';
 
 /**
  * Known optimization patterns indexed by program name.
- * Used to attach "similar patterns" context to MCP requests so the service can
- * surface program-specific optimization advice.
  */
 const KNOWN_PATTERNS: Record<string, SimilarPattern> = {
   'Jupiter V6': {
@@ -58,10 +58,6 @@ const KNOWN_PATTERNS: Record<string, SimilarPattern> = {
   },
 };
 
-/**
- * Returns up to 3 similar patterns matching the program name.
- * Tries exact match first, then a loose substring match in either direction.
- */
 function findSimilarPatterns(programName: string | undefined): SimilarPattern[] {
   if (!programName || programName === 'Unknown') return [];
 
@@ -77,11 +73,6 @@ function findSimilarPatterns(programName: string | undefined): SimilarPattern[] 
   return matches.slice(0, 3);
 }
 
-/**
- * Walks the CPI tree and returns aggregate metrics:
- * total node count, average branching factor over non-leaf nodes,
- * and the number of distinct programs invoked.
- */
 function summarizeCpiTree(cpiTree: CPITree): CpiTreeStructure {
   const programs = new Set<string>();
   let nonLeafCount = 0;
@@ -108,12 +99,18 @@ function summarizeCpiTree(cpiTree: CPITree): CpiTreeStructure {
   };
 }
 
-/**
- * Flattens the bottleneck CUEntry into the wire-friendly BottleneckNodeDetail shape.
- * Returns undefined when no bottleneck is identified for this transaction.
- */
 function extractBottleneckDetail(
-  bottleneck: { programId: string; programName: string; cuConsumed: number; utilizationPercent: number; status?: 'success' | 'failed'; depth?: number } | null | undefined
+  bottleneck:
+    | {
+        programId: string;
+        programName: string;
+        cuConsumed: number;
+        utilizationPercent: number;
+        status?: 'success' | 'failed';
+        depth?: number;
+      }
+    | null
+    | undefined
 ): BottleneckNodeDetail | undefined {
   if (!bottleneck) return undefined;
 
@@ -127,10 +124,6 @@ function extractBottleneckDetail(
   };
 }
 
-/**
- * Converts AccountDiff[] (engine shape) to DetailedAccountDiff[] (wire shape) so
- * the MCP service can reason about who signed, who paid, and which tokens moved.
- */
 function buildDetailedAccountDiffs(diffs: AccountDiff[]): DetailedAccountDiff[] {
   return diffs.map((diff) => ({
     pubkey: diff.pubkey,
@@ -152,23 +145,28 @@ function buildMcpPayload(context: InsightContext): MCPPayload {
   const tx = context.transaction;
   const bottleneck = tx.cuProfile.bottleneck;
 
-  // Build account diff summary
   const accountDiffSummary = tx.accountDiffs
     .map(
       (diff) => `${diff.pubkey.slice(0, 8)}...: ${diff.solDelta > 0 ? '+' : ''}${diff.solDelta} SOL`
     )
     .join(', ');
 
-  // Extract errors from logs
   const parsedErrors =
     tx.logs.entries
       ?.filter((entry) => entry.type === 'failed')
       .map((entry) => entry.message || 'Unknown error') || [];
 
-  // Build log summary
   const logSummary = `${tx.logs.entries?.length || 0} log entries, ${parsedErrors.length} errors`;
 
-  // Enriched context (Task 2.7.1)
+  // Enriched context (Task 2.5.1) — framework-detected prompt context
+  const logMessages = tx.logs.entries?.map((entry) => entry.message ?? '') ?? [];
+  const detected = detectFramework(logMessages);
+  const promptContext = buildPromptContext({
+    framework: detected.framework,
+    cuConsumed: tx.cuProfile.totalConsumed,
+  });
+
+  // Enriched context (Task 2.7.1) — CPI tree + bottleneck + diffs + patterns
   const cpiTreeStructure = summarizeCpiTree(tx.cpiTree);
   const bottleneckNode = extractBottleneckDetail(bottleneck as never);
   const detailedAccountDiffs = buildDetailedAccountDiffs(tx.accountDiffs);
@@ -182,6 +180,7 @@ function buildMcpPayload(context: InsightContext): MCPPayload {
     accountDiffSummary: accountDiffSummary || 'No account changes',
     parsedErrors,
     logSummary,
+    promptContext,
     cpiTreeStructure,
     bottleneckNode,
     detailedAccountDiffs,
@@ -189,16 +188,12 @@ function buildMcpPayload(context: InsightContext): MCPPayload {
   };
 }
 
-/**
- * MCP-based insight provider that uses external AI to generate optimization suggestions.
- */
 export class McpInsightProvider implements InsightProvider {
   async fetchInsights(context: InsightContext): Promise<ProviderInsight[]> {
     try {
       const payload = buildMcpPayload(context);
       const response = await requestInsights(payload);
 
-      // Convert MCP suggestions to ProviderInsights
       return response.suggestions.map((suggestion: string): ProviderInsight => {
         return {
           insight: {

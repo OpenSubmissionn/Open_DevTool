@@ -3,7 +3,6 @@ import { renderJSON } from '../../src/analysis/renderer';
 import { AnalyzedTransaction, Insight } from '../../src/analysis/types';
 
 describe('JSON Renderer - God Mode', () => {
-  
   it('should render a complete and valid transaction report', () => {
     const mockAnalyzed = {
       signature: '5K8pWv...',
@@ -16,7 +15,7 @@ describe('JSON Renderer - God Mode', () => {
         blockTime: 1713685750,
         success: true,
         fee: 5000,
-        instructions: []
+        instructions: [],
       },
 
       cuProfile: {
@@ -24,33 +23,33 @@ describe('JSON Renderer - God Mode', () => {
         totalLimit: 200000,
         utilizationPercent: 27.1,
         perInstruction: [],
-        bottleneck: null
+        bottleneck: null,
       },
 
       cpiTree: {
         root: [],
         totalDepth: 0,
-        nodeCount: 0
+        nodeCount: 0,
       },
 
       accountDiffs: [],
       logs: {
         byProgram: {},
         errors: [],
-        totalLines: 0
-      }
+        totalLines: 0,
+      },
     } as AnalyzedTransaction;
 
     const mockInsights: Insight[] = [
-      { 
+      {
         type: 'EFFICIENCY',
         severity: 'info',
         title: 'Optimized CU usage',
         message: 'Optimized CU usage detected',
         recommendation: 'No action needed',
         source: 'rule',
-        codeSuggestions: []
-      }
+        codeSuggestions: [],
+      },
     ];
 
     const result = renderJSON(mockAnalyzed, mockInsights);
@@ -60,7 +59,7 @@ describe('JSON Renderer - God Mode', () => {
     expect(parsed.transaction.success).toBe(true);
 
     expect(parsed.computeUnits.utilization).toBeDefined();
-    
+
     expect(parsed.insights).toHaveLength(1);
     expect(parsed.insights[0].type).toBe('EFFICIENCY');
 
@@ -91,8 +90,7 @@ describe('JSON Renderer - God Mode', () => {
   it('should output a string formatted with 2 spaces for readability', () => {
     const mockData = { signature: 'test' };
     const result = renderJSON(mockData as any, []);
-    
+
     expect(result).toContain('\n  "transaction": {');
   });
-
 });
