@@ -39,10 +39,12 @@ CLAUDE.local.md
 id_rsa*
 
 # Claude Code & MCP (local-only)
+.agents/
 .claude
 .mcp.json
 .gitmodules
 CLAUDE.md
+.claude/
 CLAUDE.local.md
 
 

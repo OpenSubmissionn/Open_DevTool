@@ -1,16 +1,15 @@
 import { BorshCoder, type Idl } from '@coral-xyz/anchor';
 import type { ParsedInstruction } from '../types';
-
 import {
   ORCA_WHIRLPOOL_IDL,
   ORCA_WHIRLPOOL_PROGRAM_ID,
   instructionDiscriminator,
 } from './orca/anchor-idl-orca';
-
 import { JUPITER_V6_IDL, JUPITER_V6_PROGRAM_ID } from './jupiter/anchor-idl-jupiter';
-
 import { RAYDIUM_AMM_IDL, RAYDIUM_AMM_PROGRAM_ID } from './raydium/anchor-idl-raydium';
+import { MARINADE_IDL, MARINADE_PROGRAM_ID } from './marinade/idl';
 
+// Re-export protocol constants/IDLs from a single entrypoint.
 export {
   ORCA_WHIRLPOOL_IDL,
   ORCA_WHIRLPOOL_PROGRAM_ID,
@@ -18,13 +17,17 @@ export {
   JUPITER_V6_PROGRAM_ID,
   RAYDIUM_AMM_IDL,
   RAYDIUM_AMM_PROGRAM_ID,
+  MARINADE_IDL,
+  MARINADE_PROGRAM_ID,
   instructionDiscriminator,
 };
 
+// Program registry used when decodeAnchorInstruction is called without an explicit IDL.
 const DEFAULT_IDL_BY_PROGRAM: Record<string, Idl> = {
   [ORCA_WHIRLPOOL_PROGRAM_ID]: ORCA_WHIRLPOOL_IDL,
   [JUPITER_V6_PROGRAM_ID]: JUPITER_V6_IDL,
   [RAYDIUM_AMM_PROGRAM_ID]: RAYDIUM_AMM_IDL,
+  [MARINADE_PROGRAM_ID]: MARINADE_IDL,
 };
 
 // Programs that use custom binary layouts on-chain despite having an Anchor-compatible IDL.
@@ -46,31 +49,105 @@ export interface DecodedAnchorInstruction {
   confidence?: 'high' | 'low';
   resolvedAccounts?: Array<{ name: string; pubkey: string }>;
   accountsStrictMatch?: boolean;
+  [key: string]: unknown;
+}
+
+export interface DecodeAnchorOptions {
+  allowNonAnchorPrograms?: boolean;
 }
 
 function toCamelCaseInstructionName(name: string): string {
-  return name.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+  if (!name.includes('_')) {
+    return name;
+  }
+
+  const parts = name.split('_').filter((part) => part.length > 0);
+  if (parts.length === 0) {
+    return name;
+  }
+
+  return parts
+    .map((part, index) => {
+      if (index === 0) {
+        return part.toLowerCase();
+      }
+
+      return part.charAt(0).toUpperCase() + part.slice(1);
+    })
+    .join('');
 }
 
-// Accepts hex (even-length, all hex chars) first, then falls back to base64.
-function decodeInstructionData(
+function isValidPublicKey(value: string): boolean {
+  // Keep validation independent from specific @solana/web3.js runtime shapes.
+  // Some versions/export styles do not expose PublicKey as a constructor.
+  return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(value);
+}
+
+function areValidAccounts(accounts: unknown): accounts is string[] {
+  return (
+    Array.isArray(accounts) &&
+    accounts.every((account) => typeof account === 'string' && account.length > 0)
+  );
+}
+
+const INSTRUCTION_CLASSIFICATION: Record<string, { type: string; action?: string }> = {
+  swap: { type: 'swap' },
+  swapBaseIn: { type: 'swap_pool', action: 'exact_in' },
+  swapBaseOut: { type: 'swap_pool', action: 'exact_out' },
+  deposit: { type: 'liquidity_pool', action: 'deposit' },
+  withdraw: { type: 'liquidity_pool', action: 'withdraw' },
+  initialize: { type: 'pool_initialization' },
+  route: { type: 'swap_aggregation', action: 'exact_in' },
+  sharedAccountsRoute: { type: 'swap_aggregation', action: 'exact_in' },
+  exactOutRoute: { type: 'swap_aggregation', action: 'exact_out' },
+  sharedAccountsExactOutRoute: { type: 'swap_aggregation', action: 'exact_out' },
+  setTokenLedger: { type: 'token_ledger' },
+  openPosition: { type: 'liquidity_position', action: 'open' },
+  openPositionWithMetadata: { type: 'liquidity_position', action: 'open' },
+  closePosition: { type: 'liquidity_position', action: 'close' },
+  increaseLiquidity: { type: 'liquidity_adjustment', action: 'increase' },
+  decreaseLiquidity: { type: 'liquidity_adjustment', action: 'decrease' },
+  initializePool: { type: 'pool_initialization' },
+  // Marinade Finance liquid staking
+  unstake: { type: 'liquid_staking', action: 'unstake' },
+  liquidUnstake: { type: 'liquid_staking', action: 'unstake' },
+  orderUnstake: { type: 'liquid_staking', action: 'order_unstake' },
+  claim: { type: 'liquid_staking', action: 'claim' },
+  depositStakeAccount: { type: 'liquid_staking', action: 'deposit_stake' },
+};
+
+// Normalizes protocol-specific instruction names into the analyzer taxonomy.
+function classifyInstruction(name: string): { type: string; action?: string } {
+  return INSTRUCTION_CLASSIFICATION[name] ?? { type: 'unknown' };
+}
+
+// Accepts both parser-normalized hex and RPC-style base64 payloads.
+function decodeHexInstructionData(
   data: string
 ): { buffer: Buffer; encoding: 'hex' | 'base64' } | null {
   const trimmed = data.trim();
-  if (!trimmed) return null;
-
-  if (trimmed.length % 2 === 0 && /^[0-9a-fA-F]+$/.test(trimmed)) {
-    const buf = Buffer.from(trimmed, 'hex');
-    if (buf.length > 0) return { buffer: buf, encoding: 'hex' };
+  if (trimmed.length === 0) {
+    return null;
   }
 
-  if (/^[A-Za-z0-9+/]+=*$/.test(trimmed)) {
-    try {
-      const buf = Buffer.from(trimmed, 'base64');
-      if (buf.length > 0) return { buffer: buf, encoding: 'base64' };
-    } catch {
-      // fall through
+  if (trimmed.length % 2 === 0 && /^[0-9a-fA-F]+$/.test(trimmed)) {
+    const hexBuffer = Buffer.from(trimmed, 'hex');
+    if (hexBuffer.length > 0) {
+      return { buffer: hexBuffer, encoding: 'hex' };
     }
+  }
+
+  if (!/^[A-Za-z0-9+/]+={0,2}$/.test(trimmed) || trimmed.length % 4 !== 0) {
+    return null;
+  }
+
+  try {
+    const base64Buffer = Buffer.from(trimmed, 'base64');
+    if (base64Buffer.length > 0) {
+      return { buffer: base64Buffer, encoding: 'base64' };
+    }
+  } catch {
+    return null;
   }
 
   return null;
@@ -78,173 +155,191 @@ function decodeInstructionData(
 
 const CODER_CACHE = new Map<string, BorshCoder>();
 
-function getCoder(programId: string, idl: Idl) {
-  if (!CODER_CACHE.has(programId)) {
-    CODER_CACHE.set(programId, new BorshCoder(idl));
+function getCachedCoder(programId: string, idl: Idl): BorshCoder {
+  const idlName = idl.metadata?.name ?? 'unknown';
+  const idlVersion = idl.metadata?.version ?? 'unknown';
+  const cacheKey = `${programId}:${idlName}:${idlVersion}`;
+
+  // Reuse coders to avoid rebuilding Borsh layouts on every decode.
+  const cached = CODER_CACHE.get(cacheKey);
+  if (cached) {
+    return cached;
   }
-  return CODER_CACHE.get(programId)!;
+
+  const coder = new BorshCoder(idl);
+  CODER_CACHE.set(cacheKey, coder);
+  return coder;
 }
 
-function resolveAccounts(
-  idlIx: any,
-  accounts: string[]
-): {
-  resolved: { name: string; pubkey: string }[];
-  strict: boolean;
-} {
-  const resolved = accounts.map((pubkey, i) => ({
-    name: idlIx.accounts?.[i]?.name ?? `unknown_${i}`,
+function resolveInstructionAccounts(idl: Idl, anchorInstructionName: string, accounts: string[]) {
+  const idlInstruction = idl.instructions.find(
+    (instruction) => instruction.name === anchorInstructionName
+  );
+  if (!idlInstruction) {
+    return { resolvedAccounts: undefined, accountsStrictMatch: false };
+  }
+
+  const accountNames = idlInstruction.accounts
+    .map((account) => ('name' in account && typeof account.name === 'string' ? account.name : null))
+    .filter((name): name is string => name !== null);
+
+  if (accountNames.length === 0) {
+    return { resolvedAccounts: undefined, accountsStrictMatch: false };
+  }
+
+  const resolvedAccounts = accounts.map((pubkey, index) => ({
+    name: accountNames[index] ?? `unknown_${index}`,
     pubkey,
   }));
 
   return {
-    resolved,
-    strict: idlIx.accounts?.length === accounts.length,
+    resolvedAccounts,
+    accountsStrictMatch: accountNames.length === accounts.length,
   };
 }
 
-function classify(programId: string, name: string) {
-  if (programId === JUPITER_V6_PROGRAM_ID) {
-    if (name === 'route') return { type: 'swap_aggregation', action: 'exact_in' };
-    if (name === 'exactOutRoute') return { action: 'exact_out', type: 'swap_aggregation' };
-    if (name === 'sharedAccountsRoute') return { action: 'exact_in', type: 'swap_aggregation' };
-    if (name === 'sharedAccountsExactOutRoute')
-      return { action: 'exact_out', type: 'swap_aggregation' };
-    if (name === 'setTokenLedger') return { type: 'token_ledger' };
+function normalizeDecodedData(data: unknown): Record<string, unknown> {
+  if (data && typeof data === 'object' && !Array.isArray(data)) {
+    return data as Record<string, unknown>;
   }
 
-  if (programId === ORCA_WHIRLPOOL_PROGRAM_ID) {
-    if (name === 'initializePool') return { type: 'pool_initialization' };
-    if (name === 'swap') return { type: 'swap' };
-    if (name === 'openPosition') return { action: 'open' };
-    if (name === 'openPositionWithMetadata') return { action: 'open' };
-    if (name === 'closePosition') return { action: 'close' };
-    if (name === 'increaseLiquidity') return { action: 'increase' };
-    if (name === 'decreaseLiquidity') return { action: 'decrease' };
-  }
+  return { __raw: data };
+}
 
-  if (programId === RAYDIUM_AMM_PROGRAM_ID) {
-    if (name === 'initialize') return { type: 'pool_initialization' };
-    if (name === 'deposit') return { action: 'deposit' };
-    if (name === 'withdraw') return { action: 'withdraw' };
-    if (name === 'swapBaseIn') return { action: 'exact_in' };
-    if (name === 'swapBaseOut') return { action: 'exact_out' };
-  }
+function findInstructionByDiscriminator(idl: Idl, discriminator: Buffer) {
+  return idl.instructions.find((instruction) => {
+    if (!Array.isArray(instruction.discriminator)) {
+      return false;
+    }
 
-  return { type: 'unknown' };
+    return Buffer.from(instruction.discriminator).equals(discriminator);
+  });
+}
+
+function buildUnknownDecodedResult(
+  programId: string,
+  ix: ParsedInstruction,
+  parsedData: { buffer: Buffer; encoding: 'hex' | 'base64' },
+  decoderType: 'anchor' | 'custom',
+  decoderWarning?: string
+): DecodedAnchorInstruction {
+  // Fallback shape used when a payload cannot be decoded safely.
+  return {
+    instructionName: 'unknown',
+    anchorInstructionName: 'unknown',
+    type: 'unknown',
+    programId,
+    accounts: ix.accounts,
+    rawData: ix.data,
+    discriminator: parsedData.buffer.subarray(0, 8).toString('hex'),
+    inputEncoding: parsedData.encoding,
+    decoderType,
+    confidence: 'low',
+    ...(decoderWarning ? { decoderWarning } : {}),
+  };
 }
 
 export function decodeAnchorInstruction(
   programId: string,
   ix: ParsedInstruction,
   idl?: Idl,
-  opts?: { allowNonAnchorPrograms?: boolean }
+  options?: DecodeAnchorOptions
 ): DecodedAnchorInstruction | null {
-  if (!ix?.data || !Array.isArray(ix.accounts)) return null;
+  // Input guards to avoid invalid decode attempts.
+  if (typeof programId !== 'string' || !isValidPublicKey(programId)) {
+    return null;
+  }
 
-  // Reject when the instruction's programId explicitly mismatches the target.
-  if (ix.programId && ix.programId !== programId) return null;
+  if (
+    !ix ||
+    typeof ix.data !== 'string' ||
+    ix.data.trim().length === 0 ||
+    !areValidAccounts(ix.accounts)
+  ) {
+    return null;
+  }
+
+  if (typeof ix.programId === 'string' && ix.programId !== programId) {
+    return null;
+  }
 
   const targetIdl = idl ?? DEFAULT_IDL_BY_PROGRAM[programId];
-  if (!targetIdl) return null;
-
-  const parsed = decodeInstructionData(ix.data);
-  if (!parsed || parsed.buffer.length < 8) return null;
-
-  const discriminator = parsed.buffer.subarray(0, 8);
-  const discriminatorHex = discriminator.toString('hex');
-
-  // When the caller explicitly opts out of non-Anchor compat mode, return
-  // a custom-decoder sentinel instead of attempting Anchor decoding.
-  if (NON_ANCHOR_BINARY_PROGRAMS.has(programId) && opts?.allowNonAnchorPrograms === false) {
-    return {
-      instructionName: 'unknown',
-      anchorInstructionName: 'unknown',
-      type: 'unknown',
-      programId,
-      accounts: ix.accounts,
-      rawData: ix.data,
-      discriminator: discriminatorHex,
-      inputEncoding: parsed.encoding,
-      decoderType: 'custom',
-      confidence: 'low',
-    };
+  if (!targetIdl) {
+    return null;
   }
 
-  const idlIx = targetIdl.instructions.find((i) =>
-    Buffer.from(i.discriminator).equals(discriminator)
-  );
-
-  if (!idlIx) {
-    return {
-      instructionName: 'unknown',
-      anchorInstructionName: 'unknown',
-      type: 'unknown',
-      programId,
-      accounts: ix.accounts,
-      rawData: ix.data,
-      discriminator: discriminatorHex,
-      inputEncoding: parsed.encoding,
-      decoderType: 'anchor',
-      confidence: 'low',
-    };
+  if (programId !== targetIdl.address) {
+    return null;
   }
 
-  const coder = getCoder(programId, targetIdl);
+  const parsedData = decodeHexInstructionData(ix.data);
+  if (!parsedData || parsedData.buffer.length < 8) {
+    return null;
+  }
 
-  let decoded: any;
+  const allowNonAnchorPrograms = options?.allowNonAnchorPrograms ?? true;
+
+  if (!allowNonAnchorPrograms && NON_ANCHOR_BINARY_PROGRAMS.has(programId)) {
+    return buildUnknownDecodedResult(
+      programId,
+      ix,
+      parsedData,
+      'custom',
+      'This program uses custom non-Anchor binary layouts on-chain; use a dedicated custom decoder.'
+    );
+  }
+
+  // Validate discriminator first, then decode.
+  const discriminatorBuffer = parsedData.buffer.subarray(0, 8);
+  const idlInstruction = findInstructionByDiscriminator(targetIdl, discriminatorBuffer);
+  if (!idlInstruction) {
+    return buildUnknownDecodedResult(programId, ix, parsedData, 'anchor');
+  }
+
+  // BorshCoder decodes using the hardcoded (or injected) Anchor IDL.
+  const coder = getCachedCoder(programId, targetIdl);
+  let decoded: { name: string; data: unknown } | null = null;
   try {
-    decoded = coder.instruction.decode(parsed.buffer);
+    decoded = coder.instruction.decode(parsedData.buffer) as {
+      name: string;
+      data: unknown;
+    } | null;
   } catch {
-    return {
-      instructionName: 'unknown',
-      anchorInstructionName: idlIx.name,
-      type: 'unknown',
-      programId,
-      accounts: ix.accounts,
-      rawData: ix.data,
-      discriminator: discriminatorHex,
-      inputEncoding: parsed.encoding,
-      decoderType: 'anchor',
-      confidence: 'low',
-    };
+    return buildUnknownDecodedResult(programId, ix, parsedData, 'anchor');
   }
 
   if (!decoded) {
-    return {
-      instructionName: 'unknown',
-      anchorInstructionName: 'unknown',
-      type: 'unknown',
-      programId,
-      accounts: ix.accounts,
-      rawData: ix.data,
-      discriminator: discriminatorHex,
-      inputEncoding: parsed.encoding,
-      decoderType: 'anchor',
-      confidence: 'low',
-    };
+    return buildUnknownDecodedResult(programId, ix, parsedData, 'anchor');
   }
 
   const instructionName = toCamelCaseInstructionName(decoded.name);
-  const classification = classify(programId, instructionName);
-  const { resolved, strict } = resolveAccounts(idlIx, ix.accounts);
-  const isNonAnchor = NON_ANCHOR_BINARY_PROGRAMS.has(programId);
+  const { type, action } = classifyInstruction(instructionName);
+  const discriminator = parsedData.buffer.subarray(0, 8).toString('hex');
+  const { resolvedAccounts, accountsStrictMatch } = resolveInstructionAccounts(
+    targetIdl,
+    decoded.name,
+    ix.accounts
+  );
+  const isNonAnchorBinaryProgram = NON_ANCHOR_BINARY_PROGRAMS.has(programId);
+  const decoderWarning = isNonAnchorBinaryProgram
+    ? 'This program commonly uses custom non-Anchor binary layouts on-chain; decoded via Anchor IDL in compatibility mode.'
+    : undefined;
 
   return {
     instructionName,
     anchorInstructionName: decoded.name,
-    type: classification.type ?? 'unknown',
+    type,
     programId,
     accounts: ix.accounts,
     rawData: ix.data,
-    decodedData: decoded.data,
-    discriminator: discriminatorHex,
-    inputEncoding: parsed.encoding,
+    decodedData: normalizeDecodedData(decoded.data),
+    discriminator,
+    inputEncoding: parsedData.encoding,
     decoderType: 'anchor',
-    confidence: isNonAnchor ? 'low' : 'high',
-    resolvedAccounts: resolved,
-    accountsStrictMatch: strict,
-    ...(classification.action ? { action: classification.action } : {}),
-    ...(isNonAnchor ? { decoderWarning: 'Raydium uses custom non-Anchor binary layouts' } : {}),
+    confidence: isNonAnchorBinaryProgram ? 'low' : 'high',
+    ...(resolvedAccounts ? { resolvedAccounts } : {}),
+    ...(decoderWarning ? { decoderWarning } : {}),
+    accountsStrictMatch,
+    ...(action ? { action } : {}),
   };
 }

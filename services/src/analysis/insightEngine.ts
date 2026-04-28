@@ -95,7 +95,7 @@ const checkCUWaste = (tx: AnalyzedTransaction): Insight | null => {
  */
 const checkBudgetRisk = (tx: AnalyzedTransaction): Insight | null => {
   const utilizationPercent = getCanonicalUtilizationPercent(tx);
-  if (utilizationPercent < 90) return null;
+  if (utilizationPercent < 85) return null;
 
   return {
     type: 'BUDGET_RISK',
@@ -114,7 +114,7 @@ const checkBudgetRisk = (tx: AnalyzedTransaction): Insight | null => {
  * Deep CPI (Depth > 3)
  */
 const checkDeepCPI = (tx: AnalyzedTransaction): Insight | null => {
-  if (tx.cpiTree.totalDepth <= 3) return null;
+  if (tx.cpiTree.totalDepth <= 4) return null;
 
   return {
     type: 'DEEP_CPI',
@@ -244,7 +244,12 @@ export const analyzeTransaction = async (
   const mergedInsights = mergeInsights(ruleInsights, providerInsights);
 
   const severityScore = { critical: 0, warning: 1, info: 2 };
-  mergedInsights.sort((a, b) => severityScore[a.severity] - severityScore[b.severity]);
+  mergedInsights.sort((a, b) => {
+    const sevDiff = severityScore[a.severity] - severityScore[b.severity];
+    if (sevDiff !== 0) return sevDiff;
+    // Same severity: prioritize insights with concrete CU savings
+    return (b.estimatedCUSavings ?? 0) - (a.estimatedCUSavings ?? 0);
+  });
 
   const totalEstimatedSavings = mergedInsights.reduce(
     (sum, i) => sum + (i.estimatedCUSavings || 0),

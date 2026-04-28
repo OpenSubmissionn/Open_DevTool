@@ -1,3 +1,52 @@
+import type { PromptContext } from './prompts';
+
+/** Aggregate stats describing the CPI call tree shape. */
+export interface CpiTreeStructure {
+  /** Maximum depth of the CPI tree. */
+  depth: number;
+  /** Total number of nodes (root + children). */
+  totalNodes: number;
+  /** Average children per non-leaf node (1.0 means linear chain, >1.0 means fan-out). */
+  branchingFactor: number;
+  /** Count of distinct programs invoked across the tree. */
+  uniquePrograms: number;
+}
+
+/** Detailed information about the program that consumed the most CU. */
+export interface BottleneckNodeDetail {
+  programId: string;
+  programName: string;
+  cuConsumed: number;
+  utilizationPercent: number;
+  /** Status of the bottleneck call ("success" | "failed"). */
+  status?: 'success' | 'failed';
+  /** Depth of the bottleneck node in the CPI tree, when known. */
+  depth?: number;
+}
+
+/** Per-account state change with full role and value details. */
+export interface DetailedAccountDiff {
+  pubkey: string;
+  /** First 8 chars of the pubkey for display. */
+  pubkeyShort: string;
+  /** Account role: signer / writable / readonly. */
+  role: 'signer' | 'writable' | 'readonly';
+  solDelta: number;
+  /** Token deltas attached to this account (mint + uiDelta). */
+  tokenDeltas: Array<{
+    mint: string;
+    symbol?: string;
+    uiDelta: number;
+  }>;
+}
+
+/** Reference to a known optimization pattern for the bottleneck program. */
+export interface SimilarPattern {
+  programName: string;
+  pattern: string;
+  optimization: string;
+}
+
 export interface MCPPayload {
   bottleneckProgram: string;
   instructionName: string;
@@ -6,6 +55,16 @@ export interface MCPPayload {
   accountDiffSummary: string;
   parsedErrors: string[];
   logSummary: string;
+  /** Optional enriched context (framework examples, trade-offs, CU references). */
+  promptContext?: PromptContext;
+  /** Aggregate metrics on the CPI tree shape. */
+  cpiTreeStructure?: CpiTreeStructure;
+  /** Detailed breakdown of the CU bottleneck node. */
+  bottleneckNode?: BottleneckNodeDetail;
+  /** Per-account state changes with role and token deltas. */
+  detailedAccountDiffs?: DetailedAccountDiff[];
+  /** Known optimization patterns relevant to this transaction's bottleneck. */
+  similarPatterns?: SimilarPattern[];
 }
 
 export interface MCPInsightResponse {
@@ -37,7 +96,6 @@ export async function requestInsights(payload: MCPPayload): Promise<MCPInsightRe
 
       if (!response.ok) {
         if (response.status >= 500 && retryCount < 1) {
-          // Retry on 5xx
           return attempt(retryCount + 1);
         }
         console.warn(`[MCP] Degraded: HTTP ${response.status}`);
@@ -50,7 +108,6 @@ export async function requestInsights(payload: MCPPayload): Promise<MCPInsightRe
       clearTimeout(timeoutId);
 
       if (retryCount < 1) {
-        // Retry on network failure
         return attempt(retryCount + 1);
       }
 
