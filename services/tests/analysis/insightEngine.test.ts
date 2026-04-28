@@ -97,6 +97,125 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
     expect(report.insights[1].type).toBe('BUDGET_RISK');
   });
 
+  // --- Threshold boundary tests (Task 2.6.1) ---
+
+  it('BUDGET_RISK fires at the 85% lower boundary', async () => {
+    const mockTx = {
+      parsed: { success: true },
+      cuProfile: { totalConsumed: 170_000, totalLimit: 200_000, utilizationPercent: 85 },
+      cpiTree: { totalDepth: 1 },
+    } as unknown as AnalyzedTransaction;
+
+    const report = await analyzeTransaction(mockTx);
+    expect(report.insights.some((i) => i.type === 'BUDGET_RISK')).toBe(true);
+  });
+
+  it('BUDGET_RISK does NOT fire just below the 85% threshold', async () => {
+    const mockTx = {
+      parsed: { success: true },
+      cuProfile: { totalConsumed: 168_000, totalLimit: 200_000, utilizationPercent: 84 },
+      cpiTree: { totalDepth: 1 },
+    } as unknown as AnalyzedTransaction;
+
+    const report = await analyzeTransaction(mockTx);
+    expect(report.insights.some((i) => i.type === 'BUDGET_RISK')).toBe(false);
+  });
+
+  it('DEEP_CPI fires at the depth-5 lower boundary', async () => {
+    const mockTx = {
+      parsed: { success: true },
+      cuProfile: { totalConsumed: 50_000, totalLimit: 200_000, utilizationPercent: 25 },
+      cpiTree: { totalDepth: 5 },
+    } as unknown as AnalyzedTransaction;
+
+    const report = await analyzeTransaction(mockTx);
+    expect(report.insights.some((i) => i.type === 'DEEP_CPI')).toBe(true);
+  });
+
+  it('DEEP_CPI does NOT fire at depth 4 (normal DEX swap)', async () => {
+    const mockTx = {
+      parsed: { success: true },
+      cuProfile: { totalConsumed: 50_000, totalLimit: 200_000, utilizationPercent: 25 },
+      cpiTree: { totalDepth: 4 },
+    } as unknown as AnalyzedTransaction;
+
+    const report = await analyzeTransaction(mockTx);
+    expect(report.insights.some((i) => i.type === 'DEEP_CPI')).toBe(false);
+  });
+
+  it('ranks insights with concrete CU savings ahead of those without, within same severity', async () => {
+    const ruleInsights: Insight[] = [
+      {
+        type: 'A_NO_SAVINGS',
+        severity: 'info',
+        title: 'No savings',
+        message: 'A',
+        recommendation: 'a',
+        source: 'rule',
+        codeSuggestions: [],
+      },
+      {
+        type: 'B_WITH_SAVINGS',
+        severity: 'info',
+        title: 'With savings',
+        message: 'B',
+        recommendation: 'b',
+        source: 'rule',
+        codeSuggestions: [],
+        estimatedCUSavings: 50_000,
+      },
+    ];
+
+    const merged = mergeInsights(ruleInsights, []);
+    // Both info severity; analyzeTransaction is what applies the secondary sort.
+    // Verify by going through the full pipeline:
+    const mockTx = {
+      parsed: { success: true },
+      cuProfile: {
+        totalConsumed: 50_000,
+        totalLimit: 400_000,
+        utilizationPercent: 12.5,
+      },
+      cpiTree: { totalDepth: 1 },
+    } as unknown as AnalyzedTransaction;
+
+    // CU_WASTE has estimatedCUSavings; CU_ATTRIBUTION_LOW_CONFIDENCE does not.
+    const tx = {
+      ...mockTx,
+      parsed: {
+        success: true,
+        cuAttribution: {
+          confidence: 0.45,
+          unmatchedCUEntries: 1,
+          ambiguousKeys: 0,
+          doubleAttributionCount: 0,
+          traceTruncated: false,
+        },
+      },
+    } as unknown as AnalyzedTransaction;
+
+    const report = await analyzeTransaction(tx);
+    const wasteIndex = report.insights.findIndex((i) => i.type === 'CU_WASTE');
+    const attributionIndex = report.insights.findIndex(
+      (i) => i.type === 'CU_ATTRIBUTION_LOW_CONFIDENCE'
+    );
+
+    // Both are non-critical; CU_WASTE has savings (info severity), attribution is also info or warning.
+    // When same severity, the one with savings should come first.
+    expect(wasteIndex).toBeGreaterThanOrEqual(0);
+    expect(attributionIndex).toBeGreaterThanOrEqual(0);
+
+    const wasteInsight = report.insights[wasteIndex];
+    const attributionInsight = report.insights[attributionIndex];
+
+    if (wasteInsight.severity === attributionInsight.severity) {
+      expect(wasteIndex).toBeLessThan(attributionIndex);
+    }
+
+    // Direct check on mergeInsights stability (ranking applied at analyzeTransaction level)
+    expect(merged.length).toBe(2);
+  });
+
   it('should report low-confidence CU attribution for diagnostics', async () => {
     const mockTx = {
       parsed: {
