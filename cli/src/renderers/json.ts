@@ -30,7 +30,7 @@ export function renderJSON(analyzed: AnalyzedTransaction, insights: InsightRepor
     metadata: {
       version: '1.0.0',
       generatedAt: new Date().toISOString(),
-    }
+    },
   };
 
   return JSON.stringify(output, null, 2);

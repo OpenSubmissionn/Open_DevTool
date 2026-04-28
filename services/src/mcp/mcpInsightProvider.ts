@@ -10,13 +10,16 @@ function buildMcpPayload(context: InsightContext): MCPPayload {
 
   // Build account diff summary
   const accountDiffSummary = tx.accountDiffs
-    .map(diff => `${diff.pubkey.slice(0, 8)}...: ${diff.solDelta > 0 ? '+' : ''}${diff.solDelta} SOL`)
+    .map(
+      (diff) => `${diff.pubkey.slice(0, 8)}...: ${diff.solDelta > 0 ? '+' : ''}${diff.solDelta} SOL`
+    )
     .join(', ');
 
   // Extract errors from logs
-  const parsedErrors = tx.logs.entries
-    ?.filter(entry => entry.type === 'failed')
-    .map(entry => entry.message || 'Unknown error') || [];
+  const parsedErrors =
+    tx.logs.entries
+      ?.filter((entry) => entry.type === 'failed')
+      .map((entry) => entry.message || 'Unknown error') || [];
 
   // Build log summary
   const logSummary = `${tx.logs.entries?.length || 0} log entries, ${parsedErrors.length} errors`;
@@ -28,7 +31,7 @@ function buildMcpPayload(context: InsightContext): MCPPayload {
     cpiDepth: tx.cpiTree.totalDepth,
     accountDiffSummary: accountDiffSummary || 'No account changes',
     parsedErrors,
-    logSummary
+    logSummary,
   };
 }
 
@@ -51,9 +54,9 @@ export class McpInsightProvider implements InsightProvider {
             message: suggestion,
             recommendation: suggestion,
             source: 'mcp',
-            codeSuggestions: []
+            codeSuggestions: [],
           },
-          source: 'mcp'
+          source: 'mcp',
         };
       });
     } catch (error) {

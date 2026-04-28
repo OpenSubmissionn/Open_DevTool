@@ -23,7 +23,7 @@ describe('CU Profiler', () => {
     expect(profile.utilizationPercent).toBeCloseTo((153000 / 600000) * 100);
     expect(profile.perInstruction.length).toBe(3);
     expect(profile.bottleneck?.cuConsumed).toBe(150000); // <-- CORRIGIDO
-    expect(profile.bottleneck?.programName).toBe("Unknown Program"); // <-- ALTERADO PARA programName
+    expect(profile.bottleneck?.programName).toBe('Unknown Program'); // <-- ALTERADO PARA programName
   });
 
   it('should handle multiple instructions and calculate totals correctly', () => {
@@ -43,6 +43,6 @@ describe('CU Profiler', () => {
     expect(profile.totalLimit).toBe(0);
     expect(profile.utilizationPercent).toBe(0);
     expect(profile.perInstruction.length).toBe(0);
-    expect(profile.bottleneck?.cuConsumed).toBe(0); 
+    expect(profile.bottleneck?.cuConsumed).toBe(0);
   });
 });

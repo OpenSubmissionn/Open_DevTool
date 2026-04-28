@@ -1,4 +1,4 @@
-export * from "./analysis/types";
+export * from './analysis/types';
 export {
   getProgramName,
   getProgramInfo,
@@ -6,7 +6,7 @@ export {
   getProgramsByCategory,
 } from './solana/programs';
 
-export * from "./analysis/accountDiff";
+export * from './analysis/accountDiff';
 export * from './analysis/txParser';
 export { ParsedLogs as ParsedLogsFromLogParser, parseLogsFromBundle } from './analysis/logParser';
 export * from './analysis/cuProfiler';

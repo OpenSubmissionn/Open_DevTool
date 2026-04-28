@@ -85,7 +85,6 @@ export const registerTxCommand = (program: Command) => {
     .option('--json', 'Output results in structured JSON format', false)
     .option('--no-cache', 'Skip IDL cache and force network re-fetch')
     .action(async (signature: string, networkArg: string | undefined, options: any) => {
-
       const isJson = options.json === true;
 
       // 🔇 SILENCE MODE: desativa logs globais antes de qualquer execução
@@ -192,12 +191,9 @@ export const registerTxCommand = (program: Command) => {
         }
 
         renderTerminal(analyzed, insightsReport, selectedNetwork);
-
       } catch (error: any) {
         if (isJson) {
-          process.stdout.write(
-            JSON.stringify({ error: error.message }, null, 2)
-          );
+          process.stdout.write(JSON.stringify({ error: error.message }, null, 2));
         } else {
           const spinner = ora();
           spinner.fail(chalk.red('Pipeline Crash'));

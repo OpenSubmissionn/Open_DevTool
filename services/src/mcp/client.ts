@@ -44,7 +44,7 @@ export async function requestInsights(payload: MCPPayload): Promise<MCPInsightRe
         return { suggestions: [], source: 'mcp' };
       }
 
-      const data = await response.json() as { suggestions?: string[] };
+      const data = (await response.json()) as { suggestions?: string[] };
       return { suggestions: data.suggestions ?? [], source: 'mcp' };
     } catch (error) {
       clearTimeout(timeoutId);
@@ -54,10 +54,7 @@ export async function requestInsights(payload: MCPPayload): Promise<MCPInsightRe
         return attempt(retryCount + 1);
       }
 
-      const errorMsg =
-        error instanceof Error
-          ? error.message
-          : String(error);
+      const errorMsg = error instanceof Error ? error.message : String(error);
       console.warn(`[MCP] Degraded: ${errorMsg}`);
       return { suggestions: [], source: 'mcp' };
     }
