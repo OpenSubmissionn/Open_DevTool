@@ -15,18 +15,8 @@
     "Program SwapExample11111111111111111111111111111 invoke [1]",
     "Program SwapExample11111111111111111111111111111 success"
   ],
-  "preBalances": [
-    5000000,
-    2039280,
-    2039280,
-    1
-  ],
-  "postBalances": [
-    4995000,
-    2039280,
-    2039280,
-    1
-  ],
+  "preBalances": [5000000, 2039280, 2039280, 1],
+  "postBalances": [4995000, 2039280, 2039280, 1],
   "preTokenBalances": [
     {
       "accountIndex": 1,

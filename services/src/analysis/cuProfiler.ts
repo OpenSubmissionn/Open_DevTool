@@ -10,7 +10,7 @@
  * Returns aggregate CU metrics plus instruction-level details.
  */
 
-import { CUProfile, CUEntry } from "./types"; 
+import { CUProfile, CUEntry } from './types';
 
 export function profileCU(logMessages: string[]): CUProfile {
   // Running totals for transaction-level CU metrics.
@@ -40,9 +40,9 @@ export function profileCU(logMessages: string[]): CUProfile {
         cuConsumed: consumed,
         cuLimit: limit,
         utilizationPercent: (consumed / limit) * 100,
-        programId: "Unknown Program ID", 
-        programName: "Unknown Program",  
-        depth: 0, 
+        programId: 'Unknown Program ID',
+        programName: 'Unknown Program',
+        depth: 0,
       };
       perInstruction.push(currentEntry);
 
@@ -61,6 +61,13 @@ export function profileCU(logMessages: string[]): CUProfile {
     utilizationPercent,
     perInstruction,
     // Keep a stable fallback object to simplify consumers/tests.
-    bottleneck: bottleneck || { cuConsumed: 0, cuLimit: 0, utilizationPercent: 0, programId: "N/A", programName: "N/A", depth: 0 }, // <-- CORRIGIDO
+    bottleneck: bottleneck || {
+      cuConsumed: 0,
+      cuLimit: 0,
+      utilizationPercent: 0,
+      programId: 'N/A',
+      programName: 'N/A',
+      depth: 0,
+    }, // <-- CORRIGIDO
   };
 }

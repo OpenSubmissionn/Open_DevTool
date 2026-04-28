@@ -1,18 +1,21 @@
 import { describe, it, expect } from 'vitest';
-import { analyzeTransaction, InsightProvider, mergeInsights } from '../../src/analysis/insightEngine';
+import {
+  analyzeTransaction,
+  InsightProvider,
+  mergeInsights,
+} from '../../src/analysis/insightEngine';
 import { AnalyzedTransaction, Insight, ProviderInsight } from '../../src/analysis/types';
 
 describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
-  
   it('should detect a critical execution failure', async () => {
     const mockTx = {
       parsed: { success: false },
       cuProfile: { totalConsumed: 5000, totalLimit: 200000, utilizationPercent: 2.5 },
-      cpiTree: { totalDepth: 1 }
+      cpiTree: { totalDepth: 1 },
     } as unknown as AnalyzedTransaction;
 
     const report = await analyzeTransaction(mockTx);
-    expect(report.insights.some(i => i.type === 'EXECUTION_FAILURE')).toBe(true);
+    expect(report.insights.some((i) => i.type === 'EXECUTION_FAILURE')).toBe(true);
     expect(report.insights[0].severity).toBe('critical');
   });
 
@@ -26,14 +29,14 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
         bottleneck: {
           programName: 'Jupiter V6',
           cuConsumed: 80000,
-          utilizationPercent: 80
-        }
+          utilizationPercent: 80,
+        },
       },
-      cpiTree: { totalDepth: 1 }
+      cpiTree: { totalDepth: 1 },
     } as unknown as AnalyzedTransaction;
 
     const report = await analyzeTransaction(mockTx);
-    expect(report.insights.some(i => i.type === 'CU_BOTTLENECK')).toBe(true);
+    expect(report.insights.some((i) => i.type === 'CU_BOTTLENECK')).toBe(true);
   });
 
   it('should suggest optimization for high CU waste', async () => {
@@ -42,13 +45,13 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
       cuProfile: {
         totalConsumed: 40000,
         totalLimit: 400000,
-        utilizationPercent: 10
+        utilizationPercent: 10,
       },
-      cpiTree: { totalDepth: 1 }
+      cpiTree: { totalDepth: 1 },
     } as unknown as AnalyzedTransaction;
 
     const report = await analyzeTransaction(mockTx);
-    const waste = report.insights.find(i => i.type === 'CU_WASTE');
+    const waste = report.insights.find((i) => i.type === 'CU_WASTE');
     expect(waste).toBeDefined();
     expect(waste?.recommendation).toContain('44');
   });
@@ -59,37 +62,37 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
       cuProfile: {
         totalConsumed: 185000,
         totalLimit: 200000,
-        utilizationPercent: 92.5
+        utilizationPercent: 92.5,
       },
-      cpiTree: { totalDepth: 1 }
+      cpiTree: { totalDepth: 1 },
     } as unknown as AnalyzedTransaction;
 
     const report = await analyzeTransaction(mockTx);
-    expect(report.insights.some(i => i.type === 'BUDGET_RISK')).toBe(true);
-    expect(report.insights.find(i => i.type === 'BUDGET_RISK')?.severity).toBe('warning');
+    expect(report.insights.some((i) => i.type === 'BUDGET_RISK')).toBe(true);
+    expect(report.insights.find((i) => i.type === 'BUDGET_RISK')?.severity).toBe('warning');
   });
 
   it('should detect high complexity in deep CPI trees', async () => {
     const mockTx = {
       parsed: { success: true },
       cuProfile: { totalConsumed: 10000, totalLimit: 200000, utilizationPercent: 5 },
-      cpiTree: { totalDepth: 5 }
+      cpiTree: { totalDepth: 5 },
     } as unknown as AnalyzedTransaction;
 
     const report = await analyzeTransaction(mockTx);
-    expect(report.insights.some(i => i.type === 'DEEP_CPI')).toBe(true);
-    expect(report.insights.find(i => i.type === 'DEEP_CPI')?.severity).toBe('info');
+    expect(report.insights.some((i) => i.type === 'DEEP_CPI')).toBe(true);
+    expect(report.insights.find((i) => i.type === 'DEEP_CPI')?.severity).toBe('info');
   });
 
   it('should rank critical failure above all other insights', async () => {
     const mockTx = {
       parsed: { success: false },
-      cuProfile: { 
-        totalConsumed: 195000, 
-        totalLimit: 200000, 
-        utilizationPercent: 97.5
+      cuProfile: {
+        totalConsumed: 195000,
+        totalLimit: 200000,
+        utilizationPercent: 97.5,
       },
-      cpiTree: { totalDepth: 5 }
+      cpiTree: { totalDepth: 5 },
     } as unknown as AnalyzedTransaction;
 
     const report = await analyzeTransaction(mockTx);
@@ -129,20 +132,18 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
     expect(qualityInsight?.severity).toBe('warning');
     expect(qualityInsight?.context?.confidence).toBe(0.45);
   });
-
 });
 
 describe('Hybrid Architecture - Provider Integration', () => {
-  
   it('should return rule-based insights when no provider is injected', async () => {
     const mockTx = {
       parsed: { success: false },
       cuProfile: { totalConsumed: 5000, totalLimit: 200000, utilizationPercent: 2.5 },
-      cpiTree: { totalDepth: 1 }
+      cpiTree: { totalDepth: 1 },
     } as unknown as AnalyzedTransaction;
 
     const report = await analyzeTransaction(mockTx);
-    expect(report.insights.some(i => i.type === 'EXECUTION_FAILURE')).toBe(true);
+    expect(report.insights.some((i) => i.type === 'EXECUTION_FAILURE')).toBe(true);
     expect(report.insights.length).toBeGreaterThan(0);
   });
 
@@ -150,17 +151,17 @@ describe('Hybrid Architecture - Provider Integration', () => {
     const mockProvider: InsightProvider = {
       fetchInsights: async () => {
         throw new Error('Provider failed');
-      }
+      },
     };
 
     const mockTx = {
       parsed: { success: false },
       cuProfile: { totalConsumed: 5000, totalLimit: 200000, utilizationPercent: 2.5 },
-      cpiTree: { totalDepth: 1 }
+      cpiTree: { totalDepth: 1 },
     } as unknown as AnalyzedTransaction;
 
     const report = await analyzeTransaction(mockTx, mockProvider);
-    expect(report.insights.some(i => i.type === 'EXECUTION_FAILURE')).toBe(true);
+    expect(report.insights.some((i) => i.type === 'EXECUTION_FAILURE')).toBe(true);
     expect(report.insights.length).toBeGreaterThan(0);
   });
 
@@ -175,21 +176,21 @@ describe('Hybrid Architecture - Provider Integration', () => {
             message: 'Provider detected failure',
             recommendation: 'Provider recommendation',
             source: 'mcp',
-            codeSuggestions: []
+            codeSuggestions: [],
           },
-          source: 'mcp'
-        }
-      ]
+          source: 'mcp',
+        },
+      ],
     };
 
     const mockTx = {
       parsed: { success: false },
       cuProfile: { totalConsumed: 5000, totalLimit: 200000, utilizationPercent: 2.5 },
-      cpiTree: { totalDepth: 1 }
+      cpiTree: { totalDepth: 1 },
     } as unknown as AnalyzedTransaction;
 
     const report = await analyzeTransaction(mockTx, mockProvider);
-    const failureInsights = report.insights.filter(i => i.type === 'EXECUTION_FAILURE');
+    const failureInsights = report.insights.filter((i) => i.type === 'EXECUTION_FAILURE');
     expect(failureInsights.length).toBe(1);
     expect(failureInsights[0].severity).toBe('critical');
   });
@@ -203,8 +204,8 @@ describe('Hybrid Architecture - Provider Integration', () => {
         message: 'High CU usage',
         recommendation: 'Optimize',
         source: 'rule',
-        codeSuggestions: []
-      }
+        codeSuggestions: [],
+      },
     ];
 
     const providerInsights: ProviderInsight[] = [
@@ -216,10 +217,10 @@ describe('Hybrid Architecture - Provider Integration', () => {
           message: 'Nearing limit',
           recommendation: 'Increase budget',
           source: 'mcp',
-          codeSuggestions: []
+          codeSuggestions: [],
         },
-        source: 'mcp'
-      }
+        source: 'mcp',
+      },
     ];
 
     const merged = mergeInsights(ruleInsights, providerInsights);
@@ -227,5 +228,4 @@ describe('Hybrid Architecture - Provider Integration', () => {
     expect(merged[0].type).toBe('CU_BOTTLENECK');
     expect(merged[1].type).toBe('BUDGET_RISK');
   });
-
 });

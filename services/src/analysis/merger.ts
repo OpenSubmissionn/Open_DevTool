@@ -11,8 +11,7 @@ export interface MergeOptions {
 }
 
 function extractMicroLamportsPerCU(bundle: RawTransactionBundle): number {
-  const instructions =
-    (bundle.rawResponse?.transaction as any)?.message?.instructions ?? [];
+  const instructions = (bundle.rawResponse?.transaction as any)?.message?.instructions ?? [];
 
   for (const ix of instructions) {
     if (ix?.programId?.toString() !== 'ComputeBudget111111111111111111111111111111') continue;
@@ -42,7 +41,7 @@ export async function mergeAnalysis(
   cpiTree: CPITree,
   accountDiffs: AccountDiff[],
   options: MergeOptions = {},
-  solPriceUsd: number | null = null,
+  solPriceUsd: number | null = null
 ): Promise<AnalyzedTransaction> {
   const parsed = await parseTransaction(bundle, {
     idlCache: options.idlCache,
