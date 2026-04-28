@@ -177,7 +177,7 @@ export const registerTxCommand = (program: Command) => {
         // Step 3: Insights
         if (!isJson) spinner.text = chalk.cyan('Generating actionable insights...');
         const mcpProvider = new McpInsightProvider();
-        const insightsReport = await analyzeTransaction(analyzed, mcpProvider);
+        const insightsReport = await analyzeTransaction(analyzed, [mcpProvider]);
 
         if (!isJson) {
           spinner.succeed(chalk.green('Analysis Complete!'));
