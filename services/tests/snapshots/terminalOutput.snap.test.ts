@@ -34,6 +34,13 @@ beforeAll(() => {
   // Force chalk to never emit ANSI codes regardless of TTY detection.
   chalk.level = 0;
   process.env.FORCE_COLOR = '0';
+
+  // Force en-US locale so number separators are stable across machines
+  // (CI is en-US, dev machines may be pt-BR / de-DE / etc.).
+  const originalNumberToLocale = Number.prototype.toLocaleString;
+  Number.prototype.toLocaleString = function (locales, options) {
+    return originalNumberToLocale.call(this, locales ?? 'en-US', options);
+  };
 });
 
 describe('Terminal Output Snapshots', () => {
