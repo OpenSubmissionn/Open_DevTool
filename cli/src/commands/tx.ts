@@ -3,6 +3,26 @@ import ora from 'ora';
 import chalk from 'chalk';
 import type { CLIOptions } from '../types';
 
+// UUtility to measure stage execution time
+function nowMs() {
+  return typeof process !== 'undefined' && process.hrtime
+    ? Number(process.hrtime.bigint() / 1000000n)
+    : Date.now();
+}
+
+function printTimings(timings: {stage: string, durationMs: number}[]) {
+  const pad = (s: string) => s.padEnd(22, ' ');
+  for (const t of timings) {
+    console.log(
+      chalk.gray('  ├─'),
+      chalk.cyan(pad(t.stage)),
+      chalk.yellow(`${t.durationMs.toFixed(1)} ms`)
+    );
+  }
+  const total = timings.reduce((acc, t) => acc + t.durationMs, 0);
+  console.log(chalk.gray('  └─'), chalk.bold('Total'), chalk.green(`${total.toFixed(1)} ms`));
+}
+
 // Core services
 import {
   fetchTransaction,
@@ -80,11 +100,15 @@ function toParsedLogs(
 export const registerTxCommand = (program: Command) => {
   program
     .command('tx <signature> [network]')
-    .description('Full analysis of a Solana transaction')
+    .description('Full analysis of a Solana transaction.\n\n  --verbose: Displays detailed timing for each stage in the terminal and includes timings in the JSON under _metadata.timings.')
     .option('--network <type>', 'Solana network (mainnet/devnet)')
     .option('--json', 'Output results in structured JSON format', false)
     .option('--no-cache', 'Skip IDL cache and force network re-fetch')
+    .option('--verbose', 'Show detailed timing for each pipeline stage')
     .action(async (signature: string, networkArg: string | undefined, options: any) => {
+      // Timings array to track pipeline stages
+      const timings: {stage: string, durationMs: number}[] = [];
+      let t0 = nowMs();
 
       // Validate signature
       if (![87, 88].includes(signature.length)) {
@@ -92,6 +116,9 @@ export const registerTxCommand = (program: Command) => {
         process.exitCode = 1;
         return;
       }
+      let t1 = nowMs();
+      timings.push({ stage: 'validate_signature', durationMs: t1 - t0 });
+      t0 = t1;
 
       const optionNetwork =
         typeof options.network === 'string' ? options.network.toLowerCase() : undefined;
@@ -106,16 +133,22 @@ export const registerTxCommand = (program: Command) => {
         process.exitCode = 1;
         return;
       }
+      t1 = nowMs();
+      timings.push({ stage: 'resolve_network', durationMs: t1 - t0 });
+      t0 = t1;
 
       // [NEW] Create one IdlCache instance for the lifetime of this command.
       // noCache=true when --no-cache is passed; verbose=true when --verbose is passed.
       const globalOpts = program.opts();
-      const verbose = globalOpts.verbose === true;
-      console.log('[debug] globalOpts.verbose:', globalOpts.verbose);
+      const verbose = globalOpts.verbose === true || options.verbose === true;
+      // console.log('[debug] globalOpts.verbose:', globalOpts.verbose);
       const idlCache = new IdlCache({
         noCache: options.cache === false,   // commander inverts --no-cache → options.cache
         verbose,
       });
+      t1 = nowMs();
+      timings.push({ stage: 'init_idl_cache', durationMs: t1 - t0 });
+      t0 = t1;
 
       const spinner = ora(`Initializing Open Insight Pipeline...`).start();
 
@@ -123,9 +156,14 @@ export const registerTxCommand = (program: Command) => {
         // Step 1: Fetch
         spinner.text = chalk.cyan('Fetching transaction bundle...');
         const selectedNetwork = resolvedNetwork as CLIOptions['network'];
+        const fetchStart = nowMs();
         const rawBundle = await fetchTransaction(signature, selectedNetwork);
+        const fetchEnd = nowMs();
+        timings.push({ stage: 'fetch_transaction', durationMs: fetchEnd - fetchStart });
+        t0 = fetchEnd;
 
         // [NEW] AnchorProvider read-only para buscar IDLs on-chain de programas desconhecidos.
+        const anchorStart = nowMs();
         const { Connection } = await import('@solana/web3.js');
         const { AnchorProvider } = await import('@coral-xyz/anchor');
         const rpcUrl = resolvedNetwork === 'mainnet'
@@ -136,18 +174,26 @@ export const registerTxCommand = (program: Command) => {
           { publicKey: null, signTransaction: async (tx: any) => tx, signAllTransactions: async (txs: any) => txs } as any,
           { commitment: 'confirmed' }
         );
+        const anchorEnd = nowMs();
+        timings.push({ stage: 'init_anchor_provider', durationMs: anchorEnd - anchorStart });
+        t0 = anchorEnd;
 
         // Step 2: Analysis
         spinner.text = chalk.cyan('Parsing logs and CU...');
+        const parseStart = nowMs();
         const parsedLogSummary = parseLogsFromBundle(rawBundle.logMessages);
         const cuProfile = profileCU(rawBundle.logMessages);
         const cpiTrace = buildCPITree(rawBundle.logMessages);
         const cpiTree = toCPITree(cpiTrace);
         const accountDiffs = computeAccountDiffs(rawBundle);
+        const parseEnd = nowMs();
+        timings.push({ stage: 'parse_logs_and_cu', durationMs: parseEnd - parseStart });
+        t0 = parseEnd;
 
         // [NEW] idlCache is forwarded so mergeAnalysis → parseTransaction can
         //       decode Anchor instruction names without a network round-trip.
         spinner.text = chalk.cyan('Decoding instructions...');
+        const decodeStart = nowMs();
         const analyzed = await mergeAnalysis(
           rawBundle,
           toParsedLogs(rawBundle.logMessages, parsedLogSummary),
@@ -156,11 +202,18 @@ export const registerTxCommand = (program: Command) => {
           accountDiffs,
           { idlCache, anchorProvider },  
         );
+        const decodeEnd = nowMs();
+        timings.push({ stage: 'decode_instructions', durationMs: decodeEnd - decodeStart });
+        t0 = decodeEnd;
 
         // Step 4: Rule-based Intelligence + MCP Integration
         spinner.text = chalk.cyan('Generating actionable insights...');
+        const insightsStart = nowMs();
         const mcpProvider = new McpInsightProvider();
         const insightsReport = await analyzeTransaction(analyzed, mcpProvider);
+        const insightsEnd = nowMs();
+        timings.push({ stage: 'analyze_transaction', durationMs: insightsEnd - insightsStart });
+        t0 = insightsEnd;
 
         spinner.succeed(chalk.green('Analysis Complete!'));
         if (verbose) {
@@ -168,19 +221,32 @@ export const registerTxCommand = (program: Command) => {
         }
 
         // Step 5: Output
+        const outputStart = nowMs();
         if (options.json) {
+          // Adds timings to the _metadata field of the analyzed object
+          if (!analyzed._metadata) analyzed._metadata = {};
+          analyzed._metadata.timings = timings;
           console.log(renderJSON(analyzed, insightsReport));
+          const outputEnd = nowMs();
+          timings.push({ stage: 'render_json', durationMs: outputEnd - outputStart });
           return;
         }
 
         renderTerminal(analyzed, insightsReport, selectedNetwork);
+        const outputEnd = nowMs();
+        timings.push({ stage: 'render_terminal', durationMs: outputEnd - outputStart });
+
+        if (verbose) {
+          console.log(chalk.bold.cyan('\n[Pipeline Timings]'));
+          printTimings(timings);
+        }
 
       } catch (error: any) {
         spinner.fail(chalk.red('Pipeline Crash'));
         console.error(chalk.yellow(`\nDetail: ${error.message}`));
 
         // [NEW] Still print metrics on error so cache behaviour is observable.
-        if (verbose) {
+        if (program.opts().verbose === true || options.verbose === true) {
           idlCache.printMetrics();
         }
 
