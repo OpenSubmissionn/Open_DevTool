@@ -1,8 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  compareFrameworks,
-  validateMainnetSamples,
-} from '../../src/analysis/frameworkComparator';
+import { compareFrameworks, validateMainnetSamples } from '../../src/analysis/frameworkComparator';
 import { CUProfile } from '../../src/analysis/types';
 
 describe('Framework Comparator', () => {
@@ -172,9 +169,7 @@ describe('Enriched registry and mainnet validation', () => {
     expect(report.missingBenchmarks).toHaveLength(3);
     expect(report.results).toHaveLength(20);
     expect(
-      report.results.every(
-        (r) => r.alternatives.length > 0 || r.framework === 'unknown'
-      )
+      report.results.every((r) => r.alternatives.length > 0 || r.framework === 'unknown')
     ).toBe(true);
   });
 });
