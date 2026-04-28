@@ -1,5 +1,7 @@
 import { InsightProvider, InsightContext, ProviderInsight } from '../analysis/types';
+import { detectFramework } from '../analysis/frameworkComparator';
 import { requestInsights, MCPPayload } from './client';
+import { buildPromptContext } from './prompts';
 
 /**
  * Builds the payload for MCP insight requests from transaction context.
@@ -10,16 +12,27 @@ function buildMcpPayload(context: InsightContext): MCPPayload {
 
   // Build account diff summary
   const accountDiffSummary = tx.accountDiffs
-    .map(diff => `${diff.pubkey.slice(0, 8)}...: ${diff.solDelta > 0 ? '+' : ''}${diff.solDelta} SOL`)
+    .map(
+      (diff) => `${diff.pubkey.slice(0, 8)}...: ${diff.solDelta > 0 ? '+' : ''}${diff.solDelta} SOL`
+    )
     .join(', ');
 
   // Extract errors from logs
-  const parsedErrors = tx.logs.entries
-    ?.filter(entry => entry.type === 'failed')
-    .map(entry => entry.message || 'Unknown error') || [];
+  const parsedErrors =
+    tx.logs.entries
+      ?.filter((entry) => entry.type === 'failed')
+      .map((entry) => entry.message || 'Unknown error') || [];
 
   // Build log summary
   const logSummary = `${tx.logs.entries?.length || 0} log entries, ${parsedErrors.length} errors`;
+
+  // Detect framework from raw log messages and assemble enriched prompt context
+  const logMessages = tx.logs.entries?.map((entry) => entry.message ?? '') ?? [];
+  const detected = detectFramework(logMessages);
+  const promptContext = buildPromptContext({
+    framework: detected.framework,
+    cuConsumed: tx.cuProfile.totalConsumed,
+  });
 
   return {
     bottleneckProgram: bottleneck?.programName || 'Unknown',
@@ -28,7 +41,8 @@ function buildMcpPayload(context: InsightContext): MCPPayload {
     cpiDepth: tx.cpiTree.totalDepth,
     accountDiffSummary: accountDiffSummary || 'No account changes',
     parsedErrors,
-    logSummary
+    logSummary,
+    promptContext,
   };
 }
 
@@ -51,9 +65,9 @@ export class McpInsightProvider implements InsightProvider {
             message: suggestion,
             recommendation: suggestion,
             source: 'mcp',
-            codeSuggestions: []
+            codeSuggestions: [],
           },
-          source: 'mcp'
+          source: 'mcp',
         };
       });
     } catch (error) {

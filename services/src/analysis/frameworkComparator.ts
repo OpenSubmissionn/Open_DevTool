@@ -63,10 +63,11 @@ export function detectFramework(logMessages: string[]): FrameworkBenchmark {
     };
   }
 
-  const hasAnchorPattern = logMessages.some((message) =>
-    message.includes('Program log: Instruction:') ||
-    message.includes('AnchorError') ||
-    message.includes('anchor_lang')
+  const hasAnchorPattern = logMessages.some(
+    (message) =>
+      message.includes('Program log: Instruction:') ||
+      message.includes('AnchorError') ||
+      message.includes('anchor_lang')
   );
 
   if (hasAnchorPattern) {
@@ -79,10 +80,11 @@ export function detectFramework(logMessages: string[]): FrameworkBenchmark {
     };
   }
 
-  const hasSteelPattern = logMessages.some((message) =>
-    message.toLowerCase().includes('program log: steel') ||
-    message.includes('steel_instruction') ||
-    message.includes('steel::')
+  const hasSteelPattern = logMessages.some(
+    (message) =>
+      message.toLowerCase().includes('program log: steel') ||
+      message.includes('steel_instruction') ||
+      message.includes('steel::')
   );
 
   if (hasSteelPattern) {
@@ -95,9 +97,8 @@ export function detectFramework(logMessages: string[]): FrameworkBenchmark {
     };
   }
 
-  const hasNativeSignal = logMessages.some((message) =>
-    message.includes('solana_program::') ||
-    message.includes('invoke_signed')
+  const hasNativeSignal = logMessages.some(
+    (message) => message.includes('solana_program::') || message.includes('invoke_signed')
   );
 
   if (hasNativeSignal) {
@@ -127,16 +128,11 @@ export function compareFrameworks(
   const actualCU = cuProfile.totalConsumed;
 
   const alternatives = (Object.keys(BENCHMARK_REGISTRY) as SolanaFramework[])
-    .filter(
-      (framework) =>
-        framework !== 'unknown' && framework !== current.framework
-    )
+    .filter((framework) => framework !== 'unknown' && framework !== current.framework)
     .map((framework) => {
       const avgCU = BENCHMARK_REGISTRY[framework].avgCU;
       const deltaAbsolute = actualCU - avgCU;
-      const deltaPercent = actualCU === 0
-        ? 0
-        : (deltaAbsolute / actualCU) * 100;
+      const deltaPercent = actualCU === 0 ? 0 : (deltaAbsolute / actualCU) * 100;
 
       return {
         framework,
@@ -200,9 +196,8 @@ export function validateMainnetSamples(samples: MainnetSample[]): ValidationRepo
     .filter((result) => result.framework === 'unknown')
     .map((result) => result.signature);
 
-  const detectionRate = samples.length === 0
-    ? 0
-    : Number(((detected.length / samples.length) * 100).toFixed(2));
+  const detectionRate =
+    samples.length === 0 ? 0 : Number(((detected.length / samples.length) * 100).toFixed(2));
 
   return {
     total: samples.length,

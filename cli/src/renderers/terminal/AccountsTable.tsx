@@ -1,8 +1,8 @@
 import React from 'react';
 import { Text } from 'ink';
-import Table from "cli-table3";
-import chalk from "chalk";
-import { AccountDiff } from "../../../../services/src/analysis/types";
+import Table from 'cli-table3';
+import chalk from 'chalk';
+import { AccountDiff } from '../../../../services/src/analysis/types';
 
 type Props = {
   accounts: AccountDiff[];
@@ -11,7 +11,7 @@ type Props = {
 // Builds a fixed-width terminal table for account-level balance changes.
 export const AccountsTable = ({ accounts }: Props) => {
   const table = new Table({
-    head: ["Account", "Role", "SOL Δ", "Token Δ"],
+    head: ['Account', 'Role', 'SOL Δ', 'Token Δ'],
     colWidths: [20, 12, 15, 20],
   });
 
@@ -22,30 +22,24 @@ export const AccountsTable = ({ accounts }: Props) => {
     const solChange = formatSol(account.solDelta);
     const tokenChange = formatToken(account.tokenDeltas);
 
-    table.push([
-      shortPubkey,
-      account.role,
-      solChange,
-      tokenChange || "—",
-    ]);
+    table.push([shortPubkey, account.role, solChange, tokenChange || '—']);
   });
 
   //ONLY FIX: wrap string in <Text> for Ink compatibility
   return <Text>{table.toString()}</Text>;
 };
 
-
 // Helpers
 
 // Keeps long Solana public keys readable in narrow terminal columns.
 const truncatePubkey = (pubkey: string) => {
-  if (!pubkey) return "unknown";
-  return pubkey.slice(0, 4) + "..." + pubkey.slice(-4);
+  if (!pubkey) return 'unknown';
+  return pubkey.slice(0, 4) + '...' + pubkey.slice(-4);
 };
 
 // Converts lamports to SOL and applies color by direction of change.
 const formatSol = (lamports: number) => {
-  if (!lamports) return "0";
+  if (!lamports) return '0';
 
   const sol = lamports / 1_000_000_000;
   const value = sol.toFixed(6);
@@ -63,12 +57,12 @@ const formatToken = (tokenDeltas: any[]) => {
   return tokenDeltas
     .map((token) => {
       const amount = Number(token.delta || 0);
-      const symbol = token.symbol || "TOKEN";
+      const symbol = token.symbol || 'TOKEN';
 
       if (amount > 0) return chalk.green(`+${amount} ${symbol}`);
       if (amount < 0) return chalk.red(`${amount} ${symbol}`);
 
       return `${amount} ${symbol}`;
     })
-    .join(", ");
+    .join(', ');
 };

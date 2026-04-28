@@ -15,7 +15,7 @@ import {
   IdlCache,
   type CPITree,
   type ParsedLogs,
-} from '@open/services';     
+} from '@open/services';
 
 // MCP Integration
 import { McpInsightProvider } from '@open/services';
@@ -85,7 +85,6 @@ export const registerTxCommand = (program: Command) => {
     .option('--json', 'Output results in structured JSON format', false)
     .option('--no-cache', 'Skip IDL cache and force network re-fetch')
     .action(async (signature: string, networkArg: string | undefined, options: any) => {
-
       // Validate signature
       if (![87, 88].includes(signature.length)) {
         console.error(chalk.red('\nError: Invalid transaction signature.'));
@@ -113,7 +112,7 @@ export const registerTxCommand = (program: Command) => {
       const verbose = globalOpts.verbose === true;
       console.log('[debug] globalOpts.verbose:', globalOpts.verbose);
       const idlCache = new IdlCache({
-        noCache: options.cache === false,   // commander inverts --no-cache → options.cache
+        noCache: options.cache === false, // commander inverts --no-cache → options.cache
         verbose,
       });
 
@@ -128,12 +127,17 @@ export const registerTxCommand = (program: Command) => {
         // [NEW] AnchorProvider read-only para buscar IDLs on-chain de programas desconhecidos.
         const { Connection } = await import('@solana/web3.js');
         const { AnchorProvider } = await import('@coral-xyz/anchor');
-        const rpcUrl = resolvedNetwork === 'mainnet'
-          ? 'https://api.mainnet-beta.solana.com'
-          : 'https://api.devnet.solana.com';
+        const rpcUrl =
+          resolvedNetwork === 'mainnet'
+            ? 'https://api.mainnet-beta.solana.com'
+            : 'https://api.devnet.solana.com';
         const anchorProvider = new AnchorProvider(
           new Connection(rpcUrl, 'confirmed'),
-          { publicKey: null, signTransaction: async (tx: any) => tx, signAllTransactions: async (txs: any) => txs } as any,
+          {
+            publicKey: null,
+            signTransaction: async (tx: any) => tx,
+            signAllTransactions: async (txs: any) => txs,
+          } as any,
           { commitment: 'confirmed' }
         );
 
@@ -154,7 +158,7 @@ export const registerTxCommand = (program: Command) => {
           cuProfile,
           cpiTree,
           accountDiffs,
-          { idlCache, anchorProvider },  
+          { idlCache, anchorProvider }
         );
 
         // Step 4: Rule-based Intelligence + MCP Integration
@@ -174,7 +178,6 @@ export const registerTxCommand = (program: Command) => {
         }
 
         renderTerminal(analyzed, insightsReport, selectedNetwork);
-
       } catch (error: any) {
         spinner.fail(chalk.red('Pipeline Crash'));
         console.error(chalk.yellow(`\nDetail: ${error.message}`));

@@ -15,16 +15,8 @@
     "Program 11111111111111111111111111111111 invoke [1]",
     "Program 11111111111111111111111111111111 success"
   ],
-  "preBalances": [
-    2000000,
-    1000000,
-    1
-  ],
-  "postBalances": [
-    1895000,
-    1100000,
-    1
-  ],
+  "preBalances": [2000000, 1000000, 1],
+  "postBalances": [1895000, 1100000, 1],
   "preTokenBalances": [],
   "postTokenBalances": [],
   "innerInstructions": [],

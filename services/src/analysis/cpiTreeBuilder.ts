@@ -47,7 +47,7 @@ function markTruncated(node: ExecutionSnapshot): void {
 function popOpenNodesUntilDepth(
   stack: ExecutionSnapshot[],
   nextDepth: number,
-  trace: ExecutionTrace,
+  trace: ExecutionTrace
 ): void {
   while (stack.length > 0 && stack[stack.length - 1].depth >= nextDepth) {
     const node = stack.pop()!;
@@ -56,10 +56,7 @@ function popOpenNodesUntilDepth(
   }
 }
 
-function findMatchingOpenNode(
-  stack: ExecutionSnapshot[],
-  programId: string,
-): number {
+function findMatchingOpenNode(stack: ExecutionSnapshot[], programId: string): number {
   for (let index = stack.length - 1; index >= 0; index--) {
     if (stack[index].programId === programId) return index;
   }
@@ -69,7 +66,7 @@ function findMatchingOpenNode(
 function truncateNodesAbove(
   stack: ExecutionSnapshot[],
   matchIndex: number,
-  trace: ExecutionTrace,
+  trace: ExecutionTrace
 ): void {
   while (stack.length - 1 > matchIndex) {
     const node = stack.pop()!;
@@ -109,10 +106,16 @@ export function buildCPITree(logMessages: string[]): ExecutionTrace {
     const activeNode = stack[stack.length - 1];
 
     const logMatch = line.match(REGEX.LOG);
-    if (logMatch) { activeNode.logs.push(logMatch[1]); continue; }
+    if (logMatch) {
+      activeNode.logs.push(logMatch[1]);
+      continue;
+    }
 
     const dataMatch = line.match(REGEX.DATA);
-    if (dataMatch) { activeNode.dataLogs.push(dataMatch[1]); continue; }
+    if (dataMatch) {
+      activeNode.dataLogs.push(dataMatch[1]);
+      continue;
+    }
 
     const cuMatch = line.match(REGEX.CU);
     if (cuMatch) {

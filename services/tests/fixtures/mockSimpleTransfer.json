@@ -3,9 +3,7 @@
   "slot": 1500000,
   "blockTime": 1710000000,
   "transaction": {
-    "signatures": [
-      "5mZ8H54EQcPgZFa3sPHEHgxT5xRK6x6aHk3v1j3yhoQuZc4jAfiHn1qJpM9rN9//example"
-    ],
+    "signatures": ["5mZ8H54EQcPgZFa3sPHEHgxT5xRK6x6aHk3v1j3yhoQuZc4jAfiHn1qJpM9rN9//example"],
     "message": {
       "accountKeys": [
         "2zoF11B7hBLMRS4Q95x9vXk4T7aQk1h1Y6nF5BLse2dS",
