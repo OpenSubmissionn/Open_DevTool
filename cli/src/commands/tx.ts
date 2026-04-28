@@ -15,7 +15,7 @@ import {
   IdlCache,
   type CPITree,
   type ParsedLogs,
-} from '@open/services';     
+} from '@open/services';
 
 // MCP Integration
 import { McpInsightProvider } from '@open/services';
@@ -23,7 +23,7 @@ import { McpInsightProvider } from '@open/services';
 // JSON rendering output
 import { renderJSON } from '@open/services';
 
-// Terminal renderer (no Ink)
+// Terminal renderer
 import { renderTerminal } from '../renderers/terminal/renderer';
 
 function toCPITree(trace: ReturnType<typeof buildCPITree>): CPITree {
@@ -86,105 +86,129 @@ export const registerTxCommand = (program: Command) => {
     .option('--no-cache', 'Skip IDL cache and force network re-fetch')
     .action(async (signature: string, networkArg: string | undefined, options: any) => {
 
-      // Validate signature
-      if (![87, 88].includes(signature.length)) {
-        console.error(chalk.red('\nError: Invalid transaction signature.'));
-        process.exitCode = 1;
-        return;
+      const isJson = options.json === true;
+
+      // 🔇 SILENCE MODE: desativa logs globais antes de qualquer execução
+      const originalLog = console.log;
+      const originalError = console.error;
+
+      if (isJson) {
+        console.log = () => {};
+        console.error = () => {};
       }
 
-      const optionNetwork =
-        typeof options.network === 'string' ? options.network.toLowerCase() : undefined;
-
-      const positionalNetwork =
-        typeof networkArg === 'string' ? networkArg.toLowerCase() : undefined;
-
-      const resolvedNetwork = optionNetwork ?? positionalNetwork ?? 'devnet';
-
-      if (resolvedNetwork !== 'mainnet' && resolvedNetwork !== 'devnet') {
-        console.error(chalk.red('\nError: Invalid network.'));
-        process.exitCode = 1;
-        return;
-      }
-
-      // [NEW] Create one IdlCache instance for the lifetime of this command.
-      // noCache=true when --no-cache is passed; verbose=true when --verbose is passed.
-      const globalOpts = program.opts();
-      const verbose = globalOpts.verbose === true;
-      console.log('[debug] globalOpts.verbose:', globalOpts.verbose);
-      const idlCache = new IdlCache({
-        noCache: options.cache === false,   // commander inverts --no-cache → options.cache
-        verbose,
-      });
-
-      const spinner = ora(`Initializing Open Insight Pipeline...`).start();
+      const errorLog = (...args: any[]) => {
+        if (!isJson) originalError(...args);
+      };
 
       try {
+        // Validate signature
+        if (![87, 88].includes(signature.length)) {
+          errorLog(chalk.red('\nError: Invalid transaction signature.'));
+          process.exitCode = 1;
+          return;
+        }
+
+        const optionNetwork =
+          typeof options.network === 'string' ? options.network.toLowerCase() : undefined;
+
+        const positionalNetwork =
+          typeof networkArg === 'string' ? networkArg.toLowerCase() : undefined;
+
+        const resolvedNetwork = optionNetwork ?? positionalNetwork ?? 'devnet';
+
+        if (resolvedNetwork !== 'mainnet' && resolvedNetwork !== 'devnet') {
+          errorLog(chalk.red('\nError: Invalid network.'));
+          process.exitCode = 1;
+          return;
+        }
+
+        const globalOpts = program.opts();
+        const verbose = globalOpts.verbose === true;
+
+        const idlCache = new IdlCache({
+          noCache: options.cache === false,
+          verbose: !isJson && verbose,
+        });
+
+        const spinner = ora(`Initializing Open Insight Pipeline...`);
+        if (!isJson) spinner.start();
+
         // Step 1: Fetch
-        spinner.text = chalk.cyan('Fetching transaction bundle...');
+        if (!isJson) spinner.text = chalk.cyan('Fetching transaction bundle...');
         const selectedNetwork = resolvedNetwork as CLIOptions['network'];
         const rawBundle = await fetchTransaction(signature, selectedNetwork);
 
-        // [NEW] AnchorProvider read-only para buscar IDLs on-chain de programas desconhecidos.
         const { Connection } = await import('@solana/web3.js');
         const { AnchorProvider } = await import('@coral-xyz/anchor');
-        const rpcUrl = resolvedNetwork === 'mainnet'
-          ? 'https://api.mainnet-beta.solana.com'
-          : 'https://api.devnet.solana.com';
+
+        const rpcUrl =
+          resolvedNetwork === 'mainnet'
+            ? 'https://api.mainnet-beta.solana.com'
+            : 'https://api.devnet.solana.com';
+
         const anchorProvider = new AnchorProvider(
           new Connection(rpcUrl, 'confirmed'),
-          { publicKey: null, signTransaction: async (tx: any) => tx, signAllTransactions: async (txs: any) => txs } as any,
+          {
+            publicKey: null,
+            signTransaction: async (tx: any) => tx,
+            signAllTransactions: async (txs: any) => txs,
+          } as any,
           { commitment: 'confirmed' }
         );
 
         // Step 2: Analysis
-        spinner.text = chalk.cyan('Parsing logs and CU...');
+        if (!isJson) spinner.text = chalk.cyan('Parsing logs and CU...');
         const parsedLogSummary = parseLogsFromBundle(rawBundle.logMessages);
         const cuProfile = profileCU(rawBundle.logMessages);
         const cpiTrace = buildCPITree(rawBundle.logMessages);
         const cpiTree = toCPITree(cpiTrace);
         const accountDiffs = computeAccountDiffs(rawBundle);
 
-        // [NEW] idlCache is forwarded so mergeAnalysis → parseTransaction can
-        //       decode Anchor instruction names without a network round-trip.
-        spinner.text = chalk.cyan('Decoding instructions...');
+        if (!isJson) spinner.text = chalk.cyan('Decoding instructions...');
         const analyzed = await mergeAnalysis(
           rawBundle,
           toParsedLogs(rawBundle.logMessages, parsedLogSummary),
           cuProfile,
           cpiTree,
           accountDiffs,
-          { idlCache, anchorProvider },  
+          { idlCache, anchorProvider }
         );
 
-        // Step 4: Rule-based Intelligence + MCP Integration
-        spinner.text = chalk.cyan('Generating actionable insights...');
+        // Step 3: Insights
+        if (!isJson) spinner.text = chalk.cyan('Generating actionable insights...');
         const mcpProvider = new McpInsightProvider();
         const insightsReport = await analyzeTransaction(analyzed, mcpProvider);
 
-        spinner.succeed(chalk.green('Analysis Complete!'));
-        if (verbose) {
-          process.nextTick(() => idlCache.printMetrics());
+        if (!isJson) {
+          spinner.succeed(chalk.green('Analysis Complete!'));
+          if (verbose) process.nextTick(() => idlCache.printMetrics());
         }
 
-        // Step 5: Output
-        if (options.json) {
-          console.log(renderJSON(analyzed, insightsReport));
+        // OUTPUT
+        if (isJson) {
+          process.stdout.write(renderJSON(analyzed, insightsReport));
           return;
         }
 
         renderTerminal(analyzed, insightsReport, selectedNetwork);
 
       } catch (error: any) {
-        spinner.fail(chalk.red('Pipeline Crash'));
-        console.error(chalk.yellow(`\nDetail: ${error.message}`));
-
-        // [NEW] Still print metrics on error so cache behaviour is observable.
-        if (verbose) {
-          idlCache.printMetrics();
+        if (isJson) {
+          process.stdout.write(
+            JSON.stringify({ error: error.message }, null, 2)
+          );
+        } else {
+          const spinner = ora();
+          spinner.fail(chalk.red('Pipeline Crash'));
+          console.error(chalk.yellow(`\nDetail: ${error.message}`));
         }
 
         process.exitCode = 1;
+      } finally {
+        // 🔄 restaura console (boa prática)
+        console.log = originalLog;
+        console.error = originalError;
       }
     });
 };

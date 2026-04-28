@@ -2,25 +2,35 @@ import { AnalyzedTransaction, InsightReport } from '@open/services';
 
 /**
  * Converts transaction analysis and insights into a formatted JSON string.
+ * Structured for machine validation (Task 3.6.4).
  */
 export function renderJSON(analyzed: AnalyzedTransaction, insights: InsightReport): string {
   const output = {
-    signature: analyzed.signature,
-    status: analyzed.success ? 'success' : 'failed',
-    timestamp: new Date().toISOString(),
-    statistics: {
-      totalComputeUnits: analyzed.cuProfile.totalConsumed,
-      computeUtilization: `${analyzed.cuProfile.utilizationPercent}%`,
-      cpiDepth: analyzed.cpiTree.totalDepth,
-      accountChanges: analyzed.accountDiffs.length
+    transaction: {
+      signature: analyzed.signature,
+      success: analyzed.success,
+      timestamp: new Date().toISOString(),
     },
-    analysis: {
-      computeUnits: analyzed.cuProfile,
-      cpiTree: analyzed.cpiTree,
-      accountDiffs: analyzed.accountDiffs
+
+    computeUnits: {
+      consumed: analyzed.cuProfile?.totalConsumed ?? 0,
+      utilization: analyzed.cuProfile?.utilizationPercent ?? 0,
     },
-    insights: insights.insights,
-    primaryBottleneck: insights.primaryBottleneck
+
+    // Keep stable shape even when no transfers exist
+    transfers: [],
+
+    accounts: analyzed.accountDiffs ?? [],
+
+    // Expose CPI tree in a simple consumable format
+    programs: analyzed.cpiTree?.root ?? [],
+
+    insights: insights.insights ?? [],
+
+    metadata: {
+      version: '1.0.0',
+      generatedAt: new Date().toISOString(),
+    }
   };
 
   return JSON.stringify(output, null, 2);
