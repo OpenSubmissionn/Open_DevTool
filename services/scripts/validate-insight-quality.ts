@@ -95,7 +95,10 @@ const scenarios: Scenario[] = [
     name: 'simple-sol-transfer',
     description: 'Simple SOL transfer, ~1.5K CU, no flags expected',
     tx: makeTx({ totalConsumed: 1_500, totalLimit: 200_000, totalDepth: 1 }),
-    expected: { shouldFire: [], shouldNotFire: ['CU_BOTTLENECK', 'CU_WASTE', 'BUDGET_RISK', 'DEEP_CPI', 'EXECUTION_FAILURE'] },
+    expected: {
+      shouldFire: [],
+      shouldNotFire: ['CU_BOTTLENECK', 'CU_WASTE', 'BUDGET_RISK', 'DEEP_CPI', 'EXECUTION_FAILURE'],
+    },
   },
   {
     name: 'spl-token-transfer',
@@ -108,19 +111,28 @@ const scenarios: Scenario[] = [
     }),
     // Bottleneck at 90% of total fires the rule, but this is normal for SPL transfer
     // → If rule keeps firing here, that's a FP we want to flag in the report
-    expected: { shouldFire: ['CU_BOTTLENECK'], shouldNotFire: ['CU_WASTE', 'BUDGET_RISK', 'DEEP_CPI'] },
+    expected: {
+      shouldFire: ['CU_BOTTLENECK'],
+      shouldNotFire: ['CU_WASTE', 'BUDGET_RISK', 'DEEP_CPI'],
+    },
   },
   {
     name: 'memo-tx',
     description: 'Memo program tx, minimal CU, no flags',
     tx: makeTx({ totalConsumed: 800, totalLimit: 200_000, totalDepth: 1 }),
-    expected: { shouldFire: [], shouldNotFire: ALL_RULE_TYPES.filter((t) => t !== 'EXECUTION_FAILURE') as string[] },
+    expected: {
+      shouldFire: [],
+      shouldNotFire: ALL_RULE_TYPES.filter((t) => t !== 'EXECUTION_FAILURE') as string[],
+    },
   },
   {
     name: 'close-account',
     description: 'Close account instruction, ~500 CU',
     tx: makeTx({ totalConsumed: 500, totalLimit: 200_000, totalDepth: 1 }),
-    expected: { shouldFire: [], shouldNotFire: ['CU_BOTTLENECK', 'CU_WASTE', 'BUDGET_RISK', 'DEEP_CPI'] },
+    expected: {
+      shouldFire: [],
+      shouldNotFire: ['CU_BOTTLENECK', 'CU_WASTE', 'BUDGET_RISK', 'DEEP_CPI'],
+    },
   },
   {
     name: 'anchor-swap-modest',
