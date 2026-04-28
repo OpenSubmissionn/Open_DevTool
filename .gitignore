@@ -14,3 +14,27 @@ CLAUDE.local.md
 .mcp.json
 CLAUDE.md
 
+
+# Claude Code (local tooling, não vai pro repo)
+.claude/
+.github/workflows/claude-code.yml
+.github/workflows/claude.yml
+
+# Test outputs
+sample-output.json
+
+# Claude Code (local tooling, não vai pro repo)
+.claude/
+.github/workflows/claude-code.yml
+.github/workflows/claude.yml
+
+# Test outputs
+sample-output.json
+
+# Claude Code (local tooling, não vai pro repo)
+.claude/
+.github/workflows/claude-code.yml
+.github/workflows/claude.yml
+
+# Test outputs
+sample-output.json
