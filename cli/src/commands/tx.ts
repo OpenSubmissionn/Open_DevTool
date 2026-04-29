@@ -35,7 +35,7 @@ import {
   IdlCache,
   type CPITree,
   type ParsedLogs,
-} from '@open/services';     
+} from '@open/services';
 
 // MCP Integration
 import { McpInsightProvider } from '@open/services';
@@ -143,7 +143,7 @@ export const registerTxCommand = (program: Command) => {
       const verbose = globalOpts.verbose === true || options.verbose === true;
       // console.log('[debug] globalOpts.verbose:', globalOpts.verbose);
       const idlCache = new IdlCache({
-        noCache: options.cache === false,   // commander inverts --no-cache → options.cache
+        noCache: options.cache === false, // commander inverts --no-cache → options.cache
         verbose,
       });
       t1 = nowMs();
@@ -166,12 +166,17 @@ export const registerTxCommand = (program: Command) => {
         const anchorStart = nowMs();
         const { Connection } = await import('@solana/web3.js');
         const { AnchorProvider } = await import('@coral-xyz/anchor');
-        const rpcUrl = resolvedNetwork === 'mainnet'
-          ? 'https://api.mainnet-beta.solana.com'
-          : 'https://api.devnet.solana.com';
+        const rpcUrl =
+          resolvedNetwork === 'mainnet'
+            ? 'https://api.mainnet-beta.solana.com'
+            : 'https://api.devnet.solana.com';
         const anchorProvider = new AnchorProvider(
           new Connection(rpcUrl, 'confirmed'),
-          { publicKey: null, signTransaction: async (tx: any) => tx, signAllTransactions: async (txs: any) => txs } as any,
+          {
+            publicKey: null,
+            signTransaction: async (tx: any) => tx,
+            signAllTransactions: async (txs: any) => txs,
+          } as any,
           { commitment: 'confirmed' }
         );
         const anchorEnd = nowMs();
@@ -200,7 +205,7 @@ export const registerTxCommand = (program: Command) => {
           cuProfile,
           cpiTree,
           accountDiffs,
-          { idlCache, anchorProvider },  
+          { idlCache, anchorProvider }
         );
         const decodeEnd = nowMs();
         timings.push({ stage: 'decode_instructions', durationMs: decodeEnd - decodeStart });

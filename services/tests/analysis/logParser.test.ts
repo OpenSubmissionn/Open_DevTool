@@ -6,15 +6,14 @@ import { parseLogsFromBundle } from '../../src/analysis/logParser';
 // ─── Shared fixtures ──────────────────────────────────────────────────────────
 
 const SYSTEM = '11111111111111111111111111111111';
-const TOKEN  = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
-const VOTE   = 'Vote111111111111111111111111111111111111111';
-const JUP    = 'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4';
-const WHIRL  = 'whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc';
+const TOKEN = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+const VOTE = 'Vote111111111111111111111111111111111111111';
+const JUP = 'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4';
+const WHIRL = 'whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc';
 
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('parseLogsFromBundle', () => {
-
   // ── Output shape ────────────────────────────────────────────────────────────
 
   describe('output shape', () => {
@@ -83,9 +82,7 @@ describe('parseLogsFromBundle', () => {
 
   describe('invocation tracking', () => {
     it('increments invocations for a single invoke line', () => {
-      const result = parseLogsFromBundle([
-        `Program ${SYSTEM} invoke [1]`,
-      ]);
+      const result = parseLogsFromBundle([`Program ${SYSTEM} invoke [1]`]);
       expect(result.byProgram[SYSTEM].invocations).toBe(1);
     });
 
@@ -173,9 +170,7 @@ describe('parseLogsFromBundle', () => {
     });
 
     it('creates a byProgram entry from a CU line even without a preceding invoke', () => {
-      const result = parseLogsFromBundle([
-        `Program ${SYSTEM} consumed 99 of 200000 compute units`,
-      ]);
+      const result = parseLogsFromBundle([`Program ${SYSTEM} consumed 99 of 200000 compute units`]);
       expect(result.byProgram[SYSTEM]).toBeDefined();
       expect(result.byProgram[SYSTEM].consumed).toBe(99);
     });
@@ -185,33 +180,23 @@ describe('parseLogsFromBundle', () => {
 
   describe('error detection', () => {
     it('captures explicit "Program X failed" lines in errors[]', () => {
-      const result = parseLogsFromBundle([
-        `Program ${VOTE} failed: custom program error: 0x1`,
-      ]);
-      expect(result.errors).toContain(
-        `Program ${VOTE} failed: custom program error: 0x1`
-      );
+      const result = parseLogsFromBundle([`Program ${VOTE} failed: custom program error: 0x1`]);
+      expect(result.errors).toContain(`Program ${VOTE} failed: custom program error: 0x1`);
     });
 
     it('captures "Program log: Error: ..." lines in errors[]', () => {
-      const result = parseLogsFromBundle([
-        'Program log: Error: custom program error: 0x1',
-      ]);
+      const result = parseLogsFromBundle(['Program log: Error: custom program error: 0x1']);
       expect(result.errors).toContain('Error: custom program error: 0x1');
     });
 
     it('captures log lines containing "fail" (case-insensitive)', () => {
-      const result = parseLogsFromBundle([
-        'Program log: Transaction failed due to slippage',
-      ]);
+      const result = parseLogsFromBundle(['Program log: Transaction failed due to slippage']);
       expect(result.errors).toHaveLength(1);
       expect(result.errors[0]).toContain('failed');
     });
 
     it('captures log lines containing "FAIL" in uppercase', () => {
-      const result = parseLogsFromBundle([
-        'Program log: FAIL: slippage exceeded',
-      ]);
+      const result = parseLogsFromBundle(['Program log: FAIL: slippage exceeded']);
       expect(result.errors).toHaveLength(1);
     });
 
@@ -233,15 +218,11 @@ describe('parseLogsFromBundle', () => {
       ]);
       expect(result.errors).toHaveLength(2);
       expect(result.errors).toContain('Error: custom program error: 0x1');
-      expect(result.errors).toContain(
-        `Program ${VOTE} failed: custom program error: 0x1`
-      );
+      expect(result.errors).toContain(`Program ${VOTE} failed: custom program error: 0x1`);
     });
 
     it('records a failure error even without a preceding invoke or CU line', () => {
-      const result = parseLogsFromBundle([
-        `Program ${VOTE} failed: out of compute`,
-      ]);
+      const result = parseLogsFromBundle([`Program ${VOTE} failed: out of compute`]);
       expect(result.errors).toHaveLength(1);
       expect(result.errors[0]).toContain('out of compute');
     });
@@ -335,10 +316,13 @@ describe('parseLogsFromBundle', () => {
   describe('verbose mode', () => {
     it('parseTimeMs is a finite positive number on a non-trivial input', () => {
       const logs = Array.from({ length: 200 }, (_, i) =>
-        i % 4 === 0 ? `Program ${SYSTEM} invoke [1]`
-        : i % 4 === 1 ? 'Program log: Instruction: Transfer'
-        : i % 4 === 2 ? `Program ${SYSTEM} consumed ${i * 10} of 200000 compute units`
-        : `Program ${SYSTEM} success`
+        i % 4 === 0
+          ? `Program ${SYSTEM} invoke [1]`
+          : i % 4 === 1
+            ? 'Program log: Instruction: Transfer'
+            : i % 4 === 2
+              ? `Program ${SYSTEM} consumed ${i * 10} of 200000 compute units`
+              : `Program ${SYSTEM} success`
       );
       const result = parseLogsFromBundle(logs, true);
       expect(result.parseTimeMs).toBeGreaterThan(0);
@@ -351,7 +335,7 @@ describe('parseLogsFromBundle', () => {
         `Program ${SYSTEM} consumed 300 of 200000 compute units`,
         `Program ${SYSTEM} success`,
       ];
-      const silent  = parseLogsFromBundle(logs, false);
+      const silent = parseLogsFromBundle(logs, false);
       const verbose = parseLogsFromBundle(logs, true);
 
       expect(verbose.byProgram).toEqual(silent.byProgram);
@@ -359,5 +343,4 @@ describe('parseLogsFromBundle', () => {
       expect(verbose.totalLines).toBe(silent.totalLines);
     });
   });
-
 });

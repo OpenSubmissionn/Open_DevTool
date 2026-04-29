@@ -15,10 +15,10 @@
  *   - Verbose hit-rate metrics printed to stderr
  */
 
-import fs from "fs";
-import path from "path";
-import os from "os";
-import crypto from "crypto";
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import crypto from 'crypto';
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 
@@ -70,7 +70,7 @@ export interface CacheMetrics {
 export interface FetchResult<T> {
   idl: T;
   /** Where the IDL came from. */
-  source: "cache" | "network";
+  source: 'cache' | 'network';
   /** Wall-clock time for this fetch in ms. */
   latencyMs: number;
 }
@@ -78,23 +78,14 @@ export interface FetchResult<T> {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 export const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000; // 24 h
-export const DEFAULT_CACHE_DIR = path.join(
-  os.homedir(),
-  ".open-cli",
-  "cache",
-  "idls"
-);
+export const DEFAULT_CACHE_DIR = path.join(os.homedir(), '.open-cli', 'cache', 'idls');
 /** Bump this when the on-disk format changes to avoid stale reads. */
-export const CACHE_FORMAT_VERSION = "v1";
+export const CACHE_FORMAT_VERSION = 'v1';
 
 // ─── Internal helpers ─────────────────────────────────────────────────────────
 
 function sha256short(data: unknown): string {
-  return crypto
-    .createHash("sha256")
-    .update(JSON.stringify(data))
-    .digest("hex")
-    .slice(0, 16);
+  return crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex').slice(0, 16);
 }
 
 function verboseLog(enabled: boolean, msg: string): void {
@@ -109,11 +100,7 @@ async function sleep(ms: number): Promise<void> {
  * Retry wrapper with linear back-off.
  * Attempt 1: immediate, Attempt 2: 500 ms, Attempt 3: 1 000 ms.
  */
-async function withRetry<T>(
-  fn: () => Promise<T>,
-  maxAttempts = 3,
-  baseDelayMs = 500
-): Promise<T> {
+async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 3, baseDelayMs = 500): Promise<T> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
@@ -144,8 +131,8 @@ export class IdlCache {
     errors: 0,
     hitRate: () => {
       const total = this.metrics.hits + this.metrics.misses;
-      if (total === 0) return "0.00%";
-      return ((this.metrics.hits / total) * 100).toFixed(2) + "%";
+      if (total === 0) return '0.00%';
+      return ((this.metrics.hits / total) * 100).toFixed(2) + '%';
     },
   };
 
@@ -166,7 +153,7 @@ export class IdlCache {
 
   private entryPath(programId: string): string {
     // Replace any chars unsafe for filenames with underscores.
-    const safe = programId.replace(/[^a-zA-Z0-9_-]/g, "_");
+    const safe = programId.replace(/[^a-zA-Z0-9_-]/g, '_');
     return path.join(this.versionedDir(), `${safe}.json`);
   }
 
@@ -200,17 +187,14 @@ export class IdlCache {
         return null;
       }
 
-      const raw = fs.readFileSync(filePath, "utf-8");
+      const raw = fs.readFileSync(filePath, 'utf-8');
       const entry: IdlCacheEntry = JSON.parse(raw);
 
       // TTL check
       const ageMs = Date.now() - entry.fetchedAt;
       if (ageMs > this.ttlMs) {
         this.metrics.misses++;
-        verboseLog(
-          this.verbose,
-          `expired ${programId} (age ${(ageMs / 60_000).toFixed(1)} min)`
-        );
+        verboseLog(this.verbose, `expired ${programId} (age ${(ageMs / 60_000).toFixed(1)} min)`);
         this.delete(programId);
         return null;
       }
@@ -243,7 +227,7 @@ export class IdlCache {
    * Persists an IDL to disk. Write failures are swallowed — the freshly-
    * fetched IDL is still usable even if the cache write fails.
    */
-  set(programId: string, idl: unknown, version = "unknown"): void {
+  set(programId: string, idl: unknown, version = 'unknown'): void {
     if (this.noCache) return;
 
     try {
@@ -255,11 +239,7 @@ export class IdlCache {
         fetchedAt: Date.now(),
         checksum: sha256short(idl),
       };
-      fs.writeFileSync(
-        this.entryPath(programId),
-        JSON.stringify(entry, null, 2),
-        "utf-8"
-      );
+      fs.writeFileSync(this.entryPath(programId), JSON.stringify(entry, null, 2), 'utf-8');
       verboseLog(this.verbose, `stored  ${programId} ver=${version}`);
     } catch (err) {
       verboseLog(this.verbose, `write-err ${programId}: ${String(err)}`);
@@ -286,7 +266,7 @@ export class IdlCache {
       for (const file of fs.readdirSync(dir)) {
         fs.unlinkSync(path.join(dir, file));
       }
-      verboseLog(this.verbose, "cache cleared");
+      verboseLog(this.verbose, 'cache cleared');
     } catch (err) {
       verboseLog(this.verbose, `clear-err: ${String(err)}`);
     }
@@ -306,10 +286,10 @@ export class IdlCache {
 
     return fs
       .readdirSync(dir)
-      .filter((f) => f.endsWith(".json"))
+      .filter((f) => f.endsWith('.json'))
       .flatMap((file) => {
         try {
-          const raw = fs.readFileSync(path.join(dir, file), "utf-8");
+          const raw = fs.readFileSync(path.join(dir, file), 'utf-8');
           const entry: IdlCacheEntry = JSON.parse(raw);
           const ageMs = Date.now() - entry.fetchedAt;
           return [
@@ -369,18 +349,18 @@ export async function fetchIdlWithCache<T = unknown>(
   if (cached !== null) {
     const latencyMs = performance.now() - t0;
     verboseLog(cache.verbose, `latency cache-hit  ${latencyMs.toFixed(1)} ms`);
-    return { idl: cached.idl as T, source: "cache", latencyMs };
+    return { idl: cached.idl as T, source: 'cache', latencyMs };
   }
 
   // Slow path: network fetch with retry
   const { idl, version } = await withRetry(async () => {
     const result = await fetcher();
     // Persist before returning — a crash after fetch still warms the cache.
-    cache.set(programId, result.idl, result.version ?? "unknown");
+    cache.set(programId, result.idl, result.version ?? 'unknown');
     return result;
   });
 
   const latencyMs = performance.now() - t0;
   verboseLog(cache.verbose, `latency network     ${latencyMs.toFixed(1)} ms`);
-  return { idl, source: "network", latencyMs };
+  return { idl, source: 'network', latencyMs };
 }

@@ -133,7 +133,10 @@ describe('parseTransaction', () => {
       postBalances: [10],
       preTokenBalances: [],
       postTokenBalances: [],
-      innerInstructions: [{ index: 999, instructions: [] }, { index: 'bad', instructions: [{}] }],
+      innerInstructions: [
+        { index: 999, instructions: [] },
+        { index: 'bad', instructions: [{}] },
+      ],
       computeUnitsConsumed: null,
       err: null,
       accountKeys: [
@@ -223,7 +226,11 @@ describe('parseTransaction', () => {
           ],
         },
       ],
-      accountKeys: ['SignerA111111111111111111111111111111111', 'ChildA1111111111111111111111111111111111', repeatedProgramId],
+      accountKeys: [
+        'SignerA111111111111111111111111111111111',
+        'ChildA1111111111111111111111111111111111',
+        repeatedProgramId,
+      ],
       logMessages: [
         `Program ${repeatedProgramId} invoke [1]`,
         `Program ${repeatedProgramId} invoke [2]`,
@@ -276,11 +283,7 @@ describe('parseTransaction', () => {
           ],
         },
       ],
-      accountKeys: [
-        'SignerNested111111111111111111111111111111',
-        parentProgramId,
-        childProgramId,
-      ],
+      accountKeys: ['SignerNested111111111111111111111111111111', parentProgramId, childProgramId],
     });
 
     const parsed = await parseTransaction(bundle);
@@ -306,7 +309,11 @@ describe('parseTransaction', () => {
           ],
         },
       },
-      accountKeys: ['Acct0Order11111111111111111111111111111111', 'Acct1Order11111111111111111111111111111111', programId],
+      accountKeys: [
+        'Acct0Order11111111111111111111111111111111',
+        'Acct1Order11111111111111111111111111111111',
+        programId,
+      ],
       logMessages: [
         `Program ${programId} invoke [1]`,
         `Program ${programId} consumed 5 of 200000 compute units`,
@@ -345,7 +352,12 @@ describe('parseTransaction', () => {
           ],
         },
       },
-      accountKeys: ['AcctA11111111111111111111111111111111111', 'AcctB11111111111111111111111111111111111', programA, programB],
+      accountKeys: [
+        'AcctA11111111111111111111111111111111111',
+        'AcctB11111111111111111111111111111111111',
+        programA,
+        programB,
+      ],
       logMessages: [
         `Program ${programA} invoke [1]`,
         `Program ${programA} consumed 11 of 200000 compute units`,

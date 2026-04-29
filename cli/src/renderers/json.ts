@@ -12,15 +12,15 @@ export function renderJSON(analyzed: AnalyzedTransaction, insights: InsightRepor
       totalComputeUnits: analyzed.cuProfile.totalConsumed,
       computeUtilization: `${analyzed.cuProfile.utilizationPercent}%`,
       cpiDepth: analyzed.cpiTree.totalDepth,
-      accountChanges: analyzed.accountDiffs.length
+      accountChanges: analyzed.accountDiffs.length,
     },
     analysis: {
       computeUnits: analyzed.cuProfile,
       cpiTree: analyzed.cpiTree,
-      accountDiffs: analyzed.accountDiffs
+      accountDiffs: analyzed.accountDiffs,
     },
     insights: insights.insights,
-    primaryBottleneck: insights.primaryBottleneck
+    primaryBottleneck: insights.primaryBottleneck,
   };
   // Always merge timings into metadata, using only _metadata fields
   let metadata: Record<string, any> = {};
