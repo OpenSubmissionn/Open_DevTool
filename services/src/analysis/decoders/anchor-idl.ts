@@ -5,9 +5,10 @@ import {
   ORCA_WHIRLPOOL_IDL,
   ORCA_WHIRLPOOL_PROGRAM_ID,
   instructionDiscriminator,
-} from './anchor-defs/anchor-idl-orca';
-import { JUPITER_V6_IDL, JUPITER_V6_PROGRAM_ID } from './anchor-defs/anchor-idl-jupiter';
-import { RAYDIUM_AMM_IDL, RAYDIUM_AMM_PROGRAM_ID } from './anchor-defs/anchor-idl-raydium';
+} from './orca/anchor-idl-orca';
+import { JUPITER_V6_IDL, JUPITER_V6_PROGRAM_ID } from './jupiter/anchor-idl-jupiter';
+import { RAYDIUM_AMM_IDL, RAYDIUM_AMM_PROGRAM_ID } from './raydium/anchor-idl-raydium';
+import { MARINADE_IDL, MARINADE_PROGRAM_ID } from './marinade/idl';
 
 // Re-export protocol constants/IDLs from a single entrypoint.
 export {
@@ -17,6 +18,8 @@ export {
   JUPITER_V6_PROGRAM_ID,
   RAYDIUM_AMM_IDL,
   RAYDIUM_AMM_PROGRAM_ID,
+  MARINADE_IDL,
+  MARINADE_PROGRAM_ID,
   instructionDiscriminator,
 };
 
@@ -25,6 +28,7 @@ const DEFAULT_IDL_BY_PROGRAM: Record<string, Idl> = {
   [ORCA_WHIRLPOOL_PROGRAM_ID]: ORCA_WHIRLPOOL_IDL,
   [JUPITER_V6_PROGRAM_ID]: JUPITER_V6_IDL,
   [RAYDIUM_AMM_PROGRAM_ID]: RAYDIUM_AMM_IDL,
+  [MARINADE_PROGRAM_ID]: MARINADE_IDL,
 };
 
 export interface DecodedAnchorInstruction {
@@ -102,6 +106,12 @@ const INSTRUCTION_CLASSIFICATION: Record<string, { type: string; action?: string
   increaseLiquidity: { type: 'liquidity_adjustment', action: 'increase' },
   decreaseLiquidity: { type: 'liquidity_adjustment', action: 'decrease' },
   initializePool: { type: 'pool_initialization' },
+  liquidUnstake: { type: 'liquid_unstake', action: 'unstake' },
+  orderUnstake: { type: 'delayed_unstake', action: 'order' },
+  claim: { type: 'unstake_claim', action: 'claim' },
+  depositStakeAccount: { type: 'liquid_stake', action: 'stake' },
+  addLiquidity: { type: 'liquidity_pool', action: 'deposit' },
+  removeLiquidity: { type: 'liquidity_pool', action: 'withdraw' },
 };
 
 // Normalizes protocol-specific instruction names into the analyzer taxonomy.
