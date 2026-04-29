@@ -24,7 +24,10 @@ function getInstructionMaxDepth(instruction: ParsedTransaction['instructions'][n
 }
 
 function getTransactionMaxDepth(instructions: ParsedTransaction['instructions']): number {
-  return instructions.reduce((maxDepth, instruction) => Math.max(maxDepth, getInstructionMaxDepth(instruction)), 0);
+  return instructions.reduce(
+    (maxDepth, instruction) => Math.max(maxDepth, getInstructionMaxDepth(instruction)),
+    0
+  );
 }
 
 export function classifyTransaction(parsed: ParsedTransaction): TxType {
@@ -32,17 +35,26 @@ export function classifyTransaction(parsed: ParsedTransaction): TxType {
     return 'failed-tx';
   }
 
-  const allProgramIds = parsed.instructions.flatMap(inst => [
+  const allProgramIds = parsed.instructions.flatMap((inst) => [
     inst.programId,
-    ...inst.innerInstructions.flatMap(inner => inner.programId)
+    ...inst.innerInstructions.flatMap((inner) => inner.programId),
   ]);
   const uniqueProgramIds = [...new Set(allProgramIds)];
 
-  if (uniqueProgramIds.some(id => id.toLowerCase().includes('whirlpool') || id.toLowerCase().includes('swap'))) {
+  if (
+    uniqueProgramIds.some(
+      (id) => id.toLowerCase().includes('whirlpool') || id.toLowerCase().includes('swap')
+    )
+  ) {
     return 'swap';
   }
 
-  if (uniqueProgramIds.some(id => id.toLowerCase().includes('dex') || id === '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8')) {
+  if (
+    uniqueProgramIds.some(
+      (id) =>
+        id.toLowerCase().includes('dex') || id === '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8'
+    )
+  ) {
     return 'swap';
   }
 
@@ -50,15 +62,23 @@ export function classifyTransaction(parsed: ParsedTransaction): TxType {
     return 'transfer';
   }
 
-  if (uniqueProgramIds.some(id => id.toLowerCase().includes('meta') || id.toLowerCase().includes('candy'))) {
+  if (
+    uniqueProgramIds.some(
+      (id) => id.toLowerCase().includes('meta') || id.toLowerCase().includes('candy')
+    )
+  ) {
     return 'nft-mint';
   }
 
-  if (uniqueProgramIds.some(id => id.toLowerCase().includes('stake'))) {
+  if (uniqueProgramIds.some((id) => id.toLowerCase().includes('stake'))) {
     return 'stake';
   }
 
-  if (uniqueProgramIds.some(id => id.toLowerCase().includes('gov') || id.toLowerCase().includes('vote'))) {
+  if (
+    uniqueProgramIds.some(
+      (id) => id.toLowerCase().includes('gov') || id.toLowerCase().includes('vote')
+    )
+  ) {
     return 'governance-vote';
   }
 

@@ -16,12 +16,12 @@ interface ProgramStats {
 
 // Compiled once at module load. RE_ERR_KW runs per "Program log:" line;
 // RE_CU and RE_FAILED only run after a charCodeAt dispatch confirms the line type.
-const RE_CU     = /^Program \S+ consumed (\d+) of (\d+) compute units$/;
+const RE_CU = /^Program \S+ consumed (\d+) of (\d+) compute units$/;
 const RE_FAILED = /^Program (\w+) failed: (.*)/;
 const RE_ERR_KW = /error|fail/i;
 
 // Every Solana log line of interest starts with this prefix.
-const PREFIX     = 'Program ';
+const PREFIX = 'Program ';
 const PREFIX_LEN = PREFIX.length; // 8
 
 function initProgram(): ProgramStats {
@@ -37,7 +37,10 @@ export function parseLogsFromBundle(logMessages: string[], verbose = false): Par
   // Lazy init: avoids pre-allocating entries for programs that never appear.
   const ensureProgram = (id: string): ProgramStats => {
     let s = byProgramMap.get(id);
-    if (s === undefined) { s = initProgram(); byProgramMap.set(id, s); }
+    if (s === undefined) {
+      s = initProgram();
+      byProgramMap.set(id, s);
+    }
     return s;
   };
 
@@ -50,10 +53,12 @@ export function parseLogsFromBundle(logMessages: string[], verbose = false): Par
 
     // "Program log: <message>" — detected before programId extraction because
     // the token at PREFIX_LEN is "log", not a base58 program ID.
-    if (line.charCodeAt(PREFIX_LEN)     === 108 /* l */ &&
-        line.charCodeAt(PREFIX_LEN + 1) === 111 /* o */ &&
-        line.charCodeAt(PREFIX_LEN + 2) === 103 /* g */ &&
-        line.charCodeAt(PREFIX_LEN + 3) === 58  /* : */) {
+    if (
+      line.charCodeAt(PREFIX_LEN) === 108 /* l */ &&
+      line.charCodeAt(PREFIX_LEN + 1) === 111 /* o */ &&
+      line.charCodeAt(PREFIX_LEN + 2) === 103 /* g */ &&
+      line.charCodeAt(PREFIX_LEN + 3) === 58 /* : */
+    ) {
       // Message content starts after "Program log: " (PREFIX_LEN + 5 chars).
       const msg = line.slice(PREFIX_LEN + 5);
       if (RE_ERR_KW.test(msg)) errors.push(msg);
@@ -63,9 +68,9 @@ export function parseLogsFromBundle(logMessages: string[], verbose = false): Par
     // Slice the program ID from between "Program " and the next space.
     const sp = line.indexOf(' ', PREFIX_LEN);
     if (sp === -1) continue;
-    const programId  = line.slice(PREFIX_LEN, sp);
+    const programId = line.slice(PREFIX_LEN, sp);
     const tokenStart = sp + 1;
-    const nextChar   = line.charCodeAt(tokenStart);
+    const nextChar = line.charCodeAt(tokenStart);
 
     // Dispatch on the first two chars of the verb to avoid regex on every line.
 
@@ -81,7 +86,7 @@ export function parseLogsFromBundle(logMessages: string[], verbose = false): Par
       if (m !== null) {
         const s = ensureProgram(programId);
         s.consumed += +m[1];
-        s.limit     = +m[2]; // last seen limit wins (matches Solana RPC behaviour)
+        s.limit = +m[2]; // last seen limit wins (matches Solana RPC behaviour)
       }
       continue;
     }

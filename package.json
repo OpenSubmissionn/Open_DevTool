@@ -14,7 +14,8 @@
     "coverage": "npm run coverage --workspace @open/services",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"**/*.ts\"",
-    "validate:benchmarks": "tsx scripts/validate-benchmarks.ts"
+    "validate:benchmarks": "tsx scripts/validate-benchmarks.ts",
+    "bench:latency": "tsx scripts/latency-benchmark.ts"
   },
   "keywords": [],
   "author": "Nicole",
