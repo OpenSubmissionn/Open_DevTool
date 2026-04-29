@@ -194,8 +194,8 @@ exports[`Terminal Output Snapshots > mev-mix — multi-program with high-cu bott
   ║ ACTIONABLE INSIGHTS                                                                                                                                        ║
   ║                                                                                                                                                    ║
   ║  - Unknown Program consumed 195,000 CUs (97.5% of total).                                                                                                  ║
-  ║  - CU by node attribution confidence is 50.0% with 1 unmatched CU entries.                                                                                 ║
   ║  - Transaction requested high limits but only used 195,000 CUs (51.2% waste).                                                                              ║
+  ║  - CU by node attribution confidence is 50.0% with 1 unmatched CU entries.                                                                                 ║
   ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 "
 `;
