@@ -18,8 +18,7 @@ const KNOWN_PATTERNS: Record<string, SimilarPattern> = {
   'Jupiter V6': {
     programName: 'Jupiter V6',
     pattern: 'Aggregator swap with token program CPIs',
-    optimization:
-      'Use exact_in mode and prefer routes with fewer hops to reduce CU and slippage',
+    optimization: 'Use exact_in mode and prefer routes with fewer hops to reduce CU and slippage',
   },
   'Jupiter Aggregator': {
     programName: 'Jupiter Aggregator',
@@ -29,20 +28,17 @@ const KNOWN_PATTERNS: Record<string, SimilarPattern> = {
   'Token Program': {
     programName: 'Token Program',
     pattern: 'Standard SPL token operation',
-    optimization:
-      'Use Associated Token Accounts to avoid manual account creation overhead',
+    optimization: 'Use Associated Token Accounts to avoid manual account creation overhead',
   },
   'Raydium AMM v4': {
     programName: 'Raydium AMM v4',
     pattern: 'Constant-product AMM swap',
-    optimization:
-      'Pre-validate pool state to avoid mid-tx failures; cache pool keys across calls',
+    optimization: 'Pre-validate pool state to avoid mid-tx failures; cache pool keys across calls',
   },
   Whirlpool: {
     programName: 'Whirlpool',
     pattern: 'Concentrated liquidity swap',
-    optimization:
-      'Account for tick boundaries; query price range before swapping to set slippage',
+    optimization: 'Account for tick boundaries; query price range before swapping to set slippage',
   },
   'Magic Eden': {
     programName: 'Magic Eden',
@@ -151,6 +147,7 @@ function buildMcpPayload(context: InsightContext): MCPPayload {
     )
     .join(', ');
 
+  // Extract errors from logs
   const parsedErrors =
     tx.logs.entries
       ?.filter((entry) => entry.type === 'failed')
