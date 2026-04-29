@@ -71,7 +71,7 @@ function getAccountRole(
     return accountIndex === 0 ? 'signer' : 'writable';
   }
 
-  const { numRequiredSignatures, numReadonlySignedAccounts, numReadonlyUnsignedAccounts } = header;
+  const { numRequiredSignatures, numReadonlyUnsignedAccounts } = header;
 
   // All required-signature accounts are signers. Readonly signer info is not represented
   // in AccountDiff role and therefore collapses to "signer".

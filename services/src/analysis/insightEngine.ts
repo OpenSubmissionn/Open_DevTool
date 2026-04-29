@@ -190,7 +190,7 @@ export function mergeInsights(ruleInsights: Insight[], mcpInsights: ProviderInsi
 
   // Process each group
   const merged: Insight[] = [];
-  for (const [type, insights] of insightMap) {
+  for (const [, insights] of insightMap) {
     if (insights.length === 1) {
       // Only one source, keep as is
       merged.push(insights[0]);

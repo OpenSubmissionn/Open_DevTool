@@ -4,6 +4,7 @@ import { Command } from 'commander';
 import { loadConfig } from '../src/config/loader';
 import { registerTxCommand } from '../src/commands/tx';
 import { registerConfigCommand } from '../src/commands/config';
+import { registerBatchCommand } from '../src/commands/batch';
 
 // tsx on Windows/CommonJS runs the file twice — this blocks the second execution
 const guardKey = '__OPEN_CLI_STARTED__';
@@ -25,6 +26,7 @@ program
 
 // 4. Register commands
 registerTxCommand(program);
+registerBatchCommand(program);
 registerConfigCommand(program);
 
 // 5. Parse arguments

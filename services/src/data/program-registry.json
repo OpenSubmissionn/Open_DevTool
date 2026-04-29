@@ -7,7 +7,7 @@
   },
   {
     "name": "Orca Whirlpool",
-    "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3dhpbWR",
+    "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc",
     "idl": "services/src/analysis/decoders/orca/anchor-idl-orca.ts",
     "framework": "Anchor"
   },

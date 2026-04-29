@@ -1,4 +1,3 @@
-import { createHash } from 'crypto';
 import { BorshCoder, type Idl } from '@coral-xyz/anchor';
 import type { ParsedInstruction } from '../types';
 import {

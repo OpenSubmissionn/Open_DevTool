@@ -54,7 +54,6 @@ export async function mergeAnalysis(
   const microLamportsPerCU = extractMicroLamportsPerCU(bundle);
   const costAnalysis = analyzeCosts(bundle, solPriceUsd, microLamportsPerCU);
 
-  // Calculate CU cost (Task 3.6.2)
   let cuCost: CUCost | undefined;
 
   try {
@@ -62,15 +61,10 @@ export async function mergeAnalysis(
     const solPriceUSD = await getSolPriceUSD();
 
     if (cuConsumed > 0) {
-      console.log('[Merger] Calculating CU cost...');
       cuCost = await calculateCUCostFromCU(cuConsumed, 1000, solPriceUSD);
-      console.log('[Merger] CU cost calculated');
-    } else {
-      console.log('[Merger] No CU to calculate cost');
     }
   } catch (error) {
     console.warn('[Merger] CU cost calculation failed:', error);
-    cuCost = undefined; // Fallback
   }
 
   return {

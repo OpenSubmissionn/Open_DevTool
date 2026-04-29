@@ -152,28 +152,9 @@ export async function calculateCUCostFromCU(
   microLamportsPerCU: number,
   solPriceUSD: number | null
 ): Promise<CUCost> {
-  console.log(`[CU Cost] Calculating: ${cuConsumed} CU @ ${microLamportsPerCU} µL/CU`);
-
-  // Step 1: CU → Lamports
   const feeLamports = Math.floor((cuConsumed * microLamportsPerCU) / 1_000_000);
-  console.log(`[CU Cost] Fee in lamports: ${feeLamports}`);
-
-  // Step 2: Lamports → SOL
   const feeSOL = feeLamports / 1_000_000_000;
-  console.log(`[CU Cost] Fee in SOL: ${feeSOL}`);
-
-  // Step 3: SOL → USD
   const feeUSD = solPriceUSD !== null ? feeSOL * solPriceUSD : null;
-  console.log(`[CU Cost] Fee in USD: ${feeUSD}`);
 
-  const result: CUCost = {
-    cuConsumed,
-    microLamportsPerCU,
-    feeLamports,
-    feeSOL,
-    feeUSD,
-  };
-
-  console.log('[CU Cost] Complete:', JSON.stringify(result, null, 2));
-  return result;
+  return { cuConsumed, microLamportsPerCU, feeLamports, feeSOL, feeUSD };
 }

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { IdlCache, fetchIdlWithCache, CACHE_FORMAT_VERSION } from '../../src/solana/idlcache';
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────

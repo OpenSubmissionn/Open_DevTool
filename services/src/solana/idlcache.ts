@@ -358,7 +358,7 @@ export async function fetchIdlWithCache<T = unknown>(
   }
 
   // Slow path: network fetch with retry
-  const { idl, version } = await withRetry(async () => {
+  const { idl } = await withRetry(async () => {
     const result = await fetcher();
     // Persist before returning — a crash after fetch still warms the cache.
     cache.set(programId, result.idl, result.version ?? 'unknown');
