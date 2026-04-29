@@ -9,6 +9,7 @@ import {
 import { JUPITER_V6_IDL, JUPITER_V6_PROGRAM_ID } from './jupiter/anchor-idl-jupiter';
 import { RAYDIUM_AMM_IDL, RAYDIUM_AMM_PROGRAM_ID } from './raydium/anchor-idl-raydium';
 import { MARINADE_IDL, MARINADE_PROGRAM_ID } from './marinade/idl';
+import { MAGIC_EDEN_IDL, MAGIC_EDEN_PROGRAM_ID } from './magic-eden/idl';
 
 // Re-export protocol constants/IDLs from a single entrypoint.
 export {
@@ -20,6 +21,8 @@ export {
   RAYDIUM_AMM_PROGRAM_ID,
   MARINADE_IDL,
   MARINADE_PROGRAM_ID,
+  MAGIC_EDEN_IDL,
+  MAGIC_EDEN_PROGRAM_ID,
   instructionDiscriminator,
 };
 
@@ -29,6 +32,7 @@ const DEFAULT_IDL_BY_PROGRAM: Record<string, Idl> = {
   [JUPITER_V6_PROGRAM_ID]: JUPITER_V6_IDL,
   [RAYDIUM_AMM_PROGRAM_ID]: RAYDIUM_AMM_IDL,
   [MARINADE_PROGRAM_ID]: MARINADE_IDL,
+  [MAGIC_EDEN_PROGRAM_ID]: MAGIC_EDEN_IDL,
 };
 
 export interface DecodedAnchorInstruction {
@@ -112,6 +116,10 @@ const INSTRUCTION_CLASSIFICATION: Record<string, { type: string; action?: string
   depositStakeAccount: { type: 'liquid_stake', action: 'stake' },
   addLiquidity: { type: 'liquidity_pool', action: 'deposit' },
   removeLiquidity: { type: 'liquidity_pool', action: 'withdraw' },
+  sell: { type: 'nft_listing', action: 'list' },
+  buy: { type: 'nft_offer', action: 'offer' },
+  executeSale: { type: 'nft_trade', action: 'purchase' },
+  cancel: { type: 'nft_cancel', action: 'cancel' },
 };
 
 // Normalizes protocol-specific instruction names into the analyzer taxonomy.
@@ -151,7 +159,7 @@ function decodeHexInstructionData(
   return null;
 }
 
-const NON_ANCHOR_BINARY_PROGRAMS = new Set<string>([RAYDIUM_AMM_PROGRAM_ID]);
+const NON_ANCHOR_BINARY_PROGRAMS = new Set<string>([RAYDIUM_AMM_PROGRAM_ID, MAGIC_EDEN_PROGRAM_ID]);
 const CODER_CACHE = new Map<string, BorshCoder>();
 
 function getCachedCoder(programId: string, idl: Idl): BorshCoder {

@@ -24,6 +24,12 @@
     "framework": "Anchor"
   },
   {
+    "name": "Magic Eden",
+    "programId": "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8",
+    "idl": "services/src/analysis/decoders/magic-eden/idl.ts",
+    "framework": "Anchor"
+  },
+  {
     "name": "SPL Token Program",
     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
     "idl": null,
