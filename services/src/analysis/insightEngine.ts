@@ -164,14 +164,17 @@ const checkCUAttributionQuality = (tx: AnalyzedTransaction): Insight | null => {
 };
 
 // --- CORE ENGINE ---
-/* Merges insights from multiple providers, tagging sources and deduplicating. */
+
+/**
+ * Merges insights from multiple providers, tagging sources and deduplicating.
+ */
 export function mergeInsights(ruleInsights: Insight[], mcpInsights: ProviderInsight[]): Insight[] {
   const allInsights: Insight[] = [];
 
   // Add rule insights
   allInsights.push(...ruleInsights);
 
-  // Add MCP insights
+  // Add MCP insights (extract from ProviderInsight wrapper)
   allInsights.push(...mcpInsights.map((pi) => pi.insight));
 
   // Create a map to track insights by type for hybrid detection
@@ -215,10 +218,11 @@ export function mergeInsights(ruleInsights: Insight[], mcpInsights: ProviderInsi
 
 /**
  * Orchestrates all diagnostic rules and providers, merging insights with source tagging.
+ * Accepts multiple insight providers for flexible analysis.
  */
 export const analyzeTransaction = async (
   tx: AnalyzedTransaction,
-  provider?: InsightProvider
+  providers?: InsightProvider[]
 ): Promise<InsightReport> => {
   const rules = [
     checkFailure,
@@ -231,13 +235,18 @@ export const analyzeTransaction = async (
 
   const ruleInsights = rules.map((rule) => rule(tx)).filter((i): i is Insight => i !== null);
 
-  let providerInsights: ProviderInsight[] = [];
-  if (provider) {
-    try {
-      const context: InsightContext = { transaction: tx };
-      providerInsights = await provider.fetchInsights(context);
-    } catch (error) {
-      console.warn('Insight provider failed, falling back to rule-based insights only:', error);
+  const providerInsights: ProviderInsight[] = [];
+
+  // Process all providers if provided
+  if (providers && providers.length > 0) {
+    for (const provider of providers) {
+      try {
+        const context: InsightContext = { transaction: tx };
+        const insights = await provider.fetchInsights(context);
+        providerInsights.push(...insights);
+      } catch (error) {
+        console.warn('Insight provider failed, falling back to rule-based insights only:', error);
+      }
     }
   }
 
