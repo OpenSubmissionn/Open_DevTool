@@ -1,4 +1,3 @@
-// services/src/analysis/types.ts
 import { ParsedTransactionWithMeta } from '@solana/web3.js';
 
 /**
@@ -399,6 +398,11 @@ export interface AnalyzedTransaction {
   transfers?: TransferInfo[];
   /** Detected transaction type, when available. */
   txType?: string;
+  /** Optional metadata for CLI output (timings, etc). */
+  _metadata?: {
+    timings?: { stage: string; durationMs: number }[];
+    [key: string]: any;
+  };
 }
 
 /**
