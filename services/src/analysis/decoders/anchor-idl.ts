@@ -1,13 +1,13 @@
-import { createHash } from 'crypto';
 import { BorshCoder, type Idl } from '@coral-xyz/anchor';
 import type { ParsedInstruction } from '../types';
 import {
   ORCA_WHIRLPOOL_IDL,
   ORCA_WHIRLPOOL_PROGRAM_ID,
   instructionDiscriminator,
-} from './anchor-defs/anchor-idl-orca';
-import { JUPITER_V6_IDL, JUPITER_V6_PROGRAM_ID } from './anchor-defs/anchor-idl-jupiter';
-import { RAYDIUM_AMM_IDL, RAYDIUM_AMM_PROGRAM_ID } from './anchor-defs/anchor-idl-raydium';
+} from './orca/anchor-idl-orca';
+import { JUPITER_V6_IDL, JUPITER_V6_PROGRAM_ID } from './jupiter/anchor-idl-jupiter';
+import { RAYDIUM_AMM_IDL, RAYDIUM_AMM_PROGRAM_ID } from './raydium/anchor-idl-raydium';
+import { MARINADE_IDL, MARINADE_PROGRAM_ID } from './marinade/idl';
 
 // Re-export protocol constants/IDLs from a single entrypoint.
 export {
@@ -17,6 +17,8 @@ export {
   JUPITER_V6_PROGRAM_ID,
   RAYDIUM_AMM_IDL,
   RAYDIUM_AMM_PROGRAM_ID,
+  MARINADE_IDL,
+  MARINADE_PROGRAM_ID,
   instructionDiscriminator,
 };
 
@@ -25,7 +27,11 @@ const DEFAULT_IDL_BY_PROGRAM: Record<string, Idl> = {
   [ORCA_WHIRLPOOL_PROGRAM_ID]: ORCA_WHIRLPOOL_IDL,
   [JUPITER_V6_PROGRAM_ID]: JUPITER_V6_IDL,
   [RAYDIUM_AMM_PROGRAM_ID]: RAYDIUM_AMM_IDL,
+  [MARINADE_PROGRAM_ID]: MARINADE_IDL,
 };
+
+// Programs that use custom binary layouts on-chain despite having an Anchor-compatible IDL.
+const NON_ANCHOR_BINARY_PROGRAMS = new Set<string>([RAYDIUM_AMM_PROGRAM_ID]);
 
 export interface DecodedAnchorInstruction {
   instructionName: string;
@@ -102,6 +108,12 @@ const INSTRUCTION_CLASSIFICATION: Record<string, { type: string; action?: string
   increaseLiquidity: { type: 'liquidity_adjustment', action: 'increase' },
   decreaseLiquidity: { type: 'liquidity_adjustment', action: 'decrease' },
   initializePool: { type: 'pool_initialization' },
+  // Marinade Finance liquid staking
+  unstake: { type: 'liquid_staking', action: 'unstake' },
+  liquidUnstake: { type: 'liquid_staking', action: 'unstake' },
+  orderUnstake: { type: 'liquid_staking', action: 'order_unstake' },
+  claim: { type: 'liquid_staking', action: 'claim' },
+  depositStakeAccount: { type: 'liquid_staking', action: 'deposit_stake' },
 };
 
 // Normalizes protocol-specific instruction names into the analyzer taxonomy.
@@ -141,7 +153,6 @@ function decodeHexInstructionData(
   return null;
 }
 
-const NON_ANCHOR_BINARY_PROGRAMS = new Set<string>([RAYDIUM_AMM_PROGRAM_ID]);
 const CODER_CACHE = new Map<string, BorshCoder>();
 
 function getCachedCoder(programId: string, idl: Idl): BorshCoder {
@@ -289,7 +300,10 @@ export function decodeAnchorInstruction(
   const coder = getCachedCoder(programId, targetIdl);
   let decoded: { name: string; data: unknown } | null = null;
   try {
-    decoded = coder.instruction.decode(parsedData.buffer) as { name: string; data: unknown } | null;
+    decoded = coder.instruction.decode(parsedData.buffer) as {
+      name: string;
+      data: unknown;
+    } | null;
   } catch {
     return buildUnknownDecodedResult(programId, ix, parsedData, 'anchor');
   }

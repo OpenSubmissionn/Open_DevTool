@@ -8,7 +8,9 @@ const { buildMcpPayload, summarizeCpiTree, findSimilarPatterns } = __test;
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-function makeNode(overrides: Partial<CPINode> & { programId: string; programName: string }): CPINode {
+function makeNode(
+  overrides: Partial<CPINode> & { programId: string; programName: string }
+): CPINode {
   return {
     depth: 0,
     status: 'success',

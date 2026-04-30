@@ -1,7 +1,6 @@
 import type { Idl } from '@coral-xyz/anchor';
-import { instructionDiscriminator } from './anchor-idl-orca';
+import { instructionDiscriminator } from '../orca/anchor-idl-orca';
 
-// Compatibility IDL subset for Raydium decode mode.
 export const RAYDIUM_AMM_PROGRAM_ID = '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8';
 
 export const RAYDIUM_AMM_IDL: Idl = {
@@ -10,7 +9,9 @@ export const RAYDIUM_AMM_IDL: Idl = {
     version: '0.1.0',
     spec: '0.1.0',
   },
+
   address: RAYDIUM_AMM_PROGRAM_ID,
+
   instructions: [
     {
       name: 'initialize',
@@ -37,6 +38,8 @@ export const RAYDIUM_AMM_IDL: Idl = {
       accounts: [],
       args: [{ name: 'amount', type: 'u64' }],
     },
+    // Snake_case names so BorshCoder.encode('swap_base_in', ...) works;
+    // toCamelCaseInstructionName converts to 'swapBaseIn' for classify().
     {
       name: 'swap_base_in',
       discriminator: instructionDiscriminator('swap_base_in'),
@@ -56,6 +59,7 @@ export const RAYDIUM_AMM_IDL: Idl = {
       ],
     },
   ],
+
   accounts: [],
   types: [],
   errors: [],
