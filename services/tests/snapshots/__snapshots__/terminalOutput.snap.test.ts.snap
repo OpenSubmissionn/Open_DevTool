@@ -89,8 +89,8 @@ exports[`Terminal Output Snapshots > failed — custom program error 1`] = `
   ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
   ║ ACTIONABLE INSIGHTS                                                                                                                                        ║
   ║                                                                                                                                                    ║
-  ║  - The transaction failed, reverting all state changes and interrupting execution flow.                                                                    ║
   ║  - CU by node attribution confidence is 0.0% with 1 unmatched CU entries.                                                                                  ║
+  ║  - The transaction failed, reverting all state changes and interrupting execution flow.                                                                    ║
   ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 "
 `;
@@ -140,9 +140,9 @@ exports[`Terminal Output Snapshots > high-cu — bottleneck program 1`] = `
   ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
   ║ ACTIONABLE INSIGHTS                                                                                                                                        ║
   ║                                                                                                                                                    ║
-  ║  - Unknown Program consumed 199,500 CUs (99.75% of total).                                                                                                 ║
-  ║  - CU by node attribution confidence is 0.0% with 1 unmatched CU entries.                                                                                  ║
   ║  - Transaction used 99.8% of its CU limit, risking random failures.                                                                                        ║
+  ║  - CU by node attribution confidence is 0.0% with 1 unmatched CU entries.                                                                                  ║
+  ║  - Unknown Program consumed 199,500 CUs (99.75% of total).                                                                                                 ║
   ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 "
 `;
@@ -193,9 +193,9 @@ exports[`Terminal Output Snapshots > mev-mix — multi-program with high-cu bott
   ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
   ║ ACTIONABLE INSIGHTS                                                                                                                                        ║
   ║                                                                                                                                                    ║
+  ║  - CU by node attribution confidence is 50.0% with 1 unmatched CU entries.                                                                                 ║
   ║  - Unknown Program consumed 195,000 CUs (97.5% of total).                                                                                                  ║
   ║  - Transaction requested high limits but only used 195,000 CUs (51.2% waste).                                                                              ║
-  ║  - CU by node attribution confidence is 50.0% with 1 unmatched CU entries.                                                                                 ║
   ╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 "
 `;

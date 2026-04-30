@@ -88,6 +88,12 @@ export async function runPipeline(
   );
 
   const insights = await analyzeTransaction(analyzed);
+
+  // Stable insight ordering for snapshot tests: decouples snapshots from
+  // ranking logic in analyzeTransaction (severity tiebreakers, CU savings, etc.)
+  // so future ranking tweaks don't invalidate snapshots across all open PRs.
+  insights.insights.sort((a, b) => a.type.localeCompare(b.type));
+
   return { analyzed, insights };
 }
 
