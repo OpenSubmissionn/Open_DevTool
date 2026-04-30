@@ -6,7 +6,13 @@ describe('mergeAnalysis', () => {
   it('should merge analysis into AnalyzedTransaction', async () => {
     const bundle = mockRPCBundle();
     const logs = { byProgram: {}, errors: [], totalLines: 4 };
-    const cuProfile = { totalConsumed: 3000, totalLimit: 200000, utilizationPercent: 1.5, perInstruction: [], bottleneck: null };
+    const cuProfile = {
+      totalConsumed: 3000,
+      totalLimit: 200000,
+      utilizationPercent: 1.5,
+      perInstruction: [],
+      bottleneck: null,
+    };
     const cpiTree = { root: [], totalDepth: 0, nodeCount: 0 };
     const accountDiffs: any[] = [];
 

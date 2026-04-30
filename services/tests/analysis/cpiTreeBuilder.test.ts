@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import { buildCPITree } from '../../src/analysis/cpiTreeBuilder';
 
 describe('CPI Tree Builder', () => {
-
   it('1. Should process a deep tree with multiple children and mixed errors', () => {
     const massiveLogs = [
       'Program 1111 invoke [1]',
@@ -67,10 +66,7 @@ describe('CPI Tree Builder', () => {
   });
 
   it('3. Should handle immediate failures without CU consumption', () => {
-    const fastFailLogs = [
-      'Program FFFF invoke [1]',
-      'Program FFFF failed: invalid account data',
-    ];
+    const fastFailLogs = ['Program FFFF invoke [1]', 'Program FFFF failed: invalid account data'];
 
     const trace = buildCPITree(fastFailLogs);
 

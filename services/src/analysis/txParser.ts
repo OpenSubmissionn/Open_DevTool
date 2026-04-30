@@ -15,7 +15,7 @@
 
 import { getProgramNameSync } from '../solana/programs';
 import { buildCPITree, type ExecutionSnapshot } from './cpiTreeBuilder';
-import { fetchIdlWithCache, IdlCache } from '../solana/idlcache';  
+import { fetchIdlWithCache, IdlCache } from '../solana/idlcache';
 import type { ParsedInstruction, ParsedTransaction, RawTransactionBundle } from './types';
 
 // [NEW] AnchorProvider is only needed when IDL decoding is active.
@@ -225,7 +225,7 @@ async function prefetchIdls(
 // [NEW] Decodes instruction data using an Anchor IDL when one is available.
 // Returns null when the IDL is absent or decoding fails (hex path stays active).
 function decodeInstructionData(
-  data: string,         // already-normalized hex
+  data: string, // already-normalized hex
   programId: string,
   idlMap: Map<string, Idl | null>
 ): Record<string, unknown> | null {
@@ -259,7 +259,7 @@ function parseInstructionTree(
   accountKeys: string[],
   depth: number,
   rawChildren: UnknownRecord[],
-  idlMap: Map<string, Idl | null>   // [NEW] injected from prefetch
+  idlMap: Map<string, Idl | null> // [NEW] injected from prefetch
 ): ParsedInstruction {
   const programId = resolveProgramId(instruction, accountKeys);
   const accounts = resolveAccounts(instruction, accountKeys);
@@ -500,7 +500,7 @@ function attributeCUToInstructionTree(
 // Callers that don't pass options get identical synchronous-equivalent behaviour.
 export async function parseTransaction(
   bundle: RawTransactionBundle,
-  options: ParseTransactionOptions = {}   // [NEW]
+  options: ParseTransactionOptions = {} // [NEW]
 ): Promise<ParsedTransaction> {
   if (!bundle.signature || typeof bundle.signature !== 'string') {
     throw new Error('Invalid transaction bundle: missing signature');
@@ -529,7 +529,7 @@ export async function parseTransaction(
       accountKeys,
       0,
       innerInstructionMap.get(index) ?? [],
-      idlMap   // [NEW]
+      idlMap // [NEW]
     );
   });
 
