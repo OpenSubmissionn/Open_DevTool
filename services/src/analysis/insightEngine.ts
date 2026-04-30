@@ -175,8 +175,6 @@ export function mergeInsights(ruleInsights: Insight[], mcpInsights: ProviderInsi
   // Add rule insights
   allInsights.push(...ruleInsights);
 
-  // Add MCP insights
-  allInsights.push(...mcpInsights.map((pi) => pi.insight));
   // Add MCP insights (extract from ProviderInsight wrapper)
   allInsights.push(...mcpInsights.map((pi) => pi.insight));
 
