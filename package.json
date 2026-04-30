@@ -15,7 +15,8 @@
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"**/*.ts\"",
     "validate:benchmarks": "tsx scripts/validate-benchmarks.ts",
-    "validate:decoders": "tsx scripts/validate-decoders.ts"
+    "validate:decoders": "tsx scripts/validate-decoders.ts",
+    "bench:latency": "tsx scripts/latency-benchmark.ts"
   },
   "keywords": [],
   "author": "Nicole",

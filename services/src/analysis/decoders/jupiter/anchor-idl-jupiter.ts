@@ -1,7 +1,6 @@
 import type { Idl } from '@coral-xyz/anchor';
 import { instructionDiscriminator } from '../orca/anchor-idl-orca';
 
-// Minimal Jupiter v6 IDL subset required by the decoder/tests.
 export const JUPITER_V6_PROGRAM_ID = 'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4';
 
 export const JUPITER_V6_IDL: Idl = {
@@ -11,6 +10,7 @@ export const JUPITER_V6_IDL: Idl = {
     spec: '0.1.0',
   },
   address: JUPITER_V6_PROGRAM_ID,
+
   instructions: [
     {
       name: 'route',
@@ -20,12 +20,6 @@ export const JUPITER_V6_IDL: Idl = {
         { name: 'user_transfer_authority' },
         { name: 'user_source_token_account' },
         { name: 'user_destination_token_account' },
-        { name: 'destination_token_account' },
-        { name: 'destination_mint' },
-        { name: 'platform_fee_account' },
-        { name: 'token_2022_program' },
-        { name: 'event_authority' },
-        { name: 'program' },
       ],
       args: [
         { name: 'in_amount', type: 'u64' },
@@ -42,11 +36,6 @@ export const JUPITER_V6_IDL: Idl = {
         { name: 'user_transfer_authority' },
         { name: 'user_source_token_account' },
         { name: 'user_destination_token_account' },
-        { name: 'source_mint' },
-        { name: 'destination_mint' },
-        { name: 'platform_fee_account' },
-        { name: 'event_authority' },
-        { name: 'program' },
       ],
       args: [
         { name: 'out_amount', type: 'u64' },
@@ -69,8 +58,7 @@ export const JUPITER_V6_IDL: Idl = {
         { name: 'source_mint' },
         { name: 'destination_mint' },
         { name: 'platform_fee_account' },
-        { name: 'event_authority' },
-        { name: 'program' },
+        { name: 'token_2022_program' },
       ],
       args: [
         { name: 'id', type: 'u8' },
@@ -94,8 +82,7 @@ export const JUPITER_V6_IDL: Idl = {
         { name: 'source_mint' },
         { name: 'destination_mint' },
         { name: 'platform_fee_account' },
-        { name: 'event_authority' },
-        { name: 'program' },
+        { name: 'token_2022_program' },
       ],
       args: [
         { name: 'id', type: 'u8' },
@@ -108,24 +95,22 @@ export const JUPITER_V6_IDL: Idl = {
     {
       name: 'set_token_ledger',
       discriminator: instructionDiscriminator('set_token_ledger'),
-      accounts: [{ name: 'token_ledger' }],
+      accounts: [{ name: 'token_ledger' }, { name: 'token_account' }],
       args: [],
     },
   ],
+
   accounts: [],
+
   types: [
     {
-      name: 'RoutePlanStep',
+      name: 'bumps',
       type: {
         kind: 'struct',
-        fields: [
-          { name: 'swap', type: 'u8' },
-          { name: 'percent', type: 'u8' },
-          { name: 'input_index', type: 'u8' },
-          { name: 'output_index', type: 'u8' },
-        ],
+        fields: [],
       },
     },
   ],
+
   errors: [],
 };

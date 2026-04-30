@@ -147,6 +147,7 @@ function buildMcpPayload(context: InsightContext): MCPPayload {
     )
     .join(', ');
 
+  // Extract errors from logs
   const parsedErrors =
     tx.logs.entries
       ?.filter((entry) => entry.type === 'failed')

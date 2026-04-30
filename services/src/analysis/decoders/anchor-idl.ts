@@ -158,6 +158,7 @@ function decodeHexInstructionData(
   return null;
 }
 
+// Programs that use custom binary layouts on-chain despite having an Anchor-compatible IDL.
 const NON_ANCHOR_BINARY_PROGRAMS = new Set<string>([RAYDIUM_AMM_PROGRAM_ID, MAGIC_EDEN_PROGRAM_ID]);
 const CODER_CACHE = new Map<string, BorshCoder>();
 
@@ -306,7 +307,10 @@ export function decodeAnchorInstruction(
   const coder = getCachedCoder(programId, targetIdl);
   let decoded: { name: string; data: unknown } | null = null;
   try {
-    decoded = coder.instruction.decode(parsedData.buffer) as { name: string; data: unknown } | null;
+    decoded = coder.instruction.decode(parsedData.buffer) as {
+      name: string;
+      data: unknown;
+    } | null;
   } catch {
     return buildUnknownDecodedResult(programId, ix, parsedData, 'anchor');
   }

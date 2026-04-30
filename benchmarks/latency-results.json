@@ -1,0 +1,165 @@
+{
+  "generatedAt": "2026-04-28T05:37:53.825Z",
+  "constants": {
+    "BASELINE_TX_FETCH_MS": 600,
+    "BASELINE_IDL_FETCH_MS": 350,
+    "CACHE_HIT_MS": 5
+  },
+  "targets": {
+    "simpleMaxSeconds": 2,
+    "complexMaxSeconds": 5,
+    "warmReductionMinPercent": 40
+  },
+  "results": [
+    {
+      "id": "simple-1",
+      "complexity": "simple",
+      "cuConsumed": 500,
+      "anchorProgramCount": 0,
+      "pipelineMs": 0.10030000000006112,
+      "coldEndToEndMs": 600.1003000000001,
+      "warmEndToEndMs": 600.1003000000001,
+      "warmReductionPercent": 0
+    },
+    {
+      "id": "simple-2",
+      "complexity": "simple",
+      "cuConsumed": 750,
+      "anchorProgramCount": 0,
+      "pipelineMs": 0.06539999999995416,
+      "coldEndToEndMs": 600.0654,
+      "warmEndToEndMs": 600.0654,
+      "warmReductionPercent": 0
+    },
+    {
+      "id": "simple-3",
+      "complexity": "simple",
+      "cuConsumed": 1000,
+      "anchorProgramCount": 0,
+      "pipelineMs": 0.034300000000030195,
+      "coldEndToEndMs": 600.0343,
+      "warmEndToEndMs": 600.0343,
+      "warmReductionPercent": 0
+    },
+    {
+      "id": "simple-4",
+      "complexity": "simple",
+      "cuConsumed": 1250,
+      "anchorProgramCount": 0,
+      "pipelineMs": 0.015099999999961256,
+      "coldEndToEndMs": 600.0151,
+      "warmEndToEndMs": 600.0151,
+      "warmReductionPercent": 0
+    },
+    {
+      "id": "simple-5",
+      "complexity": "simple",
+      "cuConsumed": 1500,
+      "anchorProgramCount": 0,
+      "pipelineMs": 0.014499999999998181,
+      "coldEndToEndMs": 600.0145,
+      "warmEndToEndMs": 600.0145,
+      "warmReductionPercent": 0
+    },
+    {
+      "id": "medium-1",
+      "complexity": "medium",
+      "cuConsumed": 30000,
+      "anchorProgramCount": 1,
+      "pipelineMs": 0.024999999999977263,
+      "coldEndToEndMs": 950.025,
+      "warmEndToEndMs": 605.025,
+      "warmReductionPercent": 36.314833820162626
+    },
+    {
+      "id": "medium-2",
+      "complexity": "medium",
+      "cuConsumed": 42500,
+      "anchorProgramCount": 1,
+      "pipelineMs": 0.019800000000032014,
+      "coldEndToEndMs": 950.0198,
+      "warmEndToEndMs": 605.0198,
+      "warmReductionPercent": 36.315032591952296
+    },
+    {
+      "id": "medium-3",
+      "complexity": "medium",
+      "cuConsumed": 55000,
+      "anchorProgramCount": 1,
+      "pipelineMs": 0.019800000000032014,
+      "coldEndToEndMs": 950.0198,
+      "warmEndToEndMs": 605.0198,
+      "warmReductionPercent": 36.315032591952296
+    },
+    {
+      "id": "medium-4",
+      "complexity": "medium",
+      "cuConsumed": 67500,
+      "anchorProgramCount": 1,
+      "pipelineMs": 0.018000000000029104,
+      "coldEndToEndMs": 950.018,
+      "warmEndToEndMs": 605.018,
+      "warmReductionPercent": 36.31510139807877
+    },
+    {
+      "id": "medium-5",
+      "complexity": "medium",
+      "cuConsumed": 80000,
+      "anchorProgramCount": 1,
+      "pipelineMs": 0.08029999999985193,
+      "coldEndToEndMs": 950.0802999999999,
+      "warmEndToEndMs": 605.0802999999999,
+      "warmReductionPercent": 36.31272009323844
+    },
+    {
+      "id": "complex-1",
+      "complexity": "complex",
+      "cuConsumed": 150000,
+      "anchorProgramCount": 3,
+      "pipelineMs": 0.028599999999869397,
+      "coldEndToEndMs": 1650.0285999999999,
+      "warmEndToEndMs": 615.0285999999999,
+      "warmReductionPercent": 62.7261854733912
+    },
+    {
+      "id": "complex-2",
+      "complexity": "complex",
+      "cuConsumed": 162500,
+      "anchorProgramCount": 3,
+      "pipelineMs": 0.02980000000002292,
+      "coldEndToEndMs": 1650.0298,
+      "warmEndToEndMs": 615.0298,
+      "warmReductionPercent": 62.726139855171105
+    },
+    {
+      "id": "complex-3",
+      "complexity": "complex",
+      "cuConsumed": 175000,
+      "anchorProgramCount": 3,
+      "pipelineMs": 0.02800000000002001,
+      "coldEndToEndMs": 1650.028,
+      "warmEndToEndMs": 615.028,
+      "warmReductionPercent": 62.726208282526116
+    },
+    {
+      "id": "complex-4",
+      "complexity": "complex",
+      "cuConsumed": 187500,
+      "anchorProgramCount": 3,
+      "pipelineMs": 0.028800000000046566,
+      "coldEndToEndMs": 1650.0288,
+      "warmEndToEndMs": 615.0288,
+      "warmReductionPercent": 62.7261778703499
+    },
+    {
+      "id": "complex-5",
+      "complexity": "complex",
+      "cuConsumed": 200000,
+      "anchorProgramCount": 3,
+      "pipelineMs": 0.2642000000000735,
+      "coldEndToEndMs": 1650.2642,
+      "warmEndToEndMs": 615.2642000000001,
+      "warmReductionPercent": 62.71723036832526
+    }
+  ]
+}
