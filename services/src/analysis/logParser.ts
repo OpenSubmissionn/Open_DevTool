@@ -1,80 +1,111 @@
 // services/src/analysis/logParser.ts
 
 export interface ParsedLogs {
-  byProgram: Record<string, any>;
+  byProgram: Record<string, ProgramStats>;
   errors: string[];
   totalLines: number;
+  parseTimeMs?: number;
 }
 
-export function parseLogsFromBundle(logMessages: string[]): ParsedLogs {
-  // Initialize the result object
-  const result: ParsedLogs = {
-    byProgram: {},
-    errors: [],
-    totalLines: logMessages.length,
+interface ProgramStats {
+  consumed: number;
+  limit: number;
+  invocations: number;
+  messages: string[];
+}
+
+// Compiled once at module load. RE_ERR_KW runs per "Program log:" line;
+// RE_CU and RE_FAILED only run after a charCodeAt dispatch confirms the line type.
+const RE_CU = /^Program \S+ consumed (\d+) of (\d+) compute units$/;
+const RE_FAILED = /^Program (\w+) failed: (.*)/;
+const RE_ERR_KW = /error|fail/i;
+
+// Every Solana log line of interest starts with this prefix.
+const PREFIX = 'Program ';
+const PREFIX_LEN = PREFIX.length; // 8
+
+function initProgram(): ProgramStats {
+  return { consumed: 0, limit: 0, invocations: 0, messages: [] };
+}
+
+export function parseLogsFromBundle(logMessages: string[], verbose = false): ParsedLogs {
+  const startTime = verbose ? performance.now() : 0;
+
+  const byProgramMap = new Map<string, ProgramStats>();
+  const errors: string[] = [];
+
+  // Lazy init: avoids pre-allocating entries for programs that never appear.
+  const ensureProgram = (id: string): ProgramStats => {
+    let s = byProgramMap.get(id);
+    if (s === undefined) {
+      s = initProgram();
+      byProgramMap.set(id, s);
+    }
+    return s;
   };
 
-  // Helper function to ensure the program exists in our object
-  const initProgramIfNeeded = (programId: string) => {
-    if (!result.byProgram[programId]) {
-      result.byProgram[programId] = { consumed: 0, limit: 0, invocations: 0, messages: [] };
-    }
-  };
+  for (let i = 0; i < logMessages.length; i++) {
+    const line = logMessages[i];
 
-  // Iterate through each blockchain log message
-  for (const line of logMessages) {
-    
-    // 1. Match Compute Unit (CU) consumption lines
-    const cuRegex = /Program (\w+) consumed (\d+) of (\d+) compute units/;
-    const cuMatch = line.match(cuRegex);
-    if (cuMatch) {
-      const programId = cuMatch[1];
-      const consumed = parseInt(cuMatch[2], 10);
-      const limit = parseInt(cuMatch[3], 10);
+    // Reject non-"Program" lines with a single charCodeAt before any string op.
+    if (line.charCodeAt(0) !== 80 /* 'P' */) continue;
+    if (!line.startsWith(PREFIX)) continue;
 
-      initProgramIfNeeded(programId);
-      result.byProgram[programId].consumed += consumed;
-      result.byProgram[programId].limit = limit;
-      continue; // Move to the next line
+    // "Program log: <message>" — detected before programId extraction because
+    // the token at PREFIX_LEN is "log", not a base58 program ID.
+    if (
+      line.charCodeAt(PREFIX_LEN) === 108 /* l */ &&
+      line.charCodeAt(PREFIX_LEN + 1) === 111 /* o */ &&
+      line.charCodeAt(PREFIX_LEN + 2) === 103 /* g */ &&
+      line.charCodeAt(PREFIX_LEN + 3) === 58 /* : */
+    ) {
+      // Message content starts after "Program log: " (PREFIX_LEN + 5 chars).
+      const msg = line.slice(PREFIX_LEN + 5);
+      if (RE_ERR_KW.test(msg)) errors.push(msg);
+      continue;
     }
 
-    // 2. Match Cross-Program Invocations (CPI)
-    // e.g., "Program 111111 invoke [1]"
-    const invokeRegex = /Program (\w+) invoke \[(\d+)\]/;
-    const invokeMatch = line.match(invokeRegex);
-    if (invokeMatch) {
-      const programId = invokeMatch[1];
-      
-      initProgramIfNeeded(programId);
-      result.byProgram[programId].invocations += 1;
-      continue; 
+    // Slice the program ID from between "Program " and the next space.
+    const sp = line.indexOf(' ', PREFIX_LEN);
+    if (sp === -1) continue;
+    const programId = line.slice(PREFIX_LEN, sp);
+    const tokenStart = sp + 1;
+    const nextChar = line.charCodeAt(tokenStart);
+
+    // Dispatch on the first two chars of the verb to avoid regex on every line.
+
+    // "invoke" → 'i'(105) 'n'(110)
+    if (nextChar === 105 && line.charCodeAt(tokenStart + 1) === 110) {
+      ensureProgram(programId).invocations += 1;
+      continue;
     }
 
-    // 3. Match standard program logs
-    // e.g., "Program log: Instruction: Transfer"
-    const logRegex = /Program log: (.*)/;
-    const logMatch = line.match(logRegex);
-    if (logMatch) {
-      const message = logMatch[1];
-      
-      // If the log is actually an error, save it in the errors array
-      if (message.toLowerCase().includes('error') || message.toLowerCase().includes('fail')) {
-        result.errors.push(message);
+    // "consumed" → 'c'(99); unary + is faster than parseInt for pure-digit strings.
+    if (nextChar === 99) {
+      const m = RE_CU.exec(line);
+      if (m !== null) {
+        const s = ensureProgram(programId);
+        s.consumed += +m[1];
+        s.limit = +m[2]; // last seen limit wins (matches Solana RPC behaviour)
       }
       continue;
     }
 
-    // 4. Match explicitly failed programs
-    // e.g., "Program 111111 failed: custom program error: 0x1"
-    const failRegex = /Program (\w+) failed: (.*)/;
-    const failMatch = line.match(failRegex);
-    if (failMatch) {
-      const programId = failMatch[1];
-      const errorMessage = failMatch[2];
-      result.errors.push(`Program ${programId} failed: ${errorMessage}`);
-      continue;
+    // "failed" → 'f'(102) 'a'(97); guards against "falsy" or other 'f'-prefixed tokens.
+    if (nextChar === 102 && line.charCodeAt(tokenStart + 1) === 97) {
+      const m = RE_FAILED.exec(line);
+      if (m !== null) errors.push(`Program ${m[1]} failed: ${m[2]}`);
     }
+
+    // "success" and all other verbs are intentionally ignored.
   }
 
+  const result: ParsedLogs = {
+    byProgram: Object.fromEntries(byProgramMap),
+    errors,
+    totalLines: logMessages.length,
+  };
+
+  if (verbose) result.parseTimeMs = performance.now() - startTime;
   return result;
 }

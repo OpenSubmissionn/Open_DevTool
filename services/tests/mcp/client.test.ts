@@ -37,9 +37,7 @@ describe('MCP Client', () => {
   });
 
   it('timeout returns empty suggestions without throwing', async () => {
-    const mockFetch = vi.fn().mockRejectedValue(
-      new Error('AbortError: The operation was aborted')
-    );
+    const mockFetch = vi.fn().mockRejectedValue(new Error('AbortError: The operation was aborted'));
     vi.stubGlobal('fetch', mockFetch);
 
     process.env.MCP_ENDPOINT_URL = 'http://localhost:3000/mcp';
@@ -61,7 +59,8 @@ describe('MCP Client', () => {
   });
 
   it('5xx response retries once then returns empty suggestions', async () => {
-    const mockFetch = vi.fn()
+    const mockFetch = vi
+      .fn()
       .mockResolvedValueOnce({ ok: false, status: 503 })
       .mockResolvedValueOnce({ ok: false, status: 503 });
 

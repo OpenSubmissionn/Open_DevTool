@@ -338,15 +338,40 @@ export interface ParsedLogs {
 }
 
 /**
- * Represents the cost breakdown of a transaction in different units.
- * Values are calculated from CU consumption using the fee formula:
- * fee_lamports = (cu_consumed × micro_lamports_per_cu) / 1_000_000
+ * Transfer detected in a transaction (SOL or SPL token).
+ */
+export interface TransferInfo {
+  /** Sender account address. Empty string when direction is inbound. */
+  from: string;
+  /** Receiver account address. Empty string when direction is outbound. */
+  to: string;
+  /** Raw transfer amount as string to avoid precision loss. */
+  amount: string;
+  /** Token mint address, or 'SOL' for native transfers. */
+  token: string;
+  /** Token decimals. */
+  decimals: number;
+  /** Human-readable transfer amount. */
+  uiAmount: number;
+  /** USD value of the transfer, null when price is unavailable. */
+  usdValue: number | null;
+  /** Whether this transfer shows spam heuristic signals. */
+  isSpamSuspect: boolean;
+}
+
+/**
+ * Compute unit execution cost broken down in lamports, SOL and USD.
  */
 export interface CUCost {
+  /** Total compute units consumed. */
   cuConsumed: number;
+  /** Micro-lamports per compute unit used for fee calculation. */
   microLamportsPerCU: number;
+  /** Total fee in lamports: cu_consumed * micro_lamports_per_cu / 1_000_000 */
   feeLamports: number;
+  /** Total fee in SOL. */
   feeSOL: number;
+  /** Total fee in USD. Null when SOL price is unavailable. */
   feeUSD: number | null;
 }
 
@@ -362,14 +387,16 @@ export interface AnalyzedTransaction {
   parsed: ParsedTransaction;
   /** Compute unit consumption profile. */
   cuProfile: CUProfile;
-  /** Cost breakdown in lamports, SOL, and USD. */
-  cuCost?: CUCost;
   /** CPI call tree representation. */
   cpiTree: CPITree;
   /** Account differences identified in the transaction. */
   accountDiffs: AccountDiff[];
   /** Parsed logs for the transaction. */
   logs: ParsedLogs;
+  /** CU execution cost in lamports, SOL and USD. */
+  cuCost?: CUCost;
+  /** Transfers detected in the transaction. */
+  transfers?: TransferInfo[];
   /** Detected transaction type, when available. */
   txType?: string;
 }

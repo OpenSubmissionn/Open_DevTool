@@ -8,13 +8,19 @@
  * - Inner instructions grouped by parent index and attached as children
  * - Transaction fee from RPC metadata with payer-balance fallback
  * - Instruction depth metadata (0 for outer, 1 for attached inner)
+ * - Anchor IDL decoding for known programs via persistent filesystem cache
  *
  * Returns a ParsedTransaction with execution status and parsed instruction tree.
  */
 
 import { getProgramNameSync } from '../solana/programs';
 import { buildCPITree, type ExecutionSnapshot } from './cpiTreeBuilder';
+import { fetchIdlWithCache, IdlCache } from '../solana/idlcache';
 import type { ParsedInstruction, ParsedTransaction, RawTransactionBundle } from './types';
+
+// [NEW] AnchorProvider is only needed when IDL decoding is active.
+// Import lazily to avoid hard-wiring the dep for callers that don't use it.
+import type { AnchorProvider, Idl } from '@coral-xyz/anchor';
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -32,6 +38,21 @@ interface CUQueueBuildResult {
   queues: Map<string, CUAttributionEntry[]>;
   keyCounts: Map<string, number>;
   isTraceTruncated: boolean;
+}
+
+// [NEW] Options accepted by parseTransaction.
+export interface ParseTransactionOptions {
+  /**
+   * When provided, txParser will attempt Anchor IDL decoding for each
+   * instruction whose programId has a resolvable on-chain IDL.
+   * The cache avoids a network round-trip on repeat runs.
+   */
+  idlCache?: IdlCache;
+  /**
+   * Anchor provider needed to call Program.fetchIdl().
+   * Required when idlCache is provided; ignored otherwise.
+   */
+  anchorProvider?: AnchorProvider;
 }
 
 // Narrow unknown values before safe structured access.
@@ -167,12 +188,78 @@ function getNestedInnerInstructions(instruction: UnknownRecord): UnknownRecord[]
   return instruction.innerInstructions.filter(isRecord);
 }
 
+// [NEW] Pre-fetches IDLs for all unique program IDs in the bundle.
+// Done once before parsing so parseInstructionTree can stay synchronous.
+async function prefetchIdls(
+  programIds: string[],
+  idlCache: IdlCache,
+  anchorProvider: AnchorProvider
+): Promise<Map<string, Idl | null>> {
+  const { Program } = await import('@coral-xyz/anchor');
+  const { PublicKey } = await import('@solana/web3.js');
+
+  const unique = [...new Set(programIds)];
+
+  const entries = await Promise.all(
+    unique.map(async (programId) => {
+      try {
+        const { idl } = await fetchIdlWithCache<Idl | null>(
+          programId,
+          async () => {
+            const idl = await Program.fetchIdl(new PublicKey(programId), anchorProvider);
+            return { idl, version: (idl as any)?.version ?? 'unknown' };
+          },
+          idlCache
+        );
+        return [programId, idl] as const;
+      } catch {
+        // Graceful degradation: fall back to raw hex for this program.
+        return [programId, null] as const;
+      }
+    })
+  );
+
+  return new Map(entries);
+}
+
+// [NEW] Decodes instruction data using an Anchor IDL when one is available.
+// Returns null when the IDL is absent or decoding fails (hex path stays active).
+function decodeInstructionData(
+  data: string, // already-normalized hex
+  programId: string,
+  idlMap: Map<string, Idl | null>
+): Record<string, unknown> | null {
+  const idl = idlMap.get(programId);
+  if (!idl) return null;
+
+  try {
+    // Discriminator is the first 8 bytes of the hex-encoded data.
+    const discriminator = Buffer.from(data.slice(0, 16), 'hex');
+    const matchedInstruction = idl.instructions.find((ix) =>
+      Buffer.from((ix as any).discriminator ?? []).equals(discriminator)
+    );
+
+    if (!matchedInstruction) return null;
+
+    return {
+      instructionName: matchedInstruction.name,
+      // Full borsh decoding can be added here as the pipeline matures.
+      // For now surfacing the instruction name already eliminates the
+      // most common "what did this instruction do?" question.
+      rawHex: data,
+    };
+  } catch {
+    return null;
+  }
+}
+
 // Parses an instruction and any nested CPI children attached to it.
 function parseInstructionTree(
   instruction: UnknownRecord,
   accountKeys: string[],
   depth: number,
-  rawChildren: UnknownRecord[] = []
+  rawChildren: UnknownRecord[],
+  idlMap: Map<string, Idl | null> // [NEW] injected from prefetch
 ): ParsedInstruction {
   const programId = resolveProgramId(instruction, accountKeys);
   const accounts = resolveAccounts(instruction, accountKeys);
@@ -181,7 +268,7 @@ function parseInstructionTree(
     rawChildren.length > 0 ? rawChildren : getNestedInnerInstructions(instruction);
 
   const innerInstructions = childInstructions.map((childInstruction) =>
-    parseInstructionTree(childInstruction, accountKeys, depth + 1)
+    parseInstructionTree(childInstruction, accountKeys, depth + 1, [], idlMap)
   );
 
   return {
@@ -191,6 +278,8 @@ function parseInstructionTree(
     data,
     depth,
     innerInstructions,
+    // [NEW] decodedData is populated when an Anchor IDL was found; null otherwise.
+    decodedData: decodeInstructionData(data, programId, idlMap),
   };
 }
 
@@ -407,7 +496,12 @@ function attributeCUToInstructionTree(
   };
 }
 
-export function parseTransaction(bundle: RawTransactionBundle): ParsedTransaction {
+// [NEW] parseTransaction is now async to support optional IDL prefetching.
+// Callers that don't pass options get identical synchronous-equivalent behaviour.
+export async function parseTransaction(
+  bundle: RawTransactionBundle,
+  options: ParseTransactionOptions = {} // [NEW]
+): Promise<ParsedTransaction> {
   if (!bundle.signature || typeof bundle.signature !== 'string') {
     throw new Error('Invalid transaction bundle: missing signature');
   }
@@ -419,12 +513,23 @@ export function parseTransaction(bundle: RawTransactionBundle): ParsedTransactio
   const outerInstructions = getOuterInstructions(bundle);
   const innerInstructionMap = getInnerInstructionMap(bundle.innerInstructions);
 
+  // [NEW] Pre-fetch all IDLs in parallel before the parse loop so inner
+  // instruction decoding can stay synchronous.
+  let idlMap = new Map<string, import('@coral-xyz/anchor').Idl | null>();
+  if (options.idlCache && options.anchorProvider) {
+    const uniqueProgramIds = [
+      ...new Set(outerInstructions.map((ix) => resolveProgramId(ix, accountKeys))),
+    ];
+    idlMap = await prefetchIdls(uniqueProgramIds, options.idlCache, options.anchorProvider);
+  }
+
   const parsedInstructions: ParsedInstruction[] = outerInstructions.map((instruction, index) => {
     return parseInstructionTree(
       instruction,
       accountKeys,
       0,
-      innerInstructionMap.get(index) ?? []
+      innerInstructionMap.get(index) ?? [],
+      idlMap // [NEW]
     );
   });
 

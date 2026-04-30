@@ -37,7 +37,7 @@ export const fetchTransaction = async (
     postTokenBalances: tx.meta?.postTokenBalances || [],
     innerInstructions: tx.meta?.innerInstructions || [],
     err: tx.meta?.err || null,
-    accountKeys: tx.transaction.message.accountKeys.map(key => 
+    accountKeys: tx.transaction.message.accountKeys.map((key) =>
       typeof key === 'string' ? key : key.pubkey.toBase58()
     ),
     rawResponse: tx,

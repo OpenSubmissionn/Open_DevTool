@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { classifyTransaction, TxType } from '../../src/analysis/classifier';
+import { classifyTransaction } from '../../src/analysis/classifier';
 import { ParsedTransaction } from '../../src/analysis/types';
 
 describe('classifyTransaction', () => {
@@ -10,7 +10,18 @@ describe('classifyTransaction', () => {
       blockTime: null,
       success: true,
       fee: 5000,
-      instructions: [{ programId: '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', programName: 'Raydium', accounts: [], data: '', decodedData: undefined, cuConsumed: undefined, depth: 0, innerInstructions: [] }]
+      instructions: [
+        {
+          programId: '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8',
+          programName: 'Raydium',
+          accounts: [],
+          data: '',
+          decodedData: undefined,
+          cuConsumed: undefined,
+          depth: 0,
+          innerInstructions: [],
+        },
+      ],
     };
     expect(classifyTransaction(parsed)).toBe('swap');
   });
@@ -22,7 +33,18 @@ describe('classifyTransaction', () => {
       blockTime: null,
       success: true,
       fee: 5000,
-      instructions: [{ programId: '11111111111111111111111111111111', programName: 'System Program', accounts: [], data: '', decodedData: undefined, cuConsumed: undefined, depth: 0, innerInstructions: [] }]
+      instructions: [
+        {
+          programId: '11111111111111111111111111111111',
+          programName: 'System Program',
+          accounts: [],
+          data: '',
+          decodedData: undefined,
+          cuConsumed: undefined,
+          depth: 0,
+          innerInstructions: [],
+        },
+      ],
     };
     expect(classifyTransaction(parsed)).toBe('transfer');
   });
@@ -34,7 +56,18 @@ describe('classifyTransaction', () => {
       blockTime: null,
       success: true,
       fee: 5000,
-      instructions: [{ programId: 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s', programName: 'Metadata', accounts: [], data: '', decodedData: undefined, cuConsumed: undefined, depth: 0, innerInstructions: [] }]
+      instructions: [
+        {
+          programId: 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s',
+          programName: 'Metadata',
+          accounts: [],
+          data: '',
+          decodedData: undefined,
+          cuConsumed: undefined,
+          depth: 0,
+          innerInstructions: [],
+        },
+      ],
     };
     expect(classifyTransaction(parsed)).toBe('nft-mint');
   });
@@ -46,7 +79,18 @@ describe('classifyTransaction', () => {
       blockTime: null,
       success: true,
       fee: 5000,
-      instructions: [{ programId: 'Stake11111111111111111111111111111111111111', programName: 'Stake Program', accounts: [], data: '', decodedData: undefined, cuConsumed: undefined, depth: 0, innerInstructions: [] }]
+      instructions: [
+        {
+          programId: 'Stake11111111111111111111111111111111111111',
+          programName: 'Stake Program',
+          accounts: [],
+          data: '',
+          decodedData: undefined,
+          cuConsumed: undefined,
+          depth: 0,
+          innerInstructions: [],
+        },
+      ],
     };
     expect(classifyTransaction(parsed)).toBe('stake');
   });
@@ -58,7 +102,18 @@ describe('classifyTransaction', () => {
       blockTime: null,
       success: true,
       fee: 5000,
-      instructions: [{ programId: 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw', programName: 'Governance', accounts: [], data: '', decodedData: undefined, cuConsumed: undefined, depth: 0, innerInstructions: [] }]
+      instructions: [
+        {
+          programId: 'GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw',
+          programName: 'Governance',
+          accounts: [],
+          data: '',
+          decodedData: undefined,
+          cuConsumed: undefined,
+          depth: 0,
+          innerInstructions: [],
+        },
+      ],
     };
     expect(classifyTransaction(parsed)).toBe('governance-vote');
   });
@@ -70,7 +125,7 @@ describe('classifyTransaction', () => {
       blockTime: null,
       success: false,
       fee: 5000,
-      instructions: []
+      instructions: [],
     };
     expect(classifyTransaction(parsed)).toBe('failed-tx');
   });
@@ -82,7 +137,16 @@ describe('classifyTransaction', () => {
       blockTime: null,
       success: true,
       fee: 5000,
-      instructions: Array(6).fill({ programId: 'test', programName: 'Test', accounts: [], data: '', decodedData: undefined, cuConsumed: undefined, depth: 0, innerInstructions: [] })
+      instructions: Array(6).fill({
+        programId: 'test',
+        programName: 'Test',
+        accounts: [],
+        data: '',
+        decodedData: undefined,
+        cuConsumed: undefined,
+        depth: 0,
+        innerInstructions: [],
+      }),
     };
     expect(classifyTransaction(parsed)).toBe('high-CU');
   });
@@ -94,7 +158,18 @@ describe('classifyTransaction', () => {
       blockTime: null,
       success: true,
       fee: 5000,
-      instructions: [{ programId: 'test', programName: 'Test', accounts: [], data: '', decodedData: undefined, cuConsumed: undefined, depth: 3, innerInstructions: [] }]
+      instructions: [
+        {
+          programId: 'test',
+          programName: 'Test',
+          accounts: [],
+          data: '',
+          decodedData: undefined,
+          cuConsumed: undefined,
+          depth: 3,
+          innerInstructions: [],
+        },
+      ],
     };
     expect(classifyTransaction(parsed)).toBe('deep-cpi');
   });
@@ -107,11 +182,47 @@ describe('classifyTransaction', () => {
       success: true,
       fee: 5000,
       instructions: [
-        { programId: 'p1', programName: 'P1', accounts: [], data: '', decodedData: undefined, cuConsumed: undefined, depth: 0, innerInstructions: [] },
-        { programId: 'p2', programName: 'P2', accounts: [], data: '', decodedData: undefined, cuConsumed: undefined, depth: 0, innerInstructions: [] },
-        { programId: 'p3', programName: 'P3', accounts: [], data: '', decodedData: undefined, cuConsumed: undefined, depth: 0, innerInstructions: [] },
-        { programId: 'p4', programName: 'P4', accounts: [], data: '', decodedData: undefined, cuConsumed: undefined, depth: 0, innerInstructions: [] }
-      ]
+        {
+          programId: 'p1',
+          programName: 'P1',
+          accounts: [],
+          data: '',
+          decodedData: undefined,
+          cuConsumed: undefined,
+          depth: 0,
+          innerInstructions: [],
+        },
+        {
+          programId: 'p2',
+          programName: 'P2',
+          accounts: [],
+          data: '',
+          decodedData: undefined,
+          cuConsumed: undefined,
+          depth: 0,
+          innerInstructions: [],
+        },
+        {
+          programId: 'p3',
+          programName: 'P3',
+          accounts: [],
+          data: '',
+          decodedData: undefined,
+          cuConsumed: undefined,
+          depth: 0,
+          innerInstructions: [],
+        },
+        {
+          programId: 'p4',
+          programName: 'P4',
+          accounts: [],
+          data: '',
+          decodedData: undefined,
+          cuConsumed: undefined,
+          depth: 0,
+          innerInstructions: [],
+        },
+      ],
     };
     expect(classifyTransaction(parsed)).toBe('multi-program');
   });
@@ -123,7 +234,18 @@ describe('classifyTransaction', () => {
       blockTime: null,
       success: true,
       fee: 5000,
-      instructions: [{ programId: 'unknown', programName: 'Unknown', accounts: [], data: '', decodedData: undefined, cuConsumed: undefined, depth: 0, innerInstructions: [] }]
+      instructions: [
+        {
+          programId: 'unknown',
+          programName: 'Unknown',
+          accounts: [],
+          data: '',
+          decodedData: undefined,
+          cuConsumed: undefined,
+          depth: 0,
+          innerInstructions: [],
+        },
+      ],
     };
     expect(classifyTransaction(parsed)).toBe('unknown');
   });

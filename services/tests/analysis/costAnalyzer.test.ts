@@ -24,7 +24,10 @@ describe('Cost Analyzer', () => {
       postBalances: [999_500_000_000, 1_000_000_000],
       preTokenBalances: [],
       postTokenBalances: [],
-      accountKeys: ['11111111111111111111111111111111', 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'],
+      accountKeys: [
+        '11111111111111111111111111111111',
+        'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+      ],
     });
 
     const result = analyzeCosts(bundle, 150, 1000);
@@ -62,7 +65,10 @@ describe('Cost Analyzer', () => {
       ],
       preBalances: [1_000_000_000],
       postBalances: [1_000_000_000],
-      accountKeys: ['11111111111111111111111111111111', 'SPAMAccount1111111111111111111111111111111'],
+      accountKeys: [
+        '11111111111111111111111111111111',
+        'SPAMAccount1111111111111111111111111111111',
+      ],
     });
 
     const result = analyzeCosts(bundle, null, 1000);

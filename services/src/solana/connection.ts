@@ -15,16 +15,19 @@ const INITIAL_BACKOFF = 1000;
  * Retorna uma instância de conexão com a Solana.
  * Prioridade: 1. URL customizada | 2. Helius RPC | 3. Public RPC (Fallback )
  */
-export const getConnection = (rpcUrl?: string, network: 'mainnet' | 'devnet' = 'devnet'): Connection => {
+export const getConnection = (
+  rpcUrl?: string,
+  network: 'mainnet' | 'devnet' = 'devnet'
+): Connection => {
   // Aqui está a lógica de fallback que faltava
-  const url = rpcUrl || HELIUS_RPC_URL || (network === 'mainnet' ? MAINNET_RPC_URL : DEVNET_RPC_URL);
-  
+  const url =
+    rpcUrl || HELIUS_RPC_URL || (network === 'mainnet' ? MAINNET_RPC_URL : DEVNET_RPC_URL);
+
   const config: ConnectionConfig = {
     commitment: 'confirmed',
     confirmTransactionInitialTimeout: 60000,
   };
 
-  console.log(`Connecting to Solana via: ${url === HELIUS_RPC_URL ? 'Helius' : network === 'mainnet' ? 'Mainnet' : 'Devnet'} RPC`);
   return new Connection(url, config);
 };
 
@@ -33,7 +36,7 @@ export const getConnection = (rpcUrl?: string, network: 'mainnet' | 'devnet' = '
  */
 export const withRetry = async <T>(fn: () => Promise<T>): Promise<T> => {
   let lastError: any;
-  
+
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
       return await fn();
@@ -44,6 +47,6 @@ export const withRetry = async <T>(fn: () => Promise<T>): Promise<T> => {
       await new Promise((resolve) => setTimeout(resolve, backoff));
     }
   }
-  
+
   throw lastError;
 };

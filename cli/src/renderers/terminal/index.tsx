@@ -48,21 +48,18 @@ const Header = ({
 
         <Box>
           <Text backgroundColor="blue" color="white">
-            {' '}{networkLabel}{' '}
+            {' '}
+            {networkLabel}{' '}
           </Text>
 
           <Text backgroundColor="gray" color="white">
-            {' '}SLOT: {slot || 'N/A'}{' '}
+            {' '}
+            SLOT: {slot || 'N/A'}{' '}
           </Text>
         </Box>
       </Box>
 
-      <Box
-        borderStyle="round"
-        borderColor={statusColor}
-        paddingX={1}
-        flexDirection="column"
-      >
+      <Box borderStyle="round" borderColor={statusColor} paddingX={1} flexDirection="column">
         <Box justifyContent="space-between">
           <Box>
             <Text bold>SIGNATURE: </Text>
@@ -75,9 +72,7 @@ const Header = ({
         </Box>
 
         <Box marginTop={1}>
-          <Text color="gray">
-            TRANSACTION FEE: {displayFee} SOL
-          </Text>
+          <Text color="gray">TRANSACTION FEE: {displayFee} SOL</Text>
         </Box>
       </Box>
     </Box>
@@ -115,7 +110,6 @@ export const TerminalRenderer: React.FC<{
   insights: InsightReport;
   network?: 'mainnet' | 'devnet';
 }> = ({ analyzed, insights, network = 'devnet' }) => {
-
   const signature =
     analyzed.signature ||
     (analyzed as any).raw?.signature ||
@@ -123,27 +117,19 @@ export const TerminalRenderer: React.FC<{
     'N/A';
 
   const slot =
-    (analyzed as any).slot ||
-    (analyzed as any).parsed?.slot ||
-    (analyzed as any).raw?.slot ||
-    0;
+    (analyzed as any).slot || (analyzed as any).parsed?.slot || (analyzed as any).raw?.slot || 0;
 
   const fee =
-    (analyzed as any).fee ||
-    (analyzed as any).feeLamports ||
-    (analyzed as any).parsed?.fee;
+    (analyzed as any).fee || (analyzed as any).feeLamports || (analyzed as any).parsed?.fee;
 
   const trace = resolveTrace(analyzed);
 
-  const insightsList = Array.isArray(insights)
-    ? insights
-    : (insights as any)?.insights || [];
+  const insightsList = Array.isArray(insights) ? insights : (insights as any)?.insights || [];
 
   const accountDiffs = (analyzed as any).accountDiffs || [];
 
   return (
     <Box flexDirection="column" paddingX={2} paddingY={1} minWidth={80}>
-
       {/* HEADER */}
       <Header
         signature={signature}
@@ -155,7 +141,6 @@ export const TerminalRenderer: React.FC<{
 
       {/* MAIN SECTION */}
       <Box flexDirection="column" marginY={1}>
-
         {/* CPI TREE (Task 3.3) */}
         <CPITreeView trace={trace} />
 
@@ -164,25 +149,18 @@ export const TerminalRenderer: React.FC<{
           <Text bold>ACCOUNT CHANGES</Text>
           <AccountsTable accounts={accountDiffs} />
         </Box>
-
       </Box>
 
       {/* INSIGHTS */}
-      <Box
-        borderStyle="double"
-        borderColor="yellow"
-        paddingX={1}
-        flexDirection="column"
-      >
-        <Text color="yellow" bold>ACTIONABLE INSIGHTS</Text>
+      <Box borderStyle="double" borderColor="yellow" paddingX={1} flexDirection="column">
+        <Text color="yellow" bold>
+          ACTIONABLE INSIGHTS
+        </Text>
 
         <Box flexDirection="column" marginTop={1}>
           {insightsList.length > 0 ? (
             insightsList.map((item: any, index: number) => {
-              const text =
-                typeof item === 'string'
-                  ? item
-                  : item.message || JSON.stringify(item);
+              const text = typeof item === 'string' ? item : item.message || JSON.stringify(item);
               return (
                 <Text key={index}>
                   <Text color="yellow"> - </Text>
@@ -191,9 +169,7 @@ export const TerminalRenderer: React.FC<{
               );
             })
           ) : (
-            <Text color="gray">
-              No optimization issues detected.
-            </Text>
+            <Text color="gray">No optimization issues detected.</Text>
           )}
         </Box>
       </Box>
