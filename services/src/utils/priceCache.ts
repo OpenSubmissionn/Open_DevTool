@@ -21,22 +21,21 @@ export async function getSolPriceUSD(): Promise<number> {
     return cachedSolPrice;
   }
 
-  console.log("[Cache] Cache expired, using fallback");
+  console.log('[Cache] Cache expired, using fallback');
 
   try {
     // TODO: Integrate with CoinGecko or Binance API
     // const response = await fetch('...');
     // const data = await response.json();
     // cachedSolPrice = data.price;
-    
+
     cachedSolPrice = 180; // Default fallback
     cachedTimestamp = now;
 
     console.log(`[Cache] Price stored: $${cachedSolPrice}`);
     return cachedSolPrice;
-
   } catch (error) {
-    console.warn("[Cache] Fetch failed, using fallback: 180 USD", error);
+    console.warn('[Cache] Fetch failed, using fallback: 180 USD', error);
     return 180;
   }
 }
@@ -47,5 +46,5 @@ export async function getSolPriceUSD(): Promise<number> {
 export function clearPriceCache(): void {
   cachedSolPrice = null;
   cachedTimestamp = 0;
-  console.log("[Cache] Price cache cleared");
+  console.log('[Cache] Price cache cleared');
 }

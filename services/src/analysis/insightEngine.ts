@@ -178,7 +178,7 @@ export function mergeInsights(ruleInsights: Insight[], mcpInsights: ProviderInsi
   // Add MCP insights
   allInsights.push(...mcpInsights.map((pi) => pi.insight));
   // Add MCP insights (extract from ProviderInsight wrapper)
-  allInsights.push(...mcpInsights.map(pi => pi.insight));
+  allInsights.push(...mcpInsights.map((pi) => pi.insight));
 
   // Create a map to track insights by type for hybrid detection
   const insightMap = new Map<string, Insight[]>();
@@ -229,11 +229,11 @@ export const analyzeTransaction = async (
 ): Promise<InsightReport> => {
   const rules = [
     checkFailure,
-    checkCUAttributionQuality, 
+    checkCUAttributionQuality,
     checkCUBottleneck,
     checkCUWaste,
     checkBudgetRisk,
-    checkDeepCPI
+    checkDeepCPI,
   ];
   const rules = [
     checkFailure,
@@ -247,7 +247,7 @@ export const analyzeTransaction = async (
   const ruleInsights = rules.map((rule) => rule(tx)).filter((i): i is Insight => i !== null);
 
   const providerInsights: ProviderInsight[] = [];
-  
+
   // Process all providers if provided
   if (providers && providers.length > 0) {
     for (const provider of providers) {

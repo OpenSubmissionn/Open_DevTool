@@ -1,7 +1,7 @@
 import { ComputeBudgetInstruction, ComputeBudgetProgram } from '@solana/web3.js';
-import { calculateCUCostFromCU } from "./costAnalyzer";
-import type { CUCost } from "./types";
-import { getSolPriceUSD } from "../utils/priceCache";
+import { calculateCUCostFromCU } from './costAnalyzer';
+import type { CUCost } from './types';
+import { getSolPriceUSD } from '../utils/priceCache';
 import { RawTransactionBundle } from './types';
 import { AnalyzedTransaction, ParsedLogs, CUProfile, CPITree, AccountDiff } from './types';
 import { parseTransaction } from './txParser';
@@ -62,14 +62,14 @@ export async function mergeAnalysis(
     const solPriceUSD = await getSolPriceUSD();
 
     if (cuConsumed > 0) {
-      console.log("[Merger] Calculating CU cost...");
+      console.log('[Merger] Calculating CU cost...');
       cuCost = await calculateCUCostFromCU(cuConsumed, 1000, solPriceUSD);
-      console.log("[Merger] CU cost calculated");
+      console.log('[Merger] CU cost calculated');
     } else {
-      console.log("[Merger] No CU to calculate cost");
+      console.log('[Merger] No CU to calculate cost');
     }
   } catch (error) {
-    console.warn("[Merger] CU cost calculation failed:", error);
+    console.warn('[Merger] CU cost calculation failed:', error);
     cuCost = undefined; // Fallback
   }
 
