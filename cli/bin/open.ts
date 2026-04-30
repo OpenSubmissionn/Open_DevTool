@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // Detect JSON mode as early as possible (before any imports execute side effects)
 const isJsonMode = process.argv.includes('--json');
 
@@ -6,16 +8,16 @@ if (isJsonMode) {
   const noop = () => {};
   console.log = noop;
   console.error = noop;
-  console.warn = noop; // this was the missing piece
+  console.warn = noop;
 }
 
-// Safe to import modules after silencing logs
 import { Command } from 'commander';
 import { loadConfig } from '../src/config/loader';
 import { registerTxCommand } from '../src/commands/tx';
 import { registerConfigCommand } from '../src/commands/config';
+import { registerBatchCommand } from '../src/commands/batch';
 
-// Prevent double execution caused by tsx on Windows/CommonJS environments
+// tsx on Windows/CommonJS runs the file twice — this blocks the second execution
 const guardKey = '__OPEN_CLI_STARTED__';
 if ((global as any)[guardKey]) process.exit(0);
 (global as any)[guardKey] = true;
@@ -26,16 +28,17 @@ loadConfig();
 // 2. Initialize CLI program
 const program = new Command();
 
-// 3. Define CLI metadata and global options
+// 3. Set CLI metadata
 program
   .name('open')
   .description('OPEN - Solana Observability and CU Analysis CLI')
   .version('0.1.0')
   .option('--verbose', 'Enable debug logging', false);
 
-// 4. Register CLI commands
+// 4. Register commands
 registerTxCommand(program);
+registerBatchCommand(program);
 registerConfigCommand(program);
 
-// 5. Parse CLI arguments and execute commands
+// 5. Parse arguments
 program.parse(process.argv);

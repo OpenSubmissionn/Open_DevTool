@@ -4,7 +4,6 @@ import { fetchTransaction } from '../../src/solana/rpc';
 import { parseLogsFromBundle } from '../../src/analysis/logParser';
 import { profileCU } from '../../src/analysis/cuProfiler';
 import { mergeAnalysis } from '../../src/analysis/merger';
-import { parseTransaction } from '../../src/analysis/txParser';
 import { mockRPCBundle, DEVNET_TX_SIGNATURE } from '../setup';
 
 describe('Unit: RPC → Logs → CU (mock data)', () => {

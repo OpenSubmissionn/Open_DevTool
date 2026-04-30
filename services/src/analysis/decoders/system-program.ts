@@ -172,15 +172,12 @@ function decodeCreateAccountWithSeed(buffer: Buffer, accounts: string[]): System
     return null;
   }
 
-  const base = buffer.slice(4, 36).toString('hex');
   const seedLen = buffer.readUInt32LE(36);
   const seedOffset = 40;
 
   if (buffer.length < seedOffset + seedLen + 16 + 32) {
     return null;
   }
-
-  const seed = buffer.slice(seedOffset, seedOffset + seedLen).toString('utf-8');
   const lamportsOffset = seedOffset + seedLen;
   const lamports = Number(buffer.readBigUInt64LE(lamportsOffset));
   const space = Number(buffer.readBigUInt64LE(lamportsOffset + 8));

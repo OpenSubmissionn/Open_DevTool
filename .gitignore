@@ -1,18 +1,64 @@
+# Dependencies
 node_modules/
+**/node_modules/
+
+# Build outputs
 dist/
-.env
+build/
+out/
+target/
+.next/
+.cache/
+*.tsbuildinfo
+
+# Test / coverage
+**/coverage/
+test-ledger/
+.anchor/
+
+# Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Lockfiles (keep root, ignore nested duplicates)
+package-lock.json
 **/coverage/
 # External Claude skill submodules
 .agents/skills/ext/
 CLAUDE.local.md
 
-# Untracked files
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+id_rsa*
+
+# Claude Code & MCP (local-only)
 .agents/
-.env.example
-.gitmodules
+.claude
 .mcp.json
+.gitmodules
 CLAUDE.md
+.claude/
+CLAUDE.local.md
+
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+.agents
 
 
 # Claude Code (local tooling, não vai pro repo)
