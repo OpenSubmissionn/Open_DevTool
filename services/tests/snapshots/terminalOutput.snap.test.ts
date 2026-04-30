@@ -16,7 +16,11 @@ import type { RawTransactionBundle } from '../../src';
 
 const ANSI_REGEX = /\x1B\[[0-9;]*m/g;
 
-function captureTerminalOutput(analyzed: any, insights: any, network: 'mainnet' | 'devnet'): string {
+function captureTerminalOutput(
+  analyzed: any,
+  insights: any,
+  network: 'mainnet' | 'devnet'
+): string {
   const lines: string[] = [];
   const originalLog = console.log;
   console.log = (...args: any[]) => {
@@ -98,7 +102,12 @@ describe.skip('Terminal Output Snapshots', () => {
           accountIndex: 0,
           mint: 'SPAMmintXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
           owner: 'Spam111111111111111111111111111111111111111',
-          uiTokenAmount: { amount: '5000000000000', decimals: 0, uiAmount: 5_000_000_000, uiAmountString: '5000000000' },
+          uiTokenAmount: {
+            amount: '5000000000000',
+            decimals: 0,
+            uiAmount: 5_000_000_000,
+            uiAmountString: '5000000000',
+          },
         },
       ],
       postTokenBalances: [
@@ -106,7 +115,12 @@ describe.skip('Terminal Output Snapshots', () => {
           accountIndex: 1,
           mint: 'SPAMmintXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
           owner: 'Recv111111111111111111111111111111111111111',
-          uiTokenAmount: { amount: '5000000000000', decimals: 0, uiAmount: 5_000_000_000, uiAmountString: '5000000000' },
+          uiTokenAmount: {
+            amount: '5000000000000',
+            decimals: 0,
+            uiAmount: 5_000_000_000,
+            uiAmountString: '5000000000',
+          },
         },
       ],
       innerInstructions: [],

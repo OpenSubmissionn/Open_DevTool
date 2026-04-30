@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { classifyTransaction, TxType } from '../../src/analysis/classifier';
+import { classifyTransaction } from '../../src/analysis/classifier';
 import { ParsedTransaction } from '../../src/analysis/types';
 
 describe('classifyTransaction', () => {

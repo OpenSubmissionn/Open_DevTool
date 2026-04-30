@@ -2,19 +2,31 @@
   {
     "name": "Jupiter Aggregator v6",
     "programId": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
-    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-jupiter.ts",
+    "idl": "services/src/analysis/decoders/jupiter/anchor-idl-jupiter.ts",
     "framework": "Anchor"
   },
   {
     "name": "Orca Whirlpool",
-    "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3dhpbWR",
-    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-orca.ts",
+    "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc",
+    "idl": "services/src/analysis/decoders/orca/anchor-idl-orca.ts",
     "framework": "Anchor"
   },
   {
     "name": "Raydium Liquidity Pool v4",
     "programId": "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
-    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-raydium.ts",
+    "idl": "services/src/analysis/decoders/raydium/anchor-idl-raydium.ts",
+    "framework": "Anchor"
+  },
+  {
+    "name": "Marinade Finance",
+    "programId": "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD",
+    "idl": "services/src/analysis/decoders/marinade/idl.ts",
+    "framework": "Anchor"
+  },
+  {
+    "name": "Magic Eden",
+    "programId": "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8",
+    "idl": "services/src/analysis/decoders/magic-eden/idl.ts",
     "framework": "Anchor"
   },
   {

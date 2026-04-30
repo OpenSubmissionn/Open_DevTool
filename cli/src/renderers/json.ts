@@ -2,6 +2,7 @@ import { AnalyzedTransaction, InsightReport } from '@open/services';
 
 /**
  * Converts transaction analysis and insights into a formatted JSON string.
+ * Structured for machine validation (Task 3.6.4).
  */
 export function renderJSON(analyzed: AnalyzedTransaction, insights: InsightReport): string {
   const output: any = {
