@@ -33,13 +33,13 @@ import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 // Services modules are CJS (no "type: module" in services/package.json) and
 // scripts/ is ESM. Default-import + destructure is the supported interop path.
-import logParserMod from '../services/src/analysis/logParser';
-import cuProfilerMod from '../services/src/analysis/cuProfiler';
-import cpiTreeBuilderMod from '../services/src/analysis/cpiTreeBuilder';
-import accountDiffMod from '../services/src/analysis/accountDiff';
-import mergerMod from '../services/src/analysis/merger';
-import insightEngineMod from '../services/src/analysis/insightEngine';
-import type { RawTransactionBundle, CPITree, ParsedLogs } from '../services/src/analysis/types';
+import logParserMod from '../services/src/analysis/logParser.js';
+import cuProfilerMod from '../services/src/analysis/cuProfiler.js';
+import cpiTreeBuilderMod from '../services/src/analysis/cpiTreeBuilder.js';
+import accountDiffMod from '../services/src/analysis/accountDiff.js';
+import mergerMod from '../services/src/analysis/merger.js';
+import insightEngineMod from '../services/src/analysis/insightEngine.js';
+import type { RawTransactionBundle, CPITree, ParsedLogs } from '../services/src/analysis/types.js';
 
 const { parseLogsFromBundle } = logParserMod as any;
 const { profileCU } = cuProfilerMod as any;
