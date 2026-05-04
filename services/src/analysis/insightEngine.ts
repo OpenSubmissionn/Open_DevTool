@@ -55,7 +55,7 @@ const checkCUBottleneck = (tx: AnalyzedTransaction): Insight | null => {
     type: 'CU_BOTTLENECK',
     severity: bottleneck.utilizationPercent > 70 ? 'critical' : 'warning',
     title: `Performance Bottleneck: ${bottleneck.programName}`,
-    message: `${bottleneck.programName} consumed ${bottleneck.cuConsumed.toLocaleString()} CUs (${bottleneck.utilizationPercent}% of total).`,
+    message: `${bottleneck.programName} consumed ${bottleneck.cuConsumed.toLocaleString()} CUs (${bottleneck.utilizationPercent.toFixed(1)}% of total).`,
     recommendation: 'Optimize internal loops or simplify account state to reduce compute pressure.',
     tags: ['performance'],
     programId: bottleneck.programId,

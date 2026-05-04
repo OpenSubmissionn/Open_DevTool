@@ -396,6 +396,8 @@ export interface AnalyzedTransaction {
   cuCost?: CUCost;
   /** Transfers detected in the transaction. */
   transfers?: TransferInfo[];
+  /** Anomalies detected (spam, MEV, nondeterministic). Set by merger. */
+  anomalies?: import('./anomalyDetector').AnomalyReport;
   /** Detected transaction type, when available. */
   txType?: string;
   /** Optional metadata for CLI output (timings, etc). */

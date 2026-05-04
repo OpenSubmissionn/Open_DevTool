@@ -78,6 +78,18 @@ Example 3 — Custom RPC endpoint:
 npm run dev:cli -- tx <YOUR_TX_SIGNATURE> --rpc https://your-rpc-url.com
 ```
 
+Example 4 — CSV output (writes a file):
+```bash
+npm run dev:cli -- tx <YOUR_TX_SIGNATURE> --network mainnet --csv
+```
+
+Example 5 — CSV output to explicit path:
+```bash
+npm run dev:cli -- tx <YOUR_TX_SIGNATURE> --network mainnet --csv --output ./my-tx-report.csv
+```
+
+Note: when `--csv` is used without `--output`, the CLI writes a file named `<signature>.csv` in the current working directory.
+
 ## CLI flags
 
 | Flag | Type | Default | Description |

@@ -8,13 +8,14 @@
  *
  * Update workflow: see services/tests/snapshots/SNAPSHOT_GUIDE.md
  */
+/* eslint-disable no-control-regex */
 import { describe, it, expect, beforeAll } from 'vitest';
 import chalk from 'chalk';
 import { renderTerminal } from '../../../cli/src/renderers/terminal/renderer';
 import { runPipeline, getFixture } from '../fixtures/utils';
 import type { RawTransactionBundle } from '../../src';
 
-const ANSI_REGEX = /\x1B\[[0-9;]*m/g;
+const ANSI_REGEX = new RegExp('\\x1B\\[[0-9;]*m', 'g');
 
 function captureTerminalOutput(
   analyzed: any,
