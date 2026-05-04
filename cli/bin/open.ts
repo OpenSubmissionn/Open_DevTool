@@ -14,6 +14,7 @@ if (isJsonMode) {
 import { Command } from 'commander';
 import { loadConfig } from '../src/config/loader';
 import { registerTxCommand } from '../src/commands/tx';
+import { registerBatchCommand } from '../src/commands/batch';
 import { registerConfigCommand } from '../src/commands/config';
 import { registerInfoCommand } from '../src/commands/info';
  
