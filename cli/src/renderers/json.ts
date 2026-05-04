@@ -2,6 +2,7 @@ import { AnalyzedTransaction, InsightReport } from '@open/services';
 
 /**
  * Converts transaction analysis and insights into a formatted JSON string.
+ * Structured for machine validation (Task 3.6.4).
  */
 export function renderJSON(analyzed: AnalyzedTransaction, insights: InsightReport): string {
   const output: any = {
@@ -21,9 +22,11 @@ export function renderJSON(analyzed: AnalyzedTransaction, insights: InsightRepor
     },
     insights: insights.insights,
     primaryBottleneck: insights.primaryBottleneck,
+    anomalies: analyzed.anomalies?.anomalies ?? [],
+    anomalySummary: analyzed.anomalies?.summary ?? 'No anomalies detected',
   };
   // Always merge timings into metadata, using only _metadata fields
-  let metadata: Record<string, any> = {};
+  const metadata: Record<string, any> = {};
   if (analyzed._metadata && Array.isArray(analyzed._metadata.timings)) {
     metadata.timings = analyzed._metadata.timings;
   }

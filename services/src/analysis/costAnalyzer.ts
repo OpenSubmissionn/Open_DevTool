@@ -87,24 +87,69 @@ export function analyzeCosts(
   }
 
   // Analyze SOL transfers
+  //
+  // The previous version emitted one TransferInfo per balance delta, leaving
+  // either `from` or `to` empty — the UI rendered "—" on the other side.
+  // We now pair outgoing and incoming deltas of the same magnitude so both
+  // ends of a transfer are visible. Unpaired deltas (mints/burns, escrow
+  // close, rent reclaim) still surface with "—" because they genuinely have
+  // no counterparty.
+  //
+  // Pairing tolerance covers the fee payer case: the sender's outgoing delta
+  // equals (transferred + tx fee), so we allow a small absolute slack.
   if (bundle.preBalances && bundle.postBalances && bundle.preBalances.length > 0) {
-    for (let i = 1; i < bundle.preBalances.length; i++) {
-      // Skip index 0 (fee payer)
-      const preBal = bundle.preBalances[i];
-      const postBal = bundle.postBalances[i];
-      const delta = postBal - preBal;
+    type Delta = { pubkey: string; amount: number; idx: number };
+    const outflows: Delta[] = [];
+    const inflows: Delta[] = [];
 
-      // Only include meaningful deltas: delta > 0 (receiver) or delta < -5000 (sender, ignore fee noise)
-      if (delta > 0 || delta < -5000) {
-        const absAmount = Math.abs(delta);
-        const uiAmount = absAmount / 1_000_000_000;
+    for (let i = 0; i < bundle.preBalances.length; i++) {
+      const delta = bundle.postBalances[i] - bundle.preBalances[i];
+      // Skip noise below typical tx fee.
+      if (delta > 0) inflows.push({ pubkey: bundle.accountKeys[i], amount: delta, idx: i });
+      else if (delta < -5000)
+        outflows.push({ pubkey: bundle.accountKeys[i], amount: -delta, idx: i });
+    }
 
-        const usdValue = solPriceUSD !== null ? uiAmount * solPriceUSD : null;
+    // Process largest first so big transfers get matched before dust rebates.
+    outflows.sort((a, b) => b.amount - a.amount);
+    inflows.sort((a, b) => b.amount - a.amount);
 
+    const FEE_SLACK_LAMPORTS = 10_000; // covers signature fee + small priority fees
+    const consumedInflows = new Set<number>();
+
+    for (const out of outflows) {
+      // Best inflow: same amount (exact), or amount = out - fee (sender pays fee).
+      let matchIdx = -1;
+      for (let k = 0; k < inflows.length; k++) {
+        if (consumedInflows.has(k)) continue;
+        const diff = out.amount - inflows[k].amount;
+        if (diff >= 0 && diff <= FEE_SLACK_LAMPORTS) {
+          matchIdx = k;
+          break;
+        }
+      }
+
+      const uiAmount = out.amount / 1_000_000_000;
+      const usdValue = solPriceUSD !== null ? uiAmount * solPriceUSD : null;
+
+      if (matchIdx >= 0) {
+        const inflow = inflows[matchIdx];
+        consumedInflows.add(matchIdx);
         transfers.push({
-          from: delta < 0 ? bundle.accountKeys[i] : '',
-          to: delta > 0 ? bundle.accountKeys[i] : '',
-          amount: absAmount.toString(),
+          from: out.pubkey,
+          to: inflow.pubkey,
+          amount: inflow.amount.toString(),
+          token: 'SOL',
+          decimals: 9,
+          uiAmount: inflow.amount / 1_000_000_000,
+          usdValue: solPriceUSD !== null ? (inflow.amount / 1_000_000_000) * solPriceUSD : null,
+          isSpamSuspect: false,
+        });
+      } else {
+        transfers.push({
+          from: out.pubkey,
+          to: '',
+          amount: out.amount.toString(),
           token: 'SOL',
           decimals: 9,
           uiAmount,
@@ -112,6 +157,23 @@ export function analyzeCosts(
           isSpamSuspect: false,
         });
       }
+    }
+
+    // Inflows with no matching outflow (mint, rent reclaim, program payout).
+    for (let k = 0; k < inflows.length; k++) {
+      if (consumedInflows.has(k)) continue;
+      const inflow = inflows[k];
+      const uiAmount = inflow.amount / 1_000_000_000;
+      transfers.push({
+        from: '',
+        to: inflow.pubkey,
+        amount: inflow.amount.toString(),
+        token: 'SOL',
+        decimals: 9,
+        uiAmount,
+        usdValue: solPriceUSD !== null ? uiAmount * solPriceUSD : null,
+        isSpamSuspect: false,
+      });
     }
   }
 
@@ -141,4 +203,20 @@ export function analyzeCosts(
     cuCost,
     totalTransferUSD,
   };
+}
+
+/**
+ * Calculate CU cost from raw data
+ * Used by merger to add cost info to analysis
+ */
+export async function calculateCUCostFromCU(
+  cuConsumed: number,
+  microLamportsPerCU: number,
+  solPriceUSD: number | null
+): Promise<CUCost> {
+  const feeLamports = Math.floor((cuConsumed * microLamportsPerCU) / 1_000_000);
+  const feeSOL = feeLamports / 1_000_000_000;
+  const feeUSD = solPriceUSD !== null ? feeSOL * solPriceUSD : null;
+
+  return { cuConsumed, microLamportsPerCU, feeLamports, feeSOL, feeUSD };
 }

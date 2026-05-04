@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { analyzeCosts } from '../../src/analysis/costAnalyzer';
+import { analyzeCosts, calculateCUCostFromCU } from '../../src/analysis/costAnalyzer';
 import { mockRPCBundle } from '../setup';
 
 describe('Cost Analyzer', () => {
@@ -9,6 +9,7 @@ describe('Cost Analyzer', () => {
       preTokenBalances: [],
       preBalances: [1_000_000_000],
       postBalances: [1_000_000_000],
+      computeUnitsConsumed: 3000,
     });
 
     const result = analyzeCosts(bundle, 150, 1000);
@@ -17,10 +18,12 @@ describe('Cost Analyzer', () => {
     expect(result.cuCost.cuConsumed).toBe(3000);
   });
 
-  it('SOL transfer — preBalances [1_000_000, 500_000], postBalances [995_000, 1_000_000] (index 0 is fee payer, skip) — expect 1 transfer with correct uiAmount in SOL', () => {
+  it('SOL transfer — fee payer sends 0.5 SOL to recipient — expect 1 paired transfer with both from and to populated', () => {
+    // Fee payer (index 0) loses 0.5 SOL + fee; recipient (index 1) gains 0.5 SOL.
+    // Pairing should emit a single TransferInfo with both ends populated.
     const bundle = mockRPCBundle({
-      preBalances: [1_000_000_000, 500_000_000], // 1 SOL, 0.5 SOL
-      postBalances: [999_500_000_000, 1_000_000_000], // 0.9995 SOL, 1 SOL
+      preBalances: [1_000_000_000, 500_000_000],
+      postBalances: [499_995_000, 1_000_000_000],
       preTokenBalances: [],
       postTokenBalances: [],
       accountKeys: [
@@ -31,10 +34,10 @@ describe('Cost Analyzer', () => {
 
     const result = analyzeCosts(bundle, 150, 1000);
 
-    // Should have transfers: index 0 (fee -500_000, skip) and index 1 (+500_000_000 lamports = 0.5 SOL)
     expect(result.transfers).toHaveLength(1);
     expect(result.transfers[0].token).toBe('SOL');
-    expect(result.transfers[0].uiAmount).toBeCloseTo(0.5, 9); // 500_000_000 / 1_000_000_000
+    expect(result.transfers[0].uiAmount).toBeCloseTo(0.5, 9);
+    expect(result.transfers[0].from).toBe('11111111111111111111111111111111');
     expect(result.transfers[0].to).toBe('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
   });
 
@@ -57,7 +60,7 @@ describe('Cost Analyzer', () => {
           accountIndex: 1,
           mint: unknownMint,
           uiTokenAmount: {
-            amount: '2000000000000', // 2 trillion base units with 6 decimals = 2 billion UI amount
+            amount: '2000000000000',
             decimals: 6,
             uiAmount: 2000000000,
           },
@@ -87,11 +90,8 @@ describe('Cost Analyzer', () => {
 
     const result = analyzeCosts(bundle, 200, 1000);
 
-    // feeLamports = 100_000 * 1000 / 1_000_000 = 100
     expect(result.cuCost.feeLamports).toBe(100);
-    // feeSOL = 100 / 1_000_000_000 = 0.0000001
     expect(result.cuCost.feeSOL).toBeCloseTo(0.0000001, 10);
-    // feeUSD = 0.0000001 * 200 = 0.00002
     expect(result.cuCost.feeUSD).toBeCloseTo(0.00002, 8);
   });
 
@@ -108,5 +108,63 @@ describe('Cost Analyzer', () => {
 
     expect(result.cuCost.feeUSD).toBe(null);
     expect(result.totalTransferUSD).toBe(null);
+  });
+});
+
+describe('Calculate CU Cost From CU', () => {
+  it('should calculate cost for 50k CU', async () => {
+    const cost = await calculateCUCostFromCU(50_000, 1000, 180);
+
+    expect(cost.cuConsumed).toBe(50_000);
+    expect(cost.microLamportsPerCU).toBe(1000);
+    expect(cost.feeLamports).toBe(50);
+    expect(cost.feeSOL).toBeCloseTo(0.00000005, 10);
+    expect(cost.feeUSD).toBeCloseTo(0.000009, 10);
+  });
+
+  it('should handle zero CU', async () => {
+    const cost = await calculateCUCostFromCU(0, 1000, 180);
+
+    expect(cost.feeLamports).toBe(0);
+    expect(cost.feeSOL).toBe(0);
+    expect(cost.feeUSD).toBe(0);
+  });
+
+  it('should calculate cost with different rate', async () => {
+    const cost = await calculateCUCostFromCU(100_000, 5000, 180);
+
+    expect(cost.feeLamports).toBe(500);
+  });
+
+  it('should handle null SOL price', async () => {
+    const cost = await calculateCUCostFromCU(50_000, 1000, null);
+
+    expect(cost.feeLamports).toBe(50);
+    expect(cost.feeSOL).toBeCloseTo(0.00000005, 10);
+    expect(cost.feeUSD).toBeNull();
+  });
+
+  it('should handle high-CU transaction', async () => {
+    const cost = await calculateCUCostFromCU(200_000, 1000, 180);
+
+    expect(cost.feeLamports).toBe(200);
+    expect(cost.feeUSD).toBeGreaterThan(0.00001);
+  });
+
+  it('should handle failed transaction with low CU', async () => {
+    const cost = await calculateCUCostFromCU(5_000, 1000, 180);
+
+    expect(cost.cuConsumed).toBe(5_000);
+    expect(cost.feeLamports).toBe(5);
+    expect(cost.feeUSD).toBeLessThan(0.00001);
+  });
+
+  it('should round values correctly', async () => {
+    const cost = await calculateCUCostFromCU(12_345, 1000, 180);
+
+    expect(cost.feeLamports).toBeDefined();
+    expect(cost.feeSOL).toBeDefined();
+    expect(cost.feeUSD).toBeDefined();
+    expect(Number.isNaN(cost.feeSOL)).toBe(false);
   });
 });

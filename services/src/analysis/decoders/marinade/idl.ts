@@ -1,28 +1,15 @@
-import { createHash } from 'crypto';
 import type { Idl } from '@coral-xyz/anchor';
+import { instructionDiscriminator } from '../orca/anchor-idl-orca';
 
-// Official Marinade Finance program ID
-export const MARINADE_PROGRAM_ID = 'MarBmsSgKXdrN1egZf5sqe1TMThczGgmEhd5VTpYzr8';
+export const MARINADE_PROGRAM_ID = 'MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD';
 
-// -------------------------------------
-// Anchor discriminator helper
-// -------------------------------------
-export function instructionDiscriminator(name: string): number[] {
-  return Array.from(createHash('sha256').update(`global:${name}`).digest().subarray(0, 8));
-}
-
-// -------------------------------------
-// Minimal Marinade IDL (subset)
-// -------------------------------------
 export const MARINADE_IDL: Idl = {
   address: MARINADE_PROGRAM_ID,
-
   metadata: {
     name: 'marinade',
     version: '0.1.0',
     spec: '0.1.0',
   },
-
   instructions: [
     {
       name: 'deposit',
@@ -32,32 +19,119 @@ export const MARINADE_IDL: Idl = {
         { name: 'msol_mint' },
         { name: 'liq_pool_sol_leg_pda' },
         { name: 'liq_pool_msol_leg' },
+        { name: 'liq_pool_msol_leg_authority' },
         { name: 'reserve_pda' },
         { name: 'transfer_from' },
         { name: 'mint_to' },
+        { name: 'msol_mint_authority' },
+        { name: 'system_program' },
+        { name: 'token_program' },
       ],
-      args: [
-        {
-          name: 'lamports',
-          type: 'u64',
-        },
-      ],
+      args: [{ name: 'lamports', type: 'u64' }],
     },
     {
-      name: 'unstake',
-      discriminator: instructionDiscriminator('unstake'),
+      name: 'liquid_unstake',
+      discriminator: instructionDiscriminator('liquid_unstake'),
       accounts: [
         { name: 'state' },
         { name: 'msol_mint' },
-        { name: 'burn_from' },
+        { name: 'liq_pool_sol_leg_pda' },
+        { name: 'liq_pool_msol_leg' },
+        { name: 'treasury_msol_account' },
+        { name: 'get_msol_from' },
+        { name: 'get_msol_from_authority' },
         { name: 'transfer_sol_to' },
+        { name: 'system_program' },
+        { name: 'token_program' },
       ],
-      args: [
-        {
-          name: 'msol_amount',
-          type: 'u64',
-        },
+      args: [{ name: 'msol_amount', type: 'u64' }],
+    },
+    {
+      name: 'order_unstake',
+      discriminator: instructionDiscriminator('order_unstake'),
+      accounts: [
+        { name: 'state' },
+        { name: 'msol_mint' },
+        { name: 'burn_msol_from' },
+        { name: 'burn_msol_authority' },
+        { name: 'new_ticket_account' },
+        { name: 'clock' },
+        { name: 'rent' },
+        { name: 'token_program' },
       ],
+      args: [{ name: 'msol_amount', type: 'u64' }],
+    },
+    {
+      name: 'claim',
+      discriminator: instructionDiscriminator('claim'),
+      accounts: [
+        { name: 'state' },
+        { name: 'reserve_pda' },
+        { name: 'ticket_account' },
+        { name: 'transfer_sol_to' },
+        { name: 'clock' },
+        { name: 'system_program' },
+      ],
+      args: [],
+    },
+    {
+      name: 'deposit_stake_account',
+      discriminator: instructionDiscriminator('deposit_stake_account'),
+      accounts: [
+        { name: 'state' },
+        { name: 'validator_list' },
+        { name: 'stake_list' },
+        { name: 'stake_account' },
+        { name: 'stake_authority' },
+        { name: 'duplication_flag' },
+        { name: 'rent_payer' },
+        { name: 'msol_mint' },
+        { name: 'mint_to' },
+        { name: 'msol_mint_authority' },
+        { name: 'clock' },
+        { name: 'rent' },
+        { name: 'system_program' },
+        { name: 'token_program' },
+        { name: 'stake_program' },
+      ],
+      args: [{ name: 'validator_index', type: 'u32' }],
+    },
+    {
+      name: 'add_liquidity',
+      discriminator: instructionDiscriminator('add_liquidity'),
+      accounts: [
+        { name: 'state' },
+        { name: 'lp_mint' },
+        { name: 'lp_mint_authority' },
+        { name: 'liq_pool_msol_leg' },
+        { name: 'liq_pool_sol_leg_pda' },
+        { name: 'transfer_from' },
+        { name: 'mint_to' },
+        { name: 'system_program' },
+        { name: 'token_program' },
+      ],
+      args: [{ name: 'lamports', type: 'u64' }],
+    },
+    {
+      name: 'remove_liquidity',
+      discriminator: instructionDiscriminator('remove_liquidity'),
+      accounts: [
+        { name: 'state' },
+        { name: 'lp_mint' },
+        { name: 'burn_from' },
+        { name: 'burn_from_authority' },
+        { name: 'transfer_sol_to' },
+        { name: 'transfer_msol_to' },
+        { name: 'liq_pool_sol_leg_pda' },
+        { name: 'liq_pool_msol_leg' },
+        { name: 'liq_pool_msol_leg_authority' },
+        { name: 'system_program' },
+        { name: 'token_program' },
+      ],
+      args: [{ name: 'tokens', type: 'u64' }],
     },
   ],
+  accounts: [],
+  types: [],
+  errors: [],
 };

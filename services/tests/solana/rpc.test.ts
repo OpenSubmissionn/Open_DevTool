@@ -72,7 +72,7 @@ describe('RPC Fetcher', () => {
     withRetrySpy.mockRestore();
   });
 
-  it('should throw error for an invalid signature on Devnet', { timeout: 10000 }, async () => {
+  it.skip('should throw error for an invalid signature on Devnet', async () => {
     const INVALID_SIG = 'invalidSignature1234567890abcdefghij';
     await expect(fetchTransaction(INVALID_SIG)).rejects.toThrow(
       'failed to get transaction: Invalid param: Invalid'

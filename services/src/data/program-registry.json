@@ -60,8 +60,11 @@
         "create-account"
       ]
     },
-    "coverage": 33,
-    "lastUpdated": "2026-04-28"
+  {
+    "name": "Magic Eden",
+    "programId": "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8",
+    "idl": "services/src/analysis/decoders/magic-eden/idl.ts",
+    "framework": "Anchor"
   },
   {
     "name": "SPL Token Program",

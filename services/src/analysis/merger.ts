@@ -1,9 +1,13 @@
 import { ComputeBudgetInstruction, ComputeBudgetProgram } from '@solana/web3.js';
+import { calculateCUCostFromCU } from './costAnalyzer';
+import type { CUCost } from './types';
+import { getSolPriceUSD } from '../utils/priceCache';
 import { RawTransactionBundle } from './types';
 import { AnalyzedTransaction, ParsedLogs, CUProfile, CPITree, AccountDiff } from './types';
 import { parseTransaction } from './txParser';
 import { IdlCache } from '../solana/idlcache';
 import { analyzeCosts } from './costAnalyzer';
+import { detectAnomalies } from './anomalyDetector';
 
 export interface MergeOptions {
   idlCache?: IdlCache;
@@ -51,6 +55,21 @@ export async function mergeAnalysis(
   const microLamportsPerCU = extractMicroLamportsPerCU(bundle);
   const costAnalysis = analyzeCosts(bundle, solPriceUsd, microLamportsPerCU);
 
+  let cuCost: CUCost | undefined;
+
+  try {
+    const cuConsumed = cuProfile?.totalConsumed || 0;
+    const solPriceUSD = await getSolPriceUSD();
+
+    if (cuConsumed > 0) {
+      cuCost = await calculateCUCostFromCU(cuConsumed, 1000, solPriceUSD);
+    }
+  } catch (error) {
+    console.warn('[Merger] CU cost calculation failed:', error);
+  }
+
+  const anomalies = detectAnomalies(bundle, costAnalysis.transfers);
+
   return {
     signature: parsed.signature,
     success: parsed.success,
@@ -60,7 +79,8 @@ export async function mergeAnalysis(
     cpiTree,
     accountDiffs,
     logs,
-    cuCost: costAnalysis.cuCost,
+    cuCost,
     transfers: costAnalysis.transfers,
+    anomalies,
   };
 }

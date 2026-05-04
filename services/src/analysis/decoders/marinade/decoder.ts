@@ -1,67 +1,55 @@
-import { BorshCoder } from '@coral-xyz/anchor';
+import type { DecodedAnchorInstruction } from '../anchor-idl';
+import { decodeAnchorInstruction } from '../anchor-idl';
 import type { ParsedInstruction } from '../../types';
-
 import { MARINADE_IDL, MARINADE_PROGRAM_ID } from './idl';
 
-// Initialize a Borsh coder using the Marinade IDL.
-// This is responsible for decoding instruction data.
-const coder = new BorshCoder(MARINADE_IDL);
-
-// Standard output shape aligned with the analysis pipeline
-export interface MarinadeDecodedInstruction {
-  instructionName: string; // Decoded instruction name (e.g. "deposit")
-  programId: string; // Marinade program ID
-  accounts: string[]; // Accounts involved in the instruction
-  rawData: string; // Original encoded instruction data
-  decodedData?: Record<string, unknown>; // Decoded arguments
+export interface MarinadeDecodedInstruction extends DecodedAnchorInstruction {
+  lamports?: bigint;
+  msolAmount?: bigint;
 }
 
-// Main decoder function for Marinade instructions
+const MARINADE_SEMANTIC_MAP: Record<string, { type: string; action: string }> = {
+  deposit: { type: 'liquid_stake', action: 'stake' },
+  depositStakeAccount: { type: 'liquid_stake', action: 'stake' },
+  liquidUnstake: { type: 'liquid_unstake', action: 'unstake' },
+  orderUnstake: { type: 'delayed_unstake', action: 'order' },
+  claim: { type: 'unstake_claim', action: 'claim' },
+  addLiquidity: { type: 'liquidity_pool', action: 'deposit' },
+  removeLiquidity: { type: 'liquidity_pool', action: 'withdraw' },
+};
+
 export function decodeMarinadeInstruction(
   ix: ParsedInstruction
 ): MarinadeDecodedInstruction | null {
-  // Ensure the instruction belongs to the Marinade program
-  if (ix.programId !== MARINADE_PROGRAM_ID) {
+  const base = decodeAnchorInstruction(MARINADE_PROGRAM_ID, ix, MARINADE_IDL);
+  if (!base) {
     return null;
   }
 
-  // Validate instruction data
-  if (!ix.data || typeof ix.data !== 'string') {
-    return null;
+  const semantic = MARINADE_SEMANTIC_MAP[base.instructionName];
+  if (!semantic) {
+    return {
+      ...base,
+      decoderWarning: base.decoderWarning ?? 'unrecognized Marinade instruction',
+      confidence: 'low',
+    };
   }
 
-  let buffer: Buffer;
-
-  try {
-    // Attempt to decode base64 (default encoding from RPC responses)
-    buffer = Buffer.from(ix.data, 'base64');
-  } catch {
-    return null;
-  }
-
-  // Anchor instructions must have at least 8 bytes (discriminator)
-  if (buffer.length < 8) {
-    return null;
-  }
-
-  let decoded;
-
-  try {
-    // Decode instruction using Anchor BorshCoder
-    decoded = coder.instruction.decode(buffer);
-  } catch {
-    return null;
-  }
-
-  // If decoding fails, return null
-  if (!decoded) return null;
-
-  // Return normalized decoded instruction
-  return {
-    instructionName: decoded.name,
-    programId: MARINADE_PROGRAM_ID,
-    accounts: ix.accounts,
-    rawData: ix.data,
-    decodedData: decoded.data as Record<string, unknown>,
+  const result: MarinadeDecodedInstruction = {
+    ...base,
+    type: semantic.type,
+    action: semantic.action,
   };
+
+  const lamports = base.decodedData?.lamports;
+  if (lamports !== undefined && lamports !== null) {
+    result.lamports = BigInt(String(lamports));
+  }
+
+  const msolAmount = base.decodedData?.msol_amount;
+  if (msolAmount !== undefined && msolAmount !== null) {
+    result.msolAmount = BigInt(String(msolAmount));
+  }
+
+  return result;
 }
