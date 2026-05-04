@@ -14,7 +14,7 @@
   },
   {
     "name": "Orca Whirlpool",
-    "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3dhpbWR",
+    "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc",
     "framework": "Anchor",
     "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-orca.ts",
     "decoderStatus": "complete",
@@ -40,7 +40,7 @@
   },
   {
     "name": "Marinade Finance",
-    "programId": "MarBmsSgKXdrMwV1KPeB3eSVG8kapHga2FYWiKWKJ7n",
+    "programId": "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD",
     "framework": "Anchor",
     "idl": null,
     "decoderStatus": "planned",
