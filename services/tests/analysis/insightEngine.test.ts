@@ -316,9 +316,7 @@ describe('Ranking - Task 2.13.1 priority scoring', () => {
 
     const report = await analyzeTransaction(tx);
     const wasteIndex = report.insights.findIndex((i) => i.type === 'CU_WASTE');
-    const attrIndex = report.insights.findIndex(
-      (i) => i.type === 'CU_ATTRIBUTION_LOW_CONFIDENCE'
-    );
+    const attrIndex = report.insights.findIndex((i) => i.type === 'CU_ATTRIBUTION_LOW_CONFIDENCE');
     expect(wasteIndex).toBeGreaterThanOrEqual(0);
     expect(attrIndex).toBeGreaterThanOrEqual(0);
     expect(wasteIndex).toBeLessThan(attrIndex);

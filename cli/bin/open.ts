@@ -15,6 +15,7 @@ import { Command } from 'commander';
 import { loadConfig } from '../src/config/loader';
 import { registerTxCommand } from '../src/commands/tx';
 import { registerConfigCommand } from '../src/commands/config';
+import { registerInfoCommand } from '../src/commands/info';
 import { registerBatchCommand } from '../src/commands/batch';
 
 // tsx on Windows/CommonJS runs the file twice — this blocks the second execution
@@ -39,6 +40,7 @@ program
 registerTxCommand(program);
 registerBatchCommand(program);
 registerConfigCommand(program);
+registerInfoCommand(program);
 
 // 5. Parse arguments
 program.parse(process.argv);

@@ -2,26 +2,54 @@
   {
     "name": "Jupiter Aggregator v6",
     "programId": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
-    "idl": "services/src/analysis/decoders/jupiter/anchor-idl-jupiter.ts",
-    "framework": "Anchor"
+    "framework": "Anchor",
+    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-jupiter.ts",
+    "decoderStatus": "complete",
+    "benchmark": {
+      "framework": "Anchor",
+      "operations": ["transfer", "create-account"]
+    },
+    "coverage": 100,
+    "lastUpdated": "2026-04-28"
   },
   {
     "name": "Orca Whirlpool",
     "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc",
-    "idl": "services/src/analysis/decoders/orca/anchor-idl-orca.ts",
-    "framework": "Anchor"
+    "framework": "Anchor",
+    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-orca.ts",
+    "decoderStatus": "complete",
+    "benchmark": {
+      "framework": "Anchor",
+      "operations": ["transfer", "create-account"]
+    },
+    "coverage": 100,
+    "lastUpdated": "2026-04-28"
   },
   {
     "name": "Raydium Liquidity Pool v4",
     "programId": "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
-    "idl": "services/src/analysis/decoders/raydium/anchor-idl-raydium.ts",
-    "framework": "Anchor"
+    "framework": "Anchor",
+    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-raydium.ts",
+    "decoderStatus": "complete",
+    "benchmark": {
+      "framework": "Anchor",
+      "operations": ["transfer", "create-account"]
+    },
+    "coverage": 100,
+    "lastUpdated": "2026-04-28"
   },
   {
     "name": "Marinade Finance",
     "programId": "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD",
-    "idl": "services/src/analysis/decoders/marinade/idl.ts",
-    "framework": "Anchor"
+    "framework": "Anchor",
+    "idl": null,
+    "decoderStatus": "planned",
+    "benchmark": {
+      "framework": "Anchor",
+      "operations": ["transfer", "create-account"]
+    },
+    "coverage": 0,
+    "lastUpdated": "2026-04-28"
   },
   {
     "name": "Magic Eden",
@@ -32,13 +60,37 @@
   {
     "name": "SPL Token Program",
     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "framework": "Native",
     "idl": null,
-    "framework": "Native"
+    "decoderStatus": "complete",
+    "benchmark": {
+      "framework": "Native",
+      "operations": ["transfer", "create-account"]
+    },
+    "coverage": 100,
+    "lastUpdated": "2026-04-28"
   },
   {
     "name": "System Program",
     "programId": "11111111111111111111111111111111",
+    "framework": "Native",
     "idl": null,
-    "framework": "Native"
+    "decoderStatus": "complete",
+    "benchmark": {
+      "framework": "Native",
+      "operations": ["transfer", "create-account"]
+    },
+    "coverage": 100,
+    "lastUpdated": "2026-04-28"
+  },
+  {
+    "name": "Drift Protocol",
+    "programId": "dRiftyHA39MWEi3m9aunc5MzRF1JYU2HTr3TqqYo69m",
+    "framework": "Anchor",
+    "idl": null,
+    "decoderStatus": "planned",
+    "benchmark": null,
+    "coverage": 0,
+    "lastUpdated": "2026-04-27"
   }
 ]

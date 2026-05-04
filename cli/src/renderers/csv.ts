@@ -65,17 +65,13 @@ function pickPrimaryProgram(analyzed: AnalyzedTransaction): string {
 
 function pickFramework(analyzed: AnalyzedTransaction): string {
   return (
-    (analyzed as any)?.frameworkComparison?.detected ??
-    (analyzed as any)?.parsed?.framework ??
-    ''
+    (analyzed as any)?.frameworkComparison?.detected ?? (analyzed as any)?.parsed?.framework ?? ''
   );
 }
 
 export function csvRow(analyzed: AnalyzedTransaction, insights: InsightReport): string {
   const anomalies = (analyzed as any)?.anomalies?.anomalies ?? [];
-  const insightsList = Array.isArray(insights)
-    ? insights
-    : ((insights as any)?.insights ?? []);
+  const insightsList = Array.isArray(insights) ? insights : ((insights as any)?.insights ?? []);
 
   const cells = [
     analyzed.signature ?? '',
