@@ -3,36 +3,29 @@
     "name": "Jupiter Aggregator v6",
     "programId": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
     "framework": "Anchor",
-    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-jupiter.ts",
+    "idl": "services/src/analysis/decoders/jupiter/anchor-idl-jupiter.ts",
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Anchor",
-      "operations": [
-        "transfer",
-        "create-account"
-      ]
+      "operations": ["transfer", "create-account"]
     },
     "coverage": 100,
     "lastUpdated": "2026-04-28"
   },
   {
     "name": "Orca Whirlpool",
-    "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3dhpbWR",
+    "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc",
     "framework": "Anchor",
-    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-orca.ts",
+    "idl": "services/src/analysis/decoders/orca/anchor-idl-orca.ts",
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Anchor",
-      "operations": [
-        "transfer",
-        "create-account"
-      ]
+      "operations": ["transfer", "create-account"]
     },
     "coverage": 100,
     "lastUpdated": "2026-04-28"
   },
   {
-    
     "name": "Magic Eden",
     "programId": "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8",
     "idl": "services/src/analysis/decoders/magic-eden/idl.ts",
@@ -42,30 +35,24 @@
     "name": "Raydium Liquidity Pool v4",
     "programId": "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
     "framework": "Anchor",
-    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-raydium.ts",
+    "idl": "services/src/analysis/decoders/raydium/anchor-idl-raydium.ts",
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Anchor",
-      "operations": [
-        "transfer",
-        "create-account"
-      ]
+      "operations": ["transfer", "create-account"]
     },
     "coverage": 100,
     "lastUpdated": "2026-04-28"
   },
   {
     "name": "Marinade Finance",
-    "programId": "MarBmsSgKXdrMwV1KPeB3eSVG8kapHga2FYWiKWKJ7n",
+    "programId": "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD",
     "framework": "Anchor",
     "idl": null,
     "decoderStatus": "planned",
     "benchmark": {
       "framework": "Anchor",
-      "operations": [
-        "transfer",
-        "create-account"
-      ]
+      "operations": ["transfer", "create-account"]
     },
     "coverage": 33,
     "lastUpdated": "2026-04-28"
@@ -78,10 +65,7 @@
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Native",
-      "operations": [
-        "transfer",
-        "create-account"
-      ]
+      "operations": ["transfer", "create-account"]
     },
     "coverage": 100,
     "lastUpdated": "2026-04-28"
@@ -94,10 +78,7 @@
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Native",
-      "operations": [
-        "transfer",
-        "create-account"
-      ]
+      "operations": ["transfer", "create-account"]
     },
     "coverage": 100,
     "lastUpdated": "2026-04-28"
@@ -110,10 +91,7 @@
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Anchor",
-      "operations": [
-        "transfer",
-        "create-account"
-      ]
+      "operations": ["transfer", "create-account"]
     },
     "coverage": 100,
     "lastUpdated": "2026-04-29"
@@ -126,10 +104,7 @@
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Anchor",
-      "operations": [
-        "transfer",
-        "create-account"
-      ]
+      "operations": ["transfer", "create-account"]
     },
     "coverage": 100,
     "lastUpdated": "2026-04-29"

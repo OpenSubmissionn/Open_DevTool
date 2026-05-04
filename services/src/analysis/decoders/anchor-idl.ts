@@ -1,49 +1,45 @@
 import { BorshCoder, type Idl } from '@coral-xyz/anchor';
 import type { ParsedInstruction } from '../types';
 import {
-	ORCA_WHIRLPOOL_IDL,
-	ORCA_WHIRLPOOL_PROGRAM_ID,
-	instructionDiscriminator,
-} from "./anchor-defs/anchor-idl-orca";
-import { JUPITER_V6_IDL, JUPITER_V6_PROGRAM_ID } from "./anchor-defs/anchor-idl-jupiter";
-import { RAYDIUM_AMM_IDL, RAYDIUM_AMM_PROGRAM_ID } from "./anchor-defs/anchor-idl-raydium";
-import { MAGIC_EDEN_MMM_IDL, MAGIC_EDEN_MMM_PROGRAM_ID } from "./anchor-defs/anchor-idl-magic-eden";
-import { SQUADS_V4_IDL, SQUADS_V4_PROGRAM_ID } from "./anchor-defs/anchor-idl-squads";
+  ORCA_WHIRLPOOL_IDL,
+  ORCA_WHIRLPOOL_PROGRAM_ID,
+  instructionDiscriminator,
+} from './orca/anchor-idl-orca';
 import { JUPITER_V6_IDL, JUPITER_V6_PROGRAM_ID } from './jupiter/anchor-idl-jupiter';
 import { RAYDIUM_AMM_IDL, RAYDIUM_AMM_PROGRAM_ID } from './raydium/anchor-idl-raydium';
+import { MAGIC_EDEN_MMM_IDL, MAGIC_EDEN_MMM_PROGRAM_ID } from './anchor-defs/anchor-idl-magic-eden';
+import { SQUADS_V4_IDL, SQUADS_V4_PROGRAM_ID } from './anchor-defs/anchor-idl-squads';
 import { MARINADE_IDL, MARINADE_PROGRAM_ID } from './marinade/idl';
 import { MAGIC_EDEN_IDL, MAGIC_EDEN_PROGRAM_ID } from './magic-eden/idl';
 
 // Re-export protocol constants/IDLs from a single entrypoint.
 export {
-	ORCA_WHIRLPOOL_IDL,
-	ORCA_WHIRLPOOL_PROGRAM_ID,
-	JUPITER_V6_IDL,
-	JUPITER_V6_PROGRAM_ID,
-	RAYDIUM_AMM_IDL,
-	RAYDIUM_AMM_PROGRAM_ID,
-	MAGIC_EDEN_MMM_IDL,
-	MAGIC_EDEN_MMM_PROGRAM_ID,
-	SQUADS_V4_IDL,
-	SQUADS_V4_PROGRAM_ID,
-	instructionDiscriminator,
+  ORCA_WHIRLPOOL_IDL,
+  ORCA_WHIRLPOOL_PROGRAM_ID,
+  JUPITER_V6_IDL,
+  JUPITER_V6_PROGRAM_ID,
+  RAYDIUM_AMM_IDL,
+  RAYDIUM_AMM_PROGRAM_ID,
+  MAGIC_EDEN_MMM_IDL,
+  MAGIC_EDEN_MMM_PROGRAM_ID,
+  SQUADS_V4_IDL,
+  SQUADS_V4_PROGRAM_ID,
   MARINADE_IDL,
   MARINADE_PROGRAM_ID,
-  instructionDiscriminator,
   MAGIC_EDEN_IDL,
   MAGIC_EDEN_PROGRAM_ID,
-  instructionDiscriminator
+  instructionDiscriminator,
 };
 
 // Program registry used when decodeAnchorInstruction is called without an explicit IDL.
-const DEFAULT_IDL_BY_PROGRAM: Record<string, Idl> = {'
-	[ORCA_WHIRLPOOL_PROGRAM_ID]: ORCA_WHIRLPOOL_IDL,
-	[JUPITER_V6_PROGRAM_ID]: JUPITER_V6_IDL,
-	[RAYDIUM_AMM_PROGRAM_ID]: RAYDIUM_AMM_IDL,
+const DEFAULT_IDL_BY_PROGRAM: Record<string, Idl> = {
+  [ORCA_WHIRLPOOL_PROGRAM_ID]: ORCA_WHIRLPOOL_IDL,
+  [JUPITER_V6_PROGRAM_ID]: JUPITER_V6_IDL,
+  [RAYDIUM_AMM_PROGRAM_ID]: RAYDIUM_AMM_IDL,
   [MARINADE_PROGRAM_ID]: MARINADE_IDL,
-	[MAGIC_EDEN_MMM_PROGRAM_ID]: MAGIC_EDEN_MMM_IDL,
-	[SQUADS_V4_PROGRAM_ID]: SQUADS_V4_IDL,
-  [MAGIC_EDEN_PROGRAM_ID]: MAGIC_EDEN_IDL
+  [MAGIC_EDEN_MMM_PROGRAM_ID]: MAGIC_EDEN_MMM_IDL,
+  [SQUADS_V4_PROGRAM_ID]: SQUADS_V4_IDL,
+  [MAGIC_EDEN_PROGRAM_ID]: MAGIC_EDEN_IDL,
 };
 
 export interface DecodedAnchorInstruction {
