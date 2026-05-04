@@ -6,7 +6,7 @@
   "scripts": {
     "build": "echo \"@open/scripts: no build step\"",
     "validate:benchmarks": "node --loader ts-node/esm ./validate-benchmarks.ts",
-    "validate:registry": "node --loader ts-node/esm ./validate-program-registry.ts"
+    "validate:registry": "node --loader ts-node/esm ./validate-program-registry.ts",
     "validate:decoders": "node --loader ts-node/esm ./validate-decoders.ts"
   },
   "dependencies": {

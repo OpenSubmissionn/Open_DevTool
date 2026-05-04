@@ -7,10 +7,7 @@
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Anchor",
-      "operations": [
-        "transfer",
-        "create-account"
-      ]
+      "operations": ["transfer", "create-account"]
     },
     "coverage": 100,
     "lastUpdated": "2026-04-28"
@@ -23,10 +20,7 @@
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Anchor",
-      "operations": [
-        "transfer",
-        "create-account"
-      ]
+      "operations": ["transfer", "create-account"]
     },
     "coverage": 100,
     "lastUpdated": "2026-04-28"
@@ -39,10 +33,7 @@
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Anchor",
-      "operations": [
-        "transfer",
-        "create-account"
-      ]
+      "operations": ["transfer", "create-account"]
     },
     "coverage": 100,
     "lastUpdated": "2026-04-28"
@@ -55,11 +46,11 @@
     "decoderStatus": "planned",
     "benchmark": {
       "framework": "Anchor",
-      "operations": [
-        "transfer",
-        "create-account"
-      ]
+      "operations": ["transfer", "create-account"]
     },
+    "coverage": 0,
+    "lastUpdated": "2026-04-28"
+  },
   {
     "name": "Magic Eden",
     "programId": "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8",
@@ -74,10 +65,7 @@
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Native",
-      "operations": [
-        "transfer",
-        "create-account"
-      ]
+      "operations": ["transfer", "create-account"]
     },
     "coverage": 100,
     "lastUpdated": "2026-04-28"
@@ -90,10 +78,7 @@
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Native",
-      "operations": [
-        "transfer",
-        "create-account"
-      ]
+      "operations": ["transfer", "create-account"]
     },
     "coverage": 100,
     "lastUpdated": "2026-04-28"
