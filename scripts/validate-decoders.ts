@@ -228,8 +228,9 @@ function checkRegistryEntry(entry: DecoderEntry): CheckResult {
   let registry: Array<{ programId: string }>;
   try {
     registry = JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
-  } catch {
-    return { pass: false, message: 'Failed to parse program-registry.json' };
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : String(err);
+    return { pass: false, message: `Failed to parse program-registry.json: ${reason}` };
   }
 
   const found = registry.some((r) => r.programId === entry.programId);
