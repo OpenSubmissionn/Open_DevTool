@@ -297,7 +297,9 @@ const renderCUCost = (cuCost: CUCost | undefined) => {
     const feeUSDStr =
       cuCost.feeUSD !== null ? chalk.green(`$${cuCost.feeUSD.toFixed(6)}`) : chalk.gray('USD N/A');
 
-    console.log(row(` ${chalk.white('CU Consumed:')}   ${chalk.cyan(cuCost.cuConsumed.toLocaleString())} CU`));
+    console.log(
+      row(` ${chalk.white('CU Consumed:')}   ${chalk.cyan(cuCost.cuConsumed.toLocaleString())} CU`)
+    );
     console.log(row(` ${chalk.white('Priority Fee:')}  ${priorityLabel}`));
     console.log(
       row(
@@ -367,7 +369,14 @@ const renderCPITree = (
   if (!nodes || nodes.length === 0) {
     console.log(row(chalk.gray('[ No CPI data available ]')));
   } else {
-    const lines = buildCPITreeVisualLines(nodes, bottleneckTarget, '', true, { consumed: false }, totalCU);
+    const lines = buildCPITreeVisualLines(
+      nodes,
+      bottleneckTarget,
+      '',
+      true,
+      { consumed: false },
+      totalCU
+    );
     for (const treeLine of lines) {
       const isFailed = treeLine.includes('[FAILED]') || treeLine.includes('[TRUNCATED]');
       const isBottleneck = treeLine.includes('[BOTTLENECK]');
@@ -467,7 +476,12 @@ const renderInsights = (insightsList: any[]) => {
   console.log('');
   console.log('  ' + yellow('╔' + line('═', WIDTH - 2) + '╗'));
   console.log(
-    '  ' + yellow('║') + ' ' + padVisible(yellow.bold('ACTIONABLE INSIGHTS'), INNER) + ' ' + yellow('║')
+    '  ' +
+      yellow('║') +
+      ' ' +
+      padVisible(yellow.bold('ACTIONABLE INSIGHTS'), INNER) +
+      ' ' +
+      yellow('║')
   );
   console.log('  ' + yellow('║') + ' ' + padVisible('', INNER) + ' ' + yellow('║'));
 
