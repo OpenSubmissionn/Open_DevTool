@@ -172,7 +172,10 @@ export class IdlCache {
    * Never throws — callers always get a safe fallback.
    */
   get(programId: string): IdlCacheEntry | null {
-    verboseLog(this.verbose, `[debug] get() called for programId=${programId} | verbose=${this.verbose}`);
+    verboseLog(
+      this.verbose,
+      `[debug] get() called for programId=${programId} | verbose=${this.verbose}`
+    );
     if (this.noCache) {
       verboseLog(this.verbose, `bypass  ${programId} (--no-cache)`);
       return null;
@@ -353,7 +356,7 @@ export async function fetchIdlWithCache<T = unknown>(
   }
 
   // Slow path: network fetch with retry
-  const { idl, version } = await withRetry(async () => {
+  const { idl } = await withRetry(async () => {
     const result = await fetcher();
     // Persist before returning — a crash after fetch still warms the cache.
     cache.set(programId, result.idl, result.version ?? 'unknown');

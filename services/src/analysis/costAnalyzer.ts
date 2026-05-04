@@ -142,3 +142,19 @@ export function analyzeCosts(
     totalTransferUSD,
   };
 }
+
+/**
+ * Calculate CU cost from raw data
+ * Used by merger to add cost info to analysis
+ */
+export async function calculateCUCostFromCU(
+  cuConsumed: number,
+  microLamportsPerCU: number,
+  solPriceUSD: number | null
+): Promise<CUCost> {
+  const feeLamports = Math.floor((cuConsumed * microLamportsPerCU) / 1_000_000);
+  const feeSOL = feeLamports / 1_000_000_000;
+  const feeUSD = solPriceUSD !== null ? feeSOL * solPriceUSD : null;
+
+  return { cuConsumed, microLamportsPerCU, feeLamports, feeSOL, feeUSD };
+}

@@ -19,6 +19,9 @@ export * from './analysis/renderer';
 export * from './solana/rpc';
 export * from './solana/connection';
 
+// Batch analysis
+export * from './analysis/batchAggregator';
+
 // MCP Integration
 export * from './mcp/client';
 export * from './mcp/mcpInsightProvider';

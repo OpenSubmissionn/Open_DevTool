@@ -33,17 +33,13 @@ import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 // Services modules are CJS (no "type: module" in services/package.json) and
 // scripts/ is ESM. Default-import + destructure is the supported interop path.
-import logParserMod from '../services/src/analysis/logParser';
-import cuProfilerMod from '../services/src/analysis/cuProfiler';
-import cpiTreeBuilderMod from '../services/src/analysis/cpiTreeBuilder';
-import accountDiffMod from '../services/src/analysis/accountDiff';
-import mergerMod from '../services/src/analysis/merger';
-import insightEngineMod from '../services/src/analysis/insightEngine';
-import type {
-  RawTransactionBundle,
-  CPITree,
-  ParsedLogs,
-} from '../services/src/analysis/types';
+import logParserMod from '../services/src/analysis/logParser.js';
+import cuProfilerMod from '../services/src/analysis/cuProfiler.js';
+import cpiTreeBuilderMod from '../services/src/analysis/cpiTreeBuilder.js';
+import accountDiffMod from '../services/src/analysis/accountDiff.js';
+import mergerMod from '../services/src/analysis/merger.js';
+import insightEngineMod from '../services/src/analysis/insightEngine.js';
+import type { RawTransactionBundle, CPITree, ParsedLogs } from '../services/src/analysis/types.js';
 
 const { parseLogsFromBundle } = logParserMod as any;
 const { profileCU } = cuProfilerMod as any;
@@ -97,11 +93,7 @@ function makeBundle(
   cpiDepth: number,
   err: object | null = null
 ): RawTransactionBundle {
-  const accountKeys = [
-    pad('Payer-' + id),
-    pad('Recv-' + id),
-    ...programIds,
-  ];
+  const accountKeys = [pad('Payer-' + id), pad('Recv-' + id), ...programIds];
 
   const logMessages: string[] = [];
   // Build nested CPI logs: invoke[1] → invoke[2] → ... up to cpiDepth
@@ -109,12 +101,11 @@ function makeBundle(
     const depth = Math.min(idx + 1, cpiDepth);
     logMessages.push(`Program ${pid} invoke [${depth}]`);
   });
-  logMessages.push(
-    `Program ${programIds[0]} consumed ${cuConsumed} of 200000 compute units`
-  );
+  logMessages.push(`Program ${programIds[0]} consumed ${cuConsumed} of 200000 compute units`);
   // Close in reverse (success / failed for last)
   for (let i = programIds.length - 1; i >= 0; i--) {
-    const status = i === programIds.length - 1 && err ? 'failed: custom program error: 0x1' : 'success';
+    const status =
+      i === programIds.length - 1 && err ? 'failed: custom program error: 0x1' : 'success';
     logMessages.push(`Program ${programIds[i]} ${status}`);
   }
 
@@ -210,10 +201,7 @@ function toCPITree(trace: ReturnType<typeof buildCPITree>): CPITree {
   return { root: trace.roots.map(toNode), totalDepth: maxDepth, nodeCount: count };
 }
 
-function toParsedLogs(
-  msgs: string[],
-  parsed: ReturnType<typeof parseLogsFromBundle>
-): ParsedLogs {
+function toParsedLogs(msgs: string[], parsed: ReturnType<typeof parseLogsFromBundle>): ParsedLogs {
   return {
     raw: msgs,
     entries: [],
@@ -331,18 +319,13 @@ function summarize(results: ScenarioResult[], bucket: Complexity): BucketStats {
   };
 }
 
-function verdict(
-  simple: BucketStats,
-  complex: BucketStats,
-  warmReductionCacheApplicable: number
-) {
+function verdict(simple: BucketStats, complex: BucketStats, warmReductionCacheApplicable: number) {
   return {
     simpleUnderTarget: simple.coldMaxSeconds < TARGETS.simpleMaxSeconds,
     complexUnderTarget: complex.coldMaxSeconds < TARGETS.complexMaxSeconds,
     // Target applies to cache-relevant scenarios only — simple txs have no
     // Anchor programs so the cache has no effect on them by design.
-    warmReductionMet:
-      warmReductionCacheApplicable >= TARGETS.warmReductionMinPercent,
+    warmReductionMet: warmReductionCacheApplicable >= TARGETS.warmReductionMinPercent,
   };
 }
 
@@ -379,12 +362,10 @@ function buildReport(results: ScenarioResult[]): string {
   const simple = summarize(results, 'simple');
   const medium = summarize(results, 'medium');
   const complex = summarize(results, 'complex');
-  const overallReduction =
-    results.reduce((s, r) => s + r.warmReductionPercent, 0) / results.length;
+  const overallReduction = results.reduce((s, r) => s + r.warmReductionPercent, 0) / results.length;
   const cacheApplicable = results.filter((r) => r.anchorProgramCount > 0);
   const cacheApplicableReduction =
-    cacheApplicable.reduce((s, r) => s + r.warmReductionPercent, 0) /
-    cacheApplicable.length;
+    cacheApplicable.reduce((s, r) => s + r.warmReductionPercent, 0) / cacheApplicable.length;
   const v = verdict(simple, complex, cacheApplicableReduction);
 
   const status = (ok: boolean) => (ok ? '✅ PASS' : '❌ FAIL');
@@ -457,9 +438,12 @@ ${
   v.simpleUnderTarget && v.complexUnderTarget && v.warmReductionMet
     ? '_None — all targets met._'
     : [
-        !v.simpleUnderTarget && '- Simple-bucket cold latency exceeds 2.0s budget — investigate \`mergeAnalysis\` overhead on small bundles.',
-        !v.complexUnderTarget && '- Complex-bucket cold latency exceeds 5.0s budget — review IDL prefetch concurrency in \`prefetchIdls\`.',
-        !v.warmReductionMet && `- Warm reduction below 40% — verify \`IdlCache\` is actually persisting across runs (check \`~/.open-cli/cache/idls/v1/\`).`,
+        !v.simpleUnderTarget &&
+          '- Simple-bucket cold latency exceeds 2.0s budget — investigate \`mergeAnalysis\` overhead on small bundles.',
+        !v.complexUnderTarget &&
+          '- Complex-bucket cold latency exceeds 5.0s budget — review IDL prefetch concurrency in \`prefetchIdls\`.',
+        !v.warmReductionMet &&
+          `- Warm reduction below 40% — verify \`IdlCache\` is actually persisting across runs (check \`~/.open-cli/cache/idls/v1/\`).`,
       ]
         .filter(Boolean)
         .join('\n')
@@ -507,8 +491,7 @@ async function main() {
   const complex = summarize(results, 'complex');
   const cacheApplicable = results.filter((r) => r.anchorProgramCount > 0);
   const cacheApplicableReduction =
-    cacheApplicable.reduce((s, r) => s + r.warmReductionPercent, 0) /
-    cacheApplicable.length;
+    cacheApplicable.reduce((s, r) => s + r.warmReductionPercent, 0) / cacheApplicable.length;
   console.log('');
   console.log('Verdict:');
   console.log(

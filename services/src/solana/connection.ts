@@ -28,9 +28,6 @@ export const getConnection = (
     confirmTransactionInitialTimeout: 60000,
   };
 
-  console.log(
-    `Connecting to Solana via: ${url === HELIUS_RPC_URL ? 'Helius' : network === 'mainnet' ? 'Mainnet' : 'Devnet'} RPC`
-  );
   return new Connection(url, config);
 };
 

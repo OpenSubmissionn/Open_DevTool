@@ -163,7 +163,52 @@ const checkCUAttributionQuality = (tx: AnalyzedTransaction): Insight | null => {
   };
 };
 
+// --- RANKING ---
+
+/**
+ * Deterministic priority score for insight ranking. Higher = more relevant.
+ *
+ * Combines five signals: severity, actionability (suggestions/savings/program
+ * focus), source agreement (hybrid > mcp > rule), tag intent (failure / cost
+ * boosted, diagnostics penalised), and savings magnitude as a fine tiebreak.
+ *
+ * See docs/Insight_Ranking_Logic.md for the full rationale.
+ */
+export function scoreInsight(insight: Insight): number {
+  const severityWeight: Record<Insight['severity'], number> = {
+    critical: 100,
+    warning: 50,
+    info: 10,
+  };
+  let score = severityWeight[insight.severity];
+
+  const hasCodeSuggestions = (insight.codeSuggestions?.length ?? 0) > 0;
+  const savings = insight.estimatedCUSavings ?? 0;
+  if (hasCodeSuggestions) score += 20;
+  if (savings > 0) score += 15;
+  if (insight.programId) score += 5;
+
+  if (insight.source === 'hybrid') score += 20;
+  else if (insight.source === 'mcp') score += 10;
+
+  const tags = insight.tags ?? [];
+  if (tags.includes('failure')) score += 15;
+  if (tags.includes('cost') || tags.includes('optimization')) score += 10;
+  if (tags.includes('risk')) score += 5;
+  if (tags.includes('diagnostics') || tags.includes('quality')) score -= 25;
+
+  if (savings > 0) {
+    score += Math.min(10, Math.log10(savings + 1));
+  }
+
+  return score;
+}
+
 // --- CORE ENGINE ---
+
+/**
+ * Merges insights from multiple providers, tagging sources and deduplicating.
+ */
 /* Merges insights from multiple providers, tagging sources and deduplicating. */
 export function mergeInsights(ruleInsights: Insight[], mcpInsights: ProviderInsight[]): Insight[] {
   const allInsights: Insight[] = [];
@@ -171,7 +216,7 @@ export function mergeInsights(ruleInsights: Insight[], mcpInsights: ProviderInsi
   // Add rule insights
   allInsights.push(...ruleInsights);
 
-  // Add MCP insights
+  // Add MCP insights (extract from ProviderInsight wrapper)
   allInsights.push(...mcpInsights.map((pi) => pi.insight));
 
   // Create a map to track insights by type for hybrid detection
@@ -187,7 +232,7 @@ export function mergeInsights(ruleInsights: Insight[], mcpInsights: ProviderInsi
 
   // Process each group
   const merged: Insight[] = [];
-  for (const [type, insights] of insightMap) {
+  for (const [, insights] of insightMap) {
     if (insights.length === 1) {
       // Only one source, keep as is
       merged.push(insights[0]);
@@ -215,10 +260,11 @@ export function mergeInsights(ruleInsights: Insight[], mcpInsights: ProviderInsi
 
 /**
  * Orchestrates all diagnostic rules and providers, merging insights with source tagging.
+ * Accepts multiple insight providers for flexible analysis.
  */
 export const analyzeTransaction = async (
   tx: AnalyzedTransaction,
-  provider?: InsightProvider
+  providers?: InsightProvider[]
 ): Promise<InsightReport> => {
   const rules = [
     checkFailure,
@@ -231,25 +277,26 @@ export const analyzeTransaction = async (
 
   const ruleInsights = rules.map((rule) => rule(tx)).filter((i): i is Insight => i !== null);
 
-  let providerInsights: ProviderInsight[] = [];
-  if (provider) {
-    try {
-      const context: InsightContext = { transaction: tx };
-      providerInsights = await provider.fetchInsights(context);
-    } catch (error) {
-      console.warn('Insight provider failed, falling back to rule-based insights only:', error);
+  const providerInsights: ProviderInsight[] = [];
+
+  // Process all providers if provided
+  if (providers && providers.length > 0) {
+    for (const provider of providers) {
+      try {
+        const context: InsightContext = { transaction: tx };
+        const insights = await provider.fetchInsights(context);
+        providerInsights.push(...insights);
+      } catch (error) {
+        console.warn('Insight provider failed, falling back to rule-based insights only:', error);
+      }
     }
   }
 
   const mergedInsights = mergeInsights(ruleInsights, providerInsights);
 
-  const severityScore = { critical: 0, warning: 1, info: 2 };
-  mergedInsights.sort((a, b) => {
-    const sevDiff = severityScore[a.severity] - severityScore[b.severity];
-    if (sevDiff !== 0) return sevDiff;
-    // Same severity: prioritize insights with concrete CU savings
-    return (b.estimatedCUSavings ?? 0) - (a.estimatedCUSavings ?? 0);
-  });
+  // Sort by priority score (descending). Higher score = more actionable / relevant.
+  // Stable sort via JS spec: insights with identical scores keep their input order.
+  mergedInsights.sort((a, b) => scoreInsight(b) - scoreInsight(a));
 
   const totalEstimatedSavings = mergedInsights.reduce(
     (sum, i) => sum + (i.estimatedCUSavings || 0),

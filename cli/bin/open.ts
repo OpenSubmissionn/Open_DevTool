@@ -1,5 +1,16 @@
 #!/usr/bin/env node
 
+// Detect JSON mode as early as possible (before any imports execute side effects)
+const isJsonMode = process.argv.includes('--json');
+
+// Silence all console output in JSON mode to ensure pure machine-readable output
+if (isJsonMode) {
+  const noop = () => {};
+  console.log = noop;
+  console.error = noop;
+  console.warn = noop;
+}
+
 import { Command } from 'commander';
 import { loadConfig } from '../src/config/loader';
 import { registerTxCommand } from '../src/commands/tx';
@@ -26,6 +37,7 @@ program
 
 // 4. Register commands
 registerTxCommand(program);
+registerBatchCommand(program);
 registerConfigCommand(program);
 registerInfoCommand(program);
 

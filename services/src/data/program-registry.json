@@ -32,6 +32,13 @@
     "lastUpdated": "2026-04-28"
   },
   {
+    
+    "name": "Magic Eden",
+    "programId": "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8",
+    "idl": "services/src/analysis/decoders/magic-eden/idl.ts",
+    "framework": "Anchor"
+  },
+  {
     "name": "Raydium Liquidity Pool v4",
     "programId": "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
     "framework": "Anchor",

@@ -51,8 +51,8 @@ describe('Marinade Decoder (REAL validation)', () => {
     expect((result?.decodedData as any).lamports.toNumber()).toBe(1_000_000_000);
   });
 
-  it('should decode unstake correctly', () => {
-    const data = buildInstructionData('unstake', {
+  it('should decode liquid_unstake correctly', () => {
+    const data = buildInstructionData('liquid_unstake', {
       msol_amount: 500_000_000,
     });
 
@@ -61,7 +61,7 @@ describe('Marinade Decoder (REAL validation)', () => {
     const result = decodeMarinadeInstruction(ix as any);
 
     expect(result).not.toBeNull();
-    expect(result?.instructionName).toBe('unstake');
+    expect(result?.instructionName).toBe('liquidUnstake');
 
     expect(result?.decodedData).toBeDefined();
 

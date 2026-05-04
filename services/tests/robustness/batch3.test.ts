@@ -1,18 +1,18 @@
-import { describe, it, expect } from 'vitest'
-import { mockRPCBundle } from '../setup'
-import { detectAnomalies, AnomalyType } from '../../src/analysis/anomalyDetector'
-import { analyzeCosts } from '../../src/analysis/costAnalyzer'
-import { parseLogsFromBundle } from '../../src/analysis/logParser'
-import { profileCU } from '../../src/analysis/cuProfiler'
-import { parseTransaction } from '../../src/analysis/txParser'
-import { classifyTransaction } from '../../src/analysis/classifier'
-import { RawTransactionBundle } from '../../src/analysis/types'
+import { describe, it, expect } from 'vitest';
+import { mockRPCBundle } from '../setup';
+import { detectAnomalies, AnomalyType } from '../../src/analysis/anomalyDetector';
+import { analyzeCosts } from '../../src/analysis/costAnalyzer';
+import { parseLogsFromBundle } from '../../src/analysis/logParser';
+import { profileCU } from '../../src/analysis/cuProfiler';
+import { parseTransaction } from '../../src/analysis/txParser';
+import { classifyTransaction } from '../../src/analysis/classifier';
+import { RawTransactionBundle } from '../../src/analysis/types';
 
 interface Scenario {
-  name: string
-  bundle: RawTransactionBundle
-  expectAnomaly: boolean
-  expectAnomalyType?: AnomalyType
+  name: string;
+  bundle: RawTransactionBundle;
+  expectAnomaly: boolean;
+  expectAnomalyType?: AnomalyType;
 }
 
 const scenarios: Scenario[] = [
@@ -29,7 +29,12 @@ const scenarios: Scenario[] = [
           accountIndex: 0,
           mint: 'UNKNOWN_MINT_XYZ',
           owner: 'owner1',
-          uiTokenAmount: { amount: '2000000000000', decimals: 6, uiAmount: 2000000, uiAmountString: '2000000' },
+          uiTokenAmount: {
+            amount: '2000000000000',
+            decimals: 6,
+            uiAmount: 2000000,
+            uiAmountString: '2000000',
+          },
         },
       ],
     }),
@@ -124,13 +129,23 @@ const scenarios: Scenario[] = [
           accountIndex: 0,
           mint: 'UNKNOWN_1',
           owner: 'owner1',
-          uiTokenAmount: { amount: '2000000000000', decimals: 6, uiAmount: 2000000, uiAmountString: '2000000' },
+          uiTokenAmount: {
+            amount: '2000000000000',
+            decimals: 6,
+            uiAmount: 2000000,
+            uiAmountString: '2000000',
+          },
         },
         {
           accountIndex: 1,
           mint: 'UNKNOWN_2',
           owner: 'owner2',
-          uiTokenAmount: { amount: '3000000000000', decimals: 6, uiAmount: 3000000, uiAmountString: '3000000' },
+          uiTokenAmount: {
+            amount: '3000000000000',
+            decimals: 6,
+            uiAmount: 3000000,
+            uiAmountString: '3000000',
+          },
         },
       ],
     }),
@@ -190,7 +205,10 @@ const scenarios: Scenario[] = [
   {
     name: 'known-program-transfer',
     bundle: mockRPCBundle({
-      logMessages: ['Program 11111111111111111111111111111111 invoke [1]', 'Program 11111111111111111111111111111111 success'],
+      logMessages: [
+        'Program 11111111111111111111111111111111 invoke [1]',
+        'Program 11111111111111111111111111111111 success',
+      ],
     }),
     expectAnomaly: false,
   },
@@ -217,7 +235,12 @@ const scenarios: Scenario[] = [
           accountIndex: 0,
           mint: 'UNKNOWN_MINT_ABC',
           owner: 'owner1',
-          uiTokenAmount: { amount: '1000000000000', decimals: 6, uiAmount: 1000000, uiAmountString: '1000000' },
+          uiTokenAmount: {
+            amount: '1000000000000',
+            decimals: 6,
+            uiAmount: 1000000,
+            uiAmountString: '1000000',
+          },
         },
       ],
     }),
@@ -231,7 +254,12 @@ const scenarios: Scenario[] = [
           accountIndex: 0,
           mint: 'UNKNOWN_MINT_DEF',
           owner: 'owner1',
-          uiTokenAmount: { amount: '1000001000000', decimals: 6, uiAmount: 1000001, uiAmountString: '1000001' },
+          uiTokenAmount: {
+            amount: '1000001000000',
+            decimals: 6,
+            uiAmount: 1000001,
+            uiAmountString: '1000001',
+          },
         },
       ],
     }),
@@ -255,7 +283,12 @@ const scenarios: Scenario[] = [
           accountIndex: 0,
           mint: 'UNKNOWN_MINT_XYZ',
           owner: 'owner1',
-          uiTokenAmount: { amount: '2000000000000', decimals: 6, uiAmount: 2000000, uiAmountString: '2000000' },
+          uiTokenAmount: {
+            amount: '2000000000000',
+            decimals: 6,
+            uiAmount: 2000000,
+            uiAmountString: '2000000',
+          },
         },
       ],
     }),
@@ -277,43 +310,45 @@ const scenarios: Scenario[] = [
     }),
     expectAnomaly: false,
   },
-]
+];
 
 describe('Batch 3 — 25 transaction scenarios', () => {
   for (const scenario of scenarios) {
     it(scenario.name, () => {
-      const costAnalysis = analyzeCosts(scenario.bundle, null, 1000)
-      const report = detectAnomalies(scenario.bundle, costAnalysis.transfers)
+      const costAnalysis = analyzeCosts(scenario.bundle, null, 1000);
+      const report = detectAnomalies(scenario.bundle, costAnalysis.transfers);
 
       if (scenario.expectAnomaly === false) {
         if (scenario.expectAnomalyType) {
-          expect(report.anomalies.filter(a => a.type === scenario.expectAnomalyType)).toHaveLength(0)
+          expect(
+            report.anomalies.filter((a) => a.type === scenario.expectAnomalyType)
+          ).toHaveLength(0);
         }
       } else {
         if (scenario.expectAnomalyType) {
-          expect(report.anomalies.some(a => a.type === scenario.expectAnomalyType)).toBe(true)
+          expect(report.anomalies.some((a) => a.type === scenario.expectAnomalyType)).toBe(true);
         }
       }
 
-      expect(typeof report.summary).toBe('string')
-      expect(Array.isArray(report.anomalies)).toBe(true)
-    })
+      expect(typeof report.summary).toBe('string');
+      expect(Array.isArray(report.anomalies)).toBe(true);
+    });
   }
-})
+});
 
 describe('Batch 3 meta — top 3 regression stubs', () => {
   it('no crash on null computeUnitsConsumed', () => {
-    const bundle = mockRPCBundle({ computeUnitsConsumed: null })
-    expect(() => detectAnomalies(bundle, [])).not.toThrow()
-  })
+    const bundle = mockRPCBundle({ computeUnitsConsumed: null });
+    expect(() => detectAnomalies(bundle, [])).not.toThrow();
+  });
 
   it('no crash on empty logMessages', () => {
-    const bundle = mockRPCBundle({ logMessages: [] })
-    expect(() => detectAnomalies(bundle, [])).not.toThrow()
-  })
+    const bundle = mockRPCBundle({ logMessages: [] });
+    expect(() => detectAnomalies(bundle, [])).not.toThrow();
+  });
 
   it('no crash on empty postTokenBalances', () => {
-    const bundle = mockRPCBundle({ postTokenBalances: [] })
-    expect(() => detectAnomalies(bundle, [])).not.toThrow()
-  })
-})
+    const bundle = mockRPCBundle({ postTokenBalances: [] });
+    expect(() => detectAnomalies(bundle, [])).not.toThrow();
+  });
+});
