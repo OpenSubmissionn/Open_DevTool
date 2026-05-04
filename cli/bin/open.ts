@@ -14,9 +14,10 @@ if (isJsonMode) {
 import { Command } from 'commander';
 import { loadConfig } from '../src/config/loader';
 import { registerTxCommand } from '../src/commands/tx';
+import { registerBatchCommand } from '../src/commands/batch';
 import { registerConfigCommand } from '../src/commands/config';
 import { registerInfoCommand } from '../src/commands/info';
- 
+
 // tsx on Windows/CommonJS runs the file twice — this blocks the second execution
 const guardKey = '__OPEN_CLI_STARTED__';
 if ((global as any)[guardKey]) process.exit(0);

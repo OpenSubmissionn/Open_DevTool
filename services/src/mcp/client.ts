@@ -72,50 +72,132 @@ export interface MCPInsightResponse {
   source: 'mcp';
 }
 
-export async function requestInsights(payload: MCPPayload): Promise<MCPInsightResponse> {
-  const endpointUrl = process.env.MCP_ENDPOINT_URL;
+/**
+ * AI insights resolution order:
+ *   1. MCP_DISABLED=1            → skip AI entirely (rule-based only)
+ *   2. MCP_ENDPOINT_URL set      → POST payload to that endpoint (advanced override)
+ *   3. GROQ_API_KEY set          → free Groq tier (Llama 3.3 70B, ~30 req/min)
+ *   4. ANTHROPIC_API_KEY set     → Claude (paid, ~$0.003/analysis with Sonnet)
+ *   5. neither set               → warn, fall back to rule-based
+ *
+ * Each user pays (or doesn't, with Groq) their own way. The pipeline always
+ * works — when AI is unavailable, only rule-based insights render.
+ */
+import { callAnthropic, type AnthropicResult } from './anthropic';
+import { callGroq } from './groq';
 
-  if (!endpointUrl) {
-    console.warn('[MCP] Degraded: MCP_ENDPOINT_URL not set');
+const DEFAULT_ANTHROPIC_MODEL = 'claude-sonnet-4-5';
+const DEFAULT_GROQ_MODEL = 'llama-3.3-70b-versatile';
+
+export async function requestInsights(payload: MCPPayload): Promise<MCPInsightResponse> {
+  if (process.env.MCP_DISABLED) {
     return { suggestions: [], source: 'mcp' };
   }
 
+  const endpointUrl = process.env.MCP_ENDPOINT_URL;
+  if (endpointUrl) {
+    announceProvider('Custom MCP', new URL(endpointUrl).host);
+    return callMcpEndpoint(endpointUrl, payload);
+  }
+
+  const groqKey = process.env.GROQ_API_KEY;
+  if (groqKey) {
+    const model = process.env.MCP_MODEL || DEFAULT_GROQ_MODEL;
+    announceProvider('Groq', model);
+    return callProvider((signal) => callGroq(payload, groqKey, model, signal));
+  }
+
+  const anthropicKey = process.env.ANTHROPIC_API_KEY;
+  if (anthropicKey) {
+    const model = process.env.MCP_MODEL || DEFAULT_ANTHROPIC_MODEL;
+    announceProvider('Anthropic', model);
+    return callProvider((signal) => callAnthropic(payload, anthropicKey, model, signal));
+  }
+
+  warnNoKey();
+  return { suggestions: [], source: 'mcp' };
+}
+
+let announcedProvider = false;
+function announceProvider(name: string, model: string): void {
+  process.env.MCP_PROVIDER_LABEL = `${name} · ${model}`;
+  if (announcedProvider) return;
+  announcedProvider = true;
+  console.info(`[MCP] AI provider: ${name} · ${model}`);
+}
+
+async function callProvider(
+  fn: (signal: AbortSignal) => Promise<AnthropicResult>
+): Promise<MCPInsightResponse> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  try {
+    const result = await fn(controller.signal);
+    if (result.degraded) warnDegraded(result);
+    return { suggestions: result.suggestions, source: 'mcp' };
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+async function callMcpEndpoint(url: string, payload: MCPPayload): Promise<MCPInsightResponse> {
   const attempt = async (retryCount: number): Promise<MCPInsightResponse> => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
-
     try {
-      const response = await fetch(endpointUrl, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
         signal: controller.signal,
       });
-
-      clearTimeout(timeoutId);
-
       if (!response.ok) {
-        if (response.status >= 500 && retryCount < 1) {
-          return attempt(retryCount + 1);
-        }
-        console.warn(`[MCP] Degraded: HTTP ${response.status}`);
+        if (response.status >= 500 && retryCount < 1) return attempt(retryCount + 1);
+        console.warn(
+          `[MCP] AI insights indisponíveis (HTTP ${response.status}). Rendering rule-based insights only.`
+        );
         return { suggestions: [], source: 'mcp' };
       }
-
       const data = (await response.json()) as { suggestions?: string[] };
       return { suggestions: data.suggestions ?? [], source: 'mcp' };
     } catch (error) {
-      clearTimeout(timeoutId);
-
-      if (retryCount < 1) {
-        return attempt(retryCount + 1);
-      }
-
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      console.warn(`[MCP] Degraded: ${errorMsg}`);
+      if (retryCount < 1) return attempt(retryCount + 1);
+      const msg = error instanceof Error ? error.message : String(error);
+      console.warn(`[MCP] AI insights indisponíveis (${msg}). Rendering rule-based insights only.`);
       return { suggestions: [], source: 'mcp' };
+    } finally {
+      clearTimeout(timeoutId);
     }
   };
-
   return attempt(0);
+}
+
+function warnNoKey(): void {
+  console.warn(
+    '[MCP] Nenhuma chave de AI configurada. Rendering rule-based insights only.\n' +
+      '       Opção 1 (gratuito):  GROQ_API_KEY        → https://console.groq.com/keys (Llama 3.3 70B, ~30 req/min)\n' +
+      '       Opção 2 (pago):      ANTHROPIC_API_KEY   → https://console.anthropic.com (Claude Sonnet, ~$0.003/análise)'
+  );
+}
+
+function warnDegraded(result: AnthropicResult): void {
+  switch (result.degraded) {
+    case 'no_credit':
+      console.warn(
+        `[MCP] ${result.message ?? 'Sem créditos.'} Rendering rule-based insights only.`
+      );
+      return;
+    case 'rate_limit':
+      console.warn(`[MCP] ${result.message ?? 'Rate limit.'} Rendering rule-based insights only.`);
+      return;
+    case 'auth':
+      console.warn(
+        `[MCP] ${result.message ?? 'Auth falhou.'} Verifique sua ANTHROPIC_API_KEY. Rendering rule-based insights only.`
+      );
+      return;
+    default:
+      console.warn(
+        `[MCP] AI insights indisponíveis (${result.message ?? 'erro desconhecido'}). Rendering rule-based insights only.`
+      );
+  }
 }

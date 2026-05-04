@@ -495,15 +495,45 @@ const renderInsights = (insightsList: any[]) => {
         yellow('║')
     );
   } else {
-    insightsList.forEach((item: any) => {
+    const ruleBased = insightsList.filter((i) => getInsightSource(i) !== 'mcp');
+    const aiBased = insightsList.filter((i) => getInsightSource(i) === 'mcp');
+
+    const renderItem = (item: any) => {
       const text = typeof item === 'string' ? item : item.message || JSON.stringify(item);
       const content = ` ${yellow('-')} ${text}`;
       console.log('  ' + yellow('║') + ' ' + padVisible(content, INNER) + ' ' + yellow('║'));
-    });
+    };
+
+    const renderSubheader = (label: string) => {
+      console.log(
+        '  ' + yellow('║') + ' ' + padVisible(chalk.bold.cyan(label), INNER) + ' ' + yellow('║')
+      );
+    };
+
+    const blank = () =>
+      console.log('  ' + yellow('║') + ' ' + padVisible('', INNER) + ' ' + yellow('║'));
+
+    if (ruleBased.length) {
+      renderSubheader('Rule-based');
+      ruleBased.forEach(renderItem);
+    }
+
+    if (aiBased.length) {
+      if (ruleBased.length) blank();
+      renderSubheader(
+        `AI-generated${process.env.MCP_PROVIDER_LABEL ? ` (${process.env.MCP_PROVIDER_LABEL})` : ''}`
+      );
+      aiBased.forEach(renderItem);
+    }
   }
 
   console.log('  ' + yellow('╚' + line('═', WIDTH - 2) + '╝'));
 };
+
+function getInsightSource(item: any): string | undefined {
+  if (typeof item === 'string') return undefined;
+  return item?.source ?? item?.insight?.source;
+}
 
 // ─── MAIN RENDER FUNCTION ───────────────────────────────────────────────────
 
