@@ -375,8 +375,8 @@ function buildReport(results: ScenarioResult[]): string {
 End-to-end latency and IDL cache validation after parser optimizations
 (Task 3.2.1) and IDL cache (Task 3.3.1) landed in Week 3.
 
-> Run with \`npm run bench:latency\` from the repo root.
-> Raw timings: \`benchmarks/latency-results.json\`.
+> Run with 'npm run bench:latency' from the repo root.
+> Raw timings: 'benchmarks/latency-results.json'.
 
 ## Methodology
 
@@ -384,7 +384,7 @@ End-to-end latency and IDL cache validation after parser optimizations
 - For each bundle: 1 warm-up + 3 timed pipeline runs; median pipeline time used.
 - End-to-end latency = pipeline + simulated RPC fetch + simulated IDL fetch.
 - Simulation constants (calibrated against typical Helius p50):
-  - Tx fetch (\`getParsedTransaction\`): ${BASELINE_TX_FETCH_MS} ms
+  - Tx fetch ('getParsedTransaction'): ${BASELINE_TX_FETCH_MS} ms
   - Anchor IDL fetch (cold, per program): ${BASELINE_IDL_FETCH_MS} ms
   - IDL cache hit (warm, per program): ${CACHE_HIT_MS} ms
 
@@ -429,7 +429,7 @@ ${results
 ${
   v.simpleUnderTarget && v.complexUnderTarget && v.warmReductionMet
     ? `All three Week 3 latency targets are met. Parser (Task 3.2.1) and IDL cache (Task 3.3.1) optimizations land at expected levels and no regression is observed in the analysis pipeline (median pipeline time across all 15 scenarios stays under 50 ms, well below RPC-bound costs).`
-    : `One or more targets failed. See the verdict table above; raw timings in \`benchmarks/latency-results.json\` carry the data for the optimization backlog.`
+    : `One or more targets failed. See the verdict table above; raw timings in 'benchmarks/latency-results.json' carry the data for the optimization backlog.`
 }
 
 ### Backlog (if any)
@@ -439,11 +439,11 @@ ${
     ? '_None — all targets met._'
     : [
         !v.simpleUnderTarget &&
-          '- Simple-bucket cold latency exceeds 2.0s budget — investigate \`mergeAnalysis\` overhead on small bundles.',
+          '- Simple-bucket cold latency exceeds 2.0s budget — investigate "mergeAnalysis" overhead on small bundles.',
         !v.complexUnderTarget &&
-          '- Complex-bucket cold latency exceeds 5.0s budget — review IDL prefetch concurrency in \`prefetchIdls\`.',
+          '- Complex-bucket cold latency exceeds 5.0s budget — review IDL prefetch concurrency in "prefetchIdls".',
         !v.warmReductionMet &&
-          `- Warm reduction below 40% — verify \`IdlCache\` is actually persisting across runs (check \`~/.open-cli/cache/idls/v1/\`).`,
+          '- Warm reduction below 40% — verify "IdlCache" is actually persisting across runs (check "~/.open-cli/cache/idls/v1/").',
       ]
         .filter(Boolean)
         .join('\n')

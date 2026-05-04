@@ -47,6 +47,16 @@ function validateEntry(
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
   const required = ['name', 'programId', 'framework', 'idl', 'decoderStatus', 'benchmark', 'coverage', 'lastUpdated'];
+  const required = [
+    'name',
+    'programId',
+    'framework',
+    'idl',
+    'decoderStatus',
+    'benchmark',
+    'coverage',
+    'lastUpdated',
+  ];
 
   for (const key of required) {
     if (!(key in entry)) errors.push(`Missing required field: "${key}"`);
@@ -102,6 +112,9 @@ function validateEntry(
         errors.push(`"benchmark.framework" must be a string`);
       } else if (b.framework !== entry.framework) {
         errors.push(`"benchmark.framework" (${b.framework}) does not match entry framework (${entry.framework})`);
+        errors.push(
+          `"benchmark.framework" (${b.framework}) does not match entry framework (${entry.framework})`
+        );
       }
       if (!Array.isArray(b.operations) || b.operations.length === 0) {
         errors.push(`"benchmark.operations" must be a non-empty array`);
@@ -160,6 +173,13 @@ function main() {
 
   const registryPath = path.join(repoRoot, 'services', 'src', 'data', 'program-registry.json');
   const benchmarksPath = path.join(repoRoot, 'services', 'src', 'data', 'framework-benchmarks.json');
+  const benchmarksPath = path.join(
+    repoRoot,
+    'services',
+    'src',
+    'data',
+    'framework-benchmarks.json'
+  );
 
   let registry: ProgramEntry[];
   let benchmarks: BenchmarkEntry[];

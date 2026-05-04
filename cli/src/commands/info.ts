@@ -84,6 +84,9 @@ function renderTable(entries: ProgramEntry[]): void {
     chalk.bold('Benchmark'.padEnd(cols.benchmark));
 
   const sep = chalk.gray('─'.repeat(cols.name + cols.framework + cols.coverage + cols.decoder + cols.benchmark + 2));
+  const sep = chalk.gray(
+    '─'.repeat(cols.name + cols.framework + cols.coverage + cols.decoder + cols.benchmark + 2)
+  );
 
   console.log('');
   console.log(chalk.bold('OPEN — Program Registry'));
