@@ -7,6 +7,7 @@ import { AnalyzedTransaction, ParsedLogs, CUProfile, CPITree, AccountDiff } from
 import { parseTransaction } from './txParser';
 import { IdlCache } from '../solana/idlcache';
 import { analyzeCosts } from './costAnalyzer';
+import { detectAnomalies } from './anomalyDetector';
 
 export interface MergeOptions {
   idlCache?: IdlCache;
@@ -67,6 +68,8 @@ export async function mergeAnalysis(
     console.warn('[Merger] CU cost calculation failed:', error);
   }
 
+  const anomalies = detectAnomalies(bundle, costAnalysis.transfers);
+
   return {
     signature: parsed.signature,
     success: parsed.success,
@@ -78,5 +81,6 @@ export async function mergeAnalysis(
     logs,
     cuCost,
     transfers: costAnalysis.transfers,
+    anomalies,
   };
 }

@@ -18,10 +18,12 @@ describe('Cost Analyzer', () => {
     expect(result.cuCost.cuConsumed).toBe(3000);
   });
 
-  it('SOL transfer — preBalances [1_000_000_000, 500_000_000], postBalances [999_500_000_000, 1_000_000_000] (index 0 is fee payer, skip) — expect 1 transfer with correct uiAmount in SOL', () => {
+  it('SOL transfer — fee payer sends 0.5 SOL to recipient — expect 1 paired transfer with both from and to populated', () => {
+    // Fee payer (index 0) loses 0.5 SOL + fee; recipient (index 1) gains 0.5 SOL.
+    // Pairing should emit a single TransferInfo with both ends populated.
     const bundle = mockRPCBundle({
       preBalances: [1_000_000_000, 500_000_000],
-      postBalances: [999_500_000_000, 1_000_000_000],
+      postBalances: [499_995_000, 1_000_000_000],
       preTokenBalances: [],
       postTokenBalances: [],
       accountKeys: [
@@ -35,6 +37,7 @@ describe('Cost Analyzer', () => {
     expect(result.transfers).toHaveLength(1);
     expect(result.transfers[0].token).toBe('SOL');
     expect(result.transfers[0].uiAmount).toBeCloseTo(0.5, 9);
+    expect(result.transfers[0].from).toBe('11111111111111111111111111111111');
     expect(result.transfers[0].to).toBe('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
   });
 

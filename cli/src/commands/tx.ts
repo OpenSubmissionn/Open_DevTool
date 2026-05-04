@@ -1,4 +1,6 @@
 import { Command } from 'commander';
+import * as fs from 'fs';
+import * as path from 'path';
 import ora from 'ora';
 import chalk from 'chalk';
 import type { CLIOptions } from '../types';
@@ -18,6 +20,7 @@ import {
 
 import { toCPITree, toParsedLogs } from '../utils/pipeline';
 import { renderTerminal } from '../renderers/terminal/renderer';
+import { renderCSV } from '../renderers/csv';
 
 function nowMs() {
   return typeof process !== 'undefined' && process.hrtime
@@ -46,21 +49,25 @@ export const registerTxCommand = (program: Command) => {
     )
     .option('--network <type>', 'Solana network (mainnet/devnet)')
     .option('--json', 'Output results in structured JSON format', false)
+    .option('--csv', 'Output a single CSV row (with header) for BI tools', false)
+    .option('--output <path>', 'Write JSON/CSV output to file instead of stdout')
     .option('--no-cache', 'Skip IDL cache and force network re-fetch')
     .option('--verbose', 'Show detailed timing for each pipeline stage')
     .action(async (signature: string, networkArg: string | undefined, options: any) => {
       const isJson = options.json === true;
+      const isCsv = options.csv === true;
+      const isMachineOutput = isJson || isCsv;
 
       const originalLog = console.log;
       const originalError = console.error;
 
-      if (isJson) {
+      if (isMachineOutput) {
         console.log = () => {};
         console.error = () => {};
       }
 
       const errorLog = (...args: any[]) => {
-        if (!isJson) originalError(...args);
+        if (!isMachineOutput) originalError(...args);
       };
 
       const timings: { stage: string; durationMs: number }[] = [];
@@ -94,14 +101,14 @@ export const registerTxCommand = (program: Command) => {
       const verbose = globalOpts.verbose === true || options.verbose === true;
       const idlCache = new IdlCache({
         noCache: options.cache === false,
-        verbose: !isJson && verbose,
+        verbose: !isMachineOutput && verbose,
       });
       t1 = nowMs();
       timings.push({ stage: 'init_idl_cache', durationMs: t1 - t0 });
       t0 = t1;
 
       const spinner = ora(`Initializing Open Insight Pipeline...`);
-      if (!isJson) spinner.start();
+      if (!isMachineOutput) spinner.start();
 
       try {
         spinner.text = chalk.cyan('Fetching transaction bundle...');
@@ -165,7 +172,7 @@ export const registerTxCommand = (program: Command) => {
         timings.push({ stage: 'analyze_transaction', durationMs: insightsEnd - insightsStart });
         t0 = insightsEnd;
 
-        if (!isJson) {
+        if (!isMachineOutput) {
           spinner.succeed(chalk.green('Analysis Complete!'));
           if (verbose) process.nextTick(() => idlCache.printMetrics());
         }
@@ -174,7 +181,29 @@ export const registerTxCommand = (program: Command) => {
         if (isJson) {
           if (!analyzed._metadata) analyzed._metadata = {};
           analyzed._metadata.timings = timings;
-          process.stdout.write(renderJSON(analyzed, insightsReport));
+          const jsonOut = renderJSON(analyzed, insightsReport);
+          if (options.output) {
+            const outPath = path.resolve(options.output);
+            fs.writeFileSync(outPath, jsonOut, 'utf-8');
+            originalLog(`\nReport written to: ${outPath}`);
+            return;
+          }
+          process.stdout.write(jsonOut);
+          return;
+        }
+        if (isCsv) {
+          const csvOut = renderCSV(analyzed, insightsReport) + '\n';
+          const defaultName = `${signature}.csv`;
+          if (options.output) {
+            const outPath = path.resolve(options.output);
+            fs.writeFileSync(outPath, csvOut, 'utf-8');
+            originalLog(`\nCSV written to: ${outPath}`);
+            return;
+          }
+          // If no explicit output path, write file named <signature>.csv in cwd
+          const outPath = path.resolve(defaultName);
+          fs.writeFileSync(outPath, csvOut, 'utf-8');
+          originalLog(`\nCSV written to: ${outPath}`);
           return;
         }
 
@@ -189,6 +218,8 @@ export const registerTxCommand = (program: Command) => {
       } catch (error: any) {
         if (isJson) {
           process.stdout.write(JSON.stringify({ error: error.message }, null, 2));
+        } else if (isCsv) {
+          process.stdout.write(`error,${error.message?.replace(/"/g, '""') ?? ''}\n`);
         } else {
           spinner.fail(chalk.red('Pipeline Crash'));
           console.error(chalk.yellow(`\nDetail: ${error.message}`));
