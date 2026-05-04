@@ -7,6 +7,8 @@ import {
 } from './orca/anchor-idl-orca';
 import { JUPITER_V6_IDL, JUPITER_V6_PROGRAM_ID } from './jupiter/anchor-idl-jupiter';
 import { RAYDIUM_AMM_IDL, RAYDIUM_AMM_PROGRAM_ID } from './raydium/anchor-idl-raydium';
+import { MAGIC_EDEN_MMM_IDL, MAGIC_EDEN_MMM_PROGRAM_ID } from './anchor-defs/anchor-idl-magic-eden';
+import { SQUADS_V4_IDL, SQUADS_V4_PROGRAM_ID } from './anchor-defs/anchor-idl-squads';
 import { MARINADE_IDL, MARINADE_PROGRAM_ID } from './marinade/idl';
 import { MAGIC_EDEN_IDL, MAGIC_EDEN_PROGRAM_ID } from './magic-eden/idl';
 
@@ -18,6 +20,10 @@ export {
   JUPITER_V6_PROGRAM_ID,
   RAYDIUM_AMM_IDL,
   RAYDIUM_AMM_PROGRAM_ID,
+  MAGIC_EDEN_MMM_IDL,
+  MAGIC_EDEN_MMM_PROGRAM_ID,
+  SQUADS_V4_IDL,
+  SQUADS_V4_PROGRAM_ID,
   MARINADE_IDL,
   MARINADE_PROGRAM_ID,
   MAGIC_EDEN_IDL,
@@ -31,6 +37,8 @@ const DEFAULT_IDL_BY_PROGRAM: Record<string, Idl> = {
   [JUPITER_V6_PROGRAM_ID]: JUPITER_V6_IDL,
   [RAYDIUM_AMM_PROGRAM_ID]: RAYDIUM_AMM_IDL,
   [MARINADE_PROGRAM_ID]: MARINADE_IDL,
+  [MAGIC_EDEN_MMM_PROGRAM_ID]: MAGIC_EDEN_MMM_IDL,
+  [SQUADS_V4_PROGRAM_ID]: SQUADS_V4_IDL,
   [MAGIC_EDEN_PROGRAM_ID]: MAGIC_EDEN_IDL,
 };
 

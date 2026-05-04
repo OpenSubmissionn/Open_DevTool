@@ -17,7 +17,7 @@
  *   # or from the repo root:
  *   npx tsx scripts/validate-decoders.ts
  */
-
+import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -25,9 +25,23 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, '..');
-const SERVICES_ROOT = path.join(REPO_ROOT, 'services');
+const SERVICES_ROOT = path.resolve(REPO_ROOT, 'services');
 
-// ── Registry of decoders to validate ─────────────────────────────────────────
+// Validates that the discriminator in each new IDL matches the raw bytes
+// of the corresponding instruction in a real recorded transaction.
+
+interface IxData {
+  programIdIndex: number;
+  data: string; // base58
+  accounts: number[];
+}
+
+interface FixtureCase {
+  label: string;
+  fixture: string;
+  programId: string;
+  expectedInstruction: string;
+}
 
 interface DecoderEntry {
   name: string;
@@ -35,6 +49,43 @@ interface DecoderEntry {
   idlPath: string; // relative to SERVICES_ROOT/src
   decoderFn: string; // name of the decode function (used for documentation)
   testFile: string; // relative to SERVICES_ROOT/tests
+}
+
+const CASES: FixtureCase[] = [
+  {
+    label: 'Magic Eden v2 (MMM)',
+    fixture: 'realMagicEdenTx.json',
+    programId: 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K',
+    expectedInstruction: 'mip1_sell',
+  },
+  {
+    label: 'Squads Protocol V4',
+    fixture: 'realSquadsTx.json',
+    programId: 'SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf',
+    expectedInstruction: 'spending_limit_use',
+  },
+];
+
+const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+function base58Decode(s: string): Uint8Array {
+  let num = 0n;
+  for (const ch of s) {
+    const idx = BASE58_ALPHABET.indexOf(ch);
+    if (idx < 0) throw new Error(`Invalid base58 char: ${ch}`);
+    num = num * 58n + BigInt(idx);
+  }
+  const bytes: number[] = [];
+  while (num > 0n) {
+    bytes.push(Number(num & 0xffn));
+    num >>= 8n;
+  }
+  // Leading zeros
+  for (const ch of s) {
+    if (ch === '1') bytes.push(0);
+    else break;
+  }
+  return new Uint8Array(bytes.reverse());
 }
 
 const DECODERS: DecoderEntry[] = [
@@ -177,8 +228,9 @@ function checkRegistryEntry(entry: DecoderEntry): CheckResult {
   let registry: Array<{ programId: string }>;
   try {
     registry = JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
-  } catch {
-    return { pass: false, message: 'Failed to parse program-registry.json' };
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : String(err);
+    return { pass: false, message: `Failed to parse program-registry.json: ${reason}` };
   }
 
   const found = registry.some((r) => r.programId === entry.programId);
@@ -301,6 +353,7 @@ function main(): void {
     process.exit(0);
   } else {
     console.error(`${FAIL} Decoder validation failed. Fix the issues above before merging.\n`);
+
     process.exit(1);
   }
 }

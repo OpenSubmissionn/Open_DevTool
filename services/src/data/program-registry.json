@@ -3,7 +3,7 @@
     "name": "Jupiter Aggregator v6",
     "programId": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
     "framework": "Anchor",
-    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-jupiter.ts",
+    "idl": "services/src/analysis/decoders/jupiter/anchor-idl-jupiter.ts",
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Anchor",
@@ -16,7 +16,7 @@
     "name": "Orca Whirlpool",
     "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc",
     "framework": "Anchor",
-    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-orca.ts",
+    "idl": "services/src/analysis/decoders/orca/anchor-idl-orca.ts",
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Anchor",
@@ -26,10 +26,16 @@
     "lastUpdated": "2026-04-28"
   },
   {
+    "name": "Magic Eden",
+    "programId": "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8",
+    "idl": "services/src/analysis/decoders/magic-eden/idl.ts",
+    "framework": "Anchor"
+  },
+  {
     "name": "Raydium Liquidity Pool v4",
     "programId": "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
     "framework": "Anchor",
-    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-raydium.ts",
+    "idl": "services/src/analysis/decoders/raydium/anchor-idl-raydium.ts",
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Anchor",
@@ -82,6 +88,32 @@
     },
     "coverage": 100,
     "lastUpdated": "2026-04-28"
+  },
+  {
+    "name": "Magic Eden v2 (MMM)",
+    "programId": "M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K",
+    "framework": "Anchor",
+    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-magic-eden.ts",
+    "decoderStatus": "complete",
+    "benchmark": {
+      "framework": "Anchor",
+      "operations": ["transfer", "create-account"]
+    },
+    "coverage": 100,
+    "lastUpdated": "2026-04-29"
+  },
+  {
+    "name": "Squads Protocol V4",
+    "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+    "framework": "Anchor",
+    "idl": "services/src/analysis/decoders/anchor-defs/anchor-idl-squads.ts",
+    "decoderStatus": "complete",
+    "benchmark": {
+      "framework": "Anchor",
+      "operations": ["transfer", "create-account"]
+    },
+    "coverage": 100,
+    "lastUpdated": "2026-04-29"
   },
   {
     "name": "Drift Protocol",

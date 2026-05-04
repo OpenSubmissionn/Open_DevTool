@@ -46,6 +46,7 @@ function validateEntry(
   seenIds: Set<string>
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
+  const required = ['name', 'programId', 'framework', 'idl', 'decoderStatus', 'benchmark', 'coverage', 'lastUpdated'];
   const required = [
     'name',
     'programId',
@@ -110,6 +111,7 @@ function validateEntry(
       if (typeof b.framework !== 'string') {
         errors.push(`"benchmark.framework" must be a string`);
       } else if (b.framework !== entry.framework) {
+        errors.push(`"benchmark.framework" (${b.framework}) does not match entry framework (${entry.framework})`);
         errors.push(
           `"benchmark.framework" (${b.framework}) does not match entry framework (${entry.framework})`
         );
@@ -170,6 +172,7 @@ function main() {
   if (writeMode) console.log('  Mode: --write (will update coverage and lastUpdated)');
 
   const registryPath = path.join(repoRoot, 'services', 'src', 'data', 'program-registry.json');
+  const benchmarksPath = path.join(repoRoot, 'services', 'src', 'data', 'framework-benchmarks.json');
   const benchmarksPath = path.join(
     repoRoot,
     'services',
