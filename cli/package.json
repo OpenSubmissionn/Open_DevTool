@@ -1,6 +1,6 @@
 {
   "name": "open-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "OPEN - Solana Observability and CU Analysis CLI",
   "main": "bin/open.ts",
   "scripts": {
@@ -27,6 +27,7 @@
     "commander": "^11.1.0",
     "dotenv": "^16.6.1",
     "ink": "^3.2.0",
-    "ora": "^9.3.0"
+    "ora": "^9.3.0",
+    "string-width": "^4.2.3"
   }
 }
