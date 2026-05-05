@@ -88,25 +88,45 @@ export function analyzeCosts(
 
   // Analyze SOL transfers
   //
-  // The previous version emitted one TransferInfo per balance delta, leaving
-  // either `from` or `to` empty — the UI rendered "—" on the other side.
-  // We now pair outgoing and incoming deltas of the same magnitude so both
-  // ends of a transfer are visible. Unpaired deltas (mints/burns, escrow
-  // close, rent reclaim) still surface with "—" because they genuinely have
-  // no counterparty.
+  // Approach: pair outgoing and incoming balance deltas so both ends of each
+  // transfer surface in the UI. Two refinements over a naïve implementation:
   //
-  // Pairing tolerance covers the fee payer case: the sender's outgoing delta
-  // equals (transferred + tx fee), so we allow a small absolute slack.
+  // 1) Fee-payer adjustment. In Solana, accountKeys[0] is the fee payer and
+  //    is the only account charged the tx fee. Their on-chain delta is
+  //    `-(transferred + fee)`, which previously broke pairing for high-priority
+  //    txs (Pump.fun, Jupiter — where the fee can be hundreds of thousands of
+  //    lamports). We now add `feeLamports` back to that account's delta so the
+  //    pairing logic operates on pure transfer amounts. Fee accounting still
+  //    happens in the cuCost panel; nothing is lost, just separated.
+  //
+  // 2) Exact pairing tolerance. After fee adjustment, sender and receiver
+  //    deltas of the same transfer should match exactly — no slack needed.
+  //
+  // Known limitation (single-account net delta):
+  //   `preBalances`/`postBalances` give only NET change per account. If the
+  //   same account both sends and receives SOL within one tx (e.g. swap pool
+  //   that nets to a small fee), only the net flow is visible — gross legs
+  //   are invisible without parsing each instruction. This affects neither
+  //   the fee math nor the spam detector; it's purely a transfer-table
+  //   completeness gap. To fix, we would need to walk the parsed instructions
+  //   and aggregate System.transfer calls — out of scope for the current pass.
   if (bundle.preBalances && bundle.postBalances && bundle.preBalances.length > 0) {
     type Delta = { pubkey: string; amount: number; idx: number };
     const outflows: Delta[] = [];
     const inflows: Delta[] = [];
 
+    const txFee = bundle.fee ?? 0;
+
     for (let i = 0; i < bundle.preBalances.length; i++) {
-      const delta = bundle.postBalances[i] - bundle.preBalances[i];
-      // Skip noise below typical tx fee.
+      let delta = bundle.postBalances[i] - bundle.preBalances[i];
+
+      // Fee payer (accountKeys[0]): net out the tx fee so the remaining delta
+      // reflects only their transfer activity. Result is 0 when they only paid
+      // the fee, which is correctly skipped by the `delta !== 0` filter below.
+      if (i === 0) delta += txFee;
+
       if (delta > 0) inflows.push({ pubkey: bundle.accountKeys[i], amount: delta, idx: i });
-      else if (delta < -5000)
+      else if (delta < 0)
         outflows.push({ pubkey: bundle.accountKeys[i], amount: -delta, idx: i });
     }
 
@@ -114,38 +134,36 @@ export function analyzeCosts(
     outflows.sort((a, b) => b.amount - a.amount);
     inflows.sort((a, b) => b.amount - a.amount);
 
-    const FEE_SLACK_LAMPORTS = 10_000; // covers signature fee + small priority fees
     const consumedInflows = new Set<number>();
 
     for (const out of outflows) {
-      // Best inflow: same amount (exact), or amount = out - fee (sender pays fee).
+      // After fee adjustment, exact match is the norm. Allow 1 lamport for any
+      // floor-rounding artifacts in derivatives like rent reclaim refunds.
       let matchIdx = -1;
       for (let k = 0; k < inflows.length; k++) {
         if (consumedInflows.has(k)) continue;
-        const diff = out.amount - inflows[k].amount;
-        if (diff >= 0 && diff <= FEE_SLACK_LAMPORTS) {
+        if (Math.abs(out.amount - inflows[k].amount) <= 1) {
           matchIdx = k;
           break;
         }
       }
 
-      const uiAmount = out.amount / 1_000_000_000;
-      const usdValue = solPriceUSD !== null ? uiAmount * solPriceUSD : null;
-
       if (matchIdx >= 0) {
         const inflow = inflows[matchIdx];
         consumedInflows.add(matchIdx);
+        const uiAmount = inflow.amount / 1_000_000_000;
         transfers.push({
           from: out.pubkey,
           to: inflow.pubkey,
           amount: inflow.amount.toString(),
           token: 'SOL',
           decimals: 9,
-          uiAmount: inflow.amount / 1_000_000_000,
-          usdValue: solPriceUSD !== null ? (inflow.amount / 1_000_000_000) * solPriceUSD : null,
+          uiAmount,
+          usdValue: solPriceUSD !== null ? uiAmount * solPriceUSD : null,
           isSpamSuspect: false,
         });
       } else {
+        const uiAmount = out.amount / 1_000_000_000;
         transfers.push({
           from: out.pubkey,
           to: '',
@@ -153,7 +171,7 @@ export function analyzeCosts(
           token: 'SOL',
           decimals: 9,
           uiAmount,
-          usdValue,
+          usdValue: solPriceUSD !== null ? uiAmount * solPriceUSD : null,
           isSpamSuspect: false,
         });
       }
@@ -178,17 +196,54 @@ export function analyzeCosts(
   }
 
   // Calculate CU cost
+  //
+  // Source of truth:
+  //   - cuConsumed: bundle.computeUnitsConsumed (canonical RPC meta value, what
+  //     Solscan and validators report). The summed-from-logs value in cuProfile
+  //     can lag by hundreds of CU because Compute Budget invocations and other
+  //     implicit costs don't always emit `consumed N of M` log lines.
+  //   - feeLamports: bundle.fee (authoritative total fee from RPC meta.fee,
+  //     which already equals base + priority). Recomputing only the priority
+  //     component here was the source of the "275 lamports" mismatch with the
+  //     header fee.
+  //
+  // Strategy:
+  //   - feeLamports is canonical (from RPC meta.fee).
+  //   - baseFeeLamports = 5000 × numRequiredSignatures (Solana protocol rule).
+  //   - priorityFeeLamports = feeLamports - baseFeeLamports (whatever's left).
+  //   - microLamportsPerCU is for DISPLAY ("Price: X µL/CU"). Prefer the value
+  //     decoded from the SetComputeUnitPrice instruction; if unavailable
+  //     (versioned txs where the RPC doesn't pre-parse), back-derive it from
+  //     the actual priority fee paid.
+  //
+  // Always preserves the identity baseFee + priorityFee = totalFee.
   const cuConsumed = bundle.computeUnitsConsumed ?? 0;
-  const feeLamports = Math.floor((cuConsumed * microLamportsPerCU) / 1_000_000);
+  const feeLamports = bundle.fee ?? 0;
+
+  const numSigs =
+    (bundle.rawResponse?.transaction as any)?.message?.header?.numRequiredSignatures ?? 1;
+  const baseFeeLamports = Math.min(feeLamports, 5_000 * numSigs);
+  const priorityFeeLamports = feeLamports - baseFeeLamports;
+
+  // Display price: prefer instruction-decoded value, fall back to back-derivation.
+  const effectiveMicroLamportsPerCU =
+    microLamportsPerCU > 0
+      ? microLamportsPerCU
+      : cuConsumed > 0
+        ? Math.round((priorityFeeLamports * 1_000_000) / cuConsumed)
+        : 0;
+
   const feeSOL = feeLamports / 1_000_000_000;
   const feeUSD = solPriceUSD !== null ? feeSOL * solPriceUSD : null;
 
   const cuCost: CUCost = {
     cuConsumed,
-    microLamportsPerCU,
+    microLamportsPerCU: effectiveMicroLamportsPerCU,
     feeLamports,
     feeSOL,
     feeUSD,
+    priorityFeeLamports,
+    baseFeeLamports,
   };
 
   // Calculate total transfer USD
@@ -206,17 +261,33 @@ export function analyzeCosts(
 }
 
 /**
- * Calculate CU cost from raw data
- * Used by merger to add cost info to analysis
+ * Calculate CU cost from raw data.
+ *
+ * Used as a fallback when only CU + price are known (no full bundle). Pass
+ * `totalFeeLamports` from `bundle.fee` (RPC meta.fee) when available so that
+ * `feeLamports` reflects the true total. If omitted, the function assumes the
+ * priority fee plus a single signature base fee (5000 lamports) — this matches
+ * the most common case but is a heuristic, not the canonical value.
  */
 export async function calculateCUCostFromCU(
   cuConsumed: number,
   microLamportsPerCU: number,
-  solPriceUSD: number | null
+  solPriceUSD: number | null,
+  totalFeeLamports?: number
 ): Promise<CUCost> {
-  const feeLamports = Math.floor((cuConsumed * microLamportsPerCU) / 1_000_000);
+  const priorityFeeLamports = Math.floor((cuConsumed * microLamportsPerCU) / 1_000_000);
+  const feeLamports = totalFeeLamports ?? priorityFeeLamports + 5000;
+  const baseFeeLamports = Math.max(0, feeLamports - priorityFeeLamports);
   const feeSOL = feeLamports / 1_000_000_000;
   const feeUSD = solPriceUSD !== null ? feeSOL * solPriceUSD : null;
 
-  return { cuConsumed, microLamportsPerCU, feeLamports, feeSOL, feeUSD };
+  return {
+    cuConsumed,
+    microLamportsPerCU,
+    feeLamports,
+    feeSOL,
+    feeUSD,
+    priorityFeeLamports,
+    baseFeeLamports,
+  };
 }

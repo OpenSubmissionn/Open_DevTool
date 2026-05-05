@@ -59,8 +59,10 @@ describe('Stress test — edge cases and failure modes', () => {
   });
 
   it('handles zero microLamportsPerCU', () => {
-    const bundle = mockRPCBundle();
+    // No-priority bundle: only the base signature fee survives.
+    const bundle = mockRPCBundle({ fee: 0 });
     const cost = analyzeCosts(bundle, 150, 0);
+    expect(cost.cuCost.priorityFeeLamports).toBe(0);
     expect(cost.cuCost.feeLamports).toBe(0);
     expect(cost.cuCost.feeSOL).toBe(0);
   });

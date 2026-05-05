@@ -212,7 +212,7 @@ export function buildCPITreeVisualLines(
     if (node.status === 'truncated') tags.push('TRUNCATED');
 
     const icon = isFailed ? '✗' : '✓';
-    const cu = (node.cuConsumed ?? 0).toLocaleString();
+    const cu = (node.cuConsumed ?? 0).toLocaleString('en-US');
     const tagsChunk = tags.length > 0 ? ` [${tags.join('][')}]` : '';
 
     const resolvedName = resolveProgramName(node.programId);
@@ -259,7 +259,9 @@ const renderHeader = (
   const statusColor = success ? chalk.green : chalk.red;
   const networkLabel = chalk.bgBlue.white(` ${network.toUpperCase()} `);
   const slotLabel = chalk.bgGray.white(` SLOT: ${slot || 'N/A'} `);
-  const displayFee = fee !== undefined ? (fee / 1e9).toFixed(6) : 'N/A';
+  // 9 decimals = full lamport precision; matches the CU cost panel breakdown
+  // so the same value isn't displayed two different ways on one screen.
+  const displayFee = fee !== undefined ? (fee / 1e9).toFixed(9) : 'N/A';
 
   console.log('');
   console.log(`  ${chalk.cyan.bold('OPEN INSIGHT [CLI v0.1.0]')}   ${networkLabel} ${slotLabel}`);
@@ -288,22 +290,35 @@ const renderCUCost = (cuCost: CUCost | undefined) => {
   if (!cuCost || cuCost.cuConsumed === 0) {
     console.log(row(chalk.gray('[ No CU cost data available ]')));
   } else {
-    const priorityLabel =
+    const priceLabel =
       cuCost.microLamportsPerCU > 0
-        ? chalk.yellow(`${cuCost.microLamportsPerCU.toLocaleString()} µL/CU`)
-        : chalk.gray('no priority fee');
+        ? chalk.yellow(`${cuCost.microLamportsPerCU.toLocaleString('en-US')} µL/CU`)
+        : chalk.gray('no priority price set');
+
+    const priorityFeeLabel =
+      cuCost.priorityFeeLamports > 0
+        ? chalk.yellow(`${cuCost.priorityFeeLamports.toLocaleString('en-US')} lamports`)
+        : chalk.gray('0 lamports');
 
     const feeSOLStr = cuCost.feeSOL.toFixed(9);
     const feeUSDStr =
       cuCost.feeUSD !== null ? chalk.green(`$${cuCost.feeUSD.toFixed(6)}`) : chalk.gray('USD N/A');
 
     console.log(
-      row(` ${chalk.white('CU Consumed:')}   ${chalk.cyan(cuCost.cuConsumed.toLocaleString())} CU`)
+      row(
+        ` ${chalk.white('CU Consumed:')}   ${chalk.cyan(cuCost.cuConsumed.toLocaleString('en-US'))} CU`
+      )
     );
-    console.log(row(` ${chalk.white('Priority Fee:')}  ${priorityLabel}`));
+    console.log(row(` ${chalk.white('Price:')}         ${priceLabel}`));
     console.log(
       row(
-        ` ${chalk.white('Fee:')}           ${chalk.yellow(cuCost.feeLamports.toLocaleString())} lamports  ·  ${chalk.yellow(feeSOLStr)} SOL  ·  ${feeUSDStr}`
+        ` ${chalk.white('Base Fee:')}      ${chalk.yellow(cuCost.baseFeeLamports.toLocaleString('en-US'))} lamports`
+      )
+    );
+    console.log(row(` ${chalk.white('Priority Fee:')}  ${priorityFeeLabel}`));
+    console.log(
+      row(
+        ` ${chalk.white('Total Fee:')}     ${chalk.yellow(cuCost.feeLamports.toLocaleString('en-US'))} lamports  ·  ${chalk.yellow(feeSOLStr)} SOL  ·  ${feeUSDStr}`
       )
     );
   }
@@ -340,9 +355,14 @@ const renderTransferBreakdown = (transfers: TransferInfo[] | undefined) => {
     // itself — mint, rent reclaim, or escrow. Label it instead of "—".
     const from = t.from ? truncatePubkey(t.from) : chalk.gray('(mint/rent)');
     const to = t.to ? truncatePubkey(t.to) : chalk.gray('(burn/rent)');
-    const amount = t.uiAmount.toLocaleString(undefined, { maximumFractionDigits: 6 });
+    const amount = t.uiAmount.toLocaleString('en-US', { maximumFractionDigits: 6 });
     const token = t.token === 'SOL' ? chalk.yellow('SOL') : truncate(t.token, 8, 6);
-    const usd = t.usdValue !== null ? chalk.green(`$${t.usdValue.toFixed(2)}`) : chalk.gray('N/A');
+    const usd =
+      t.usdValue !== null
+        ? t.usdValue > 0 && t.usdValue < 0.01
+          ? chalk.green('< $0.01')
+          : chalk.green(`$${t.usdValue.toFixed(2)}`)
+        : chalk.gray('N/A');
     const spam = t.isSpamSuspect ? chalk.red('⚠ YES') : chalk.gray('no');
 
     table.push([from, to, amount, token, usd, spam]);
