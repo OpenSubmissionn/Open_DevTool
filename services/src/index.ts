@@ -25,6 +25,7 @@ export type {
 export * from './analysis/renderer';
 export * from './solana/rpc';
 export * from './solana/connection';
+export * from './solana/simulationService';
 
 // Batch analysis
 export * from './analysis/batchAggregator';
