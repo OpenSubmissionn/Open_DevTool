@@ -54,11 +54,28 @@ Open takes any Solana transaction signature and turns it into a fully decoded ex
 
 ## Installation
 
+Install globally with one command (requires Node.js 18+ and git):
+
 ```bash
-git clone https://github.com/Mirelasbianchi/open.git
-cd open
+npm install -g github:OpenSubmissionn/Submission_Open
+```
+
+This makes the `open` command available globally. To verify:
+
+```bash
+open --help
+```
+
+> **macOS users:** macOS ships its own `open` command. Depending on your `PATH` order, the npm-installed `open` may shadow it. If that bothers you, invoke with `npx --package=github:OpenSubmissionn/Submission_Open open ...` instead.
+
+### Install from source (for contributors)
+
+```bash
+git clone https://github.com/OpenSubmissionn/Submission_Open.git
+cd Submission_Open
 npm install
 npm run build
+npm link
 ```
 
 ## Quickstart
