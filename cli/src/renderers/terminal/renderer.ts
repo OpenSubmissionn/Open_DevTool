@@ -7,7 +7,6 @@ import {
   AccountDiff,
   TransferInfo,
   CUProfile,
-  Insight,
 } from '../../../../services/src';
 import {
   buildCPITree,
@@ -23,9 +22,12 @@ import { getProgramNameSync } from '../../../../services/src/solana/programs';
 
 const WIDTH = 145;
 const INNER = WIDTH - 4;
-const LEFT_W = 80;
+// Left column got wider after the redundant SUGGESTION card moved out of the
+// dashboard — extra width goes to the CALL TREE (bigger CU bar + room for full
+// program names) and to the FLAME GRAPH strip.
+const LEFT_W = 92;
 const GAP = 3;
-const RIGHT_W = INNER - LEFT_W - GAP; // 58
+const RIGHT_W = INNER - LEFT_W - GAP; // 46
 const BUDGET_LIMIT_DEFAULT = 200_000;
 
 // ─── ANSI-AWARE LAYOUT HELPERS ──────────────────────────────────────────────
@@ -89,16 +91,31 @@ const boxTwoCol = (left: string, right: string, color = chalk.gray) =>
   color('│');
 
 // ─── BARS / FORMATTERS ──────────────────────────────────────────────────────
+//
+// Threshold scheme requested by Nicole:
+//   < 25 %  → neon green   (OK)
+//   25–50 % → yellow       (alert)
+//   ≥ 50 %  → vivid red    (over budget for a single CPI segment)
+// All bars and CU labels share this same palette so the user can read severity
+// at a glance no matter where the number appears (tree row, flame, KPI card).
 
 const cuColor = (pct: number) => {
-  if (pct >= 0.5) return chalk.red;
-  if (pct >= 0.25) return chalk.yellow;
-  return chalk.cyan;
+  if (pct >= 0.5) return chalk.redBright;
+  if (pct >= 0.25) return chalk.yellowBright;
+  return chalk.greenBright;
+};
+
+const cuColorBold = (pct: number) => {
+  if (pct >= 0.5) return chalk.redBright.bold;
+  if (pct >= 0.25) return chalk.yellowBright.bold;
+  return chalk.greenBright.bold;
 };
 
 const horizontalBar = (pct: number, width: number): string => {
   const clamped = Math.max(0, Math.min(1, pct));
-  const filled = Math.max(0, Math.min(width, Math.round(clamped * width)));
+  // Floor instead of round so tiny shares (< half a cell) render as fully
+  // empty — matches the bar style Nicole referenced where 1.8% shows no fill.
+  const filled = Math.max(0, Math.min(width, Math.floor(clamped * width)));
   const empty = width - filled;
   const c = cuColor(clamped);
   return c('█'.repeat(filled)) + chalk.gray('░'.repeat(empty));
@@ -111,12 +128,38 @@ const gradientBar = (pct: number, width: number): string => {
   let out = '';
   for (let i = 0; i < filled; i++) {
     const p = (i + 1) / Math.max(1, width);
-    if (p < 0.55) out += chalk.green('█');
-    else if (p < 0.85) out += chalk.yellow('█');
-    else out += chalk.red('█');
+    if (p < 0.25) out += chalk.greenBright('█');
+    else if (p < 0.5) out += chalk.yellowBright('█');
+    else out += chalk.redBright('█');
   }
   out += chalk.gray('░'.repeat(empty));
   return out;
+};
+
+// Inline severity bar for a CPI tree row.
+//   • lengthPct  → controls how much of the bar is filled. Caller passes
+//                  cu / max(cu) so the longest bar fills the full track and
+//                  others scale relative to the max — proper profiler-style
+//                  visual encoding of CU consumption.
+//   • colorPct   → controls the colour. Caller passes cu / total so the
+//                  threshold palette (green / yellow / red) reflects the row's
+//                  share of the whole transaction, not its share of the max.
+// Each bar is framed by thin ▕ ▏ edges so adjacent rows read as INDIVIDUAL
+// bars instead of merging into one stacked block. Floor-based fill so tiny
+// shares render as fully empty (just the track).
+const rowBar = (lengthPct: number, colorPct: number, width: number): string => {
+  const clampedLen = Math.max(0, Math.min(1, lengthPct));
+  const inner = Math.max(2, width - 2);
+  const filled = Math.max(0, Math.min(inner, Math.floor(clampedLen * inner)));
+  const empty = inner - filled;
+  const c = cuColor(colorPct);
+  return chalk.gray('▕') + c('█'.repeat(filled)) + chalk.gray('░'.repeat(empty)) + chalk.gray('▏');
+};
+
+const severityLabel = (pct: number): string => {
+  if (pct >= 0.5) return chalk.redBright.bold('● HOT');
+  if (pct >= 0.25) return chalk.yellowBright.bold('● WARN');
+  return chalk.greenBright.bold('● OK');
 };
 
 const formatSol = (lamports: number) => {
@@ -314,7 +357,11 @@ export function buildCPITreeVisualLines(
   return output;
 }
 
-// ─── DASHBOARD: HEADER ROW (mac dots + meta + status) ───────────────────────
+// ─── DASHBOARD: HEADER (single line) ────────────────────────────────────────
+//
+// Single sober line: mac dots + signature meta + status pill + duration. All
+// the rich CU/summary info lives in its dedicated sections below so the
+// briefing stays clean and quiet.
 
 function dashboardHeaderRow(
   signature: string,
@@ -341,6 +388,10 @@ function dashboardHeaderRow(
 }
 
 // ─── DASHBOARD: TAB BAR ─────────────────────────────────────────────────────
+//
+// Lightweight nav strip under the header so the user can see, at a glance,
+// which sub-view is in play. The active tab gets green bold + a green
+// underline; the others stay grey.
 
 function dashboardTabBarLines(active: string = 'Flame'): {
   tabLine: string;
@@ -360,17 +411,60 @@ function dashboardTabBarLines(active: string = 'Flame'): {
   };
 }
 
-// ─── DASHBOARD: CALL TREE (right-aligned CU per row) ────────────────────────
+// ─── DASHBOARD: CALL TREE (bar + % + CU, threshold-coloured per row) ────────
+//
+// Each row is laid out as fixed columns so they stay aligned no matter how
+// deep the tree gets:
+//
+//   <prefix><connector><dot> <name> <pubkey> ··· <bar> <pct>  <cu>
+//
+// The dot, bar and CU number are coloured by the row's share of the
+// transaction's TOTAL consumed CUs — so a single hot CPI flares red even when
+// the whole transaction sits under budget. The bottleneck row gets an extra
+// "⚠ HOTSPOT" tag so it pops without us having to invent a new colour.
+
+// Column widths for the CALL TREE rows. Bar is wide (32) so the visualisation
+// reads like a real bar chart — same anatomy as the COMPUTE UNITS PER
+// INSTRUCTION rows Nicole referenced. The right cluster has a fixed visible
+// width so the column header dashes line up with the row data and the box
+// border doesn't drift; pct is 6-wide to fit "100.0%" on the root row.
+const TREE_BAR_W = 32;
+const TREE_PCT_W = 6;
+const TREE_CU_W = 12;
+// 1 leading space + bar + 1 space + pct + 2 spaces + cu  → total visible width
+// of the right cluster, used to compute the available space for the label.
+const TREE_RIGHT_W = 1 + TREE_BAR_W + 1 + TREE_PCT_W + 2 + TREE_CU_W;
+
+// Walk the tree once to find the largest CU value so we can normalise bar
+// lengths to it. The bar for the heaviest node fills the full track; every
+// other bar is scaled relative to that max — direct visual encoding of
+// "biggest CU eater" vs the rest.
+function findMaxCU(nodes: CPINodeView[]): number {
+  let max = 0;
+  const walk = (ns: CPINodeView[]) => {
+    for (const n of ns) {
+      const cu = n.cuConsumed ?? 0;
+      if (cu > max) max = cu;
+      if (n.children?.length) walk(n.children);
+    }
+  };
+  walk(nodes);
+  return max;
+}
 
 function buildDashboardTreeLines(
   nodes: CPINodeView[],
   bottleneckTarget: BottleneckTarget | null,
   width: number,
+  totalCU: number,
+  maxCU?: number,
   prefix = '',
   isRoot = true,
   state = { consumed: false }
 ): string[] {
   const out: string[] = [];
+  // Compute max once at the top-level call and reuse for every recursion.
+  const max = maxCU ?? findMaxCU(nodes);
 
   nodes.forEach((node, i) => {
     const isLast = i === nodes.length - 1;
@@ -387,29 +481,46 @@ function buildDashboardTreeLines(
 
     if (matchesBottleneck) state.consumed = true;
 
+    const cu = node.cuConsumed ?? 0;
+    const pct = totalCU > 0 ? cu / totalCU : 0;
+    const barLengthPct = max > 0 ? cu / max : 0;
+
     const resolvedName = resolveProgramName(node.programId) ?? node.programName ?? node.programId;
     const shortPub = truncatePubkey(node.programId);
-    const warn = matchesBottleneck || isFailed ? chalk.red('⚠ ') : '';
+
     const nameStyled = matchesBottleneck
-      ? chalk.red.bold(resolvedName)
+      ? chalk.redBright.bold(resolvedName)
       : isFailed
         ? chalk.yellow(resolvedName)
         : isRoot
           ? chalk.white.bold(resolvedName)
           : chalk.white(resolvedName);
-    const labelText = `${warn}${nameStyled} ${chalk.gray(shortPub)}`;
 
-    const cuStr = (node.cuConsumed ?? 0).toLocaleString('en-US') + ' CU';
-    const cuColored = matchesBottleneck
-      ? chalk.red.bold(cuStr)
-      : isFailed
-        ? chalk.yellow(cuStr)
-        : chalk.gray(cuStr);
-
+    // No leading severity dot — Nicole wants the rows to look like the photo
+    // (label + bar + % + CU). The bar + colored numbers already encode
+    // severity, so the dot was just visual noise.
+    const labelText = `${nameStyled} ${chalk.gray(shortPub)}`;
     const leftSide = chalk.gray(prefix + connector) + labelText;
-    const used = stringWidth(leftSide) + stringWidth(cuStr);
-    const padN = Math.max(2, width - used);
-    out.push(leftSide + ' '.repeat(padN) + cuColored);
+
+    // Right cluster: bar + pct + CU. We size the left side so the right
+    // cluster always lands at the same column.
+    const cuStr = cu.toLocaleString('en-US') + ' CU';
+    const pctStr = totalCU > 0 ? `${(pct * 100).toFixed(1)}%`.padStart(TREE_PCT_W) : '    — ';
+    // Bar length normalised by max CU; colour by share of total.
+    const bar = totalCU > 0 ? rowBar(barLengthPct, pct, TREE_BAR_W) : ' '.repeat(TREE_BAR_W);
+
+    const cuColored = isFailed
+      ? chalk.yellow(cuStr)
+      : matchesBottleneck
+        ? chalk.redBright.bold(cuStr)
+        : cuColor(pct)(cuStr);
+    const pctColored = isFailed ? chalk.yellow(pctStr) : cuColorBold(pct)(pctStr);
+
+    const leftBudget = Math.max(20, width - TREE_RIGHT_W);
+    const leftPadded = padVisible(truncateMid(leftSide, leftBudget), leftBudget);
+    const cuPadded = padVisibleStart(cuColored, TREE_CU_W);
+
+    out.push(`${leftPadded} ${bar} ${pctColored}  ${cuPadded}`);
 
     if (node.children?.length) {
       out.push(
@@ -417,6 +528,8 @@ function buildDashboardTreeLines(
           node.children,
           bottleneckTarget,
           width,
+          totalCU,
+          max,
           childPrefix,
           false,
           state
@@ -426,6 +539,166 @@ function buildDashboardTreeLines(
   });
 
   return out;
+}
+
+// ─── DASHBOARD: FLAME GRAPH ─────────────────────────────────────────────────
+//
+// Designed for "wow" — a flat, observability-grade flame strip with a rich
+// categorical palette. Severity (red / yellow) is reserved exclusively for
+// HOT (≥50 %) and WARN (25–50 %) segments so the alarm keeps its meaning;
+// every other program rotates through a striking blue-led cool palette
+// (blueBright → cyanBright → magentaBright → blue → cyan → magenta) so the
+// strip reads as a polished, professional rainbow instead of a sea of red.
+//
+// Layout:
+//   1. Inline labels       — program name + % centred over each segment.
+//   2. Three-row strip     — ▄ (top edge) / █ (body) / ▀ (bottom edge),
+//                            same colour per segment, gives a chunky silhouette.
+//   3. Tick ruler          — │ markers under every 25 % with 0/25/50/75/100 %
+//                            labels so the reader has an actual scale.
+//   4. Legend rows         — colour chip + severity badge (only when HOT/WARN)
+//                            + program name + share + CU + mini-bar.
+
+type FlameSeg = { name: string; cu: number; share: number };
+
+// Cool palette — leads with blueBright (the "azul marcante" Nicole asked for),
+// then rotates through cyan/magenta/etc. so adjacent segments never share a
+// hue. Skipping greenBright on purpose: green now lives in the CALL TREE row
+// dot only (OK indicator), keeping the flame's identity distinct.
+const FLAME_COOL_PALETTE = [
+  chalk.blueBright,
+  chalk.cyanBright,
+  chalk.magentaBright,
+  chalk.blue,
+  chalk.cyan,
+  chalk.magenta,
+];
+
+const flameColor = (share: number, idx: number) => {
+  if (share >= 0.5) return chalk.redBright;
+  if (share >= 0.25) return chalk.yellowBright;
+  return FLAME_COOL_PALETTE[idx % FLAME_COOL_PALETTE.length];
+};
+
+function collectFlameSegments(cuProfile: CUProfile | undefined): FlameSeg[] {
+  if (!cuProfile?.perInstruction?.length || !cuProfile.totalConsumed) return [];
+  const total = cuProfile.totalConsumed;
+  const map = new Map<string, { name: string; cu: number }>();
+  for (const e of cuProfile.perInstruction) {
+    const name = resolveProgramName(e.programId) ?? e.programName ?? e.programId;
+    const prev = map.get(e.programId);
+    if (prev) prev.cu += e.cuConsumed ?? 0;
+    else map.set(e.programId, { name, cu: e.cuConsumed ?? 0 });
+  }
+  return [...map.values()]
+    .map((v) => ({ ...v, share: total > 0 ? v.cu / total : 0 }))
+    .sort((a, b) => b.cu - a.cu);
+}
+
+function buildFlameGraphLines(cuProfile: CUProfile | undefined, width: number): string[] {
+  const segments = collectFlameSegments(cuProfile);
+  if (!segments.length) {
+    return [chalk.gray('  No flame data available.')];
+  }
+
+  // 1. Build the strip widths so they sum to exactly `width`.
+  const totalCU = segments.reduce((s, x) => s + x.cu, 0) || 1;
+  const widths = segments.map((s) => Math.max(1, Math.floor((s.cu / totalCU) * width)));
+  // distribute rounding remainder onto the largest segment
+  const used = widths.reduce((a, b) => a + b, 0);
+  if (used !== width && widths.length > 0) widths[0] += width - used;
+
+  // Resolve a stable colour for each segment (used in strip + legend so chip
+  // matches the bar exactly).
+  const colors = segments.map((s, i) => flameColor(s.share, i));
+
+  // 2. Three-row strip: top edge, full body, bottom edge.
+  const topEdge: string[] = [];
+  const body: string[] = [];
+  const botEdge: string[] = [];
+  for (let i = 0; i < segments.length; i++) {
+    const c = colors[i];
+    topEdge.push(c('▄'.repeat(widths[i])));
+    body.push(c('█'.repeat(widths[i])));
+    botEdge.push(c('▀'.repeat(widths[i])));
+  }
+
+  // 3. Tick ruler with markers under 0/25/50/75/100 %.
+  const ruler = (() => {
+    const tickRow = ' '.repeat(width).split('');
+    const labelRow = ' '.repeat(width).split('');
+    const ticks = [0, 25, 50, 75, 100];
+    for (const t of ticks) {
+      const idx = Math.min(width - 1, Math.round((t / 100) * (width - 1)));
+      tickRow[idx] = '│';
+      const lab = t === 0 ? '0' : `${t}%`;
+      const start = Math.min(width - lab.length, Math.max(0, idx - Math.floor(lab.length / 2)));
+      for (let k = 0; k < lab.length; k++) labelRow[start + k] = lab[k];
+    }
+    return [chalk.gray(tickRow.join('')), chalk.gray(labelRow.join(''))];
+  })();
+
+  // 4. Inline labels centred over each segment wide enough to fit them. The
+  //    label uses the segment's own colour so it visually anchors to the strip.
+  const innerLabels = (() => {
+    type Span = { start: number; text: string; idx: number };
+    const spans: Span[] = [];
+    let cursor = 0;
+    for (let i = 0; i < segments.length; i++) {
+      const w = widths[i];
+      if (w >= 8) {
+        const pctLabel = `${(segments[i].share * 100).toFixed(0)}%`;
+        const nameLabel = truncateMid(segments[i].name, Math.max(3, w - pctLabel.length - 1));
+        const text = `${nameLabel} ${pctLabel}`;
+        const trimmed = truncateMid(text, w - 2);
+        const start = cursor + Math.max(0, Math.floor((w - stringWidth(trimmed)) / 2));
+        spans.push({ start, text: trimmed, idx: i });
+      }
+      cursor += w;
+    }
+    let out = '';
+    let pos = 0;
+    for (const span of spans) {
+      if (span.start > pos) out += ' '.repeat(span.start - pos);
+      out += colors[span.idx].bold(span.text);
+      pos = span.start + stringWidth(span.text);
+    }
+    if (pos < width) out += ' '.repeat(width - pos);
+    return out;
+  })();
+
+  // 5. Legend rows: chip + sev badge (only HOT/WARN) + name + mini-bar + pct + CU.
+  const LEGEND_NAME_W = 26;
+  const LEGEND_BAR_W = 16;
+  const legend = segments.slice(0, 6).map((s, i) => {
+    const c = colors[i];
+    const chip = c('██');
+    let badge: string;
+    if (s.share >= 0.5) badge = chalk.bgRedBright.black.bold(' HOT  ');
+    else if (s.share >= 0.25) badge = chalk.bgYellowBright.black.bold(' WARN ');
+    else badge = chalk.gray('      ');
+    const name = padVisible(truncateMid(s.name, LEGEND_NAME_W), LEGEND_NAME_W);
+    // mini-bar fills proportional to share, in the segment's own colour
+    const filled = Math.max(0, Math.min(LEGEND_BAR_W, Math.round(s.share * LEGEND_BAR_W)));
+    const miniBar = c('█'.repeat(filled)) + chalk.gray('░'.repeat(LEGEND_BAR_W - filled));
+    const pct = padVisibleStart(`${(s.share * 100).toFixed(1)}%`, 6);
+    const cu = padVisibleStart(`${s.cu.toLocaleString('en-US')} CU`, 12);
+    const pctColored = c.bold(pct);
+    const cuColored = c(cu);
+    return `  ${chip}  ${badge}  ${chalk.white(name)}  ${miniBar}  ${pctColored}  ${cuColored}`;
+  });
+
+  return [
+    innerLabels,
+    topEdge.join(''),
+    body.join(''),
+    botEdge.join(''),
+    ruler[0],
+    ruler[1],
+    '',
+    chalk.gray('  ── breakdown ' + '─'.repeat(Math.max(0, width - 16))),
+    ...legend,
+  ];
 }
 
 // ─── DASHBOARD: CU PER INSTRUCTION BARS ─────────────────────────────────────
@@ -443,17 +716,34 @@ function buildCUBarsLines(cuProfile: CUProfile | undefined, width: number): stri
     else map.set(e.programId, { name, cu: e.cuConsumed ?? 0 });
   }
   const sorted = [...map.values()].sort((a, b) => b.cu - a.cu).slice(0, 5);
+  // Bar length is normalised against the heaviest instruction (sorted[0])
+  // so the longest bar fills the whole track and every other bar is scaled
+  // relative to that max — proper profiler-style encoding of CU usage.
+  const maxCU = sorted.length > 0 ? sorted[0].cu : 0;
 
+  // Same row anatomy Nicole wants in the screenshot: label  bar  % (bold,
+  // threshold-coloured)  CU (threshold-coloured). CU column right-padded so
+  // numbers line up no matter how wide the value is.
   const NAME_W = 18;
-  const PCT_W = 5;
-  const BAR_W = Math.max(8, width - NAME_W - PCT_W - 4);
+  const PCT_W = 6; // fits "100.0%"
+  const CU_W = 12;
+  const BAR_W = Math.max(8, width - NAME_W - PCT_W - CU_W - 6);
 
   return sorted.map((e) => {
     const pct = e.cu / total;
+    const barLengthPct = maxCU > 0 ? e.cu / maxCU : 0;
     const name = padVisible(truncateMid(e.name, NAME_W), NAME_W);
-    const bar = horizontalBar(pct, BAR_W);
-    const pctStr = padVisibleStart(`${Math.round(pct * 100)}%`, PCT_W);
-    return `${chalk.white(name)}  ${bar}  ${chalk.gray(pctStr)}`;
+    // Bar length scaled to max; colour is still threshold-by-share so the
+    // visual narrative ("how much of the budget") reads alongside the
+    // comparative narrative ("how it stacks up vs the heaviest one").
+    const filled = Math.max(0, Math.min(BAR_W, Math.floor(barLengthPct * BAR_W)));
+    const empty = BAR_W - filled;
+    const bar = cuColor(pct)('█'.repeat(filled)) + chalk.gray('░'.repeat(empty));
+    const pctStr = padVisibleStart(`${(pct * 100).toFixed(1)}%`, PCT_W);
+    const pctColored = cuColorBold(pct)(pctStr);
+    const cuStr = `${e.cu.toLocaleString('en-US')} CU`;
+    const cuColored = padVisibleStart(cuColor(pct)(cuStr), CU_W);
+    return `${chalk.white(name)}  ${bar}  ${pctColored}  ${cuColored}`;
   });
 }
 
@@ -542,110 +832,35 @@ function buildCpiDetailLines(
   return lines;
 }
 
-// ─── DASHBOARD: SUGGESTION BOX ──────────────────────────────────────────────
-
-function wrapText(text: string, width: number): string[] {
-  if (!text) return [];
-  const words = text.split(/\s+/).filter(Boolean);
-  const lines: string[] = [];
-  let current = '';
-  for (const w of words) {
-    if (!current) {
-      current = w;
-      continue;
-    }
-    if (stringWidth(current + ' ' + w) > width) {
-      lines.push(current);
-      current = w;
-    } else {
-      current = current + ' ' + w;
-    }
-  }
-  if (current) lines.push(current);
-  return lines;
-}
-
-function buildSuggestionLines(primary: Insight | null, width: number): string[] {
-  const inner = width - 4;
-  const titleText = 'SUGGESTION';
-  const dashes = Math.max(0, width - 5 - titleText.length);
-  const top =
-    chalk.green('╭─ ') + chalk.green.bold(titleText) + chalk.green(' ' + '─'.repeat(dashes) + '╮');
-  const bot = chalk.green('╰' + '─'.repeat(width - 2) + '╯');
-  const blank = chalk.green('│ ') + ' '.repeat(inner) + chalk.green(' │');
-
-  const lines: string[] = [top, blank];
-
-  if (!primary) {
-    lines.push(
-      chalk.green('│ ') +
-        padVisible(chalk.gray('No optimization issues detected.'), inner) +
-        chalk.green(' │')
-    );
-    lines.push(blank);
-    lines.push(bot);
-    return lines;
-  }
-
-  const message = primary.message || primary.title || '';
-  const recommendation = primary.recommendation || '';
-  let body = message;
-  if (recommendation && !message.includes(recommendation)) {
-    body = body ? `${body} ${recommendation}` : recommendation;
-  }
-
-  const wrapped = wrapText(body, inner);
-  for (const w of wrapped) {
-    lines.push(chalk.green('│ ') + padVisible(chalk.green(w), inner) + chalk.green(' │'));
-  }
-
-  if (primary.estimatedCUSavings && primary.estimatedCUSavings > 0) {
-    lines.push(blank);
-    const savText =
-      chalk.green.bold('Estimated savings: ') +
-      chalk.green(`~${(primary.estimatedCUSavings / 1000).toFixed(0)}k CU`);
-    lines.push(chalk.green('│ ') + padVisible(savText, inner) + chalk.green(' │'));
-  }
-
-  lines.push(blank);
-  lines.push(bot);
-  return lines;
-}
-
 // ─── DASHBOARD: BUDGET BAR ──────────────────────────────────────────────────
 
 function buildBudgetBarLines(consumed: number, limit: number, width: number): string[] {
   const pct = limit > 0 ? consumed / limit : 0;
   const out: string[] = [];
-  out.push(chalk.cyan.bold('BUDGET TOTAL'));
+  // Title styled like other section heads so it visually anchors between the
+  // CALL TREE and the FLAME GRAPH.
+  const title = 'BUDGET TOTAL  ·  used vs ceiling';
+  out.push(
+    chalk.cyanBright.bold(title) +
+      '  ' +
+      chalk.gray('─'.repeat(Math.max(0, width - stringWidth(title) - 2)))
+  );
   out.push('');
   out.push(gradientBar(pct, width));
+  // Bottom labels: 0 on the left, consumed / limit on the right, with the
+  // utilization % bolded in threshold colour so it pops against the bar.
+  const pctLabel = `${Math.round(pct * 100)}%`;
+  const pctColored = cuColorBold(pct)(pctLabel);
   const labelLeft = chalk.gray('0');
-  const labelRight = chalk.gray(
-    `${consumed.toLocaleString('en-US')} / ${limit.toLocaleString('en-US')} CU`
-  );
+  const labelRight =
+    pctColored +
+    chalk.gray(`   ${consumed.toLocaleString('en-US')} / ${limit.toLocaleString('en-US')} CU`);
   const fill = Math.max(1, width - stringWidth(labelLeft) - stringWidth(labelRight));
   out.push(labelLeft + ' '.repeat(fill) + labelRight);
   return out;
 }
 
 // ─── DASHBOARD HELPERS ──────────────────────────────────────────────────────
-
-function pickPrimaryInsight(insights: InsightReport): Insight | null {
-  if (!insights) return null;
-  const primary = (insights as any).primaryBottleneck as Insight | null | undefined;
-  if (primary) return primary;
-  const list: Insight[] = Array.isArray(insights) ? (insights as any) : (insights.insights ?? []);
-  if (!list.length) return null;
-  const sevRank: Record<string, number> = { critical: 3, warning: 2, info: 1 };
-  const sorted = [...list].sort((a, b) => {
-    const sa = sevRank[a.severity] ?? 0;
-    const sb = sevRank[b.severity] ?? 0;
-    if (sa !== sb) return sb - sa;
-    return (b.estimatedCUSavings ?? 0) - (a.estimatedCUSavings ?? 0);
-  });
-  return sorted[0] ?? null;
-}
 
 function findInstructionIndex(analyzed: AnalyzedTransaction): number {
   const bottleneckProgram = (analyzed as any)?.cuProfile?.bottleneck?.programId;
@@ -725,8 +940,9 @@ function renderDashboard(
 
   // Left column ────────────────────────────────────────────────────────────
   const treeLines = cpiNodes.length
-    ? buildDashboardTreeLines(cpiNodes, bottleneckTarget, LEFT_W)
+    ? buildDashboardTreeLines(cpiNodes, bottleneckTarget, LEFT_W, totalConsumed)
     : [chalk.gray('  No CPI data available.')];
+  const flameLines = buildFlameGraphLines(cuProfile, LEFT_W);
   const barLines = buildCUBarsLines(cuProfile, LEFT_W);
 
   // Right column ───────────────────────────────────────────────────────────
@@ -761,29 +977,51 @@ function renderDashboard(
     logCount,
     RIGHT_W
   );
-  const primary = pickPrimaryInsight(insights);
-  const suggestionLines = buildSuggestionLines(primary, RIGHT_W);
-  const budgetLines = buildBudgetBarLines(totalConsumed, totalLimit, RIGHT_W);
+  // Suggestion intentionally omitted from the right column — the full
+  // ACTIONABLE INSIGHTS panel below the dashboard is the single source of
+  // truth so the right column stays focused on metrics. Budget bar moved to
+  // the left column (between CALL TREE and FLAME GRAPH) so it gets the full
+  // LEFT_W width and reads as part of the CU narrative.
+  const budgetLines = buildBudgetBarLines(totalConsumed, totalLimit, LEFT_W);
+
+  // Headings get a thin underline so each section reads as a card. The flame
+  // strip sits between the tree (structural view) and the per-instruction bars
+  // (detail view) so the eye walks: callgraph → flame summary → details.
+  const sectionHead = (label: string, accent: (s: string) => string = chalk.cyan.bold) => [
+    accent(label) + '  ' + chalk.gray('─'.repeat(Math.max(0, LEFT_W - stringWidth(label) - 2))),
+    '',
+  ];
+
+  // Column header for CALL TREE rows — widths must mirror the row layout in
+  // buildDashboardTreeLines so the dashes align with the data underneath.
+  const treeColHeader = chalk.gray(
+    padVisible('  program', Math.max(20, LEFT_W - TREE_RIGHT_W)) +
+      ' ' +
+      padVisible('share', TREE_BAR_W) +
+      ' ' +
+      padVisible('   %', TREE_PCT_W) +
+      '  ' +
+      padVisibleStart('CU', TREE_CU_W)
+  );
 
   const leftLines: string[] = [
-    chalk.gray.bold('CALL TREE'),
-    '',
+    ...sectionHead('CALL TREE', chalk.cyan.bold),
+    treeColHeader,
+    chalk.gray('  ' + '─'.repeat(LEFT_W - 2)),
     ...treeLines,
     '',
     '',
-    chalk.gray.bold('COMPUTE UNITS PER INSTRUCTION'),
+    ...budgetLines,
     '',
+    '',
+    ...sectionHead('FLAME GRAPH  ·  CU share by program', chalk.magentaBright.bold),
+    ...flameLines,
+    '',
+    '',
+    ...sectionHead('COMPUTE UNITS PER INSTRUCTION', chalk.cyan.bold),
     ...barLines,
   ];
-  const rightLines: string[] = [
-    ...kpiLines,
-    '',
-    ...cpiDetailLines,
-    '',
-    ...suggestionLines,
-    '',
-    ...budgetLines,
-  ];
+  const rightLines: string[] = [...kpiLines, '', ...cpiDetailLines];
 
   const maxLen = Math.max(leftLines.length, rightLines.length);
   while (leftLines.length < maxLen) leftLines.push('');
@@ -889,43 +1127,108 @@ const renderAccountsTable = (accountDiffs: AccountDiff[]) => {
 };
 
 // ─── ANOMALIES ──────────────────────────────────────────────────────────────
+//
+// Each anomaly renders as a self-contained card so the section reads like a
+// formal incident report rather than a flat log:
+//
+//   ╭─ [ HIGH ] · spam ─────────────────────────────────── confidence 85% ─╮
+//   │                                                                       │
+//   │  ⚠  Suspicious spam token transfer: 1,580,738.23 tokens of unverified │
+//   │     mint FraUdp6Y…56jau5                                              │
+//   │                                                                       │
+//   ╰───────────────────────────────────────────────────────────────────────╯
+//
+// Severity drives the badge colour (red/yellow/cyan), the icon, and the
+// confidence threshold colouring so the eye triages without reading words.
 
-const severityChalk = (sev: string) => {
-  if (sev === 'high') return chalk.red;
-  if (sev === 'medium') return chalk.yellow;
-  return chalk.cyan;
+const severityAccent = (sev: string) => {
+  if (sev === 'high') return chalk.redBright;
+  if (sev === 'medium') return chalk.yellowBright;
+  return chalk.cyanBright;
 };
 
-const SEVERITY_ICON: Record<string, string> = {
-  high: '⚠',
-  medium: '!',
-  low: 'i',
+const confidenceColored = (confidence: number): string => {
+  const pct = `${(confidence * 100).toFixed(0)}%`;
+  if (confidence >= 0.8) return chalk.redBright.bold(pct);
+  if (confidence >= 0.5) return chalk.yellowBright.bold(pct);
+  return chalk.greenBright.bold(pct);
+};
+
+const wrapText = (text: string, width: number): string[] => {
+  if (!text) return [];
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let current = '';
+  for (const w of words) {
+    if (!current) {
+      current = w;
+      continue;
+    }
+    if (stringWidth(current + ' ' + w) > width) {
+      lines.push(current);
+      current = w;
+    } else {
+      current = current + ' ' + w;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
 };
 
 const renderAnomalies = (report: any) => {
   const anomalies: any[] = report?.anomalies ?? [];
-  console.log('');
-  console.log('  ' + chalk.cyan.bold('ANOMALIES'));
+  const count = anomalies.length;
 
-  if (anomalies.length === 0) {
-    console.log('  ' + chalk.gray('[ No anomalies detected ]'));
+  console.log('');
+
+  // Section title — the count is appended in plain text rather than a
+  // background-coloured pill so it reads as a label, not a billboard.
+  const subtitle =
+    count === 0
+      ? chalk.gray('· nothing suspicious')
+      : count === 1
+        ? chalk.gray('· 1 detected')
+        : chalk.gray(`· ${count} detected`);
+  console.log('  ' + chalk.cyan.bold('ANOMALIES') + '  ' + subtitle);
+  console.log('  ' + chalk.gray('─'.repeat(WIDTH - 2)));
+
+  if (count === 0) {
+    console.log('  ' + chalk.gray('No spam, MEV, or unusual patterns detected.'));
     return;
   }
 
-  for (const a of anomalies) {
-    const color = severityChalk(a.severity);
-    const icon = SEVERITY_ICON[a.severity] ?? '·';
-    const tag = color.bold(`[${String(a.severity).toUpperCase()}]`);
-    const type = chalk.gray(`(${a.type})`);
-    console.log(`  ${color(icon)} ${tag} ${type}  ${a.description}`);
+  // Column widths so every entry lines up: idx · severity · type · confidence
+  // · description (wrapped). Description text indents under the type column so
+  // multi-line entries stay readable.
+  const IDX_W = 4; // "  1." padded
+  const SEV_W = 10; // "[HIGH]   " etc
+  const TYPE_W = 14; // type slug
+  const CONF_W = 18; // "confidence 85%"
+  const DESC_INDENT = ' '.repeat(IDX_W);
+  const DESC_W = WIDTH - 2 - IDX_W;
 
-    // Detector confidence is meta-information about how sure the rule is —
-    // it's not part of the anomaly itself. Surface it on its own indented
-    // line in a distinct colour so it reads as detector metadata.
-    const pct = (Number(a.confidence ?? 0) * 100).toFixed(0);
-    console.log(
-      `      ${chalk.blueBright('↳')} ${chalk.blueBright.bold('Detector confidence:')} ${chalk.blueBright(pct + '%')}`
-    );
+  for (let i = 0; i < anomalies.length; i++) {
+    const a = anomalies[i];
+    const sev = String(a.severity ?? 'low').toLowerCase();
+    const accent = severityAccent(sev);
+    const sevTag = padVisible(accent.bold(`[${sev.toUpperCase()}]`), SEV_W);
+    const typeText = padVisible(chalk.white.bold(a.type ?? 'unknown'), TYPE_W);
+    const confidence = Number(a.confidence ?? 0);
+    const confLabel = padVisible(chalk.gray('confidence ') + confidenceColored(confidence), CONF_W);
+
+    const idxLabel = padVisible(chalk.gray(`${i + 1}.`), IDX_W - 1) + ' ';
+
+    // Header line: 1.  [HIGH]    spam            confidence 85%
+    console.log('  ' + idxLabel + sevTag + typeText + confLabel);
+
+    // Description, wrapped under the indent so it reads as one block.
+    const wrapped = wrapText(String(a.description ?? ''), DESC_W - 2);
+    wrapped.forEach((line) => {
+      console.log('  ' + DESC_INDENT + chalk.white(line));
+    });
+
+    // Spacer between entries (not after the last one).
+    if (i < anomalies.length - 1) console.log('');
   }
 };
 
