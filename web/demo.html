@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>open — interactive demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg: #07070d;
+      --bg-soft: #0d0d18;
+      --fg: #e8e8f0;
+      --fg-dim: #9a9ab0;
+      --fg-mute: #5a5a72;
+      --border: #1f1f2e;
+      --border-bright: #2c2c44;
+      --purple: #9945ff;
+      --purple-soft: #b07cff;
+      --green: #14f195;
+      --green-soft: #4dffba;
+      --yellow: #ffc857;
+      --red: #ff4d6d;
+      --blue: #2563eb;
+      --blue-soft: #60a5fa;
+      --orange: #f59e0b;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    code, .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    a { color: inherit; text-decoration: none; }
+
+    /* animated CU bars background — matches landing */
+    .cu-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(37, 99, 235, 0.15), transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(20, 241, 149, 0.08), transparent 60%),
+        var(--bg);
+    }
+
+    .cu-bars {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 2vw;
+      gap: 0.4vw;
+    }
+
+    .cu-bar {
+      flex: 1;
+      min-width: 4px;
+      background: linear-gradient(
+        to top,
+        rgba(37, 99, 235, 0.45) 0%,
+        rgba(96, 165, 250, 0.30) 50%,
+        rgba(20, 241, 149, 0.20) 100%
+      );
+      border-radius: 3px 3px 0 0;
+      height: 6%;
+      transform-origin: bottom;
+      transition: height 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .cu-bar.high {
+      background: linear-gradient(
+        to top,
+        rgba(255, 77, 109, 0.5) 0%,
+        rgba(255, 200, 87, 0.40) 60%,
+        rgba(20, 241, 149, 0.20) 100%
+      );
+    }
+
+    .cu-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, var(--bg) 0%, transparent 12%, transparent 70%, rgba(7, 7, 13, 0.85) 100%);
+      pointer-events: none;
+    }
+
+    .cu-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: linear-gradient(to bottom, black 0%, transparent 80%);
+      pointer-events: none;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    /* nav */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: rgba(7, 7, 13, 0.7);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 28px;
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-mark {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue-soft) 100%);
+      position: relative;
+    }
+
+    .logo-mark::after {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      background: var(--bg);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 22px;
+      align-items: center;
+      font-size: 14px;
+      color: var(--fg-dim);
+    }
+
+    .nav-links a:hover { color: var(--fg); }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--fg-dim);
+      font-size: 14px;
+    }
+
+    .back-link:hover { color: var(--fg); }
+
+    .nav-cta {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-bright);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--fg);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+
+    .nav-cta:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--blue);
+    }
+
+    /* hero (compact) */
+    .demo-hero {
+      padding: 60px 0 36px;
+      text-align: center;
+    }
+
+    .preview-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      background: rgba(245, 158, 11, 0.08);
+      color: var(--orange);
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.2s;
+    }
+
+    .preview-banner.live {
+      border-color: rgba(20, 241, 149, 0.3);
+      background: rgba(20, 241, 149, 0.08);
+      color: var(--green);
+    }
+
+    .preview-banner.error {
+      border-color: rgba(255, 77, 109, 0.3);
+      background: rgba(255, 77, 109, 0.08);
+      color: var(--red);
+    }
+
+    .preview-banner .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 8px currentColor;
+      animation: pulse 1.8s ease-out infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 currentColor; }
+      70% { box-shadow: 0 0 0 6px transparent; }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+
+    .demo-hero .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--blue-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 14px;
+    }
+
+    .demo-hero h1 {
+      font-size: clamp(36px, 5.5vw, 56px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin: 0 0 14px;
+    }
+
+    .demo-hero h1 .accent {
+      background: linear-gradient(90deg, var(--blue-soft), #93c5fd);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .demo-hero p {
+      max-width: 600px;
+      margin: 0 auto 36px;
+      color: var(--fg-dim);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* demo input */
+    .demo-input-row {
+      display: flex;
+      gap: 12px;
+      max-width: 760px;
+      margin: 0 auto 16px;
+    }
+
+    .demo-input {
+      flex: 1;
+      padding: 16px 20px;
+      background: rgba(13, 13, 24, 0.85);
+      border: 1px solid var(--border-bright);
+      border-radius: 12px;
+      color: var(--fg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+
+    .demo-input::placeholder { color: var(--fg-mute); }
+
+    .demo-input:focus {
+      border-color: var(--blue-soft);
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+    }
+
+    .demo-analyze {
+      padding: 0 28px;
+      background: linear-gradient(135deg, var(--blue) 0%, #1d4ed8 100%);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.15s;
+      box-shadow: 0 8px 20px -8px rgba(37, 99, 235, 0.6);
+    }
+
+    .demo-analyze:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px -10px rgba(37, 99, 235, 0.75);
+    }
+
+    .demo-analyze:disabled {
+      opacity: 0.6;
+      cursor: progress;
+      transform: none;
+    }
+
+    .demo-samples {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      max-width: 760px;
+      margin: 0 auto 28px;
+      font-size: 13px;
+      color: var(--fg-mute);
+    }
+
+    .sample-chip {
+      padding: 6px 12px;
+      background: rgba(13, 13, 24, 0.6);
+      border: 1px solid var(--border-bright);
+      border-radius: 999px;
+      color: var(--fg-dim);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .sample-chip:hover {
+      border-color: var(--blue-soft);
+      color: var(--blue-soft);
+      background: rgba(96, 165, 250, 0.06);
+    }
+
+    /* demo card */
+    .demo-card {
+      max-width: 980px;
+      margin: 0 auto 80px;
+      background: rgba(10, 10, 20, 0.7);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .demo-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      padding: 0 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .demo-tabs::-webkit-scrollbar { display: none; }
+
+    .demo-tab {
+      padding: 16px 20px;
+      background: none;
+      border: none;
+      color: var(--fg-dim);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+
+    .demo-tab:hover { color: var(--fg); }
+
+    .demo-tab.active {
+      color: var(--fg);
+      font-weight: 600;
+    }
+
+    .demo-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 16px;
+      right: 16px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--blue-soft));
+      border-radius: 2px;
+    }
+
+    .demo-panels {
+      padding: 28px;
+      min-height: 380px;
+    }
+
+    .demo-panel { animation: panelFade 0.35s ease-out; }
+    .demo-panel.hidden { display: none; }
+
+    @keyframes panelFade {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CU total bar */
+    .cu-total {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--fg-dim);
+    }
+
+    .cu-total .num {
+      color: var(--red);
+      font-weight: 600;
+    }
+
+    .cu-track {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+
+    .cu-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--yellow) 0%, var(--orange) 50%, var(--red) 100%);
+      border-radius: 999px;
+      transition: width 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .demo-card.animating .cu-fill { width: 92% !important; }
+
+    /* per-program rows */
+    .prog-rows {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .prog-row {
+      display: grid;
+      grid-template-columns: 180px 1fr 90px;
+      align-items: center;
+      gap: 14px;
+      font-size: 13px;
+    }
+
+    .prog-name {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--fg-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .prog-bar-track {
+      position: relative;
+      height: 26px;
+      background: rgba(255, 255, 255, 0.025);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .prog-bar {
+      height: 100%;
+      width: 0;
+      border-radius: 4px;
+      transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition-delay: var(--delay, 0s);
+    }
+
+    .demo-card.animating .prog-bar { width: var(--w, 0); }
+
+    .prog-bar.blue   { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+    .prog-bar.orange { background: linear-gradient(90deg, #fb923c, #f59e0b); box-shadow: 0 0 14px rgba(245, 158, 11, 0.35); }
+    .prog-bar.purple { background: linear-gradient(90deg, #c084fc, #a855f7); }
+    .prog-bar.green  { background: linear-gradient(90deg, #34d399, #10b981); }
+    .prog-bar.gray   { background: linear-gradient(90deg, #64748b, #475569); }
+
+    .prog-cu {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--fg-dim);
+      text-align: right;
+      font-size: 12px;
+    }
+
+    .bottleneck-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--orange);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .bottleneck-callout {
+      display: flex;
+      gap: 12px;
+      padding: 16px 18px;
+      background: rgba(245, 158, 11, 0.06);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--fg-dim);
+    }
+
+    .bottleneck-callout .icon { color: var(--orange); flex-shrink: 0; }
+    .bottleneck-callout strong { color: var(--orange); font-weight: 600; }
+    .bottleneck-callout .savings { color: var(--green); font-weight: 600; }
+
+    /* CPI tree */
+    .cpi-tree {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.9;
+      color: var(--fg-dim);
+    }
+
+    .cpi-tree .branch { color: var(--fg-mute); }
+    .cpi-tree .prog { color: var(--fg); }
+    .cpi-tree .ix { color: var(--purple-soft); }
+    .cpi-tree .cu { color: var(--fg-mute); margin-left: 8px; }
+    .cpi-tree .warn { color: var(--orange); margin-left: 8px; }
+
+    .cpi-tree .lvl-1 { padding-left: 0; }
+    .cpi-tree .lvl-2 { padding-left: 24px; }
+    .cpi-tree .lvl-3 { padding-left: 48px; }
+
+    /* account diff — before / after rows */
+    .diff-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .diff-row {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) 1fr 1fr;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .diff-row:hover {
+      border-color: var(--border-bright);
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .diff-header {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) 1fr 1fr;
+      gap: 16px;
+      padding: 8px 18px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--fg-mute);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+    }
+
+    .diff-acct .name {
+      color: var(--fg);
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .diff-acct .addr {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--fg-mute);
+    }
+
+    .diff-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--fg-dim);
+    }
+
+    .diff-value.delta-pos { color: var(--green); }
+    .diff-value.delta-neg { color: var(--red); }
+    .diff-value.delta-eq  { color: var(--fg-mute); }
+
+    .diff-value .arrow { margin-left: 6px; }
+
+    /* account model — interactive SVG graph */
+    .model-wrap {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 16px;
+      height: 540px;
+    }
+
+    .model-canvas {
+      position: relative;
+      background: rgba(8, 8, 16, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .model-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .model-edge {
+      stroke: var(--border-bright);
+      stroke-width: 1.5;
+      fill: none;
+      transition: stroke 0.18s, stroke-width 0.18s;
+    }
+
+    .model-edge.dim { opacity: 0.35; }
+    .model-edge.active { stroke: var(--blue-soft); stroke-width: 2; }
+
+    .model-edge-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      fill: var(--fg-mute);
+      text-anchor: middle;
+      pointer-events: none;
+    }
+
+    .model-node {
+      cursor: pointer;
+      transition: filter 0.18s, transform 0.18s;
+    }
+
+    .model-node:hover { filter: brightness(1.25); }
+
+    .model-node.dim { opacity: 0.5; }
+
+    .model-node rect {
+      stroke-width: 1.5;
+      transition: stroke-width 0.18s;
+    }
+
+    .model-node.signer rect  { fill: rgba(20, 241, 149, 0.10);  stroke: var(--green); }
+    .model-node.program rect { fill: rgba(37, 99, 235, 0.12);   stroke: var(--blue); }
+    .model-node.pda rect     { fill: rgba(168, 85, 247, 0.12);  stroke: var(--purple); }
+    .model-node.account rect { fill: rgba(255, 255, 255, 0.04); stroke: var(--fg-mute); }
+
+    .model-node.selected rect {
+      stroke-width: 2.5;
+      filter: drop-shadow(0 0 8px currentColor);
+    }
+
+    .model-node.signer.selected rect  { stroke: var(--green-soft); }
+    .model-node.program.selected rect { stroke: var(--blue-soft); }
+    .model-node.pda.selected rect     { stroke: var(--purple-soft); }
+    .model-node.account.selected rect { stroke: var(--fg-dim); }
+
+    .model-node text {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      fill: var(--fg);
+      text-anchor: middle;
+      pointer-events: none;
+      font-weight: 500;
+    }
+
+    .model-detail {
+      background: rgba(13, 13, 24, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      overflow-y: auto;
+    }
+
+    .model-detail .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .model-detail h4 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--fg);
+      letter-spacing: -0.01em;
+    }
+
+    .model-detail .close {
+      background: none;
+      border: none;
+      color: var(--fg-mute);
+      font-size: 18px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+      transition: color 0.15s;
+    }
+
+    .model-detail .close:hover { color: var(--fg); }
+
+    .model-detail .row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+
+    .model-detail .row .k {
+      color: var(--fg-mute);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .model-detail .row .v {
+      color: var(--fg);
+      font-family: 'JetBrains Mono', monospace;
+      word-break: break-all;
+      font-size: 12px;
+    }
+
+    .model-detail .desc {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      color: var(--fg-dim);
+      font-size: 13px;
+      line-height: 1.6;
+      border-left: 2px solid var(--blue);
+      padding-left: 10px;
+    }
+
+    .model-detail.empty .body {
+      color: var(--fg-mute);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .model-legend {
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--fg-dim);
+      pointer-events: none;
+    }
+
+    .model-legend .item { display: flex; align-items: center; gap: 6px; }
+    .model-legend .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      border: 1px solid;
+    }
+    .model-legend .swatch.signer  { background: rgba(20, 241, 149, 0.15);  border-color: var(--green); }
+    .model-legend .swatch.program { background: rgba(37, 99, 235, 0.18);   border-color: var(--blue); }
+    .model-legend .swatch.pda     { background: rgba(168, 85, 247, 0.18);  border-color: var(--purple); }
+    .model-legend .swatch.account { background: rgba(255, 255, 255, 0.06); border-color: var(--fg-mute); }
+
+    /* account model */
+    .acct-model {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .acct-card {
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .acct-card .owner {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--purple-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    .acct-card .addr {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--fg);
+      margin-bottom: 6px;
+    }
+
+    .acct-card .meta {
+      font-size: 12px;
+      color: var(--fg-dim);
+      display: flex;
+      gap: 12px;
+    }
+
+    .acct-card .meta span { display: inline-flex; gap: 4px; }
+    .acct-card .meta .k { color: var(--fg-mute); }
+
+    /* learn */
+    .learn-grid { display: grid; gap: 16px; }
+
+    .learn-card {
+      padding: 18px 20px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--blue);
+      border-radius: 8px;
+    }
+
+    .learn-card.tip { border-left-color: var(--purple); }
+    .learn-card.opt { border-left-color: var(--orange); }
+    .learn-card.ref { border-left-color: var(--green); }
+
+    .learn-card h5 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .learn-card h5 .pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--fg-mute);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 500;
+    }
+
+    .learn-card p {
+      margin: 0;
+      color: var(--fg-dim);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .learn-card code {
+      color: var(--purple-soft);
+      background: rgba(153, 69, 255, 0.08);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    /* footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 30px 0;
+      position: relative;
+      z-index: 1;
+      background: rgba(7, 7, 13, 0.6);
+      backdrop-filter: blur(8px);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      color: var(--fg-mute);
+      font-size: 13px;
+    }
+
+    .footer-inner .accent { color: var(--fg-dim); }
+
+    /* responsive */
+    @media (max-width: 820px) {
+      .nav-links a:not(.nav-cta):not(.back-link) { display: none; }
+      .demo-input-row { flex-direction: column; }
+      .demo-analyze { padding: 14px 22px; }
+      .demo-panels { padding: 18px; }
+      .prog-row {
+        grid-template-columns: 110px 1fr 70px;
+        gap: 8px;
+        font-size: 12px;
+      }
+      .diff-row, .diff-header { grid-template-columns: 1fr 1fr; }
+      .diff-row .diff-value:nth-child(2),
+      .diff-header span:nth-child(2) { display: none; }
+      .model-wrap { grid-template-columns: 1fr; height: auto; }
+      .model-canvas { height: 380px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cu-bar { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="cu-bg" aria-hidden="true">
+    <div class="cu-bars" id="cuBars"></div>
+  </div>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="landing.html" class="logo">
+        <span class="logo-mark"></span>
+        <span>open</span>
+      </a>
+      <div class="nav-links">
+        <a href="landing.html" class="back-link">← Landing</a>
+        <a href="landing.html#features">Features</a>
+        <a
+          href="https://github.com/OpenSubmissionn/Submission_Open"
+          target="_blank"
+          rel="noopener"
+          class="nav-cta"
+        >GitHub →</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="demo-hero container">
+    <div class="preview-banner">
+      <span class="dot"></span>
+      <span>preview · running on mock data</span>
+    </div>
+    <div class="eyebrow">// interactive demo</div>
+    <h1>Try open <span class="accent">right now</span></h1>
+    <p>
+      Paste a Solana transaction signature or pick one of the samples below.
+      Navigate the tabs to explore the flame graph, CPI tree, account diff and more.
+    </p>
+
+    <div class="demo-input-row">
+      <input
+        type="text"
+        class="demo-input"
+        id="demoInput"
+        placeholder="paste a Solana transaction signature..."
+        value="4xE9fQ8nKp2vXLm...mK7r"
+        spellcheck="false"
+      />
+      <button class="demo-analyze" id="demoAnalyze">Analyze</button>
+    </div>
+
+    <div class="demo-samples">
+      <span>Try:</span>
+      <button class="sample-chip" data-sig="4xE9fQ8nKp2vXLm...mK7r">4xE9f...mK7r</button>
+      <button class="sample-chip" data-sig="9aB2cT4hRn8vFkY...pL4s">9aB2c...pL4s</button>
+      <button class="sample-chip" data-sig="7kM3xG5jHs1zNqW...qN8w">7kM3x...qN8w</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="demo-card animating" id="demoCard">
+      <div class="demo-tabs" role="tablist">
+        <button class="demo-tab active" data-tab="flame">Flame Graph</button>
+        <button class="demo-tab" data-tab="cpi">CPI Tree</button>
+        <button class="demo-tab" data-tab="diff">Account Diff</button>
+        <button class="demo-tab" data-tab="model">Account Model</button>
+        <button class="demo-tab" data-tab="learn">Learn</button>
+      </div>
+
+      <div class="demo-panels">
+        <!-- Flame Graph -->
+        <div class="demo-panel" data-panel="flame">
+          <div class="cu-total">
+            <span>Total Compute Units</span>
+            <span><span class="num">184,320</span> / 200,000 CU</span>
+          </div>
+          <div class="cu-track">
+            <div class="cu-fill"></div>
+          </div>
+
+          <div class="prog-rows">
+            <div class="prog-row">
+              <span class="prog-name">Jupiter Aggregator V6</span>
+              <div class="prog-bar-track">
+                <div class="prog-bar blue" style="--w: 50%; --delay: 0.1s;"></div>
+              </div>
+              <span class="prog-cu">101,170 CU</span>
+            </div>
+
+            <div class="prog-row">
+              <span class="prog-name">
+                Orca Whirlpool
+                <span class="bottleneck-pill">⚠ Bottleneck</span>
+              </span>
+              <div class="prog-bar-track">
+                <div class="prog-bar orange" style="--w: 55%; --delay: 0.2s;"></div>
+              </div>
+              <span class="prog-cu">110,500 CU</span>
+            </div>
+
+            <div class="prog-row">
+              <span class="prog-name">Metaplex Metadata</span>
+              <div class="prog-bar-track">
+                <div class="prog-bar purple" style="--w: 18%; --delay: 0.3s;"></div>
+              </div>
+              <span class="prog-cu">18,432 CU</span>
+            </div>
+
+            <div class="prog-row">
+              <span class="prog-name">Token Program</span>
+              <div class="prog-bar-track">
+                <div class="prog-bar green" style="--w: 6%; --delay: 0.4s;"></div>
+              </div>
+              <span class="prog-cu">5,530 CU</span>
+            </div>
+
+            <div class="prog-row">
+              <span class="prog-name">System Program</span>
+              <div class="prog-bar-track">
+                <div class="prog-bar gray" style="--w: 4%; --delay: 0.5s;"></div>
+              </div>
+              <span class="prog-cu">3,688 CU</span>
+            </div>
+          </div>
+
+          <div class="bottleneck-callout">
+            <span class="icon">⚠</span>
+            <div>
+              <strong>Bottleneck:</strong> Orca Whirlpool · <code style="font-family: 'JetBrains Mono', monospace; color: var(--fg);">swap_v2</code> consumed <strong>110,500 CU (60%)</strong>. Passing the tick array account directly avoids on-chain re-derivation. Estimated savings: <span class="savings">~40,000 CU</span>.
+            </div>
+          </div>
+        </div>
+
+        <!-- CPI Tree -->
+        <div class="demo-panel hidden" data-panel="cpi">
+          <div class="cpi-tree">
+            <div class="lvl-1"><span class="branch">└─</span> <span class="prog">Jupiter Aggregator V6</span> <span class="ix">[route]</span> <span class="cu">101,170 CU</span></div>
+            <div class="lvl-2"><span class="branch">├─</span> <span class="prog">Orca Whirlpool</span> <span class="ix">[swap_v2]</span> <span class="cu">110,500 CU</span> <span class="warn">⚠ bottleneck</span></div>
+            <div class="lvl-3"><span class="branch">│  ├─</span> <span class="prog">Token Program</span> <span class="ix">[transfer]</span> <span class="cu">3,210 CU</span></div>
+            <div class="lvl-3"><span class="branch">│  └─</span> <span class="prog">Token Program</span> <span class="ix">[transfer]</span> <span class="cu">2,320 CU</span></div>
+            <div class="lvl-2"><span class="branch">├─</span> <span class="prog">Metaplex Metadata</span> <span class="ix">[verify_collection]</span> <span class="cu">18,432 CU</span></div>
+            <div class="lvl-2"><span class="branch">└─</span> <span class="prog">System Program</span> <span class="ix">[transfer]</span> <span class="cu">3,688 CU</span></div>
+
+            <div style="margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--border); font-family: 'Inter', sans-serif; color: var(--fg-mute); font-size: 12px;">
+              6 program invocations · max depth 3 · reconstructed from program logs
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Diff -->
+        <div class="demo-panel hidden" data-panel="diff">
+          <div class="diff-header">
+            <span>Account</span>
+            <span>Before</span>
+            <span>After</span>
+          </div>
+          <div class="diff-rows" id="diffRows">
+            <div class="diff-row">
+              <div class="diff-acct">
+                <div class="name">SOL Balance</div>
+                <div class="addr">9aB2...xK4s</div>
+              </div>
+              <div class="diff-value">2.451 SOL</div>
+              <div class="diff-value delta-neg">2.449 SOL <span class="arrow">↓</span></div>
+            </div>
+            <div class="diff-row">
+              <div class="diff-acct">
+                <div class="name">Token Account (USDC)</div>
+                <div class="addr">EPjF...Wk8d</div>
+              </div>
+              <div class="diff-value">1,000.00 USDC</div>
+              <div class="diff-value delta-neg">985.23 USDC <span class="arrow">↓</span></div>
+            </div>
+            <div class="diff-row">
+              <div class="diff-acct">
+                <div class="name">Token Account (SOL)</div>
+                <div class="addr">7mNr...vQ2p</div>
+              </div>
+              <div class="diff-value">0.00 SOL</div>
+              <div class="diff-value delta-pos">0.823 SOL <span class="arrow">↑</span></div>
+            </div>
+            <div class="diff-row">
+              <div class="diff-acct">
+                <div class="name">Authority</div>
+                <div class="addr">Auth...rity1</div>
+              </div>
+              <div class="diff-value delta-eq">Unchanged</div>
+              <div class="diff-value delta-eq">Unchanged</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Model -->
+        <div class="demo-panel hidden" data-panel="model">
+          <div class="model-wrap">
+            <div class="model-canvas">
+              <svg
+                class="model-svg"
+                id="modelSvg"
+                viewBox="0 0 760 540"
+                preserveAspectRatio="xMidYMid meet"
+              ></svg>
+              <div class="model-legend">
+                <div class="item"><span class="swatch program"></span>Program</div>
+                <div class="item"><span class="swatch pda"></span>PDA</div>
+                <div class="item"><span class="swatch signer"></span>Signer</div>
+                <div class="item"><span class="swatch account"></span>Account</div>
+              </div>
+            </div>
+            <aside class="model-detail empty" id="modelDetail">
+              <div class="head">
+                <h4 id="modelDetailTitle">No node selected</h4>
+              </div>
+              <div class="body" id="modelDetailBody">
+                Click a node in the graph to inspect its type, owner, address and role in the transaction.
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- Learn -->
+        <div class="demo-panel hidden" data-panel="learn">
+          <div class="learn-grid">
+            <div class="learn-card">
+              <h5>What this transaction did <span class="pill">summary</span></h5>
+              <p>A token swap routed through <strong style="color: var(--fg);">Jupiter Aggregator V6</strong>. Jupiter chose <strong style="color: var(--fg);">Orca Whirlpool</strong> as the venue and used the <code>swap_v2</code> instruction to convert 0.5114 SOL into 245.882 USDC.</p>
+            </div>
+
+            <div class="learn-card opt">
+              <h5>Optimization opportunity <span class="pill">−40k CU</span></h5>
+              <p>The Whirlpool swap re-derives the <code>tick_array</code> account on-chain, which costs ~40k CU. If you pre-compute the tick array PDA off-chain and pass it in <code>remaining_accounts</code>, the program can skip the derivation entirely.</p>
+            </div>
+
+            <div class="learn-card tip">
+              <h5>Concept · CPI <span class="pill">core</span></h5>
+              <p>A <strong style="color: var(--fg);">Cross-Program Invocation</strong> is when one program calls another mid-execution. CU is shared across the call stack — the inner program's CU counts against the outer program's budget.</p>
+            </div>
+
+            <div class="learn-card ref">
+              <h5>Related reading <span class="pill">refs</span></h5>
+              <p>· Solana Cookbook: <code>compute_budget</code> instruction<br/>· Anchor docs: <code>#[account(init_if_needed)]</code> &amp; rent<br/>· Whirlpool SDK: precomputed tick arrays</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span><span class="accent">open</span> · interactive demo · MIT licensed</span>
+      <a
+        href="https://github.com/OpenSubmissionn/Submission_Open"
+        target="_blank"
+        rel="noopener"
+        class="nav-cta"
+      >github.com/OpenSubmissionn/Submission_Open</a>
+    </div>
+  </footer>
+
+  <script>
+    // animated CU bars background
+    (function () {
+      const container = document.getElementById('cuBars');
+      const BAR_COUNT = 64;
+      const bars = [];
+
+      function seeded(i) {
+        const x = Math.sin(i * 12.9898) * 43758.5453;
+        return x - Math.floor(x);
+      }
+
+      for (let i = 0; i < BAR_COUNT; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'cu-bar';
+        if (seeded(i + 100) > 0.78) bar.classList.add('high');
+        container.appendChild(bar);
+        bars.push({
+          el: bar,
+          peak: 22 + seeded(i) * 50,
+          phase: seeded(i + 50) * 1.2,
+          jitter: 0.85 + seeded(i + 7) * 0.3,
+        });
+      }
+
+      const docEl = document.documentElement;
+      let ticking = false;
+
+      function update() {
+        const scrollTop = window.scrollY || docEl.scrollTop;
+        const scrollMax = docEl.scrollHeight - window.innerHeight;
+        const progress = scrollMax > 0 ? Math.min(1, scrollTop / scrollMax) : 0;
+        const t = performance.now() * 0.0006;
+
+        for (let i = 0; i < bars.length; i++) {
+          const b = bars[i];
+          const localProgress = Math.max(0, Math.min(1, (progress * 1.6) - b.phase * 0.5));
+          const eased = 1 - Math.pow(1 - localProgress, 3);
+          const shimmer = 1 + Math.sin(t + i * 0.4) * 0.05 * eased;
+          const heightPct = Math.max(2, eased * b.peak * b.jitter * shimmer);
+          b.el.style.height = heightPct + '%';
+        }
+        ticking = false;
+      }
+
+      function onScroll() {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+
+      function tick() {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+        requestAnimationFrame(tick);
+      }
+      tick();
+    })();
+
+    // demo interactions — tabs, samples, /api/analyze wiring, account model
+    (function () {
+      const card = document.getElementById('demoCard');
+      const input = document.getElementById('demoInput');
+      const analyzeBtn = document.getElementById('demoAnalyze');
+      const banner = document.querySelector('.preview-banner');
+      if (!card || !input || !analyzeBtn) return;
+
+      const SVG_NS = 'http://www.w3.org/2000/svg';
+
+      // ───────── mock graph for the Account Model (matches the screenshot) ─────────
+      const MOCK_MODEL = {
+        nodes: [
+          { id: 'wallet',   type: 'signer',  x:  80, y: 220, w: 150, h: 34, label: 'Wallet (signer)',     address: '8N3...K2L',  owner: 'System Program',     description: 'The user wallet that signs the transaction.' },
+          { id: 'feepayer', type: 'signer',  x:  80, y: 470, w: 150, h: 34, label: 'Fee Payer',           address: '8N3...K2L',  owner: 'System Program',     description: 'Account that pays the transaction fee. Same as the wallet here.' },
+          { id: 'jupiter',  type: 'program', x: 280, y: 220, w: 160, h: 34, label: 'Jupiter Aggregator…', address: 'JUP6...rwLD', owner: 'BPFLoaderUpgradeable', description: 'Routes the swap across DEX venues to get the best execution price.' },
+          { id: 'orca',     type: 'program', x: 480, y: 100, w: 150, h: 34, label: 'Orca Whirlpool',      address: 'whir...wpgX', owner: 'BPFLoaderUpgradeable', description: 'Concentrated-liquidity AMM. Runs swap_v2. The bottleneck of this transaction.' },
+          { id: 'token',    type: 'program', x: 480, y: 290, w: 150, h: 34, label: 'Token Program',       address: 'Toke...AAA',  owner: 'BPFLoader2',          description: 'SPL Token Program — moves token balances between ATAs.' },
+          { id: 'meta',     type: 'program', x: 480, y: 400, w: 150, h: 34, label: 'Metaplex Metadata',   address: 'meta...DAA',  owner: 'BPFLoaderUpgradeable', description: 'Stores token metadata. Verifies the asset collection.' },
+          { id: 'system',   type: 'program', x: 280, y: 470, w: 150, h: 34, label: 'System Program',      address: 'syst...stem', owner: 'native',              description: 'Solana System Program — creates accounts, transfers SOL.' },
+          { id: 'tickPda',  type: 'pda',     x: 660, y:  40, w: 130, h: 30, label: 'Tick Array PDA',      address: '5pQ...rT9z',  owner: 'Orca Whirlpool',      description: 'PDA storing tick liquidity data. Re-derived on-chain (~40k CU).' },
+          { id: 'posPda',   type: 'pda',     x: 660, y: 110, w: 130, h: 30, label: 'Position PDA',        address: 'pos...VV8',   owner: 'Orca Whirlpool',      description: 'Tracks the user position in the Whirlpool.' },
+          { id: 'usdcAcct', type: 'account', x: 660, y: 280, w: 130, h: 30, label: 'Token Acct (USDC)',   address: '9aB...pL4s',  owner: 'Token Program',       description: 'User Associated Token Account for USDC. Credited 245.882 USDC.' },
+          { id: 'solAcct',  type: 'account', x: 660, y: 350, w: 130, h: 30, label: 'Token Acct (SOL)',    address: '4xE...mK7r',  owner: 'Token Program',       description: 'User Associated Token Account for WSOL. Debited 0.5114 WSOL.' },
+          { id: 'metaAcct', type: 'account', x: 660, y: 430, w: 130, h: 30, label: 'Metadata Account',    address: '3vR...wX1q',  owner: 'Metaplex Metadata',   description: 'Metadata PDA storing the token metadata payload.' },
+        ],
+        edges: [
+          { from: 'wallet',   to: 'jupiter',  label: 'invokes' },
+          { from: 'jupiter',  to: 'orca',     label: 'CPI' },
+          { from: 'jupiter',  to: 'token',    label: 'CPI' },
+          { from: 'jupiter',  to: 'meta',     label: 'CPI' },
+          { from: 'orca',     to: 'tickPda',  label: 'reads' },
+          { from: 'orca',     to: 'posPda',   label: 'writes' },
+          { from: 'token',    to: 'usdcAcct', label: 'credits' },
+          { from: 'token',    to: 'solAcct',  label: 'debits' },
+          { from: 'meta',     to: 'metaAcct', label: '' },
+          { from: 'feepayer', to: 'system',   label: 'deducts fee' },
+        ],
+      };
+
+      const state = { modelData: MOCK_MODEL, selected: null };
+
+      // ───────── tab switching ─────────
+      const tabs = card.querySelectorAll('.demo-tab');
+      const panels = card.querySelectorAll('.demo-panel');
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          tabs.forEach((t) => t.classList.remove('active'));
+          tab.classList.add('active');
+          panels.forEach((p) => {
+            p.classList.toggle('hidden', p.dataset.panel !== tab.dataset.tab);
+          });
+          // graph SVG sizes itself when first visible — rebuild on every show is cheap
+          if (tab.dataset.tab === 'model') buildAccountModel(state.modelData);
+        });
+      });
+
+      // ───────── sample chips ─────────
+      document.querySelectorAll('.sample-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          input.value = chip.dataset.sig || chip.textContent.trim();
+          input.focus();
+          replay();
+        });
+      });
+
+      function replay() {
+        card.classList.remove('animating');
+        void card.offsetWidth;
+        card.classList.add('animating');
+      }
+
+      // ───────── status banner ─────────
+      function setBanner(text, kind) {
+        if (!banner) return;
+        banner.classList.remove('live', 'error');
+        if (kind === 'live')  banner.classList.add('live');
+        if (kind === 'error') banner.classList.add('error');
+        const label = banner.querySelector('span:not(.dot)');
+        if (label) label.textContent = text;
+      }
+
+      // ───────── analyze: hit /api/analyze when we have a real signature,
+      //                  fall back to the mock animation otherwise ─────────
+      analyzeBtn.addEventListener('click', async () => {
+        const sig = input.value.trim();
+        const looksReal = (sig.length === 87 || sig.length === 88) && !sig.includes('...');
+
+        const original = analyzeBtn.textContent;
+        analyzeBtn.textContent = 'Analyzing…';
+        analyzeBtn.disabled = true;
+
+        if (!looksReal) {
+          // mock mode — just replay the precomputed visualization
+          replay();
+          setTimeout(() => {
+            analyzeBtn.textContent = original;
+            analyzeBtn.disabled = false;
+          }, 900);
+          return;
+        }
+
+        try {
+          const res = await fetch('/api/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ signature: sig, network: 'mainnet' }),
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error || `HTTP ${res.status}`);
+          }
+          const data = await res.json();
+          setBanner(
+            `live · ${(data.tookMs / 1000).toFixed(1)}s · ${data.computeUnits.consumed.toLocaleString()} CU`,
+            'live'
+          );
+          renderResult(data);
+          replay();
+        } catch (e) {
+          console.warn('[analyze] backend error, showing mock:', e.message);
+          setBanner(`error · ${String(e.message).slice(0, 50)} (showing mock)`, 'error');
+          replay();
+        } finally {
+          analyzeBtn.textContent = original;
+          analyzeBtn.disabled = false;
+        }
+      });
+
+      // ───────── render real data into the panels ─────────
+      function renderResult(data) {
+        renderFlame(data);
+        renderCpi(data);
+        renderDiff(data);
+        renderLearn(data);
+        // model rebuild from real data is a heavier layout problem — leave for v2
+      }
+
+      function renderFlame(data) {
+        if (!data || !data.programs) return;
+        const numEl = document.querySelector('[data-panel="flame"] .cu-total .num');
+        const fullEl = document.querySelector('[data-panel="flame"] .cu-total span:last-child');
+        if (numEl)  numEl.textContent = data.computeUnits.consumed.toLocaleString();
+        if (fullEl) fullEl.innerHTML = `<span class="num">${data.computeUnits.consumed.toLocaleString()}</span> / ${data.computeUnits.limit.toLocaleString()} CU`;
+
+        const fill = document.querySelector('[data-panel="flame"] .cu-fill');
+        if (fill && data.computeUnits.limit > 0) {
+          const pct = Math.min(100, (data.computeUnits.consumed / data.computeUnits.limit) * 100);
+          fill.style.width = pct.toFixed(1) + '%';
+        }
+
+        const rows = document.querySelector('[data-panel="flame"] .prog-rows');
+        if (!rows) return;
+        rows.innerHTML = '';
+        const max = Math.max(...data.programs.map((p) => p.cuConsumed), 1);
+        const palette = ['blue', 'orange', 'purple', 'green', 'gray'];
+        const bottleneckId = data.bottleneck?.programId;
+
+        data.programs.slice(0, 8).forEach((p, idx) => {
+          const w = (p.cuConsumed / max) * 100;
+          const row = document.createElement('div');
+          row.className = 'prog-row';
+          const isBottleneck = p.programId === bottleneckId;
+          row.innerHTML = `
+            <span class="prog-name">
+              ${escapeHtml(shortLabel(p.programName))}
+              ${isBottleneck ? '<span class="bottleneck-pill">⚠ Bottleneck</span>' : ''}
+            </span>
+            <div class="prog-bar-track">
+              <div class="prog-bar ${isBottleneck ? 'orange' : palette[idx % palette.length]}"
+                   style="--w: ${w.toFixed(1)}%; --delay: ${(idx * 0.08).toFixed(2)}s;"></div>
+            </div>
+            <span class="prog-cu">${p.cuConsumed.toLocaleString()} CU</span>
+          `;
+          rows.appendChild(row);
+        });
+      }
+
+      function renderCpi(data) {
+        if (!data || !data.cpiTree || !data.cpiTree.root) return;
+        const wrap = document.querySelector('[data-panel="cpi"] .cpi-tree');
+        if (!wrap) return;
+        wrap.innerHTML = '';
+        const lines = [];
+        const walk = (nodes, depth, parentLast) => {
+          nodes.forEach((n, i) => {
+            const isLast = i === nodes.length - 1;
+            const branch = depth === 0 ? (isLast ? '└─' : '├─')
+              : (parentLast ? '   ' : '│  ').repeat(Math.max(0, depth - 1)) + (isLast ? '└─' : '├─');
+            const cu = n.cuConsumed != null ? `${n.cuConsumed.toLocaleString()} CU` : '';
+            lines.push(`<div class="lvl-${Math.min(3, depth + 1)}"><span class="branch">${branch}</span> <span class="prog">${escapeHtml(shortLabel(n.programName))}</span> ${cu ? `<span class="cu">${cu}</span>` : ''}</div>`);
+            if (n.children && n.children.length) walk(n.children, depth + 1, isLast);
+          });
+        };
+        walk(data.cpiTree.root, 0, true);
+        wrap.innerHTML = lines.join('') +
+          `<div style="margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--border); font-family: 'Inter', sans-serif; color: var(--fg-mute); font-size: 12px;">
+            ${data.cpiTree.nodeCount} program invocations · max depth ${data.cpiTree.totalDepth}
+          </div>`;
+      }
+
+      function renderDiff(data) {
+        if (!data || !data.accountDiffs) return;
+        const rows = document.getElementById('diffRows');
+        if (!rows) return;
+        rows.innerHTML = '';
+        if (data.accountDiffs.length === 0) {
+          rows.innerHTML = `<div class="diff-row"><div class="diff-acct"><div class="name">No changes detected</div></div><div class="diff-value delta-eq">—</div><div class="diff-value delta-eq">—</div></div>`;
+          return;
+        }
+        for (const d of data.accountDiffs.slice(0, 12)) {
+          const sol = (d.solDelta || 0) / 1e9;
+          let beforeText, afterText, deltaCls = 'delta-eq';
+          if (sol !== 0) {
+            // we don't have pre/post directly — show "−Δ" in before column
+            afterText = (sol > 0 ? '+' : '') + sol.toFixed(6) + ' SOL';
+            beforeText = '0 (relative)';
+            deltaCls = sol > 0 ? 'delta-pos' : 'delta-neg';
+          } else if (d.tokenDeltas && d.tokenDeltas.length) {
+            const t = d.tokenDeltas[0];
+            const v = t.uiDelta;
+            afterText = (v > 0 ? '+' : '') + v + ' ' + (t.symbol || t.mint.slice(0, 4));
+            beforeText = '0 (relative)';
+            deltaCls = v > 0 ? 'delta-pos' : 'delta-neg';
+          } else {
+            beforeText = afterText = 'Unchanged';
+          }
+          const arrow = deltaCls === 'delta-pos' ? '↑' : deltaCls === 'delta-neg' ? '↓' : '';
+          const row = document.createElement('div');
+          row.className = 'diff-row';
+          row.innerHTML = `
+            <div class="diff-acct">
+              <div class="name">${escapeHtml(d.role || 'Account')}</div>
+              <div class="addr">${escapeHtml(shortAddr(d.pubkey))}</div>
+            </div>
+            <div class="diff-value">${escapeHtml(beforeText)}</div>
+            <div class="diff-value ${deltaCls}">${escapeHtml(afterText)} ${arrow ? `<span class="arrow">${arrow}</span>` : ''}</div>
+          `;
+          rows.appendChild(row);
+        }
+      }
+
+      function renderLearn(data) {
+        if (!data || !data.insights) return;
+        const grid = document.querySelector('[data-panel="learn"] .learn-grid');
+        if (!grid) return;
+        if (data.insights.length === 0) return; // keep mock cards
+        grid.innerHTML = '';
+        data.insights.slice(0, 6).forEach((ins) => {
+          const cls = ins.severity === 'critical' ? 'opt'
+                    : ins.severity === 'warning' ? 'opt'
+                    : ins.tags?.includes('reference') ? 'ref'
+                    : 'tip';
+          const pillText = ins.estimatedCUSavings ? `−${(ins.estimatedCUSavings / 1000).toFixed(0)}k CU` : (ins.severity || 'info');
+          const card = document.createElement('div');
+          card.className = `learn-card ${cls}`;
+          card.innerHTML = `
+            <h5>${escapeHtml(ins.title || ins.type)} <span class="pill">${escapeHtml(pillText)}</span></h5>
+            <p>${escapeHtml(ins.message || '')}</p>
+            ${ins.recommendation ? `<p style="margin-top: 8px; color: var(--fg-mute);">${escapeHtml(ins.recommendation)}</p>` : ''}
+          `;
+          grid.appendChild(card);
+        });
+      }
+
+      // ───────── account model — SVG graph builder ─────────
+      function buildAccountModel(data) {
+        const svg = document.getElementById('modelSvg');
+        if (!svg || !data) return;
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+        const byId = new Map(data.nodes.map((n) => [n.id, n]));
+
+        // edges (drawn first so they sit under the nodes)
+        const eg = document.createElementNS(SVG_NS, 'g');
+        for (const e of data.edges) {
+          const a = byId.get(e.from);
+          const b = byId.get(e.to);
+          if (!a || !b) continue;
+          const x1 = a.x + a.w;
+          const y1 = a.y + a.h / 2;
+          const x2 = b.x;
+          const y2 = b.y + b.h / 2;
+          const mx = (x1 + x2) / 2;
+          const path = document.createElementNS(SVG_NS, 'path');
+          path.setAttribute('d', `M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`);
+          path.setAttribute('class', 'model-edge');
+          path.dataset.from = e.from;
+          path.dataset.to = e.to;
+          eg.appendChild(path);
+          if (e.label) {
+            const t = document.createElementNS(SVG_NS, 'text');
+            t.setAttribute('x', String(mx));
+            t.setAttribute('y', String((y1 + y2) / 2 - 4));
+            t.setAttribute('class', 'model-edge-label');
+            t.textContent = e.label;
+            eg.appendChild(t);
+          }
+        }
+        svg.appendChild(eg);
+
+        // nodes
+        const ng = document.createElementNS(SVG_NS, 'g');
+        for (const n of data.nodes) {
+          const g = document.createElementNS(SVG_NS, 'g');
+          g.setAttribute('class', `model-node ${n.type}`);
+          g.dataset.id = n.id;
+          const rect = document.createElementNS(SVG_NS, 'rect');
+          rect.setAttribute('x', String(n.x));
+          rect.setAttribute('y', String(n.y));
+          rect.setAttribute('width', String(n.w));
+          rect.setAttribute('height', String(n.h));
+          rect.setAttribute('rx', '14');
+          g.appendChild(rect);
+          const text = document.createElementNS(SVG_NS, 'text');
+          text.setAttribute('x', String(n.x + n.w / 2));
+          text.setAttribute('y', String(n.y + n.h / 2 + 4));
+          text.textContent = n.label;
+          g.appendChild(text);
+          g.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            selectNode(n.id);
+          });
+          ng.appendChild(g);
+        }
+        svg.appendChild(ng);
+
+        svg.addEventListener('click', () => selectNode(null));
+        if (state.selected) selectNode(state.selected);
+      }
+
+      function selectNode(id) {
+        state.selected = id;
+        const svg = document.getElementById('modelSvg');
+        const detail = document.getElementById('modelDetail');
+        if (!svg || !detail) return;
+
+        svg.querySelectorAll('.model-node').forEach((g) => {
+          g.classList.toggle('selected', g.dataset.id === id);
+          g.classList.toggle('dim', id != null && g.dataset.id !== id && !isNeighbor(g.dataset.id, id));
+        });
+        svg.querySelectorAll('.model-edge').forEach((p) => {
+          const isInc = p.dataset.from === id || p.dataset.to === id;
+          p.classList.toggle('active', !!id && isInc);
+          p.classList.toggle('dim',    !!id && !isInc);
+        });
+
+        const titleEl = document.getElementById('modelDetailTitle');
+        const bodyEl  = document.getElementById('modelDetailBody');
+        if (!id) {
+          detail.classList.add('empty');
+          titleEl.textContent = 'No node selected';
+          bodyEl.innerHTML = 'Click a node in the graph to inspect its type, owner, address and role in the transaction.';
+          return;
+        }
+        const node = state.modelData.nodes.find((n) => n.id === id);
+        if (!node) return;
+        detail.classList.remove('empty');
+        titleEl.textContent = node.label.replace(/…$/, '');
+        bodyEl.innerHTML = `
+          <div class="row"><span class="k">Type</span><span class="v">${capitalize(node.type)}</span></div>
+          <div class="row"><span class="k">Address</span><span class="v">${escapeHtml(node.address)}</span></div>
+          <div class="row"><span class="k">Owner</span><span class="v">${escapeHtml(node.owner)}</span></div>
+          <div class="desc">${escapeHtml(node.description)}</div>
+        `;
+      }
+
+      function isNeighbor(a, b) {
+        if (!a || !b) return false;
+        return state.modelData.edges.some(
+          (e) => (e.from === a && e.to === b) || (e.from === b && e.to === a)
+        );
+      }
+
+      // ───────── tiny utils ─────────
+      function shortAddr(s) {
+        if (!s) return '';
+        return s.length > 16 ? `${s.slice(0, 6)}…${s.slice(-4)}` : s;
+      }
+      function shortLabel(s) {
+        if (!s) return 'unknown';
+        if (s.length > 32) return s.slice(0, 14) + '…' + s.slice(-6);
+        return s;
+      }
+      function capitalize(s) { return s ? s[0].toUpperCase() + s.slice(1) : s; }
+      function escapeHtml(s) {
+        const div = document.createElement('div');
+        div.textContent = String(s ?? '');
+        return div.innerHTML;
+      }
+
+      // ───────── boot ─────────
+      // Build the account model up-front so it's ready when the tab is clicked.
+      buildAccountModel(state.modelData);
+
+      // Probe the backend — switches the banner if the dev server is running.
+      fetch('/api/health')
+        .then((r) => r.ok && r.json())
+        .then((j) => { if (j && j.ok) setBanner(`live · backend connected (v${j.version})`, 'live'); })
+        .catch(() => { /* offline, leave banner in mock-data state */ });
+    })();
+  </script>
+</body>
+</html>
