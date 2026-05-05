@@ -834,9 +834,14 @@ const renderTransferBreakdown = (transfers: TransferInfo[] | undefined) => {
     // itself — mint, rent reclaim, or escrow. Label it instead of "—".
     const from = t.from ? truncatePubkey(t.from) : chalk.gray('(mint/rent)');
     const to = t.to ? truncatePubkey(t.to) : chalk.gray('(burn/rent)');
-    const amount = t.uiAmount.toLocaleString(undefined, { maximumFractionDigits: 6 });
+    const amount = t.uiAmount.toLocaleString('en-US', { maximumFractionDigits: 6 });
     const token = t.token === 'SOL' ? chalk.yellow('SOL') : truncate(t.token, 8, 6);
-    const usd = t.usdValue !== null ? chalk.green(`$${t.usdValue.toFixed(2)}`) : chalk.gray('N/A');
+    const usd =
+      t.usdValue !== null
+        ? t.usdValue > 0 && t.usdValue < 0.01
+          ? chalk.green('< $0.01')
+          : chalk.green(`$${t.usdValue.toFixed(2)}`)
+        : chalk.gray('N/A');
     const spam = t.isSpamSuspect ? chalk.red('⚠ YES') : chalk.gray('no');
 
     table.push([from, to, amount, token, usd, spam]);

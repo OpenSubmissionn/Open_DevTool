@@ -27,6 +27,7 @@ export function mockRPCBundle(overrides: Partial<RawTransactionBundle> = {}): Ra
       'Program 11111111111111111111111111111111 success',
     ],
     computeUnitsConsumed: 3000,
+    fee: 5000,
     preBalances: [1000000, 2000000],
     postBalances: [700000, 2300000],
     preTokenBalances: [],

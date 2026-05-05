@@ -25,13 +25,26 @@ export function detectAnomalies(
 
   try {
     // Rule 1 — Spam detection
+    //
+    // Direction is described from whichever endpoints are populated:
+    //   - sender + receiver  → "transfer between accounts" (neutral)
+    //   - sender only        → "sent" (origin known, destination is mint/burn)
+    //   - receiver only      → "received" (mint to user, no clear sender)
+    //   - neither            → "transfer" (degenerate case)
     for (const transfer of transfers) {
       if (transfer.isSpamSuspect === true) {
+        const hasFrom = !!transfer.from;
+        const hasTo = !!transfer.to;
+        const action =
+          hasFrom && hasTo ? 'transfer' : hasFrom ? 'sent' : hasTo ? 'received' : 'transfer';
+        const amountStr = transfer.uiAmount.toLocaleString('en-US', { maximumFractionDigits: 2 });
+        const shortMint = `${transfer.token.slice(0, 8)}...${transfer.token.slice(-6)}`;
+
         anomalies.push({
           type: 'spam',
           severity: 'high',
           confidence: 0.85,
-          description: `Unverified token transfer with suspicious volume: ${transfer.uiAmount} ${transfer.token}`,
+          description: `Suspicious spam token ${action}: ${amountStr} tokens of unverified mint ${shortMint}`,
           details: {
             mint: transfer.token,
             uiAmount: transfer.uiAmount,

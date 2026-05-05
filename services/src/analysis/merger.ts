@@ -53,19 +53,41 @@ export async function mergeAnalysis(
   });
 
   const microLamportsPerCU = extractMicroLamportsPerCU(bundle);
-  const costAnalysis = analyzeCosts(bundle, solPriceUsd, microLamportsPerCU);
 
-  let cuCost: CUCost | undefined;
-
-  try {
-    const cuConsumed = cuProfile?.totalConsumed || 0;
-    const solPriceUSD = await getSolPriceUSD();
-
-    if (cuConsumed > 0) {
-      cuCost = await calculateCUCostFromCU(cuConsumed, 1000, solPriceUSD);
+  // Resolve a SOL price up front so transfer USD values *and* feeUSD share the
+  // same source. CLI callers don't pass a price explicitly, so without this the
+  // analyzer would render "USD N/A" even though the price cache has a value.
+  let resolvedSolPriceUsd = solPriceUsd;
+  if (resolvedSolPriceUsd === null) {
+    try {
+      resolvedSolPriceUsd = await getSolPriceUSD();
+    } catch (error) {
+      console.warn('[Merger] SOL price lookup failed:', error);
     }
-  } catch (error) {
-    console.warn('[Merger] CU cost calculation failed:', error);
+  }
+
+  const costAnalysis = analyzeCosts(bundle, resolvedSolPriceUsd, microLamportsPerCU);
+
+  // Prefer the cost panel computed by analyzeCosts — it uses the canonical
+  // bundle.computeUnitsConsumed (matches Solscan) and bundle.fee (true total).
+  // Fall back to a CU-only calculation when the RPC didn't return computeUnits
+  // but the log-derived profiler still produced a non-zero total.
+  let cuCost: CUCost | undefined = costAnalysis.cuCost;
+
+  if (!cuCost || cuCost.cuConsumed === 0) {
+    try {
+      const cuConsumed = cuProfile?.totalConsumed || 0;
+      if (cuConsumed > 0) {
+        cuCost = await calculateCUCostFromCU(
+          cuConsumed,
+          microLamportsPerCU,
+          resolvedSolPriceUsd,
+          bundle.fee
+        );
+      }
+    } catch (error) {
+      console.warn('[Merger] CU cost fallback calculation failed:', error);
+    }
   }
 
   const anomalies = detectAnomalies(bundle, costAnalysis.transfers);
