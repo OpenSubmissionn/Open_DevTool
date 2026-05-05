@@ -1,35 +1,57 @@
 {
-  "name": "open-cli",
+  "name": "solana-open",
   "version": "0.2.0",
-  "description": "OPEN - Solana Observability and CU Analysis CLI",
-  "main": "bin/open.ts",
+  "description": "Visual transaction debugger and CU profiler for Solana — turn any signature into a fully decoded execution profile",
   "bin": {
     "open": "dist/open.js"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup bin/open.ts",
+    "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:cli": "tsx bin/open.ts"
   },
   "keywords": [
     "solana",
     "cli",
+    "debugger",
+    "transaction",
+    "profiler",
+    "compute-units",
+    "cu",
     "observability",
-    "cu"
+    "blockchain",
+    "web3"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "OPEN team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenSubmissionn/Submission_Open.git",
+    "directory": "cli"
+  },
+  "homepage": "https://github.com/OpenSubmissionn/Submission_Open#readme",
+  "bugs": {
+    "url": "https://github.com/OpenSubmissionn/Submission_Open/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "type": "commonjs",
   "devDependencies": {
     "@types/dotenv": "^6.1.1",
     "@types/node": "^20.11.19",
+    "tsup": "^8.0.2",
     "tsx": "^4.7.1"
   },
   "dependencies": {
     "@solana/web3.js": "^1.98.4",
     "commander": "^11.1.0",
     "dotenv": "^16.6.1",
-    "ink": "^3.2.0",
     "ora": "^9.3.0",
     "string-width": "^4.2.3"
   }
