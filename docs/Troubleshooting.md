@@ -45,7 +45,7 @@ space, truncated string, or a block hash pasted instead of a tx signature.
 3. Quote the argument so the shell does not eat characters:
 
    ```bash
-   npm run cli -- tx "5Nd...full-signature-here..." --network mainnet
+   open tx "5Nd...full-signature-here..." --network mainnet
    ```
 
 ## 2. `failed to get transaction: <sig>`
@@ -74,8 +74,8 @@ Three possibilities, in order of likelihood:
 1. Try the other network:
 
    ```bash
-   npm run cli -- tx <sig> --network mainnet
-   npm run cli -- tx <sig> --network devnet
+   open tx <sig> --network mainnet
+   open tx <sig> --network devnet
    ```
 2. If still failing on mainnet for an old tx, point at an archive RPC
    (Helius, QuickNode):
@@ -103,9 +103,9 @@ Common typos: `main`, `dev`, `mainnet-beta`, `MAINNET`.
 **Fix**
 
 ```bash
-npm run cli -- tx <sig> --network mainnet     # ok
-npm run cli -- tx <sig> --network devnet      # ok
-npm run cli -- tx <sig> --network mainnet-beta  # rejected
+open tx <sig> --network mainnet     # ok
+open tx <sig> --network devnet      # ok
+open tx <sig> --network mainnet-beta  # rejected
 ```
 
 The CLI lower-cases its input, so capitalization is fine, but the value
@@ -238,7 +238,7 @@ chalk, but old branches or stale builds may still ship the Ink path.
 3. If you want plain text, pipe through a stripper:
 
    ```bash
-   npm run cli -- tx <sig> | sed 's/\x1b\[[0-9;]*m//g'
+   open tx <sig> | sed 's/\x1b\[[0-9;]*m//g'
    ```
 
 ## 8. Snapshot tests fail with locale-dependent numbers
@@ -306,7 +306,7 @@ Three options, from least to most invasive:
    touching disk):
 
    ```bash
-   npm run cli -- tx <sig> --no-cache
+   open tx <sig> --no-cache
    ```
 2. **Drop a single program's cache entry**:
 
@@ -345,7 +345,7 @@ all workspaces are installed and built.
    ```bash
    npm install        # installs all workspaces
    npm run build      # builds services + cli
-   npm run cli -- tx <sig>
+   open tx <sig>
    ```
 2. To get a global `open` binary on your PATH:
 
@@ -361,12 +361,12 @@ all workspaces are installed and built.
 
 | Goal | Command |
 |---|---|
-| Show per-stage timings, retries, IDL cache hits | `npm run cli -- tx <sig> --verbose` |
-| Bypass IDL cache for this run only | `npm run cli -- tx <sig> --no-cache` |
-| Force a specific RPC endpoint | `HELIUS_RPC_URL=https://... npm run cli -- tx <sig>` |
-| Persist full JSON for diffing | `npm run cli -- tx <sig> --json > out.json` |
+| Show per-stage timings, retries, IDL cache hits | `open tx <sig> --verbose` |
+| Bypass IDL cache for this run only | `open tx <sig> --no-cache` |
+| Force a specific RPC endpoint | `HELIUS_RPC_URL=https://... open tx <sig>` |
+| Persist full JSON for diffing | `open tx <sig> --json > out.json` |
 | Verify env wiring | `node -e "require('dotenv').config(); console.log(Object.keys(process.env).filter(k=>k.includes('HELIUS')||k.includes('MCP')))"` |
-| Re-download every IDL | `rm -rf ~/.open-cli/cache/idls && npm run cli -- tx <sig> --verbose` |
+| Re-download every IDL | `rm -rf ~/.open-cli/cache/idls && open tx <sig> --verbose` |
 | Confirm test suite isolation | `LC_ALL=en_US.UTF-8 npm run test:all` |
 | Lint + typecheck only | `npm run lint && npx tsc --noEmit` |
 

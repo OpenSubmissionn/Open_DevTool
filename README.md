@@ -65,27 +65,27 @@ npm run build
 
 Example 1 — Full analysis as JSON:
 ```bash
-npm run dev:cli -- tx <YOUR_TX_SIGNATURE> --json
+open tx <YOUR_TX_SIGNATURE> --json
 ```
 
 Example 2 — Analyze on devnet:
 ```bash
-npm run dev:cli -- tx <YOUR_TX_SIGNATURE> --network devnet
+open tx <YOUR_TX_SIGNATURE> --network devnet
 ```
 
 Example 3 — Custom RPC endpoint:
 ```bash
-npm run dev:cli -- tx <YOUR_TX_SIGNATURE> --rpc https://your-rpc-url.com
+open tx <YOUR_TX_SIGNATURE> --rpc https://your-rpc-url.com
 ```
 
 Example 4 — CSV output (writes a file):
 ```bash
-npm run dev:cli -- tx <YOUR_TX_SIGNATURE> --network mainnet --csv
+open tx <YOUR_TX_SIGNATURE> --network mainnet --csv
 ```
 
 Example 5 — CSV output to explicit path:
 ```bash
-npm run dev:cli -- tx <YOUR_TX_SIGNATURE> --network mainnet --csv --output ./my-tx-report.csv
+open tx <YOUR_TX_SIGNATURE> --network mainnet --csv --output ./my-tx-report.csv
 ```
 
 Note: when `--csv` is used without `--output`, the CLI writes a file named `<signature>.csv` in the current working directory.

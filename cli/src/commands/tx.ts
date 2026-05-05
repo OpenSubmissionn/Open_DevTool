@@ -86,7 +86,7 @@ export const registerTxCommand = (program: Command) => {
         typeof options.network === 'string' ? options.network.toLowerCase() : undefined;
       const positionalNetwork =
         typeof networkArg === 'string' ? networkArg.toLowerCase() : undefined;
-      const resolvedNetwork = optionNetwork ?? positionalNetwork ?? 'devnet';
+      const resolvedNetwork = optionNetwork ?? positionalNetwork ?? 'mainnet';
 
       if (resolvedNetwork !== 'mainnet' && resolvedNetwork !== 'devnet') {
         errorLog(chalk.red('\nError: Invalid network.'));

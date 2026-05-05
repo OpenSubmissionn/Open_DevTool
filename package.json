@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "CLI debugger visual para transações Solana",
   "main": "index.js",
+  "bin": {
+    "open": "cli/dist/open.js"
+  },
   "scripts": {
     "cli": "tsx cli/bin/open.ts",
     "dev": "npm run dev -w cli",
