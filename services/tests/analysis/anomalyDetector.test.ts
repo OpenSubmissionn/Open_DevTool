@@ -69,4 +69,58 @@ describe('anomalyDetector', () => {
     const report = detectAnomalies(mockRPCBundle(), transfers);
     expect(report.anomalies.filter((a) => a.type === 'spam')).toHaveLength(0);
   });
+
+  // Each of these tests exercises one branch of the directional language used
+  // in the spam description (sent / received / transfer / degenerate).
+  describe('spam description directionality', () => {
+    const baseTransfer = {
+      amount: '999999999',
+      token: 'SpamMint11111111111111111111111111111111111',
+      decimals: 6,
+      uiAmount: 1_500_000,
+      usdValue: null,
+      isSpamSuspect: true,
+    };
+
+    it('says "transfer" when both from and to are populated', () => {
+      const report = detectAnomalies(mockRPCBundle(), [
+        { ...baseTransfer, from: 'sender', to: 'receiver' },
+      ]);
+      const spam = report.anomalies.find((a) => a.type === 'spam');
+      expect(spam?.description).toContain('spam token transfer:');
+    });
+
+    it('says "sent" when only from is populated (burn/rent destination)', () => {
+      const report = detectAnomalies(mockRPCBundle(), [
+        { ...baseTransfer, from: 'sender', to: '' },
+      ]);
+      const spam = report.anomalies.find((a) => a.type === 'spam');
+      expect(spam?.description).toContain('spam token sent:');
+    });
+
+    it('says "received" when only to is populated (mint origin)', () => {
+      const report = detectAnomalies(mockRPCBundle(), [
+        { ...baseTransfer, from: '', to: 'receiver' },
+      ]);
+      const spam = report.anomalies.find((a) => a.type === 'spam');
+      expect(spam?.description).toContain('spam token received:');
+    });
+
+    it('falls back to "transfer" when neither endpoint is populated', () => {
+      const report = detectAnomalies(mockRPCBundle(), [{ ...baseTransfer, from: '', to: '' }]);
+      const spam = report.anomalies.find((a) => a.type === 'spam');
+      expect(spam?.description).toContain('spam token transfer:');
+    });
+
+    it('truncates long mint addresses in the description', () => {
+      const longMint = 'AbCdEfGhIjKlMnOpQrStUvWxYz1234567890SuperLongMint';
+      const report = detectAnomalies(mockRPCBundle(), [
+        { ...baseTransfer, token: longMint, from: 'a', to: 'b' },
+      ]);
+      const spam = report.anomalies.find((a) => a.type === 'spam');
+      // 8 chars head + "..." + 6 chars tail
+      expect(spam?.description).toContain('AbCdEfGh...ngMint');
+      expect(spam?.description).not.toContain(longMint);
+    });
+  });
 });

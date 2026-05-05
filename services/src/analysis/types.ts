@@ -67,6 +67,8 @@ export interface RawTransactionBundle {
   innerInstructions: any[];
   /** Total compute units consumed, when available. */
   computeUnitsConsumed: number | null;
+  /** Total transaction fee in lamports as reported by the RPC (base + priority). */
+  fee: number;
   /** Execution error returned by the transaction, if any. */
   err: object | string | null;
   /** Account public keys included in the transaction. */
@@ -364,14 +366,18 @@ export interface TransferInfo {
 export interface CUCost {
   /** Total compute units consumed. */
   cuConsumed: number;
-  /** Micro-lamports per compute unit used for fee calculation. */
+  /** Micro-lamports per compute unit used for priority fee calculation. */
   microLamportsPerCU: number;
-  /** Total fee in lamports: cu_consumed * micro_lamports_per_cu / 1_000_000 */
+  /** Total transaction fee in lamports (base signature fee + priority fee), from RPC meta.fee. */
   feeLamports: number;
-  /** Total fee in SOL. */
+  /** Total transaction fee in SOL. */
   feeSOL: number;
-  /** Total fee in USD. Null when SOL price is unavailable. */
+  /** Total transaction fee in USD. Null when SOL price is unavailable. */
   feeUSD: number | null;
+  /** Priority fee component in lamports: floor(cu_consumed * micro_lamports_per_cu / 1_000_000). */
+  priorityFeeLamports: number;
+  /** Base signature fee component in lamports (5000 per signature). */
+  baseFeeLamports: number;
 }
 
 /**
