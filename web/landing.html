@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>open — chrome dev tools for solana</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg: #07070d;
+      --bg-soft: #0d0d18;
+      --fg: #e8e8f0;
+      --fg-dim: #9a9ab0;
+      --fg-mute: #5a5a72;
+      --border: #1f1f2e;
+      --border-bright: #2c2c44;
+      --purple: #9945ff;
+      --purple-soft: #b07cff;
+      --green: #14f195;
+      --green-soft: #4dffba;
+      --yellow: #ffc857;
+      --red: #ff4d6d;
+      --blue: #2563eb;
+      --blue-soft: #60a5fa;
+      --orange: #f59e0b;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-feature-settings: 'cv11', 'ss01';
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    code, .mono {
+      font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* ============================================
+       BACKGROUND CU BARS — drives the scroll effect
+       ============================================ */
+    .cu-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(153, 69, 255, 0.18), transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(20, 241, 149, 0.10), transparent 60%),
+        var(--bg);
+    }
+
+    .cu-bars {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 2vw;
+      gap: 0.4vw;
+    }
+
+    .cu-bar {
+      flex: 1;
+      min-width: 4px;
+      background: linear-gradient(
+        to top,
+        rgba(153, 69, 255, 0.55) 0%,
+        rgba(153, 69, 255, 0.35) 40%,
+        rgba(20, 241, 149, 0.30) 75%,
+        rgba(20, 241, 149, 0.10) 100%
+      );
+      border-radius: 3px 3px 0 0;
+      height: 6%;
+      transform-origin: bottom;
+      transition: height 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow:
+        0 0 8px rgba(153, 69, 255, 0.18),
+        inset 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+
+    .cu-bar.high {
+      background: linear-gradient(
+        to top,
+        rgba(255, 77, 109, 0.55) 0%,
+        rgba(255, 200, 87, 0.40) 60%,
+        rgba(20, 241, 149, 0.20) 100%
+      );
+      box-shadow: 0 0 12px rgba(255, 77, 109, 0.25);
+    }
+
+    .cu-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, var(--bg) 0%, transparent 12%, transparent 70%, rgba(7, 7, 13, 0.85) 100%);
+      pointer-events: none;
+    }
+
+    .cu-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: linear-gradient(to bottom, black 0%, transparent 80%);
+      pointer-events: none;
+    }
+
+    /* ============================================
+       LAYOUT
+       ============================================ */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    /* ============================================
+       NAV
+       ============================================ */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: rgba(7, 7, 13, 0.7);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 28px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-mark {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--purple) 0%, var(--green) 100%);
+      position: relative;
+    }
+
+    .logo-mark::after {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      background: var(--bg);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      font-size: 14px;
+      color: var(--fg-dim);
+    }
+
+    .nav-links a:hover {
+      color: var(--fg);
+    }
+
+    .nav-cta {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-bright);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--fg);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+
+    .nav-cta:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--purple);
+    }
+
+    /* ============================================
+       HERO
+       ============================================ */
+    .hero {
+      padding: 120px 0 100px;
+      text-align: center;
+      position: relative;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border-bright);
+      background: rgba(153, 69, 255, 0.08);
+      color: var(--purple-soft);
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    .logo-block {
+      display: inline-block;
+      padding: 14px 44px 22px;
+      margin: 0 0 32px;
+      background: linear-gradient(140deg, #1e3a8a 0%, #2563eb 50%, #1d4ed8 100%);
+      border-radius: 18px;
+      font-weight: 900;
+      font-size: clamp(72px, 12vw, 144px);
+      line-height: 0.9;
+      letter-spacing: -0.06em;
+      color: #ffffff;
+      position: relative;
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 -24px 60px rgba(0, 0, 0, 0.25),
+        0 30px 80px -20px rgba(37, 99, 235, 0.55);
+      animation: logoFloat 6s ease-in-out infinite;
+    }
+
+    .logo-block .dim {
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .tagline {
+      font-size: clamp(20px, 2.4vw, 28px);
+      font-weight: 500;
+      color: var(--fg);
+      margin: 0 0 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .tagline .accent {
+      background: linear-gradient(90deg, var(--purple-soft), var(--green-soft));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      max-width: 640px;
+      margin: 0 auto 40px;
+      color: var(--fg-dim);
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 22px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple) 0%, #7a2eff 100%);
+      color: white;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+        0 8px 24px rgba(153, 69, 255, 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+        0 12px 32px rgba(153, 69, 255, 0.5);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: var(--border-bright);
+      color: var(--fg);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: var(--purple);
+    }
+
+    .install-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      background: rgba(13, 13, 24, 0.8);
+      border: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--fg-dim);
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .install-line:hover {
+      border-color: var(--purple);
+    }
+
+    .install-line .prompt {
+      color: var(--green);
+    }
+
+    .install-line .copy {
+      color: var(--fg-mute);
+      font-size: 12px;
+      padding-left: 12px;
+      border-left: 1px solid var(--border);
+    }
+
+    /* ============================================
+       SECTION COMMON
+       ============================================ */
+    section.block {
+      padding: 100px 0;
+      position: relative;
+    }
+
+    .section-head {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 64px;
+    }
+
+    .section-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--purple-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 14px;
+    }
+
+    .section-head h2 {
+      font-size: clamp(32px, 4.5vw, 48px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin: 0 0 16px;
+    }
+
+    .section-head p {
+      color: var(--fg-dim);
+      font-size: 17px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ============================================
+       VERSIONS
+       ============================================ */
+    .versions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .version-card {
+      display: block;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .version-card:hover {
+      border-color: var(--border-bright);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.5);
+    }
+
+    a.version-card:hover {
+      border-color: var(--blue-soft);
+    }
+
+    a.version-card.available:hover {
+      border-color: var(--green);
+    }
+
+    .version-card.available {
+      border-color: rgba(20, 241, 149, 0.25);
+    }
+
+    .version-card.available::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+    }
+
+    .version-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 18px;
+    }
+
+    .version-badge.live {
+      background: rgba(20, 241, 149, 0.12);
+      color: var(--green);
+      border: 1px solid rgba(20, 241, 149, 0.3);
+    }
+
+    .version-badge.soon {
+      background: rgba(255, 200, 87, 0.10);
+      color: var(--yellow);
+      border: 1px solid rgba(255, 200, 87, 0.25);
+    }
+
+    .version-badge .pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulse 1.8s ease-out infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 currentColor; }
+      70% { box-shadow: 0 0 0 6px transparent; }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+
+    .version-card h3 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 10px;
+    }
+
+    .version-card .desc {
+      color: var(--fg-dim);
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 0 0 22px;
+    }
+
+    .version-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 24px;
+    }
+
+    .version-card li {
+      display: flex;
+      gap: 10px;
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--fg-dim);
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .version-card li:last-child {
+      border-bottom: none;
+    }
+
+    .version-card li .check {
+      color: var(--green);
+      flex-shrink: 0;
+    }
+
+    .version-card li .pending {
+      color: var(--fg-mute);
+    }
+
+    /* ============================================
+       MODES (run on signature vs simulate file)
+       ============================================ */
+    .modes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .mode-card {
+      background: rgba(13, 13, 24, 0.6);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .mode-card-head {
+      padding: 24px 28px 16px;
+    }
+
+    .mode-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 20px;
+    }
+
+    .mode-icon.live {
+      background: rgba(20, 241, 149, 0.12);
+      color: var(--green);
+      border: 1px solid rgba(20, 241, 149, 0.25);
+    }
+
+    .mode-icon.simulate {
+      background: rgba(153, 69, 255, 0.12);
+      color: var(--purple-soft);
+      border: 1px solid rgba(153, 69, 255, 0.25);
+    }
+
+    .mode-card h3 {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0 0 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .mode-card p {
+      color: var(--fg-dim);
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .mode-terminal {
+      background: #050509;
+      border-top: 1px solid var(--border);
+      padding: 20px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .mode-terminal .line {
+      display: flex;
+      gap: 10px;
+    }
+
+    .mode-terminal .prompt {
+      color: var(--green);
+      user-select: none;
+    }
+
+    .mode-terminal .cmd {
+      color: var(--fg);
+    }
+
+    .mode-terminal .arg {
+      color: var(--purple-soft);
+    }
+
+    .mode-terminal .out {
+      color: var(--fg-mute);
+      padding-left: 22px;
+    }
+
+    .mode-terminal .out .ok {
+      color: var(--green);
+    }
+
+    .mode-terminal .out .warn {
+      color: var(--yellow);
+    }
+
+    /* ============================================
+       FEATURES
+       ============================================ */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .feature {
+      background: rgba(13, 13, 24, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: all 0.2s;
+    }
+
+    .feature:hover {
+      border-color: var(--purple);
+      background: rgba(153, 69, 255, 0.04);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(153, 69, 255, 0.15), rgba(20, 241, 149, 0.10));
+      border: 1px solid var(--border-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--purple-soft);
+    }
+
+    .feature h4 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 0 0 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .feature p {
+      font-size: 13px;
+      color: var(--fg-dim);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 50px 0 40px;
+      margin-top: 60px;
+      position: relative;
+      z-index: 1;
+      background: rgba(7, 7, 13, 0.6);
+      backdrop-filter: blur(8px);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-meta {
+      color: var(--fg-mute);
+      font-size: 13px;
+    }
+
+    .footer-meta .accent {
+      color: var(--fg-dim);
+    }
+
+    /* ============================================
+       FINAL CTA
+       ============================================ */
+    .final-cta {
+      text-align: center;
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, transparent, rgba(153, 69, 255, 0.04), transparent);
+    }
+
+    .final-cta h2 {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 0 0 14px;
+    }
+
+    .final-cta p {
+      color: var(--fg-dim);
+      margin: 0 0 28px;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 820px) {
+      .versions-grid,
+      .modes-grid {
+        grid-template-columns: 1fr;
+      }
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .nav-links a:not(.nav-cta) {
+        display: none;
+      }
+      .install-line .copy {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      section.block {
+        padding: 60px 0;
+      }
+      .hero {
+        padding: 80px 0 60px;
+      }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .cu-bar {
+        transition: none;
+      }
+      html {
+        scroll-behavior: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- background CU bars (compute-unit bars grow on scroll) -->
+  <div class="cu-bg" aria-hidden="true">
+    <div class="cu-bars" id="cuBars"></div>
+  </div>
+
+  <!-- nav -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="logo">
+        <span class="logo-mark"></span>
+        <span>open</span>
+      </a>
+      <div class="nav-links">
+        <a href="#versions">Versions</a>
+        <a href="#modes">How it works</a>
+        <a href="#features">Features</a>
+        <a href="demo.html">Demo</a>
+        <a
+          href="https://github.com/OpenSubmissionn/Submission_Open"
+          target="_blank"
+          rel="noopener"
+          class="nav-cta"
+        >GitHub →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero container">
+    <div class="eyebrow">
+      <span class="dot"></span>
+      <span>v1.0 · CLI live on npm</span>
+    </div>
+    <div class="logo-block">ope<span class="dim">n</span></div>
+    <p class="tagline">
+      <span class="accent">chrome dev tools</span> for solana
+    </p>
+    <p class="subtitle">
+      Take any Solana transaction signature — or an unsigned blob — and turn it into
+      a fully decoded execution profile. Compute units, CPI call trees, account diffs,
+      and an insight layer that flags bottlenecks automatically.
+    </p>
+
+    <div class="cta-row">
+      <a
+        href="https://github.com/OpenSubmissionn/Submission_Open"
+        target="_blank"
+        rel="noopener"
+        class="btn btn-primary"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 0a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2c-3.34.73-4.04-1.6-4.04-1.6-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.21.09 1.85 1.24 1.85 1.24 1.07 1.84 2.81 1.31 3.5 1 .1-.78.42-1.31.76-1.61-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.3-1.55 3.3-1.23 3.3-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.62-5.49 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12 12 0 0 0 12 0Z"/>
+        </svg>
+        Star on GitHub
+      </a>
+      <a href="#versions" class="btn btn-ghost">
+        See versions →
+      </a>
+    </div>
+
+    <div class="install-line" id="installLine" title="Click to copy">
+      <span class="prompt">$</span>
+      <span class="mono" id="installCmd">npm install -g github:OpenSubmissionn/Submission_Open</span>
+      <span class="copy" id="copyHint">copy</span>
+    </div>
+  </header>
+
+  <!-- VERSIONS -->
+  <section class="block container" id="versions">
+    <div class="section-head">
+      <div class="section-eyebrow">// versions</div>
+      <h2>Two ways to run open</h2>
+      <p>The CLI is shipping today. The web debugger is what we're building next.</p>
+    </div>
+
+    <div class="versions-grid">
+      <a
+        href="https://github.com/OpenSubmissionn/Submission_Open"
+        target="_blank"
+        rel="noopener"
+        class="version-card available"
+      >
+        <span class="version-badge live">
+          <span class="pulse"></span>
+          Available now
+        </span>
+        <h3>CLI</h3>
+        <p class="desc">
+          Profile transactions straight from your terminal. Pipe to JSON, export CSV,
+          or read the rendered TUI in real time.
+        </p>
+        <ul>
+          <li><span class="check">●</span> Global install via npm</li>
+          <li><span class="check">●</span> Mainnet, devnet & custom RPC</li>
+          <li><span class="check">●</span> JSON, CSV & terminal renderers</li>
+          <li><span class="check">●</span> Batch mode for many signatures</li>
+        </ul>
+        <span class="btn btn-ghost"
+          style="width: 100%; justify-content: center; pointer-events: none;">View on GitHub →</span>
+      </a>
+
+      <a href="demo.html" class="version-card version-card-link">
+        <span class="version-badge soon">
+          <span class="pulse"></span>
+          Preview available
+        </span>
+        <h3>Web</h3>
+        <p class="desc">
+          A browser-based visual debugger — paste a signature, get an interactive
+          flame graph, CPI tree and account state timeline.
+        </p>
+        <ul>
+          <li><span class="pending">○</span> Interactive CU flame graph</li>
+          <li><span class="pending">○</span> Clickable CPI call tree</li>
+          <li><span class="pending">○</span> Side-by-side simulation diff</li>
+          <li><span class="pending">○</span> Shareable transaction reports</li>
+        </ul>
+        <span class="btn btn-ghost"
+          style="width: 100%; justify-content: center; pointer-events: none;">Open preview →</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- MODES (live signature vs simulate from file) -->
+  <section class="block container" id="modes">
+    <div class="section-head">
+      <div class="section-eyebrow">// run modes</div>
+      <h2>Run on a real signature, or simulate from a file</h2>
+      <p>
+        Already broadcast? Decode it. Still drafting? Profile it before you sign.
+      </p>
+    </div>
+
+    <div class="modes-grid">
+      <div class="mode-card">
+        <div class="mode-card-head">
+          <div class="mode-icon live">⚡</div>
+          <h3>On-chain signature</h3>
+          <p>
+            Point open at any confirmed transaction signature. It pulls the tx from
+            the RPC and gives you the full profile — CU usage, CPI tree, account diffs.
+          </p>
+        </div>
+        <div class="mode-terminal">
+          <div class="line">
+            <span class="prompt">$</span>
+            <span class="cmd">open tx <span class="arg">&lt;SIGNATURE&gt;</span></span>
+          </div>
+          <div class="out">→ fetched from mainnet · <span class="ok">✓ decoded</span></div>
+          <div class="out">→ 8 instructions · 4 CPIs · <span class="warn">312k CU</span></div>
+          <div class="line" style="margin-top: 10px;">
+            <span class="prompt">$</span>
+            <span class="cmd">open tx <span class="arg">&lt;SIG&gt;</span> --network devnet --json</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mode-card">
+        <div class="mode-card-head">
+          <div class="mode-icon simulate">∿</div>
+          <h3>Simulate from file</h3>
+          <p>
+            Have a base64 transaction blob you haven't broadcast yet? Pass the path
+            (or the blob itself) and open will simulate it against current state.
+          </p>
+        </div>
+        <div class="mode-terminal">
+          <div class="line">
+            <span class="prompt">$</span>
+            <span class="cmd">open simulate <span class="arg">./my-tx.b64</span></span>
+          </div>
+          <div class="out">→ simulating against mainnet state...</div>
+          <div class="out">→ <span class="ok">✓ would succeed</span> · 184k CU</div>
+          <div class="line" style="margin-top: 10px;">
+            <span class="prompt">$</span>
+            <span class="cmd">open simulate <span class="arg">&lt;BASE64_BLOB&gt;</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="block container" id="features">
+    <div class="section-head">
+      <div class="section-eyebrow">// features</div>
+      <h2>Everything you need to debug a Solana transaction</h2>
+      <p>
+        Built around the same questions you'd ask in Chrome DevTools — but for the SVM.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">CU</div>
+        <h4>CU Profiler</h4>
+        <p>Per-instruction compute unit breakdown with hotspot detection.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⌥</div>
+        <h4>CPI Call Tree</h4>
+        <p>Reconstructed from program logs — see who calls whom, and how deep.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">Δ</div>
+        <h4>Account Diffs</h4>
+        <p>Pre/post state for every touched account, decoded when possible.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">!</div>
+        <h4>Insight Engine</h4>
+        <p>Flags missing PDA bump caches, redundant CPIs, oversized account loads.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚠</div>
+        <h4>Anomaly Detection</h4>
+        <p>Outlier CU spikes vs. historical baseline for the same program.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">$</div>
+        <h4>Cost Analysis</h4>
+        <p>Lamport breakdown — base fee, priority fee, rent, transfer totals.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⇄</div>
+        <h4>Framework Compare</h4>
+        <p>See how the same logic would cost in Anchor, Pinocchio, or raw SVM.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">▤</div>
+        <h4>Batch Mode</h4>
+        <p>Run analysis across a file of signatures and aggregate the report.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="container">
+      <h2>Ship faster. Profile everything.</h2>
+      <p>open is MIT-licensed and open source. Try it on a real signature in 30 seconds.</p>
+      <div class="cta-row">
+        <a
+          href="https://github.com/OpenSubmissionn/Submission_Open"
+          target="_blank"
+          rel="noopener"
+          class="btn btn-primary"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 0a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2c-3.34.73-4.04-1.6-4.04-1.6-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.21.09 1.85 1.24 1.85 1.24 1.07 1.84 2.81 1.31 3.5 1 .1-.78.42-1.31.76-1.61-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.3-1.55 3.3-1.23 3.3-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.62-5.49 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12 12 0 0 0 12 0Z"/>
+          </svg>
+          Open the repo
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="logo">
+        <span class="logo-mark"></span>
+        <span>open</span>
+      </div>
+      <div class="footer-meta">
+        <span class="accent">MIT licensed</span> · built for the Solana community
+      </div>
+      <a
+        href="https://github.com/OpenSubmissionn/Submission_Open"
+        target="_blank"
+        rel="noopener"
+        class="nav-cta"
+      >github.com/OpenSubmissionn/Submission_Open</a>
+    </div>
+  </footer>
+
+  <script>
+    // ============================================
+    // CU bar background — bars grow as you scroll
+    // ============================================
+    (function () {
+      const container = document.getElementById('cuBars');
+      const BAR_COUNT = 64;
+      const bars = [];
+
+      // pseudo-random but deterministic per bar — gives each bar its own
+      // peak height + phase, so the wave looks organic
+      function seeded(i) {
+        const x = Math.sin(i * 12.9898) * 43758.5453;
+        return x - Math.floor(x);
+      }
+
+      for (let i = 0; i < BAR_COUNT; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'cu-bar';
+        // some bars are "high CU" (red/yellow tint) — about 1 in 5
+        if (seeded(i + 100) > 0.78) bar.classList.add('high');
+        container.appendChild(bar);
+        bars.push({
+          el: bar,
+          peak: 28 + seeded(i) * 64,    // % of viewport height — max bar height
+          phase: seeded(i + 50) * 1.2,  // 0..1.2 — when this bar starts growing
+          jitter: 0.85 + seeded(i + 7) * 0.3,
+        });
+      }
+
+      const docEl = document.documentElement;
+      let ticking = false;
+
+      function update() {
+        const scrollTop = window.scrollY || docEl.scrollTop;
+        const scrollMax = docEl.scrollHeight - window.innerHeight;
+        const progress = scrollMax > 0 ? Math.min(1, scrollTop / scrollMax) : 0;
+
+        // wave shimmer based on time, very subtle so the bars feel alive
+        const t = performance.now() * 0.0006;
+
+        for (let i = 0; i < bars.length; i++) {
+          const b = bars[i];
+          // each bar starts growing a bit later than the previous (phase)
+          const localProgress = Math.max(0, Math.min(1, (progress * 1.6) - b.phase * 0.5));
+          // ease-out-cubic so growth decelerates near the top
+          const eased = 1 - Math.pow(1 - localProgress, 3);
+          // small live shimmer (±6% of current height)
+          const shimmer = 1 + Math.sin(t + i * 0.4) * 0.05 * eased;
+          const heightPct = Math.max(2, eased * b.peak * b.jitter * shimmer);
+          b.el.style.height = heightPct + '%';
+        }
+
+        ticking = false;
+      }
+
+      function onScroll() {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+
+      // shimmer loop — keeps bars alive even when not scrolling
+      function tick() {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+        requestAnimationFrame(tick);
+      }
+      tick();
+    })();
+
+    // ============================================
+    // Click-to-copy on the install line
+    // ============================================
+    (function () {
+      const line = document.getElementById('installLine');
+      const cmd = document.getElementById('installCmd');
+      const hint = document.getElementById('copyHint');
+      if (!line || !cmd || !hint) return;
+
+      line.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(cmd.textContent.trim());
+          const original = hint.textContent;
+          hint.textContent = 'copied ✓';
+          hint.style.color = 'var(--green)';
+          setTimeout(() => {
+            hint.textContent = original;
+            hint.style.color = '';
+          }, 1600);
+        } catch (e) {
+          // clipboard blocked — silently no-op
+        }
+      });
+    })();
+
+  </script>
+</body>
+</html>
