@@ -207,7 +207,8 @@ export const registerTxCommand = (program: Command) => {
           return;
         }
 
-        renderTerminal(analyzed, insightsReport, selectedNetwork);
+        const totalMsForHeader = timings.reduce((acc, t) => acc + t.durationMs, 0);
+        renderTerminal(analyzed, insightsReport, selectedNetwork, totalMsForHeader);
         const outputEnd = nowMs();
         timings.push({ stage: 'render_terminal', durationMs: outputEnd - outputStart });
 
