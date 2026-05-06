@@ -96,9 +96,11 @@
         rgba(20, 241, 149, 0.10) 100%
       );
       border-radius: 3px 3px 0 0;
-      height: 6%;
+      height: 100%;
+      transform: scaleY(0.06);
       transform-origin: bottom;
-      transition: height 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+      will-change: transform;
+      backface-visibility: hidden;
       box-shadow:
         0 0 8px rgba(153, 69, 255, 0.18),
         inset 0 0 1px rgba(255, 255, 255, 0.05);
@@ -132,6 +134,61 @@
       background-size: 40px 40px;
       mask-image: linear-gradient(to bottom, black 0%, transparent 80%);
       pointer-events: none;
+    }
+
+    /* ============================================
+       HERO REVEAL — cloak-style word-by-word
+       ============================================ */
+    .word {
+      display: inline-block;
+      opacity: 0;
+      filter: blur(14px);
+      transform: translateY(0.3em);
+      animation: wordReveal 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+      animation-delay: calc(var(--i, 0) * 200ms + 120ms);
+      will-change: opacity, filter, transform;
+    }
+
+    @keyframes wordReveal {
+      0% {
+        opacity: 0;
+        filter: blur(14px);
+        transform: translateY(0.3em);
+      }
+      55% {
+        opacity: 0.65;
+        filter: blur(4px);
+      }
+      100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0);
+      }
+    }
+
+    .hero .subtitle,
+    .hero .cta-row,
+    .hero .install-line {
+      opacity: 0;
+      animation: heroFadeUp 0.95s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+      will-change: opacity, transform, filter;
+    }
+
+    .hero .subtitle  { animation-delay: 1.15s; }
+    .hero .cta-row   { animation-delay: 1.35s; }
+    .hero .install-line { animation-delay: 1.55s; }
+
+    @keyframes heroFadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+        filter: blur(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
     }
 
     /* ============================================
@@ -756,6 +813,16 @@
     @media (prefers-reduced-motion: reduce) {
       .cu-bar {
         transition: none;
+        will-change: auto;
+      }
+      .word,
+      .hero .subtitle,
+      .hero .cta-row,
+      .hero .install-line {
+        animation: none !important;
+        opacity: 1;
+        filter: none;
+        transform: none;
       }
       html {
         scroll-behavior: auto;
@@ -793,7 +860,11 @@
   <!-- HERO -->
   <header class="hero container">
     <h1 class="tagline">
-      <span class="accent">Chrome DevTools</span><br />for Solana
+      <span class="word accent" style="--i:0">Chrome</span>
+      <span class="word accent" style="--i:1">DevTools</span>
+      <br />
+      <span class="word" style="--i:2">for</span>
+      <span class="word" style="--i:3">Solana</span>
     </h1>
     <p class="subtitle">
       Paste your transaction signature and get all the information you need. 
@@ -1080,7 +1151,7 @@
           // small live shimmer (±6% of current height)
           const shimmer = 1 + Math.sin(t + i * 0.4) * 0.05 * eased;
           const heightPct = Math.max(2, eased * b.peak * b.jitter * shimmer);
-          b.el.style.height = heightPct + '%';
+          b.el.style.transform = 'scaleY(' + (heightPct / 100) + ')';
         }
 
         ticking = false;
