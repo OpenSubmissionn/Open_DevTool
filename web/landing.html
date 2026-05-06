@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>open — chrome dev tools for solana</title>
+  <title>OPEN — Chrome dev tools for solana</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -177,19 +177,15 @@
     }
 
     .logo-mark {
-      width: 26px;
-      height: 26px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, var(--purple) 0%, var(--green) 100%);
-      position: relative;
-    }
-
-    .logo-mark::after {
-      content: '';
-      position: absolute;
-      inset: 6px;
-      border-radius: 50%;
-      background: var(--bg);
+      width: 36px;
+      height: 36px;
+      display: block;
+      box-sizing: border-box;
+      padding: 4px;
+      border-radius: 6px;
+      background: #000;     /* black plate; the SVG paths are hardcoded #4b6cb3 (blue letters on black) */
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+      flex-shrink: 0;
     }
 
     .nav-links {
@@ -251,40 +247,14 @@
       box-shadow: 0 0 8px var(--green);
     }
 
-    .logo-block {
-      display: inline-block;
-      padding: 14px 44px 22px;
-      margin: 0 0 32px;
-      background: linear-gradient(140deg, #1e3a8a 0%, #2563eb 50%, #1d4ed8 100%);
-      border-radius: 18px;
-      font-weight: 900;
-      font-size: clamp(72px, 12vw, 144px);
-      line-height: 0.9;
-      letter-spacing: -0.06em;
-      color: #ffffff;
-      position: relative;
-      box-shadow:
-        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
-        inset 0 -24px 60px rgba(0, 0, 0, 0.25),
-        0 30px 80px -20px rgba(37, 99, 235, 0.55);
-      animation: logoFloat 6s ease-in-out infinite;
-    }
-
-    .logo-block .dim {
-      color: rgba(255, 255, 255, 0.55);
-    }
-
-    @keyframes logoFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
-
     .tagline {
-      font-size: clamp(20px, 2.4vw, 28px);
-      font-weight: 500;
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 800;
       color: var(--fg);
-      margin: 0 0 16px;
-      letter-spacing: -0.01em;
+      margin: 16px 0 28px;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      text-wrap: balance;
     }
 
     .tagline .accent {
@@ -292,7 +262,7 @@
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      font-weight: 700;
+      font-weight: 900;
     }
 
     .subtitle {
@@ -803,8 +773,7 @@
   <nav>
     <div class="nav-inner">
       <a href="#" class="logo">
-        <span class="logo-mark"></span>
-        <span>open</span>
+        <img class="logo-mark" src="open-symbol.svg" alt="OPEN" />
       </a>
       <div class="nav-links">
         <a href="#versions">Versions</a>
@@ -823,18 +792,11 @@
 
   <!-- HERO -->
   <header class="hero container">
-    <div class="eyebrow">
-      <span class="dot"></span>
-      <span>v1.0 · CLI live on npm</span>
-    </div>
-    <div class="logo-block">ope<span class="dim">n</span></div>
-    <p class="tagline">
-      <span class="accent">chrome dev tools</span> for solana
-    </p>
+    <h1 class="tagline">
+      <span class="accent">Chrome DevTools</span><br />for Solana
+    </h1>
     <p class="subtitle">
-      Take any Solana transaction signature — or an unsigned blob — and turn it into
-      a fully decoded execution profile. Compute units, CPI call trees, account diffs,
-      and an insight layer that flags bottlenecks automatically.
+      Paste your transaction signature and get all the information you need. 
     </p>
 
     <div class="cta-row">
@@ -933,7 +895,7 @@
           <div class="mode-icon live">⚡</div>
           <h3>On-chain signature</h3>
           <p>
-            Point open at any confirmed transaction signature. It pulls the tx from
+            Point OPEN at any confirmed transaction signature. It pulls the tx from
             the RPC and gives you the full profile — CU usage, CPI tree, account diffs.
           </p>
         </div>
@@ -1034,7 +996,7 @@
   <section class="final-cta">
     <div class="container">
       <h2>Ship faster. Profile everything.</h2>
-      <p>open is MIT-licensed and open source. Try it on a real signature in 30 seconds.</p>
+      <p>OPEN is MIT-licensed and open source. Try it on a real signature in 30 seconds.</p>
       <div class="cta-row">
         <a
           href="https://github.com/OpenSubmissionn/Submission_Open"
@@ -1054,8 +1016,7 @@
   <footer>
     <div class="container footer-inner">
       <div class="logo">
-        <span class="logo-mark"></span>
-        <span>open</span>
+        <img class="logo-mark" src="open-symbol.svg" alt="OPEN" />
       </div>
       <div class="footer-meta">
         <span class="accent">MIT licensed</span> · built for the Solana community

@@ -1,0 +1,74 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "OPEN OPEN" [ref=e4] [cursor=pointer]:
+        - /url: landing.html
+        - img "OPEN" [ref=e5]
+        - generic [ref=e6]: OPEN
+      - generic [ref=e7]:
+        - link "← Landing" [ref=e8] [cursor=pointer]:
+          - /url: landing.html
+        - link "Features" [ref=e9] [cursor=pointer]:
+          - /url: landing.html#features
+        - link "GitHub →" [ref=e10] [cursor=pointer]:
+          - /url: https://github.com/OpenSubmissionn/Submission_Open
+  - banner [ref=e11]:
+    - generic [ref=e14]: live · backend connected · paste a real signature to analyze
+    - generic [ref=e15]: // interactive demo
+    - heading "Try open right now" [level=1] [ref=e16]
+    - paragraph [ref=e17]: Paste a Solana transaction signature or pick one of the samples below. Navigate the tabs to explore the flame graph, CPI tree, account diff and more.
+    - generic [ref=e18]:
+      - textbox "paste a real Solana transaction signature (87–88 chars) for live analysis..." [ref=e19]: 4xE9fQ8nKp2vXLm...mK7r
+      - button "Analyze" [ref=e20] [cursor=pointer]
+    - generic [ref=e21]:
+      - generic [ref=e22]: "Mock samples:"
+      - button "4xE9f...mK7r" [ref=e23] [cursor=pointer]
+      - button "9aB2c...pL4s" [ref=e24] [cursor=pointer]
+      - button "7kM3x...qN8w" [ref=e25] [cursor=pointer]
+      - generic [ref=e26]: ·
+      - button "⚡ live mainnet sample" [ref=e27] [cursor=pointer]
+  - main [ref=e28]:
+    - generic [ref=e29]:
+      - tablist [ref=e30]:
+        - button "Flame Graph" [ref=e31] [cursor=pointer]
+        - button "CPI Tree" [ref=e32] [cursor=pointer]
+        - button "Account Diff" [ref=e33] [cursor=pointer]
+        - button "Account Model" [ref=e34] [cursor=pointer]
+        - button "Explanation" [ref=e35] [cursor=pointer]
+        - button "Learn" [ref=e36] [cursor=pointer]
+      - generic [ref=e38]:
+        - generic [ref=e39]:
+          - generic [ref=e40]: Total Compute Units
+          - generic [ref=e41]: 184,320 / 200,000 CU
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - generic [ref=e46]: Jupiter Aggregator V6
+            - generic [ref=e49]: 101,170 CU
+          - generic [ref=e50]:
+            - generic [ref=e51]:
+              - text: Orca Whirlpool
+              - generic [ref=e52]: ⚠ Bottleneck
+            - generic [ref=e55]: 110,500 CU
+          - generic [ref=e56]:
+            - generic [ref=e57]: Metaplex Metadata
+            - generic [ref=e60]: 18,432 CU
+          - generic [ref=e61]:
+            - generic [ref=e62]: Token Program
+            - generic [ref=e65]: 5,530 CU
+          - generic [ref=e66]:
+            - generic [ref=e67]: System Program
+            - generic [ref=e70]: 3,688 CU
+        - generic [ref=e71]:
+          - generic [ref=e72]: ⚠
+          - generic [ref=e73]:
+            - strong [ref=e74]: "Bottleneck:"
+            - text: Orca Whirlpool ·
+            - code [ref=e75]: swap_v2
+            - text: consumed
+            - strong [ref=e76]: 110,500 CU (60%)
+            - text: ". Passing the tick array account directly avoids on-chain re-derivation. Estimated savings: ~40,000 CU."
+  - contentinfo [ref=e77]:
+    - generic [ref=e78]:
+      - generic [ref=e79]: OPEN · interactive demo · MIT licensed
+      - link "github.com/OpenSubmissionn/Submission_Open" [ref=e80] [cursor=pointer]:
+        - /url: https://github.com/OpenSubmissionn/Submission_Open

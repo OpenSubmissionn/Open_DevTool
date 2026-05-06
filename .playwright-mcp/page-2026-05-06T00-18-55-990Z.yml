@@ -1,0 +1,108 @@
+- generic [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "open" [ref=e4] [cursor=pointer]:
+        - /url: landing.html
+        - generic [ref=e6]: open
+      - generic [ref=e7]:
+        - link "← Landing" [ref=e8] [cursor=pointer]:
+          - /url: landing.html
+        - link "Features" [ref=e9] [cursor=pointer]:
+          - /url: landing.html#features
+        - link "GitHub →" [ref=e10] [cursor=pointer]:
+          - /url: https://github.com/OpenSubmissionn/Submission_Open
+  - banner [ref=e11]:
+    - generic [ref=e14]: live · 1.1s · 95,297 CU
+    - generic [ref=e15]: // interactive demo
+    - heading "Try open right now" [level=1] [ref=e16]
+    - paragraph [ref=e17]: Paste a Solana transaction signature or pick one of the samples below. Navigate the tabs to explore the flame graph, CPI tree, account diff and more.
+    - generic [ref=e18]:
+      - textbox "paste a real Solana transaction signature (87–88 chars) for live analysis..." [ref=e19]: 2ujdRg2nR5mBZ7ydheAvwmDFzr5Nni9h8wzpEWdmTezAQPUAteTMybDJh7rWAN8ytTpYVfFyPDAZoD8tPiFkGjYC
+      - button "Analyze" [ref=e20] [cursor=pointer]
+    - generic [ref=e21]:
+      - generic [ref=e22]: "Mock samples:"
+      - button "4xE9f...mK7r" [ref=e23] [cursor=pointer]
+      - button "9aB2c...pL4s" [ref=e24] [cursor=pointer]
+      - button "7kM3x...qN8w" [ref=e25] [cursor=pointer]
+      - generic [ref=e26]: ·
+      - button "⚡ live mainnet sample" [ref=e27] [cursor=pointer]
+    - generic [ref=e80]:
+      - generic [ref=e81]: ● success
+      - generic [ref=e82]: ·
+      - generic [ref=e83]: 2ujdRg…GjYC
+      - generic [ref=e84]: ·
+      - text: network
+      - generic [ref=e85]: mainnet
+      - generic [ref=e86]: ·
+      - text: slot
+      - generic [ref=e87]: 417,853,997
+      - generic [ref=e88]: ·
+      - text: fee
+      - generic [ref=e89]: 0.000006 SOL
+      - generic [ref=e90]: ·
+      - text: CU
+      - generic [ref=e91]: 95,297 / 956,243
+  - main [ref=e28]:
+    - generic [ref=e29]:
+      - tablist [ref=e30]:
+        - button "Flame Graph" [ref=e31] [cursor=pointer]
+        - button "CPI Tree" [ref=e32] [cursor=pointer]
+        - button "Account Diff" [ref=e33] [cursor=pointer]
+        - button "Account Model" [active] [ref=e34] [cursor=pointer]
+        - button "Learn" [ref=e35] [cursor=pointer]
+      - generic [ref=e116]:
+        - generic [ref=e117]:
+          - img [ref=e118]:
+            - generic [ref=e119]:
+              - generic: invokes
+              - generic: invokes
+              - generic: invokes
+              - generic: CPI
+              - generic: CPI
+              - generic: CPI
+              - generic: CPI
+              - generic: CPI
+              - generic: debits
+              - generic: credits
+              - generic: credits
+              - generic: debits
+            - generic [ref=e132]:
+              - generic [ref=e133] [cursor=pointer]:
+                - generic: Wallet (signer)
+              - generic [ref=e135] [cursor=pointer]:
+                - generic: Associated Token Account
+              - generic [ref=e137] [cursor=pointer]:
+                - generic: Jupiter Aggregator V6
+              - generic [ref=e139] [cursor=pointer]:
+                - generic: Token Program
+              - generic [ref=e141] [cursor=pointer]:
+                - generic: Token Program
+              - generic [ref=e143] [cursor=pointer]:
+                - generic: System Program
+              - generic [ref=e145] [cursor=pointer]:
+                - generic: Token Program
+              - generic [ref=e147] [cursor=pointer]:
+                - generic: Token Program
+              - generic [ref=e149] [cursor=pointer]:
+                - generic: Raydium CLMM
+              - generic [ref=e151] [cursor=pointer]:
+                - generic: Token Acct (EPjF…Dt1v)
+              - generic [ref=e153] [cursor=pointer]:
+                - generic: Token Acct (EPjF…Dt1v)
+              - generic [ref=e155] [cursor=pointer]:
+                - generic: Token Acct (EPjF…Dt1v)
+              - generic [ref=e157] [cursor=pointer]:
+                - generic: Token Acct (So11…1112)
+          - generic:
+            - generic: Program
+            - generic: PDA
+            - generic: Signer
+            - generic: Account
+        - complementary [ref=e159]:
+          - heading "No node selected" [level=4] [ref=e161]
+          - generic [ref=e162]: Click a node in the graph to inspect its type, owner, address and role in the transaction.
+  - contentinfo [ref=e76]:
+    - generic [ref=e77]:
+      - generic [ref=e78]: open · interactive demo · MIT licensed
+      - link "github.com/OpenSubmissionn/Submission_Open" [ref=e79] [cursor=pointer]:
+        - /url: https://github.com/OpenSubmissionn/Submission_Open

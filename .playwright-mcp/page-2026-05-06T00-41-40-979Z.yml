@@ -1,0 +1,113 @@
+- generic [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "open" [ref=e4] [cursor=pointer]:
+        - /url: landing.html
+        - generic [ref=e6]: open
+      - generic [ref=e7]:
+        - link "← Landing" [ref=e8] [cursor=pointer]:
+          - /url: landing.html
+        - link "Features" [ref=e9] [cursor=pointer]:
+          - /url: landing.html#features
+        - link "GitHub →" [ref=e10] [cursor=pointer]:
+          - /url: https://github.com/OpenSubmissionn/Submission_Open
+  - banner [ref=e11]:
+    - generic [ref=e14]: live · 0.9s · 95,297 CU
+    - generic [ref=e15]: // interactive demo
+    - heading "Try open right now" [level=1] [ref=e16]
+    - paragraph [ref=e17]: Paste a Solana transaction signature or pick one of the samples below. Navigate the tabs to explore the flame graph, CPI tree, account diff and more.
+    - generic [ref=e18]:
+      - textbox "paste a real Solana transaction signature (87–88 chars) for live analysis..." [ref=e19]: 2ujdRg2nR5mBZ7ydheAvwmDFzr5Nni9h8wzpEWdmTezAQPUAteTMybDJh7rWAN8ytTpYVfFyPDAZoD8tPiFkGjYC
+      - button "Analyze" [ref=e20] [cursor=pointer]
+    - generic [ref=e21]:
+      - generic [ref=e22]: "Mock samples:"
+      - button "4xE9f...mK7r" [ref=e23] [cursor=pointer]
+      - button "9aB2c...pL4s" [ref=e24] [cursor=pointer]
+      - button "7kM3x...qN8w" [ref=e25] [cursor=pointer]
+      - generic [ref=e26]: ·
+      - button "⚡ live mainnet sample" [ref=e27] [cursor=pointer]
+    - generic [ref=e81]:
+      - generic [ref=e82]: ● success
+      - generic [ref=e83]: ·
+      - generic [ref=e84]: 2ujdRg…GjYC
+      - generic [ref=e85]: ·
+      - text: network
+      - generic [ref=e86]: mainnet
+      - generic [ref=e87]: ·
+      - text: slot
+      - generic [ref=e88]: 417,853,997
+      - generic [ref=e89]: ·
+      - text: fee
+      - generic [ref=e90]: 0.000006 SOL
+      - generic [ref=e91]: ·
+      - text: CU
+      - generic [ref=e92]: 95,297 / 956,243
+  - main [ref=e28]:
+    - generic [ref=e29]:
+      - tablist [ref=e30]:
+        - button "Flame Graph" [ref=e31] [cursor=pointer]
+        - button "CPI Tree" [ref=e32] [cursor=pointer]
+        - button "Account Diff" [ref=e33] [cursor=pointer]
+        - button "Account Model" [ref=e34] [cursor=pointer]
+        - button "Explanation" [ref=e35] [cursor=pointer]
+        - button "Learn" [ref=e36] [cursor=pointer]
+      - generic [ref=e117]:
+        - generic [ref=e118]:
+          - 'button "⚙ #1 Set compute unit limit Caps how much compute the transaction is allowed to use at 119,120 CU. — no CPIs" [active] [ref=e119] [cursor=pointer]':
+            - generic [ref=e120]: ⚙
+            - generic [ref=e121]:
+              - generic [ref=e122]: "#1 Set compute unit limit"
+              - generic [ref=e123]: Caps how much compute the transaction is allowed to use at 119,120 CU.
+            - generic [ref=e124]:
+              - generic [ref=e125]: —
+              - generic [ref=e126]: no CPIs
+          - 'button "⚙ #2 Set priority fee Pays 8394 micro-lamports per CU as a priority bid (helps land in the next block). — no CPIs" [ref=e127] [cursor=pointer]':
+            - generic [ref=e128]: ⚙
+            - generic [ref=e129]:
+              - generic [ref=e130]: "#2 Set priority fee"
+              - generic [ref=e131]: Pays 8394 micro-lamports per CU as a priority bid (helps land in the next block).
+            - generic [ref=e132]:
+              - generic [ref=e133]: —
+              - generic [ref=e134]: no CPIs
+          - 'button "+ #3 Create associated token account Derives and creates the ATA for 6vXW…28Wk to hold the token So11…1112. 19,100 CU 4 CPIs" [ref=e135] [cursor=pointer]':
+            - generic [ref=e136]: +
+            - generic [ref=e137]:
+              - generic [ref=e138]: "#3 Create associated token account"
+              - generic [ref=e139]: Derives and creates the ATA for 6vXW…28Wk to hold the token So11…1112.
+            - generic [ref=e140]:
+              - generic [ref=e141]: 19,100 CU
+              - generic [ref=e142]: 4 CPIs
+          - 'button "• #4 Jupiter Aggregator V6 Calls Jupiter Aggregator V6 with 24 accounts. 72,982 CU 4 CPIs" [ref=e143] [cursor=pointer]':
+            - generic [ref=e144]: •
+            - generic [ref=e145]:
+              - generic [ref=e146]: "#4 Jupiter Aggregator V6"
+              - generic [ref=e147]: Calls Jupiter Aggregator V6 with 24 accounts.
+            - generic [ref=e148]:
+              - generic [ref=e149]: 72,982 CU
+              - generic [ref=e150]: 4 CPIs
+          - 'button "• #5 Close token account Closes CEve…uiuf and refunds the rent lamports to 6vXW…28Wk. 2,915 CU no CPIs" [ref=e151] [cursor=pointer]':
+            - generic [ref=e152]: •
+            - generic [ref=e153]:
+              - generic [ref=e154]: "#5 Close token account"
+              - generic [ref=e155]: Closes CEve…uiuf and refunds the rent lamports to 6vXW…28Wk.
+            - generic [ref=e156]:
+              - generic [ref=e157]: 2,915 CU
+              - generic [ref=e158]: no CPIs
+        - complementary [ref=e159]:
+          - heading "Set compute unit limit" [level=4] [ref=e210]
+          - generic [ref=e162]:
+            - text: Compute Budget · Comput…1111
+            - generic [ref=e211]: Caps how much compute the transaction is allowed to use at 119,120 CU.
+            - generic [ref=e212]: Details
+            - generic [ref=e213]:
+              - generic [ref=e214]: Instruction
+              - generic [ref=e215]: setComputeUnitLimit
+              - generic [ref=e216]: Limit
+              - generic [ref=e217]: 119,120 CU
+              - generic [ref=e218]: Inner CPIs
+              - generic [ref=e219]: "0"
+  - contentinfo [ref=e77]:
+    - generic [ref=e78]:
+      - generic [ref=e79]: open · interactive demo · MIT licensed
+      - link "github.com/OpenSubmissionn/Submission_Open" [ref=e80] [cursor=pointer]:
+        - /url: https://github.com/OpenSubmissionn/Submission_Open
