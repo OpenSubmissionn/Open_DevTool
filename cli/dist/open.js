@@ -28856,6 +28856,17 @@ var LEFT_W = 92;
 var GAP = 3;
 var RIGHT_W = INNER - LEFT_W - GAP;
 var BUDGET_LIMIT_DEFAULT = 2e5;
+var applyResponsiveLayout = () => {
+  const cols = process.stdout.columns;
+  if (!cols) return;
+  const target = Math.max(90, Math.min(200, cols - 2));
+  WIDTH = target;
+  INNER = WIDTH - 4;
+  LEFT_W = Math.floor((INNER - GAP) * 0.65);
+  RIGHT_W = INNER - LEFT_W - GAP;
+  TREE_BAR_W = Math.max(14, Math.min(40, Math.floor(LEFT_W * 0.35)));
+  TREE_RIGHT_W = 1 + TREE_BAR_W + 1 + TREE_PCT_W + 2 + TREE_CU_W;
+};
 var padVisible = (s, target) => {
   const pad = target - (0, import_string_width.default)(s);
   return pad > 0 ? s + " ".repeat(pad) : s;
@@ -29440,6 +29451,18 @@ function renderDashboard(analyzed, insights, network, durationMs) {
   console.log(boxBlank());
   console.log(boxBot());
 }
+var scaleCols = (ratios, mins, target) => {
+  const borders = ratios.length + 1;
+  const minTotal = mins.reduce((a, b) => a + b, 0);
+  const ratioSum = ratios.reduce((a, b) => a + b, 0);
+  const budget = Math.max(minTotal, Math.min(ratioSum, target - borders));
+  const widths = ratios.map((r, i) => Math.max(mins[i], Math.round(r / ratioSum * budget)));
+  let elastic = 0;
+  for (let i = 1; i < ratios.length; i++) if (ratios[i] > ratios[elastic]) elastic = i;
+  const sum = widths.reduce((a, b) => a + b, 0);
+  widths[elastic] = Math.max(mins[elastic], widths[elastic] + (budget - sum));
+  return widths;
+};
 var renderTransferBreakdown = (transfers) => {
   console.log("");
   console.log("  " + source_default.cyan.bold("TRANSFER BREAKDOWN"));
@@ -29456,7 +29479,12 @@ var renderTransferBreakdown = (transfers) => {
       source_default.white("USD"),
       source_default.white("Spam?")
     ],
-    colWidths: [14, 14, 20, 46, 14, 10],
+    colWidths: scaleCols(
+      [14, 14, 20, 46, 14, 10],
+      [9, 9, 10, 14, 7, 6],
+      WIDTH - 2
+    ),
+    wordWrap: true,
     style: { head: [], border: [] }
   });
   for (const t of transfers) {
@@ -29486,7 +29514,12 @@ var renderAccountsTable = (accountDiffs) => {
       source_default.white("SOL \u0394"),
       source_default.white("Token \u0394")
     ],
-    colWidths: [20, 12, 15, 20],
+    colWidths: scaleCols(
+      [20, 12, 15, 20],
+      [12, 8, 11, 14],
+      WIDTH - 2
+    ),
+    wordWrap: true,
     style: { head: [], border: [] }
   });
   accountDiffs.forEach((account) => {
@@ -29585,9 +29618,14 @@ var renderInsights = (insightsList) => {
   } else {
     const ruleBased = insightsList.filter((i) => getInsightSource(i) !== "mcp");
     const aiBased = insightsList.filter((i) => getInsightSource(i) === "mcp");
+    const totalCount = ruleBased.length + aiBased.length;
+    const idxW = String(totalCount).length;
+    let counter = 0;
     const renderItem = (item) => {
+      counter += 1;
       const text = typeof item === "string" ? item : item.message || JSON.stringify(item);
-      const content = ` ${yellow("-")} ${text}`;
+      const idx = String(counter).padStart(idxW, " ");
+      const content = ` ${yellow.bold(idx + ".")} ${text}`;
       console.log("  " + yellow("\u2551") + " " + padVisible(content, INNER) + " " + yellow("\u2551"));
     };
     const renderSubheader = (label) => {
@@ -29611,6 +29649,7 @@ var renderInsights = (insightsList) => {
   console.log("  " + yellow("\u255A" + lineChar("\u2550", WIDTH - 2) + "\u255D"));
 };
 var renderTerminal = (analyzed, insights, network = "devnet", durationMs = 0) => {
+  applyResponsiveLayout();
   const insightsList = Array.isArray(insights) ? insights : insights?.insights || [];
   let duration = durationMs;
   if (!duration && analyzed?._metadata?.timings) {

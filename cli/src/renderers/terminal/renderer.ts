@@ -19,16 +19,41 @@ import { getProgramNameSync } from '../../../../services/src/solana/programs';
 //
 // Single outer frame, two-column dashboard inside. LEFT_W + GAP + RIGHT_W
 // must equal INNER (= WIDTH - 4) so every line lands on the right border.
+//
+// These widths are recomputed from `process.stdout.columns` at render time
+// (see applyResponsiveLayout) so the dashboard adapts to narrow terminals.
+// The values below are the default/fallback used when stdout isn't a TTY
+// (piped output) or for the initial pre-render layout.
 
-const WIDTH = 145;
-const INNER = WIDTH - 4;
+let WIDTH = 145;
+let INNER = WIDTH - 4;
 // Left column got wider after the redundant SUGGESTION card moved out of the
 // dashboard — extra width goes to the CALL TREE (bigger CU bar + room for full
 // program names) and to the FLAME GRAPH strip.
-const LEFT_W = 92;
+let LEFT_W = 92;
 const GAP = 3;
-const RIGHT_W = INNER - LEFT_W - GAP; // 46
+let RIGHT_W = INNER - LEFT_W - GAP; // 46
 const BUDGET_LIMIT_DEFAULT = 200_000;
+
+// Recompute layout for the current terminal width. Called once per render.
+// Preserves the original 65/35 left/right split so the visual proportions
+// stay consistent. Skips when stdout isn't a TTY (`columns` undefined) so
+// piped output keeps the canonical 145-col layout.
+const applyResponsiveLayout = () => {
+  const cols = process.stdout.columns;
+  if (!cols) return;
+  // -2 for the leading '  ' indent before the outer frame. Min 90 keeps the
+  // KPI cards readable; max 200 stops it stretching absurdly on wide screens.
+  const target = Math.max(90, Math.min(200, cols - 2));
+  WIDTH = target;
+  INNER = WIDTH - 4;
+  LEFT_W = Math.floor((INNER - GAP) * 0.65);
+  RIGHT_W = INNER - LEFT_W - GAP;
+  // Tree bar scales with the left column. Floor at 14 so bars stay readable
+  // on narrow terminals; cap at 40 so they don't dwarf the program label.
+  TREE_BAR_W = Math.max(14, Math.min(40, Math.floor(LEFT_W * 0.35)));
+  TREE_RIGHT_W = 1 + TREE_BAR_W + 1 + TREE_PCT_W + 2 + TREE_CU_W;
+};
 
 // ─── ANSI-AWARE LAYOUT HELPERS ──────────────────────────────────────────────
 //
@@ -428,12 +453,14 @@ function dashboardTabBarLines(active: string = 'Flame'): {
 // INSTRUCTION rows Nicole referenced. The right cluster has a fixed visible
 // width so the column header dashes line up with the row data and the box
 // border doesn't drift; pct is 6-wide to fit "100.0%" on the root row.
-const TREE_BAR_W = 32;
+// TREE_BAR_W / TREE_RIGHT_W get rescaled by applyResponsiveLayout to track
+// LEFT_W on narrow terminals.
+let TREE_BAR_W = 32;
 const TREE_PCT_W = 6;
 const TREE_CU_W = 12;
 // 1 leading space + bar + 1 space + pct + 2 spaces + cu  → total visible width
 // of the right cluster, used to compute the available space for the label.
-const TREE_RIGHT_W = 1 + TREE_BAR_W + 1 + TREE_PCT_W + 2 + TREE_CU_W;
+let TREE_RIGHT_W = 1 + TREE_BAR_W + 1 + TREE_PCT_W + 2 + TREE_CU_W;
 
 // Walk the tree once to find the largest CU value so we can normalise bar
 // lengths to it. The bar for the heaviest node fills the full track; every
@@ -1057,6 +1084,27 @@ function renderDashboard(
 
 // ─── TRANSFER BREAKDOWN ─────────────────────────────────────────────────────
 
+// Scale cli-table3 column widths so the table fits within `target` total
+// chars (including the table's vertical borders). `ratios` are the original
+// preferred widths (used to keep proportions when there's room); `mins` are
+// the floors below which content gets unreadable. The largest-ratio column
+// absorbs leftover budget so it stays the elastic one.
+const scaleCols = (ratios: number[], mins: number[], target: number): number[] => {
+  const borders = ratios.length + 1;
+  const minTotal = mins.reduce((a, b) => a + b, 0);
+  const ratioSum = ratios.reduce((a, b) => a + b, 0);
+  // Cap budget at the original ratio sum so wider terminals don't stretch
+  // the table absurdly past its natural shape.
+  const budget = Math.max(minTotal, Math.min(ratioSum, target - borders));
+  const widths = ratios.map((r, i) => Math.max(mins[i], Math.round((r / ratioSum) * budget)));
+  // Reconcile: trim or grow the widest column so the row hits budget exactly.
+  let elastic = 0;
+  for (let i = 1; i < ratios.length; i++) if (ratios[i] > ratios[elastic]) elastic = i;
+  const sum = widths.reduce((a, b) => a + b, 0);
+  widths[elastic] = Math.max(mins[elastic], widths[elastic] + (budget - sum));
+  return widths;
+};
+
 const renderTransferBreakdown = (transfers: TransferInfo[] | undefined) => {
   console.log('');
   console.log('  ' + chalk.cyan.bold('TRANSFER BREAKDOWN'));
@@ -1075,7 +1123,12 @@ const renderTransferBreakdown = (transfers: TransferInfo[] | undefined) => {
       chalk.white('USD'),
       chalk.white('Spam?'),
     ],
-    colWidths: [14, 14, 20, 46, 14, 10],
+    colWidths: scaleCols(
+      [14, 14, 20, 46, 14, 10],
+      [9, 9, 10, 14, 7, 6],
+      WIDTH - 2
+    ),
+    wordWrap: true,
     style: { head: [], border: [] },
   });
 
@@ -1120,7 +1173,12 @@ const renderAccountsTable = (accountDiffs: AccountDiff[]) => {
       chalk.white('SOL Δ'),
       chalk.white('Token Δ'),
     ],
-    colWidths: [20, 12, 15, 20],
+    colWidths: scaleCols(
+      [20, 12, 15, 20],
+      [12, 8, 11, 14],
+      WIDTH - 2
+    ),
+    wordWrap: true,
     style: { head: [], border: [] },
   });
 
@@ -1278,9 +1336,18 @@ const renderInsights = (insightsList: any[]) => {
     const ruleBased = insightsList.filter((i) => getInsightSource(i) !== 'mcp');
     const aiBased = insightsList.filter((i) => getInsightSource(i) === 'mcp');
 
+    // Continuous numbering across rule-based + AI-generated so the user can
+    // refer to "fix #3" without ambiguity. idxW pads single-digit indices so
+    // `1.` and `12.` align under the same column on lists ≥10.
+    const totalCount = ruleBased.length + aiBased.length;
+    const idxW = String(totalCount).length;
+    let counter = 0;
+
     const renderItem = (item: any) => {
+      counter += 1;
       const text = typeof item === 'string' ? item : item.message || JSON.stringify(item);
-      const content = ` ${yellow('-')} ${text}`;
+      const idx = String(counter).padStart(idxW, ' ');
+      const content = ` ${yellow.bold(idx + '.')} ${text}`;
       console.log('  ' + yellow('║') + ' ' + padVisible(content, INNER) + ' ' + yellow('║'));
     };
 
@@ -1318,6 +1385,11 @@ export const renderTerminal = (
   network: 'mainnet' | 'devnet' = 'devnet',
   durationMs: number = 0
 ) => {
+  // Adapt the dashboard width to the current terminal. Reads
+  // process.stdout.columns once and rescales LEFT_W/RIGHT_W/TREE_BAR_W in
+  // place; every helper reads these on each call so the change propagates.
+  applyResponsiveLayout();
+
   const insightsList = Array.isArray(insights) ? insights : (insights as any)?.insights || [];
 
   // Fallback: derive duration from upstream timings if the caller didn't pass one.
