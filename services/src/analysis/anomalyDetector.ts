@@ -1,4 +1,4 @@
-import { RawTransactionBundle, TransferInfo } from './types';
+import { RawTransactionBundle, TransferInfo } from './types.js';
 
 export type AnomalyType = 'spam' | 'mev-like' | 'nondeterministic' | 'unknown';
 export type AnomalySeverity = 'low' | 'medium' | 'high';

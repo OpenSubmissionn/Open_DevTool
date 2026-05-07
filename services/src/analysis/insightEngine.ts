@@ -4,7 +4,7 @@ import {
   InsightReport,
   InsightContext,
   ProviderInsight,
-} from './types';
+} from './types.js';
 
 export interface InsightProvider {
   fetchInsights(context: InsightContext): Promise<ProviderInsight[]>;

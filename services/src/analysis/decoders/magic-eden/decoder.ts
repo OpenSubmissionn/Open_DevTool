@@ -1,7 +1,7 @@
-import type { DecodedAnchorInstruction } from '../anchor-idl';
-import { decodeAnchorInstruction } from '../anchor-idl';
-import type { ParsedInstruction } from '../../types';
-import { MAGIC_EDEN_IDL, MAGIC_EDEN_PROGRAM_ID } from './idl';
+import type { DecodedAnchorInstruction } from '../anchor-idl.js';
+import { decodeAnchorInstruction } from '../anchor-idl.js';
+import type { ParsedInstruction } from '../../types.js';
+import { MAGIC_EDEN_IDL, MAGIC_EDEN_PROGRAM_ID } from './idl.js';
 
 export interface MagicEdenDecodedInstruction extends DecodedAnchorInstruction {
   price?: bigint;

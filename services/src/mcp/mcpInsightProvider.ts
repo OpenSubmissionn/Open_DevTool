@@ -1,6 +1,6 @@
-import { InsightProvider, InsightContext, ProviderInsight } from '../analysis/types';
-import type { AccountDiff, CPINode, CPITree } from '../analysis/types';
-import { detectFramework } from '../analysis/frameworkComparator';
+import { InsightProvider, InsightContext, ProviderInsight } from '../analysis/types.js';
+import type { AccountDiff, CPINode, CPITree } from '../analysis/types.js';
+import { detectFramework } from '../analysis/frameworkComparator.js';
 import {
   requestInsights,
   MCPPayload,
@@ -8,8 +8,8 @@ import {
   BottleneckNodeDetail,
   DetailedAccountDiff,
   SimilarPattern,
-} from './client';
-import { buildPromptContext } from './prompts';
+} from './client.js';
+import { buildPromptContext } from './prompts.js';
 
 /**
  * Known optimization patterns indexed by program name.

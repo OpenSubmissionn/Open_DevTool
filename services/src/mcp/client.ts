@@ -1,4 +1,4 @@
-import type { PromptContext } from './prompts';
+import type { PromptContext } from './prompts.js';
 
 /** Aggregate stats describing the CPI call tree shape. */
 export interface CpiTreeStructure {
@@ -83,8 +83,8 @@ export interface MCPInsightResponse {
  * Each user pays (or doesn't, with Groq) their own way. The pipeline always
  * works — when AI is unavailable, only rule-based insights render.
  */
-import { callAnthropic, type AnthropicResult } from './anthropic';
-import { callGroq } from './groq';
+import { callAnthropic, type AnthropicResult } from './anthropic.js';
+import { callGroq } from './groq.js';
 
 const DEFAULT_ANTHROPIC_MODEL = 'claude-sonnet-4-5';
 const DEFAULT_GROQ_MODEL = 'llama-3.3-70b-versatile';

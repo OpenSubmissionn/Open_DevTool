@@ -1,5 +1,5 @@
-import { getConnection, withRetry } from './connection';
-import { RawTransactionBundle } from '../analysis/types';
+import { getConnection, withRetry } from './connection.js';
+import { RawTransactionBundle } from '../analysis/types.js';
 
 /**
  * Fetches a transaction from the Solana blockchain and maps it to a RawTransactionBundle.

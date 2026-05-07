@@ -1,4 +1,4 @@
-import { CUProfile } from './types';
+import { CUProfile } from './types.js';
 
 export type SolanaFramework = 'anchor' | 'steel' | 'native' | 'unknown';
 

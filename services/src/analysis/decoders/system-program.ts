@@ -1,4 +1,4 @@
-import type { ParsedInstruction, SystemInstruction } from '../types';
+import type { ParsedInstruction, SystemInstruction } from '../types.js';
 
 /**
  * System Program instruction discriminators (u32 little-endian).

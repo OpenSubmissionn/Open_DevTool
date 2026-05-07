@@ -1,4 +1,4 @@
-import type { AnalyzedTransaction, Insight, InsightReport } from './types';
+import type { AnalyzedTransaction, Insight, InsightReport } from './types.js';
 
 /**
  * Output payload shape for JSON rendering.

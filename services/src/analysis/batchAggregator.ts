@@ -1,4 +1,4 @@
-import type { AnalyzedTransaction, Insight, InsightReport } from './types';
+import type { AnalyzedTransaction, Insight, InsightReport } from './types.js';
 
 export interface BatchEntry {
   analyzed: AnalyzedTransaction;
