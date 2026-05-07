@@ -523,6 +523,11 @@ function buildDashboardTreeLines(
     out.push(`${leftPadded} ${bar} ${pctColored}  ${cuPadded}`);
 
     if (node.children?.length) {
+      // Ghost spacer between this row and its first child so adjacent bars
+      // breathe vertically. childPrefix carries the parent's vertical
+      // channels; appending `│` keeps the tree connection visible across the
+      // gap instead of leaving a disconnected blank line.
+      out.push(chalk.gray(childPrefix + '│'));
       out.push(
         ...buildDashboardTreeLines(
           node.children,
@@ -535,6 +540,13 @@ function buildDashboardTreeLines(
           state
         )
       );
+    }
+
+    // Ghost spacer between this subtree and the next sibling at the same
+    // depth. Root level uses a plain blank line (no shared trunk); nested
+    // levels keep the parent's `│` channels so the tree stays readable.
+    if (!isLast) {
+      out.push(isRoot ? '' : chalk.gray(prefix + '│'));
     }
   });
 

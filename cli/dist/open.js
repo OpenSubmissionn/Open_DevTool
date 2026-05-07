@@ -29073,6 +29073,7 @@ function buildDashboardTreeLines(nodes, bottleneckTarget, width, totalCU, maxCU,
     const cuPadded = padVisibleStart(cuColored, TREE_CU_W);
     out.push(`${leftPadded} ${bar} ${pctColored}  ${cuPadded}`);
     if (node.children?.length) {
+      out.push(source_default.gray(childPrefix + "\u2502"));
       out.push(
         ...buildDashboardTreeLines(
           node.children,
@@ -29085,6 +29086,9 @@ function buildDashboardTreeLines(nodes, bottleneckTarget, width, totalCU, maxCU,
           state
         )
       );
+    }
+    if (!isLast) {
+      out.push(isRoot ? "" : source_default.gray(prefix + "\u2502"));
     }
   });
   return out;
