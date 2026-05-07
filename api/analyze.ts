@@ -1,5 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { analyze } from '../web/server.js';
+import * as server from '../web/server.js';
+
+// `web/server.ts` lives under the root package.json which has no `"type"`
+// field, so it's transpiled as CJS. ESM-to-CJS named imports are checked
+// statically by Node and fail on esbuild's barrel output, so we go through
+// the namespace + `default` fallback instead.
+const analyze =
+  (server as any).analyze ?? (server as any).default?.analyze;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Accept both GET ?signature=... and POST { signature, network } so the
@@ -29,6 +36,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
+    if (typeof analyze !== 'function') {
+      throw new Error('analyze export not found on web/server module');
+    }
     const t0 = Date.now();
     const result = await analyze(signature, network);
     const tookMs = Date.now() - t0;
