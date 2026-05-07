@@ -33,10 +33,10 @@
     "decoderStatus": "complete",
     "benchmark": {
       "framework": "Anchor",
-      "operations": ["buy", "sell", "list"]
+      "operations": ["transfer", "create-account"]
     },
     "coverage": 100,
-    "lastUpdated": "2026-04-28"
+    "lastUpdated": "2026-05-07"
   },
   {
     "name": "Raydium Liquidity Pool v4",
