@@ -1742,7 +1742,7 @@ if (isMainModule) {
   server.listen(PORT, () => {
     console.log(`\n  open dev server`);
     console.log(`  → http://localhost:${PORT}/landing.html`);
-    console.log(`  → http://localhost:${PORT}/web.html`);
+    console.log(`  → http://localhost:${PORT}/demo.html`);
     console.log(`  → POST /api/analyze  { signature, network }`);
     console.log(`  → GET  /api/latest-tx  (latest mainnet Jupiter v6 sig)\n`);
   });
