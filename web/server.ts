@@ -26,8 +26,8 @@ import {
   type CPITree,
   type CPINode,
   type ParsedLogs,
-} from '../services/src/index';
-import { getProgramNameSync } from '../services/src/solana/programs';
+} from '../services/src/index.js';
+import { getProgramNameSync } from '../services/src/solana/programs.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = parseInt(process.env.PORT ?? '3344', 10);
