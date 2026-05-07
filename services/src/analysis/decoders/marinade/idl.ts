@@ -4,12 +4,12 @@ import { instructionDiscriminator } from '../orca/anchor-idl-orca';
 export const MARINADE_PROGRAM_ID = 'MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD';
 
 export const MARINADE_IDL: Idl = {
+  address: MARINADE_PROGRAM_ID,
   metadata: {
     name: 'marinade',
     version: '0.1.0',
     spec: '0.1.0',
   },
-  address: MARINADE_PROGRAM_ID,
   instructions: [
     {
       name: 'deposit',

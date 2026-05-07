@@ -30,7 +30,8 @@ export const fetchTransaction = async (
     transaction: tx.transaction,
     // Using || [] ensures the "default arrays" test passes even if meta is missing
     logMessages: tx.meta?.logMessages || [],
-    computeUnitsConsumed: tx.meta?.computeUnitsConsumed || null,
+    computeUnitsConsumed: tx.meta?.computeUnitsConsumed ?? null,
+    fee: tx.meta?.fee ?? 0,
     preBalances: tx.meta?.preBalances || [],
     postBalances: tx.meta?.postBalances || [],
     preTokenBalances: tx.meta?.preTokenBalances || [],

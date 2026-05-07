@@ -15,9 +15,17 @@ export * from './solana/idlcache';
 export type { IdlCacheOptions, FetchResult } from './solana/idlcache';
 export * from './analysis/merger';
 export { analyzeTransaction, mergeInsights } from './analysis/insightEngine';
+export { detectAnomalies } from './analysis/anomalyDetector';
+export type {
+  Anomaly,
+  AnomalyType,
+  AnomalySeverity,
+  AnomalyReport,
+} from './analysis/anomalyDetector';
 export * from './analysis/renderer';
 export * from './solana/rpc';
 export * from './solana/connection';
+export * from './solana/simulationService';
 
 // Batch analysis
 export * from './analysis/batchAggregator';

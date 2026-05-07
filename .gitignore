@@ -11,6 +11,11 @@ target/
 .cache/
 *.tsbuildinfo
 
+# Exception: ship the compiled CLI bundle so users can install via
+# `npm install -g github:OpenSubmissionn/Submission_Open` without a build step
+!cli/dist/
+!cli/dist/**
+
 # Test / coverage
 **/coverage/
 test-ledger/
@@ -60,3 +65,29 @@ Thumbs.db
 
 .agents
 
+
+# Claude Code (local tooling, não vai pro repo)
+.claude/
+.github/workflows/claude-code.yml
+.github/workflows/claude.yml
+
+# Test outputs
+sample-output.json
+
+# Claude Code (local tooling, não vai pro repo)
+.claude/
+.github/workflows/claude-code.yml
+.github/workflows/claude.yml
+
+# Test outputs
+sample-output.json
+
+# Claude Code (local tooling, não vai pro repo)
+.claude/
+.github/workflows/claude-code.yml
+.github/workflows/claude.yml
+
+# Test outputs
+sample-output.json
+
+.playwright-mcp/ 

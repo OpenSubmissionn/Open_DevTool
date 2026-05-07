@@ -159,6 +159,11 @@ export function renderJSON(
       },
     };
 
+    // Adicionar _metadata.timings quando disponível
+    if (analyzed._metadata?.timings?.length) {
+      (output as any).metadata.timings = analyzed._metadata.timings;
+    }
+
     return JSON.stringify(output, null, 2);
   } catch (error) {
     // Return machine-readable render errors.

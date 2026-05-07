@@ -19,6 +19,7 @@ import {
 
 import { toCPITree, toParsedLogs } from '../utils/pipeline';
 import { aggregateBatch, type BatchEntry, type BatchReport } from '@open/services';
+import { csvHeader, csvRow } from '../renderers/csv';
 
 // ── Batch file schema ─────────────────────────────────────────────────────────
 
@@ -210,7 +211,8 @@ export const registerBatchCommand = (program: Command) => {
     .command('batch <file>')
     .description('Analyze multiple transactions from a JSON file and generate an aggregated report')
     .option('--json', 'Output full report as structured JSON', false)
-    .option('--output <path>', 'Write JSON report to file instead of stdout')
+    .option('--csv', 'Output one CSV row per transaction (with single header)', false)
+    .option('--output <path>', 'Write JSON/CSV report to file instead of stdout')
     .option('--concurrency <n>', 'Max parallel transactions to process', '3')
     .action(async (file: string, options: any) => {
       const globalOpts = program.opts();
@@ -273,6 +275,19 @@ export const registerBatchCommand = (program: Command) => {
       }
 
       const report = aggregateBatch(entries, network);
+
+      if (options.csv) {
+        const rows = [csvHeader(), ...entries.map((e) => csvRow(e.analyzed, e.insights))];
+        const csv = rows.join('\n') + '\n';
+        if (options.output) {
+          const outPath = path.resolve(options.output);
+          fs.writeFileSync(outPath, csv, 'utf-8');
+          console.log(chalk.green(`\nCSV written to: ${outPath}`));
+        } else {
+          process.stdout.write(csv);
+        }
+        return;
+      }
 
       if (options.json || options.output) {
         const json = JSON.stringify(report, null, 2);

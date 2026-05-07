@@ -5,6 +5,10 @@ describe('MCP Client', () => {
   beforeEach(() => {
     vi.unstubAllGlobals();
     delete process.env.MCP_ENDPOINT_URL;
+    delete process.env.MCP_DISABLED;
+    delete process.env.ANTHROPIC_API_KEY;
+    delete process.env.GROQ_API_KEY;
+    delete process.env.MCP_MODEL;
   });
 
   afterEach(() => {
@@ -85,8 +89,8 @@ describe('MCP Client', () => {
     expect(mockFetch).toHaveBeenCalledTimes(2); // Initial + 1 retry
   });
 
-  it('MCP_ENDPOINT_URL not set returns empty suggestions without throwing', async () => {
-    delete process.env.MCP_ENDPOINT_URL;
+  it('MCP_DISABLED returns empty suggestions without making a network call', async () => {
+    process.env.MCP_DISABLED = '1';
 
     const mockFetch = vi.fn();
     vi.stubGlobal('fetch', mockFetch);
@@ -106,5 +110,89 @@ describe('MCP Client', () => {
     expect(result.suggestions).toEqual([]);
     expect(result.source).toBe('mcp');
     expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it('without ANTHROPIC_API_KEY and without MCP_ENDPOINT_URL, returns empty without network call', async () => {
+    const mockFetch = vi.fn();
+    vi.stubGlobal('fetch', mockFetch);
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    const payload: MCPPayload = {
+      bottleneckProgram: 'pump',
+      instructionName: 'swap',
+      cuConsumed: 50000,
+      cpiDepth: 2,
+      accountDiffSummary: '5 accounts modified',
+      parsedErrors: [],
+      logSummary: '2 CPI calls',
+    };
+
+    const result = await requestInsights(payload);
+
+    expect(result.suggestions).toEqual([]);
+    expect(mockFetch).not.toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('ANTHROPIC_API_KEY'));
+    warnSpy.mockRestore();
+  });
+
+  it('with ANTHROPIC_API_KEY, calls api.anthropic.com and returns parsed suggestions', async () => {
+    process.env.ANTHROPIC_API_KEY = 'sk-ant-test';
+
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        content: [{ text: 'aqui está a resposta:\n{"suggestions":["A","B","C"]}' }],
+      }),
+    });
+    vi.stubGlobal('fetch', mockFetch);
+
+    const payload: MCPPayload = {
+      bottleneckProgram: 'Jupiter V6',
+      instructionName: 'sharedAccountsRoute',
+      cuConsumed: 145000,
+      cpiDepth: 4,
+      accountDiffSummary: '9xQe...: -0.5 SOL',
+      parsedErrors: [],
+      logSummary: '47 logs, 0 errors',
+    };
+
+    const result = await requestInsights(payload);
+
+    expect(result.suggestions).toEqual(['A', 'B', 'C']);
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://api.anthropic.com/v1/messages',
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({ 'x-api-key': 'sk-ant-test' }),
+      })
+    );
+  });
+
+  it('with ANTHROPIC_API_KEY, 401 from Anthropic returns empty and warns about auth', async () => {
+    process.env.ANTHROPIC_API_KEY = 'sk-ant-bad';
+
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 401,
+      text: async () => 'invalid api key',
+    });
+    vi.stubGlobal('fetch', mockFetch);
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    const payload: MCPPayload = {
+      bottleneckProgram: 'pump',
+      instructionName: 'swap',
+      cuConsumed: 50000,
+      cpiDepth: 2,
+      accountDiffSummary: '5 accounts modified',
+      parsedErrors: [],
+      logSummary: '2 CPI calls',
+    };
+
+    const result = await requestInsights(payload);
+
+    expect(result.suggestions).toEqual([]);
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('ANTHROPIC_API_KEY'));
+    warnSpy.mockRestore();
   });
 });

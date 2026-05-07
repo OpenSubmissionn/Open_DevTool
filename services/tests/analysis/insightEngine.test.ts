@@ -3,6 +3,7 @@ import {
   analyzeTransaction,
   InsightProvider,
   mergeInsights,
+  scoreInsight,
 } from '../../src/analysis/insightEngine';
 import { AnalyzedTransaction, Insight, ProviderInsight } from '../../src/analysis/types';
 
@@ -250,6 +251,112 @@ describe('Insight Engine - Unit Tests (MVP Full Coverage)', () => {
     expect(qualityInsight).toBeDefined();
     expect(qualityInsight?.severity).toBe('warning');
     expect(qualityInsight?.context?.confidence).toBe(0.45);
+  });
+});
+
+describe('Ranking - Task 2.13.1 priority scoring', () => {
+  const baseInsight = (overrides: Partial<Insight>): Insight => ({
+    type: overrides.type ?? 'TEST',
+    severity: overrides.severity ?? 'info',
+    title: overrides.title ?? 't',
+    message: overrides.message ?? 'm',
+    recommendation: overrides.recommendation ?? 'r',
+    source: overrides.source ?? 'rule',
+    codeSuggestions: overrides.codeSuggestions ?? [],
+    ...overrides,
+  });
+
+  it('critical severity outranks warning, warning outranks info', () => {
+    const crit = baseInsight({ severity: 'critical' });
+    const warn = baseInsight({ severity: 'warning' });
+    const info = baseInsight({ severity: 'info' });
+    expect(scoreInsight(crit)).toBeGreaterThan(scoreInsight(warn));
+    expect(scoreInsight(warn)).toBeGreaterThan(scoreInsight(info));
+  });
+
+  it('hybrid source ranks above mcp, mcp above rule (same severity)', () => {
+    const rule = baseInsight({ severity: 'warning', source: 'rule' });
+    const mcp = baseInsight({ severity: 'warning', source: 'mcp' });
+    const hybrid = baseInsight({ severity: 'warning', source: 'hybrid' });
+    expect(scoreInsight(hybrid)).toBeGreaterThan(scoreInsight(mcp));
+    expect(scoreInsight(mcp)).toBeGreaterThan(scoreInsight(rule));
+  });
+
+  it('actionable info insight (savings + cost tag) outranks diagnostic warning', () => {
+    const actionable = baseInsight({
+      severity: 'info',
+      tags: ['cost', 'optimization'],
+      estimatedCUSavings: 50_000,
+    });
+    const diagnostic = baseInsight({
+      severity: 'warning',
+      tags: ['diagnostics', 'quality'],
+    });
+    expect(scoreInsight(actionable)).toBeGreaterThan(scoreInsight(diagnostic));
+  });
+
+  it('CU_ATTRIBUTION_LOW_CONFIDENCE is deprioritised below actionable CU_WASTE', async () => {
+    const tx = {
+      parsed: {
+        success: true,
+        cuAttribution: {
+          totalNodes: 3,
+          matchedNodes: 2,
+          unmatchedNodes: 1,
+          unmatchedCUEntries: 2,
+          ambiguousKeys: 1,
+          confidence: 0.4,
+          doubleAttributionCount: 0,
+          traceTruncated: false,
+        },
+      },
+      cuProfile: { totalConsumed: 50_000, totalLimit: 400_000, utilizationPercent: 12.5 },
+      cpiTree: { totalDepth: 1 },
+    } as unknown as AnalyzedTransaction;
+
+    const report = await analyzeTransaction(tx);
+    const wasteIndex = report.insights.findIndex((i) => i.type === 'CU_WASTE');
+    const attrIndex = report.insights.findIndex((i) => i.type === 'CU_ATTRIBUTION_LOW_CONFIDENCE');
+    expect(wasteIndex).toBeGreaterThanOrEqual(0);
+    expect(attrIndex).toBeGreaterThanOrEqual(0);
+    expect(wasteIndex).toBeLessThan(attrIndex);
+  });
+
+  it('top 3 insights for a mixed transaction contain failure + bottleneck + risk, not diagnostics', async () => {
+    const tx = {
+      parsed: {
+        success: false,
+        cuAttribution: {
+          totalNodes: 3,
+          matchedNodes: 1,
+          unmatchedNodes: 2,
+          unmatchedCUEntries: 5,
+          ambiguousKeys: 2,
+          confidence: 0.3,
+          doubleAttributionCount: 0,
+          traceTruncated: false,
+        },
+      },
+      cuProfile: {
+        totalConsumed: 195_000,
+        totalLimit: 200_000,
+        utilizationPercent: 97.5,
+        bottleneck: {
+          programId: 'BotPgm',
+          programName: 'BotPgm',
+          cuConsumed: 150_000,
+          utilizationPercent: 75,
+        },
+      },
+      cpiTree: { totalDepth: 6 },
+    } as unknown as AnalyzedTransaction;
+
+    const report = await analyzeTransaction(tx);
+    const top3 = report.insights.slice(0, 3).map((i) => i.type);
+    expect(top3).toContain('EXECUTION_FAILURE');
+    expect(top3).toContain('CU_BOTTLENECK');
+    expect(top3).toContain('BUDGET_RISK');
+    expect(top3).not.toContain('CU_ATTRIBUTION_LOW_CONFIDENCE');
   });
 });
 

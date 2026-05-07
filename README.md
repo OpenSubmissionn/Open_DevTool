@@ -54,29 +54,58 @@ Open takes any Solana transaction signature and turns it into a fully decoded ex
 
 ## Installation
 
+Install globally with one command (requires Node.js 18+ and git):
+
 ```bash
-git clone https://github.com/Mirelasbianchi/open.git
-cd open
+npm install -g github:OpenSubmissionn/Submission_Open
+```
+
+This makes the `open` command available globally. To verify:
+
+```bash
+open --help
+```
+
+> **macOS users:** macOS ships its own `open` command. Depending on your `PATH` order, the npm-installed `open` may shadow it. If that bothers you, invoke with `npx --package=github:OpenSubmissionn/Submission_Open open ...` instead.
+
+### Install from source (for contributors)
+
+```bash
+git clone https://github.com/OpenSubmissionn/Submission_Open.git
+cd Submission_Open
 npm install
 npm run build
+npm link
 ```
 
 ## Quickstart
 
 Example 1 — Full analysis as JSON:
 ```bash
-npm run dev:cli -- tx <YOUR_TX_SIGNATURE> --json
+open tx <YOUR_TX_SIGNATURE> --json
 ```
 
 Example 2 — Analyze on devnet:
 ```bash
-npm run dev:cli -- tx <YOUR_TX_SIGNATURE> --network devnet
+open tx <YOUR_TX_SIGNATURE> --network devnet
 ```
 
 Example 3 — Custom RPC endpoint:
 ```bash
-npm run dev:cli -- tx <YOUR_TX_SIGNATURE> --rpc https://your-rpc-url.com
+open tx <YOUR_TX_SIGNATURE> --rpc https://your-rpc-url.com
 ```
+
+Example 4 — CSV output (writes a file):
+```bash
+open tx <YOUR_TX_SIGNATURE> --network mainnet --csv
+```
+
+Example 5 — CSV output to explicit path:
+```bash
+open tx <YOUR_TX_SIGNATURE> --network mainnet --csv --output ./my-tx-report.csv
+```
+
+Note: when `--csv` is used without `--output`, the CLI writes a file named `<signature>.csv` in the current working directory.
 
 ## CLI flags
 

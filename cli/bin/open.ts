@@ -1,10 +1,23 @@
 #!/usr/bin/env node
 
+// Detect JSON mode as early as possible (before any imports execute side effects)
+const isJsonMode = process.argv.includes('--json');
+
+// Silence all console output in JSON mode to ensure pure machine-readable output
+if (isJsonMode) {
+  const noop = () => {};
+  console.log = noop;
+  console.error = noop;
+  console.warn = noop;
+}
+
 import { Command } from 'commander';
 import { loadConfig } from '../src/config/loader';
 import { registerTxCommand } from '../src/commands/tx';
-import { registerConfigCommand } from '../src/commands/config';
 import { registerBatchCommand } from '../src/commands/batch';
+import { registerConfigCommand } from '../src/commands/config';
+import { registerInfoCommand } from '../src/commands/info';
+import { registerSimulateCommand } from '../src/commands/simulate';
 
 // tsx on Windows/CommonJS runs the file twice — this blocks the second execution
 const guardKey = '__OPEN_CLI_STARTED__';
@@ -28,6 +41,8 @@ program
 registerTxCommand(program);
 registerBatchCommand(program);
 registerConfigCommand(program);
+registerInfoCommand(program);
+registerSimulateCommand(program);
 
 // 5. Parse arguments
 program.parse(process.argv);

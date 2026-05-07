@@ -3,7 +3,6 @@ import type { Idl } from '@coral-xyz/anchor';
 
 export const ORCA_WHIRLPOOL_PROGRAM_ID = 'whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc';
 
-// Anchor instruction discriminator = first 8 bytes of sha256("global:<ix_name>").
 export function instructionDiscriminator(name: string): number[] {
   return Array.from(createHash('sha256').update(`global:${name}`).digest().subarray(0, 8));
 }
@@ -14,7 +13,9 @@ export const ORCA_WHIRLPOOL_IDL: Idl = {
     version: '0.1.0',
     spec: '0.1.0',
   },
+
   address: ORCA_WHIRLPOOL_PROGRAM_ID,
+
   instructions: [
     {
       name: 'initialize_pool',
@@ -60,27 +61,17 @@ export const ORCA_WHIRLPOOL_IDL: Idl = {
       ],
     },
     {
-      name: 'open_position_with_metadata',
-      discriminator: instructionDiscriminator('open_position_with_metadata'),
+      name: 'close_position',
+      discriminator: instructionDiscriminator('close_position'),
       accounts: [
-        { name: 'funder' },
-        { name: 'owner' },
+        { name: 'position_authority' },
+        { name: 'receiver' },
         { name: 'position' },
         { name: 'position_mint' },
-        { name: 'position_metadata_account' },
         { name: 'position_token_account' },
-        { name: 'whirlpool' },
         { name: 'token_program' },
-        { name: 'system_program' },
-        { name: 'rent' },
-        { name: 'associated_token_program' },
-        { name: 'metadata_program' },
       ],
-      args: [
-        { name: 'bumps', type: { defined: { name: 'OpenPositionWithMetadataBumps' } } },
-        { name: 'tick_lower_index', type: 'i32' },
-        { name: 'tick_upper_index', type: 'i32' },
-      ],
+      args: [],
     },
     {
       name: 'swap',
@@ -150,21 +141,10 @@ export const ORCA_WHIRLPOOL_IDL: Idl = {
         { name: 'token_min_b', type: 'u64' },
       ],
     },
-    {
-      name: 'close_position',
-      discriminator: instructionDiscriminator('close_position'),
-      accounts: [
-        { name: 'position_authority' },
-        { name: 'receiver' },
-        { name: 'position' },
-        { name: 'position_mint' },
-        { name: 'position_token_account' },
-        { name: 'token_program' },
-      ],
-      args: [],
-    },
   ],
+
   accounts: [],
+
   types: [
     {
       name: 'WhirlpoolBumps',
@@ -181,15 +161,13 @@ export const ORCA_WHIRLPOOL_IDL: Idl = {
       },
     },
     {
-      name: 'OpenPositionWithMetadataBumps',
+      name: 'bumps',
       type: {
         kind: 'struct',
-        fields: [
-          { name: 'position_bump', type: 'u8' },
-          { name: 'metadata_bump', type: 'u8' },
-        ],
+        fields: [],
       },
     },
   ],
+
   errors: [],
 };

@@ -141,7 +141,7 @@ export class IdlCache {
     this.ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
     this.noCache = options.noCache ?? false;
     this.verbose = options.verbose ?? false;
-    console.log(`[idl-cache][debug] Instanciado com verbose=${this.verbose}`);
+    verboseLog(this.verbose, `[debug] Instantiated with verbose=${this.verbose}`);
     this.ensureCacheDirSync();
   }
 
@@ -172,8 +172,9 @@ export class IdlCache {
    * Never throws — callers always get a safe fallback.
    */
   get(programId: string): IdlCacheEntry | null {
-    console.log(
-      `[idl-cache][debug] get() chamado para programId=${programId} | verbose=${this.verbose}`
+    verboseLog(
+      this.verbose,
+      `[debug] get() called for programId=${programId} | verbose=${this.verbose}`
     );
     if (this.noCache) {
       verboseLog(this.verbose, `bypass  ${programId} (--no-cache)`);
@@ -315,10 +316,7 @@ export class IdlCache {
    * Called at the end of the `open tx` pipeline when --verbose is set.
    */
   printMetrics(): void {
-    console.log(
-      `[idl-cache] hits=${this.metrics.hits} misses=${this.metrics.misses} ` +
-        `errors=${this.metrics.errors} hit-rate=${this.metrics.hitRate()}`
-    );
+    // [CLEANUP] Remove debug log for metrics
   }
 }
 
