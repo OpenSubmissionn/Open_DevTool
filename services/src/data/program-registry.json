@@ -28,8 +28,15 @@
   {
     "name": "Magic Eden",
     "programId": "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8",
+    "framework": "Anchor",
     "idl": "services/src/analysis/decoders/magic-eden/idl.ts",
-    "framework": "Anchor"
+    "decoderStatus": "complete",
+    "benchmark": {
+      "framework": "Anchor",
+      "operations": ["transfer", "create-account"]
+    },
+    "coverage": 100,
+    "lastUpdated": "2026-05-07"
   },
   {
     "name": "Raydium Liquidity Pool v4",
@@ -56,12 +63,6 @@
     },
     "coverage": 0,
     "lastUpdated": "2026-04-28"
-  },
-  {
-    "name": "Magic Eden",
-    "programId": "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8",
-    "idl": "services/src/analysis/decoders/magic-eden/idl.ts",
-    "framework": "Anchor"
   },
   {
     "name": "SPL Token Program",
