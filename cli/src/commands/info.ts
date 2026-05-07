@@ -51,6 +51,8 @@ function colorStatus(status: ProgramEntry['decoderStatus']): string {
       return chalk.blue(status);
     case 'none':
       return chalk.gray(status);
+    default:
+      return chalk.gray('unknown');
   }
 }
 
