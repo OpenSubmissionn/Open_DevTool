@@ -36,6 +36,7 @@
     "@types/react": "^19.2.14",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
+    "@vercel/node": "^3.2.24",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.2",
     "prettier": "^3.2.5",

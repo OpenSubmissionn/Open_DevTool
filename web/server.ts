@@ -11,7 +11,7 @@
 import http from 'node:http';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import {
   fetchTransaction,
@@ -1422,7 +1422,7 @@ function buildTxFlow(
 // Build the JSON shape the demo page consumes
 // ───────────────────────────────────────────────────────────────────────────
 
-async function analyze(signature: string, network: 'mainnet' | 'devnet') {
+export async function analyze(signature: string, network: 'mainnet' | 'devnet') {
   const idlCache = new IdlCache({ verbose: false });
 
   const rawBundle = await fetchTransaction(signature, network);
@@ -1568,6 +1568,31 @@ async function analyze(signature: string, network: 'mainnet' | 'devnet') {
   };
 }
 
+// Latest mainnet Jupiter v6 signature — used by the demo's "live mainnet
+// sample" button to pull a fresh, real transaction on every click. Exported
+// so the Vercel handler in api/latest-tx.ts can reuse the same logic.
+export async function getLatestTx() {
+  const { Connection, PublicKey } = await import('@solana/web3.js');
+  // Prefer the user-provided Helius RPC (set via HELIUS_RPC_URL env) so the
+  // signature lookup doesn't burn the public mainnet rate limit.
+  const rpcUrl = process.env.HELIUS_RPC_URL ?? 'https://api.mainnet-beta.solana.com';
+  const conn = new Connection(rpcUrl, 'confirmed');
+  const JUPITER_V6 = new PublicKey('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4');
+
+  const sigs = await conn.getSignaturesForAddress(JUPITER_V6, { limit: 10 });
+  const ok = sigs.find((s) => !s.err);
+  if (!ok) throw new Error('no recent successful transactions found');
+
+  console.log(`[latest-tx] ${ok.signature.slice(0, 8)}…  slot=${ok.slot}`);
+  return {
+    signature: ok.signature,
+    network: 'mainnet' as const,
+    slot: ok.slot,
+    blockTime: ok.blockTime,
+    source: 'jupiter-v6' as const,
+  };
+}
+
 // Sum CU across the entire CPI tree so we can compute a "share of total"
 // number for the bottleneck callout (matches the CLI's "60%" on the dashboard).
 function cpuConsumedTotal(cpi: CPITree): number {
@@ -1638,27 +1663,10 @@ const server = http.createServer(async (req, res) => {
   // pull a fresh, real transaction on every click instead of using a stale one.
   if (url.pathname === '/api/latest-tx') {
     try {
-      const { Connection, PublicKey } = await import('@solana/web3.js');
-      const conn = new Connection('https://api.mainnet-beta.solana.com', 'confirmed');
-      const JUPITER_V6 = new PublicKey('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4');
-
-      const sigs = await conn.getSignaturesForAddress(JUPITER_V6, { limit: 10 });
-      const ok = sigs.find((s) => !s.err);
-      if (!ok) throw new Error('no recent successful transactions found');
-
-      console.log(`[latest-tx] ${ok.signature.slice(0, 8)}…  slot=${ok.slot}`);
-      return send(
-        res,
-        200,
-        JSON.stringify({
-          signature: ok.signature,
-          network: 'mainnet',
-          slot: ok.slot,
-          blockTime: ok.blockTime,
-          source: 'jupiter-v6',
-        }),
-        { 'Content-Type': 'application/json' },
-      );
+      const result = await getLatestTx();
+      return send(res, 200, JSON.stringify(result), {
+        'Content-Type': 'application/json',
+      });
     } catch (e: any) {
       console.error('[latest-tx] error:', e?.message ?? e);
       return send(res, 500, JSON.stringify({ error: e?.message ?? String(e) }), {
@@ -1724,10 +1732,18 @@ const server = http.createServer(async (req, res) => {
   send(res, 405, 'method not allowed');
 });
 
-server.listen(PORT, () => {
-  console.log(`\n  open dev server`);
-  console.log(`  → http://localhost:${PORT}/landing.html`);
-  console.log(`  → http://localhost:${PORT}/web.html`);
-  console.log(`  → POST /api/analyze  { signature, network }`);
-  console.log(`  → GET  /api/latest-tx  (latest mainnet Jupiter v6 sig)\n`);
-});
+// Only start the long-running HTTP server when this file is executed directly
+// (`tsx web/server.ts` for local dev). When the file is imported as a module
+// — e.g. by api/*.ts on Vercel pulling in the exported analyze/getLatestTx —
+// we skip listen() so no port binding happens in serverless contexts.
+const isMainModule =
+  process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isMainModule) {
+  server.listen(PORT, () => {
+    console.log(`\n  open dev server`);
+    console.log(`  → http://localhost:${PORT}/landing.html`);
+    console.log(`  → http://localhost:${PORT}/web.html`);
+    console.log(`  → POST /api/analyze  { signature, network }`);
+    console.log(`  → GET  /api/latest-tx  (latest mainnet Jupiter v6 sig)\n`);
+  });
+}
