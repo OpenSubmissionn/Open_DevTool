@@ -1633,6 +1633,40 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
+  // latest-tx — returns the most recent confirmed signature for a high-traffic
+  // mainnet program (Jupiter v6). Lets the demo's "live mainnet sample" button
+  // pull a fresh, real transaction on every click instead of using a stale one.
+  if (url.pathname === '/api/latest-tx') {
+    try {
+      const { Connection, PublicKey } = await import('@solana/web3.js');
+      const conn = new Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+      const JUPITER_V6 = new PublicKey('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4');
+
+      const sigs = await conn.getSignaturesForAddress(JUPITER_V6, { limit: 10 });
+      const ok = sigs.find((s) => !s.err);
+      if (!ok) throw new Error('no recent successful transactions found');
+
+      console.log(`[latest-tx] ${ok.signature.slice(0, 8)}…  slot=${ok.slot}`);
+      return send(
+        res,
+        200,
+        JSON.stringify({
+          signature: ok.signature,
+          network: 'mainnet',
+          slot: ok.slot,
+          blockTime: ok.blockTime,
+          source: 'jupiter-v6',
+        }),
+        { 'Content-Type': 'application/json' },
+      );
+    } catch (e: any) {
+      console.error('[latest-tx] error:', e?.message ?? e);
+      return send(res, 500, JSON.stringify({ error: e?.message ?? String(e) }), {
+        'Content-Type': 'application/json',
+      });
+    }
+  }
+
   // analyze endpoint — accepts GET ?signature=...&network=... or POST {signature, network}
   if (url.pathname === '/api/analyze') {
     let signature = url.searchParams.get('signature') ?? '';
@@ -1694,5 +1728,6 @@ server.listen(PORT, () => {
   console.log(`\n  open dev server`);
   console.log(`  → http://localhost:${PORT}/landing.html`);
   console.log(`  → http://localhost:${PORT}/demo.html`);
-  console.log(`  → POST /api/analyze  { signature, network }\n`);
+  console.log(`  → POST /api/analyze  { signature, network }`);
+  console.log(`  → GET  /api/latest-tx  (latest mainnet Jupiter v6 sig)\n`);
 });

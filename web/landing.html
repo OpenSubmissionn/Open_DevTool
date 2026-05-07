@@ -282,6 +282,44 @@
       position: relative;
     }
 
+    /* cloak-style ambient green dots drifting behind the title */
+    .hero-dots {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      mask-image: radial-gradient(ellipse 78% 70% at 50% 50%, black 30%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 78% 70% at 50% 50%, black 30%, transparent 100%);
+    }
+
+    .hero-dot {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px rgba(20, 241, 149, 0.55);
+      opacity: 0;
+      scale: 0.7;
+      animation:
+        heroDotPulse var(--dur, 3s) ease-in-out infinite,
+        heroDotDrift var(--drift, 10s) ease-in-out infinite alternate;
+      animation-delay: var(--delay, 0s), var(--drift-delay, 0s);
+    }
+
+    @keyframes heroDotPulse {
+      0%, 100% { opacity: 0;                   scale: 0.7; }
+      50%      { opacity: var(--max-op, 0.7);  scale: 1;   }
+    }
+
+    @keyframes heroDotDrift {
+      to { translate: var(--dx, 0) var(--dy, 0); }
+    }
+
+    .hero > *:not(.hero-dots) {
+      position: relative;
+      z-index: 1;
+    }
+
     .eyebrow {
       display: inline-flex;
       align-items: center;
@@ -824,6 +862,7 @@
         filter: none;
         transform: none;
       }
+      .hero-dots { display: none; }
       html {
         scroll-behavior: auto;
       }
@@ -859,6 +898,7 @@
 
   <!-- HERO -->
   <header class="hero container">
+    <div class="hero-dots" id="heroDots" aria-hidden="true"></div>
     <h1 class="tagline">
       <span class="word accent" style="--i:0">Chrome</span>
       <span class="word accent" style="--i:1">DevTools</span>
@@ -1176,6 +1216,56 @@
         requestAnimationFrame(tick);
       }
       tick();
+    })();
+
+    // ============================================
+    // Always start at the top — browsers restore scroll position by default
+    // on reload, but this page has an intro animation that should always be
+    // visible from the top.
+    // ============================================
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
+    // ============================================
+    // Hero ambient dots — scattered green dots that pulse and slowly drift
+    // behind the title, like log blips. Random per-dot timing/position so the
+    // field never looks synced.
+    // ============================================
+    (function () {
+      const wrap = document.getElementById('heroDots');
+      if (!wrap) return;
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const COUNT = 70;
+      const frag = document.createDocumentFragment();
+      for (let i = 0; i < COUNT; i++) {
+        const d = document.createElement('div');
+        d.className = 'hero-dot';
+        const size  = 2 + Math.random() * 3;
+        const x     = Math.random() * 100;
+        const y     = Math.random() * 100;
+        const dur   = 2 + Math.random() * 3;
+        // Negative delay so dots start mid-cycle — avoids a synchronized flash
+        // when the page loads.
+        const delay = -Math.random() * 4;
+        const maxOp = 0.3 + Math.random() * 0.5;
+        // Slow drift in a random direction, ±25px
+        const dx    = ((Math.random() - 0.5) * 50).toFixed(1) + 'px';
+        const dy    = ((Math.random() - 0.5) * 50).toFixed(1) + 'px';
+        const drift = 7 + Math.random() * 7;
+        const driftDelay = -Math.random() * drift;
+
+        d.style.cssText =
+          'width:' + size + 'px;height:' + size + 'px;' +
+          'left:' + x + '%;top:' + y + '%;' +
+          '--dur:' + dur + 's;--delay:' + delay + 's;--max-op:' + maxOp + ';' +
+          '--dx:' + dx + ';--dy:' + dy + ';' +
+          '--drift:' + drift + 's;--drift-delay:' + driftDelay + 's;';
+        frag.appendChild(d);
+      }
+      wrap.appendChild(frag);
     })();
 
     // ============================================

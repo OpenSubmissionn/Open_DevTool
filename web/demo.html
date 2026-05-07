@@ -121,7 +121,7 @@
     .container {
       position: relative;
       z-index: 1;
-      max-width: 1080px;
+      max-width: 1320px;
       margin: 0 auto;
       padding: 0 28px;
     }
@@ -142,7 +142,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 16px 28px;
-      max-width: 1080px;
+      max-width: 1320px;
       margin: 0 auto;
     }
 
@@ -369,7 +369,7 @@
 
     /* demo card */
     .demo-card {
-      max-width: 980px;
+      max-width: 1240px;
       margin: 0 auto 80px;
       background: rgba(10, 10, 20, 0.7);
       border: 1px solid var(--border);
@@ -467,7 +467,7 @@
       box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
     }
 
-    .demo-card.animating .cu-fill { width: 92% !important; }
+    .demo-card.animating .cu-fill { width: var(--cu-pct, 92%); }
 
     /* per-program rows */
     .prog-rows {
@@ -478,7 +478,7 @@
 
     .prog-row {
       display: grid;
-      grid-template-columns: 180px 1fr 90px;
+      grid-template-columns: 240px 1fr 90px;
       align-items: center;
       gap: 14px;
       font-size: 13px;
@@ -487,12 +487,18 @@
     .prog-name {
       font-family: 'JetBrains Mono', monospace;
       color: var(--fg-dim);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
       display: flex;
       align-items: center;
       gap: 8px;
+      min-width: 0;
+    }
+
+    .prog-name-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+      flex: 0 1 auto;
     }
 
     .prog-bar-track {
@@ -540,6 +546,8 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
       font-family: 'Inter', sans-serif;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .bottleneck-callout {
@@ -559,22 +567,122 @@
     .bottleneck-callout .savings { color: var(--green); font-weight: 600; }
 
     /* CPI tree */
+    .cpi-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .cpi-ctrl {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--fg-dim);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cpi-ctrl:hover {
+      border-color: var(--purple);
+      color: var(--fg);
+      background: rgba(153, 69, 255, 0.06);
+    }
+
     .cpi-tree {
       font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
-      line-height: 1.9;
       color: var(--fg-dim);
     }
 
-    .cpi-tree .branch { color: var(--fg-mute); }
-    .cpi-tree .prog { color: var(--fg); }
-    .cpi-tree .ix { color: var(--purple-soft); }
-    .cpi-tree .cu { color: var(--fg-mute); margin-left: 8px; }
-    .cpi-tree .warn { color: var(--orange); margin-left: 8px; }
+    .cpi-node { position: relative; }
 
-    .cpi-tree .lvl-1 { padding-left: 0; }
-    .cpi-tree .lvl-2 { padding-left: 24px; }
-    .cpi-tree .lvl-3 { padding-left: 48px; }
+    .cpi-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      transition: background 0.15s;
+      min-width: 0;
+    }
+
+    .cpi-node.has-children > .cpi-row { cursor: pointer; }
+    .cpi-node.has-children > .cpi-row:hover { background: rgba(255, 255, 255, 0.035); }
+
+    .cpi-chevron {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      color: var(--fg-mute);
+      transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+      flex-shrink: 0;
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .cpi-node.has-children.expanded > .cpi-row > .cpi-chevron {
+      transform: rotate(90deg);
+      color: var(--purple-soft);
+    }
+
+    .cpi-node.leaf > .cpi-row > .cpi-chevron { visibility: hidden; }
+
+    .cpi-prog { color: var(--fg); font-weight: 500; }
+    .cpi-ix   { color: var(--purple-soft); font-size: 12px; }
+
+    .cpi-cu {
+      margin-left: auto;
+      color: var(--fg-mute);
+      font-size: 12px;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+
+    .cpi-warn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--orange);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 999px;
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .cpi-children {
+      margin-left: 14px;
+      padding-left: 16px;
+      border-left: 1px dashed rgba(255, 255, 255, 0.08);
+      margin-top: 2px;
+    }
+
+    .cpi-node:not(.expanded) > .cpi-children { display: none; }
+
+    .cpi-meta-foot {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px dashed var(--border);
+      font-family: 'Inter', sans-serif;
+      color: var(--fg-mute);
+      font-size: 12px;
+    }
 
     /* account diff — before / after rows */
     .diff-rows {
@@ -1465,19 +1573,13 @@
         class="demo-input"
         id="demoInput"
         placeholder="paste a real Solana transaction signature (87–88 chars) for live analysis..."
-        value="4xE9fQ8nKp2vXLm...mK7r"
         spellcheck="false"
       />
       <button class="demo-analyze" id="demoAnalyze">Analyze</button>
     </div>
 
     <div class="demo-samples">
-      <span>Mock samples:</span>
-      <button class="sample-chip" data-sig="4xE9fQ8nKp2vXLm...mK7r">4xE9f...mK7r</button>
-      <button class="sample-chip" data-sig="9aB2cT4hRn8vFkY...pL4s">9aB2c...pL4s</button>
-      <button class="sample-chip" data-sig="7kM3xG5jHs1zNqW...qN8w">7kM3x...qN8w</button>
-      <span style="margin-left: 8px; color: var(--fg-mute);">·</span>
-      <button class="sample-chip" data-sig="2ujdRg2nR5mBZ7ydheAvwmDFzr5Nni9h8wzpEWdmTezAQPUAteTMybDJh7rWAN8ytTpYVfFyPDAZoD8tPiFkGjYC" style="border-color: rgba(20, 241, 149, 0.4); color: var(--green);">⚡ live mainnet sample</button>
+      <button class="sample-chip" id="liveSampleBtn" style="border-color: rgba(20, 241, 149, 0.4); color: var(--green);">⚡ live mainnet sample</button>
     </div>
   </header>
 
@@ -1505,7 +1607,9 @@
 
           <div class="prog-rows">
             <div class="prog-row">
-              <span class="prog-name">Jupiter Aggregator V6</span>
+              <span class="prog-name">
+                <span class="prog-name-text">Jupiter Aggregator V6</span>
+              </span>
               <div class="prog-bar-track">
                 <div class="prog-bar blue" style="--w: 50%; --delay: 0.1s;"></div>
               </div>
@@ -1514,7 +1618,7 @@
 
             <div class="prog-row">
               <span class="prog-name">
-                Orca Whirlpool
+                <span class="prog-name-text">Orca Whirlpool</span>
                 <span class="bottleneck-pill">⚠ Bottleneck</span>
               </span>
               <div class="prog-bar-track">
@@ -1524,7 +1628,9 @@
             </div>
 
             <div class="prog-row">
-              <span class="prog-name">Metaplex Metadata</span>
+              <span class="prog-name">
+                <span class="prog-name-text">Metaplex Metadata</span>
+              </span>
               <div class="prog-bar-track">
                 <div class="prog-bar purple" style="--w: 18%; --delay: 0.3s;"></div>
               </div>
@@ -1532,7 +1638,9 @@
             </div>
 
             <div class="prog-row">
-              <span class="prog-name">Token Program</span>
+              <span class="prog-name">
+                <span class="prog-name-text">Token Program</span>
+              </span>
               <div class="prog-bar-track">
                 <div class="prog-bar green" style="--w: 6%; --delay: 0.4s;"></div>
               </div>
@@ -1540,7 +1648,9 @@
             </div>
 
             <div class="prog-row">
-              <span class="prog-name">System Program</span>
+              <span class="prog-name">
+                <span class="prog-name-text">System Program</span>
+              </span>
               <div class="prog-bar-track">
                 <div class="prog-bar gray" style="--w: 4%; --delay: 0.5s;"></div>
               </div>
@@ -1558,15 +1668,66 @@
 
         <!-- CPI Tree -->
         <div class="demo-panel hidden" data-panel="cpi">
+          <div class="cpi-controls">
+            <button class="cpi-ctrl" id="cpiExpandAll">▾ Expand all</button>
+            <button class="cpi-ctrl" id="cpiCollapseAll">▸ Collapse all</button>
+          </div>
           <div class="cpi-tree">
-            <div class="lvl-1"><span class="branch">└─</span> <span class="prog">Jupiter Aggregator V6</span> <span class="ix">[route]</span> <span class="cu">101,170 CU</span></div>
-            <div class="lvl-2"><span class="branch">├─</span> <span class="prog">Orca Whirlpool</span> <span class="ix">[swap_v2]</span> <span class="cu">110,500 CU</span> <span class="warn">⚠ bottleneck</span></div>
-            <div class="lvl-3"><span class="branch">│  ├─</span> <span class="prog">Token Program</span> <span class="ix">[transfer]</span> <span class="cu">3,210 CU</span></div>
-            <div class="lvl-3"><span class="branch">│  └─</span> <span class="prog">Token Program</span> <span class="ix">[transfer]</span> <span class="cu">2,320 CU</span></div>
-            <div class="lvl-2"><span class="branch">├─</span> <span class="prog">Metaplex Metadata</span> <span class="ix">[verify_collection]</span> <span class="cu">18,432 CU</span></div>
-            <div class="lvl-2"><span class="branch">└─</span> <span class="prog">System Program</span> <span class="ix">[transfer]</span> <span class="cu">3,688 CU</span></div>
+            <div class="cpi-node has-children expanded">
+              <div class="cpi-row">
+                <span class="cpi-chevron">▸</span>
+                <span class="cpi-prog">Jupiter Aggregator V6</span>
+                <span class="cpi-ix">[route]</span>
+                <span class="cpi-cu">101,170 CU</span>
+              </div>
+              <div class="cpi-children">
+                <div class="cpi-node has-children expanded">
+                  <div class="cpi-row">
+                    <span class="cpi-chevron">▸</span>
+                    <span class="cpi-prog">Orca Whirlpool</span>
+                    <span class="cpi-ix">[swap_v2]</span>
+                    <span class="cpi-warn">⚠ bottleneck</span>
+                    <span class="cpi-cu">110,500 CU</span>
+                  </div>
+                  <div class="cpi-children">
+                    <div class="cpi-node leaf">
+                      <div class="cpi-row">
+                        <span class="cpi-chevron">▸</span>
+                        <span class="cpi-prog">Token Program</span>
+                        <span class="cpi-ix">[transfer]</span>
+                        <span class="cpi-cu">3,210 CU</span>
+                      </div>
+                    </div>
+                    <div class="cpi-node leaf">
+                      <div class="cpi-row">
+                        <span class="cpi-chevron">▸</span>
+                        <span class="cpi-prog">Token Program</span>
+                        <span class="cpi-ix">[transfer]</span>
+                        <span class="cpi-cu">2,320 CU</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="cpi-node leaf">
+                  <div class="cpi-row">
+                    <span class="cpi-chevron">▸</span>
+                    <span class="cpi-prog">Metaplex Metadata</span>
+                    <span class="cpi-ix">[verify_collection]</span>
+                    <span class="cpi-cu">18,432 CU</span>
+                  </div>
+                </div>
+                <div class="cpi-node leaf">
+                  <div class="cpi-row">
+                    <span class="cpi-chevron">▸</span>
+                    <span class="cpi-prog">System Program</span>
+                    <span class="cpi-ix">[transfer]</span>
+                    <span class="cpi-cu">3,688 CU</span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <div style="margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--border); font-family: 'Inter', sans-serif; color: var(--fg-mute); font-size: 12px;">
+            <div class="cpi-meta-foot">
               6 program invocations · max depth 3 · reconstructed from program logs
             </div>
           </div>
@@ -1809,24 +1970,59 @@
         });
       });
 
-      // ───────── sample chips ─────────
-      // The first 3 chips carry shortened/fake sigs and just replay the
-      // canned animation. The last "⚡ live mainnet sample" chip carries a
-      // real 88-char signature, which routes through analyzeBtn → /api/analyze
-      // so users can see the live pipeline without typing anything.
-      document.querySelectorAll('.sample-chip').forEach((chip) => {
-        chip.addEventListener('click', () => {
-          const sig = chip.dataset.sig || chip.textContent.trim();
-          input.value = sig;
-          input.focus();
-          const looksReal = (sig.length === 87 || sig.length === 88) && !sig.includes('...');
-          if (looksReal) {
+      // ───────── CPI tree expand/collapse ─────────
+      // Delegated click handler — also covers nodes added later by renderCpi().
+      const cpiPanel = card.querySelector('[data-panel="cpi"]');
+      if (cpiPanel) {
+        cpiPanel.addEventListener('click', (ev) => {
+          const row = ev.target.closest('.cpi-row');
+          if (!row) return;
+          const node = row.parentElement;
+          if (!node || !node.classList.contains('has-children')) return;
+          node.classList.toggle('expanded');
+        });
+
+        const expandAllBtn = document.getElementById('cpiExpandAll');
+        const collapseAllBtn = document.getElementById('cpiCollapseAll');
+        expandAllBtn?.addEventListener('click', () => {
+          cpiPanel.querySelectorAll('.cpi-node.has-children').forEach((n) => n.classList.add('expanded'));
+        });
+        collapseAllBtn?.addEventListener('click', () => {
+          cpiPanel.querySelectorAll('.cpi-node.has-children').forEach((n) => n.classList.remove('expanded'));
+        });
+      }
+
+      // ───────── live mainnet sample ─────────
+      // Hits /api/latest-tx, which pulls the most recent confirmed signature
+      // from a high-traffic mainnet program (Jupiter v6) via the Solana RPC.
+      // We then drop that sig into the input and route it through the same
+      // analyze pipeline, so users see real, just-broadcast data each click.
+      const liveBtn = document.getElementById('liveSampleBtn');
+      if (liveBtn) {
+        liveBtn.addEventListener('click', async () => {
+          const original = liveBtn.textContent;
+          liveBtn.textContent = '⚡ fetching latest mainnet tx…';
+          liveBtn.disabled = true;
+          try {
+            const res = await fetch('/api/latest-tx');
+            if (!res.ok) {
+              const err = await res.json().catch(() => ({}));
+              throw new Error(err.error || `HTTP ${res.status}`);
+            }
+            const data = await res.json();
+            if (!data.signature) throw new Error('no signature returned');
+            input.value = data.signature;
+            input.focus();
             analyzeBtn.click();
-          } else {
-            replay();
+          } catch (e) {
+            console.warn('[live-sample] error:', e.message);
+            setBanner(`error fetching latest tx · ${String(e.message).slice(0, 60)}`, 'error');
+          } finally {
+            liveBtn.textContent = original;
+            liveBtn.disabled = false;
           }
         });
-      });
+      }
 
       function replay() {
         card.classList.remove('animating');
@@ -2254,7 +2450,10 @@
         const fill = document.querySelector('[data-panel="flame"] .cu-fill');
         if (fill && data.computeUnits.limit > 0) {
           const pct = Math.min(100, (data.computeUnits.consumed / data.computeUnits.limit) * 100);
-          fill.style.width = pct.toFixed(1) + '%';
+          // Drive the bar via CSS var so the .demo-card.animating rule can pick
+          // it up — setting style.width directly was being overridden by the
+          // canned-animation rule.
+          fill.style.setProperty('--cu-pct', pct.toFixed(1) + '%');
         }
 
         const rows = document.querySelector('[data-panel="flame"] .prog-rows');
@@ -2271,7 +2470,7 @@
           const isBottleneck = p.programId === bottleneckId;
           row.innerHTML = `
             <span class="prog-name">
-              ${escapeHtml(shortLabel(p.programName))}
+              <span class="prog-name-text">${escapeHtml(shortLabel(p.programName))}</span>
               ${isBottleneck ? '<span class="bottleneck-pill">⚠ Bottleneck</span>' : ''}
             </span>
             <div class="prog-bar-track">
@@ -2302,34 +2501,48 @@
         };
 
         const bottleneckId = data.bottleneck?.programId;
-        const lines = [];
-        const walk = (nodes, depth, parentLast) => {
-          nodes.forEach((n, i) => {
-            const isLast = i === nodes.length - 1;
-            const branch = depth === 0 ? (isLast ? '└─' : '├─')
-              : (parentLast ? '   ' : '│  ').repeat(Math.max(0, depth - 1)) + (isLast ? '└─' : '├─');
-            const cu = n.cuConsumed != null ? `${n.cuConsumed.toLocaleString()} CU` : '';
-            const ixName = depth === 0 ? consumeIxName(n.programId) : null;
-            const ix = ixName ? `<span class="ix">[${escapeHtml(ixName)}]</span> ` : '';
-            const isBottleneck = depth === 0 && n.programId === bottleneckId;
-            const warn = isBottleneck ? ' <span class="warn">⚠ bottleneck</span>' : '';
-            lines.push(
-              `<div class="lvl-${Math.min(3, depth + 1)}">` +
-                `<span class="branch">${branch}</span> ` +
-                `<span class="prog">${escapeHtml(shortLabel(n.programName))}</span> ` +
-                ix +
-                (cu ? `<span class="cu">${cu}</span>` : '') +
-                warn +
-              `</div>`
-            );
-            if (n.children && n.children.length) walk(n.children, depth + 1, isLast);
-          });
-        };
-        walk(data.cpiTree.root, 0, true);
-        wrap.innerHTML = lines.join('') +
-          `<div style="margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--border); font-family: 'Inter', sans-serif; color: var(--fg-mute); font-size: 12px;">
-            ${data.cpiTree.nodeCount} program invocations · max depth ${data.cpiTree.totalDepth} · reconstructed from program logs
-          </div>`;
+
+        function buildNode(n, depth) {
+          const hasChildren = n.children && n.children.length > 0;
+          const ixName = depth === 0 ? consumeIxName(n.programId) : null;
+          const isBottleneck = depth === 0 && n.programId === bottleneckId;
+          const cu = n.cuConsumed != null ? `${n.cuConsumed.toLocaleString()} CU` : '';
+
+          const node = document.createElement('div');
+          // Top two levels expanded by default; deeper levels collapsed so the
+          // tree opens up gradually instead of dumping everything at once.
+          const expanded = hasChildren && depth < 2;
+          node.className = `cpi-node ${hasChildren ? 'has-children' : 'leaf'}${expanded ? ' expanded' : ''}`;
+
+          const row = document.createElement('div');
+          row.className = 'cpi-row';
+          row.innerHTML =
+            `<span class="cpi-chevron">▸</span>` +
+            `<span class="cpi-prog">${escapeHtml(shortLabel(n.programName))}</span>` +
+            (ixName ? `<span class="cpi-ix">[${escapeHtml(ixName)}]</span>` : '') +
+            (isBottleneck ? `<span class="cpi-warn">⚠ bottleneck</span>` : '') +
+            (cu ? `<span class="cpi-cu">${cu}</span>` : '');
+          node.appendChild(row);
+
+          if (hasChildren) {
+            const children = document.createElement('div');
+            children.className = 'cpi-children';
+            n.children.forEach((c) => children.appendChild(buildNode(c, depth + 1)));
+            node.appendChild(children);
+            // Click handling lives on the panel via event delegation (set up
+            // once during init), so we don't attach a listener per row here.
+          }
+
+          return node;
+        }
+
+        data.cpiTree.root.forEach((n) => wrap.appendChild(buildNode(n, 0)));
+
+        const meta = document.createElement('div');
+        meta.className = 'cpi-meta-foot';
+        meta.textContent =
+          `${data.cpiTree.nodeCount} program invocations · max depth ${data.cpiTree.totalDepth} · reconstructed from program logs`;
+        wrap.appendChild(meta);
       }
 
       function renderDiff(data) {
