@@ -4,6 +4,9 @@
   "rewrites": [
     { "source": "/", "destination": "/landing.html" }
   ],
+  "redirects": [
+    { "source": "/demo.html", "destination": "/web.html", "permanent": true }
+  ],
   "functions": {
     "api/analyze.ts": { "maxDuration": 60 }
   }
