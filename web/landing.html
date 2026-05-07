@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>open — chrome dev tools for solana</title>
+  <title>OPEN — Chrome dev tools for solana</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -96,9 +96,11 @@
         rgba(20, 241, 149, 0.10) 100%
       );
       border-radius: 3px 3px 0 0;
-      height: 6%;
+      height: 100%;
+      transform: scaleY(0.06);
       transform-origin: bottom;
-      transition: height 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+      will-change: transform;
+      backface-visibility: hidden;
       box-shadow:
         0 0 8px rgba(153, 69, 255, 0.18),
         inset 0 0 1px rgba(255, 255, 255, 0.05);
@@ -132,6 +134,61 @@
       background-size: 40px 40px;
       mask-image: linear-gradient(to bottom, black 0%, transparent 80%);
       pointer-events: none;
+    }
+
+    /* ============================================
+       HERO REVEAL — cloak-style word-by-word
+       ============================================ */
+    .word {
+      display: inline-block;
+      opacity: 0;
+      filter: blur(14px);
+      transform: translateY(0.3em);
+      animation: wordReveal 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+      animation-delay: calc(var(--i, 0) * 200ms + 120ms);
+      will-change: opacity, filter, transform;
+    }
+
+    @keyframes wordReveal {
+      0% {
+        opacity: 0;
+        filter: blur(14px);
+        transform: translateY(0.3em);
+      }
+      55% {
+        opacity: 0.65;
+        filter: blur(4px);
+      }
+      100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0);
+      }
+    }
+
+    .hero .subtitle,
+    .hero .cta-row,
+    .hero .install-line {
+      opacity: 0;
+      animation: heroFadeUp 0.95s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+      will-change: opacity, transform, filter;
+    }
+
+    .hero .subtitle  { animation-delay: 1.15s; }
+    .hero .cta-row   { animation-delay: 1.35s; }
+    .hero .install-line { animation-delay: 1.55s; }
+
+    @keyframes heroFadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+        filter: blur(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
     }
 
     /* ============================================
@@ -177,19 +234,15 @@
     }
 
     .logo-mark {
-      width: 26px;
-      height: 26px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, var(--purple) 0%, var(--green) 100%);
-      position: relative;
-    }
-
-    .logo-mark::after {
-      content: '';
-      position: absolute;
-      inset: 6px;
-      border-radius: 50%;
-      background: var(--bg);
+      width: 36px;
+      height: 36px;
+      display: block;
+      box-sizing: border-box;
+      padding: 4px;
+      border-radius: 6px;
+      background: #000;     /* black plate; the SVG paths are hardcoded #4b6cb3 (blue letters on black) */
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+      flex-shrink: 0;
     }
 
     .nav-links {
@@ -229,6 +282,44 @@
       position: relative;
     }
 
+    /* cloak-style ambient green dots drifting behind the title */
+    .hero-dots {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      mask-image: radial-gradient(ellipse 78% 70% at 50% 50%, black 30%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 78% 70% at 50% 50%, black 30%, transparent 100%);
+    }
+
+    .hero-dot {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px rgba(20, 241, 149, 0.55);
+      opacity: 0;
+      scale: 0.7;
+      animation:
+        heroDotPulse var(--dur, 3s) ease-in-out infinite,
+        heroDotDrift var(--drift, 10s) ease-in-out infinite alternate;
+      animation-delay: var(--delay, 0s), var(--drift-delay, 0s);
+    }
+
+    @keyframes heroDotPulse {
+      0%, 100% { opacity: 0;                   scale: 0.7; }
+      50%      { opacity: var(--max-op, 0.7);  scale: 1;   }
+    }
+
+    @keyframes heroDotDrift {
+      to { translate: var(--dx, 0) var(--dy, 0); }
+    }
+
+    .hero > *:not(.hero-dots) {
+      position: relative;
+      z-index: 1;
+    }
+
     .eyebrow {
       display: inline-flex;
       align-items: center;
@@ -251,40 +342,14 @@
       box-shadow: 0 0 8px var(--green);
     }
 
-    .logo-block {
-      display: inline-block;
-      padding: 14px 44px 22px;
-      margin: 0 0 32px;
-      background: linear-gradient(140deg, #1e3a8a 0%, #2563eb 50%, #1d4ed8 100%);
-      border-radius: 18px;
-      font-weight: 900;
-      font-size: clamp(72px, 12vw, 144px);
-      line-height: 0.9;
-      letter-spacing: -0.06em;
-      color: #ffffff;
-      position: relative;
-      box-shadow:
-        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
-        inset 0 -24px 60px rgba(0, 0, 0, 0.25),
-        0 30px 80px -20px rgba(37, 99, 235, 0.55);
-      animation: logoFloat 6s ease-in-out infinite;
-    }
-
-    .logo-block .dim {
-      color: rgba(255, 255, 255, 0.55);
-    }
-
-    @keyframes logoFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
-
     .tagline {
-      font-size: clamp(20px, 2.4vw, 28px);
-      font-weight: 500;
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 800;
       color: var(--fg);
-      margin: 0 0 16px;
-      letter-spacing: -0.01em;
+      margin: 16px 0 28px;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      text-wrap: balance;
     }
 
     .tagline .accent {
@@ -292,7 +357,7 @@
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      font-weight: 700;
+      font-weight: 900;
     }
 
     .subtitle {
@@ -786,7 +851,18 @@
     @media (prefers-reduced-motion: reduce) {
       .cu-bar {
         transition: none;
+        will-change: auto;
       }
+      .word,
+      .hero .subtitle,
+      .hero .cta-row,
+      .hero .install-line {
+        animation: none !important;
+        opacity: 1;
+        filter: none;
+        transform: none;
+      }
+      .hero-dots { display: none; }
       html {
         scroll-behavior: auto;
       }
@@ -803,14 +879,13 @@
   <nav>
     <div class="nav-inner">
       <a href="#" class="logo">
-        <span class="logo-mark"></span>
-        <span>open</span>
+        <img class="logo-mark" src="open-symbol.svg" alt="OPEN" />
       </a>
       <div class="nav-links">
         <a href="#versions">Versions</a>
         <a href="#modes">How it works</a>
         <a href="#features">Features</a>
-        <a href="demo.html">Demo</a>
+        <a href="web.html">Web Version</a>
         <a
           href="https://github.com/OpenSubmissionn/Submission_Open"
           target="_blank"
@@ -823,18 +898,16 @@
 
   <!-- HERO -->
   <header class="hero container">
-    <div class="eyebrow">
-      <span class="dot"></span>
-      <span>v1.0 · CLI live on npm</span>
-    </div>
-    <div class="logo-block">ope<span class="dim">n</span></div>
-    <p class="tagline">
-      <span class="accent">chrome dev tools</span> for solana
-    </p>
+    <div class="hero-dots" id="heroDots" aria-hidden="true"></div>
+    <h1 class="tagline">
+      <span class="word accent" style="--i:0">Chrome</span>
+      <span class="word accent" style="--i:1">DevTools</span>
+      <br />
+      <span class="word" style="--i:2">for</span>
+      <span class="word" style="--i:3">Solana</span>
+    </h1>
     <p class="subtitle">
-      Take any Solana transaction signature — or an unsigned blob — and turn it into
-      a fully decoded execution profile. Compute units, CPI call trees, account diffs,
-      and an insight layer that flags bottlenecks automatically.
+      Paste your transaction signature and get all the information you need. 
     </p>
 
     <div class="cta-row">
@@ -866,7 +939,7 @@
     <div class="section-head">
       <div class="section-eyebrow">// versions</div>
       <h2>Two ways to run open</h2>
-      <p>The CLI is shipping today. The web debugger is what we're building next.</p>
+      <p>Both versions are live today. Pick the CLI for terminal speed, or the web debugger for an interactive view.</p>
     </div>
 
     <div class="versions-grid">
@@ -895,10 +968,10 @@
           style="width: 100%; justify-content: center; pointer-events: none;">View on GitHub →</span>
       </a>
 
-      <a href="demo.html" class="version-card version-card-link">
-        <span class="version-badge soon">
+      <a href="demo.html" class="version-card version-card-link available">
+        <span class="version-badge live">
           <span class="pulse"></span>
-          Preview available
+          Available now
         </span>
         <h3>Web</h3>
         <p class="desc">
@@ -906,13 +979,13 @@
           flame graph, CPI tree and account state timeline.
         </p>
         <ul>
-          <li><span class="pending">○</span> Interactive CU flame graph</li>
-          <li><span class="pending">○</span> Clickable CPI call tree</li>
-          <li><span class="pending">○</span> Side-by-side simulation diff</li>
-          <li><span class="pending">○</span> Shareable transaction reports</li>
+          <li><span class="check">●</span> Interactive CU flame graph</li>
+          <li><span class="check">●</span> Clickable CPI call tree</li>
+          <li><span class="check">●</span> Side-by-side simulation diff</li>
+          <li><span class="check">●</span> Shareable transaction reports</li>
         </ul>
         <span class="btn btn-ghost"
-          style="width: 100%; justify-content: center; pointer-events: none;">Open preview →</span>
+          style="width: 100%; justify-content: center; pointer-events: none;">Open the web app →</span>
       </a>
     </div>
   </section>
@@ -933,7 +1006,7 @@
           <div class="mode-icon live">⚡</div>
           <h3>On-chain signature</h3>
           <p>
-            Point open at any confirmed transaction signature. It pulls the tx from
+            Point OPEN at any confirmed transaction signature. It pulls the tx from
             the RPC and gives you the full profile — CU usage, CPI tree, account diffs.
           </p>
         </div>
@@ -1034,7 +1107,7 @@
   <section class="final-cta">
     <div class="container">
       <h2>Ship faster. Profile everything.</h2>
-      <p>open is MIT-licensed and open source. Try it on a real signature in 30 seconds.</p>
+      <p>OPEN is MIT-licensed and open source. Try it on a real signature in 30 seconds.</p>
       <div class="cta-row">
         <a
           href="https://github.com/OpenSubmissionn/Submission_Open"
@@ -1054,8 +1127,7 @@
   <footer>
     <div class="container footer-inner">
       <div class="logo">
-        <span class="logo-mark"></span>
-        <span>open</span>
+        <img class="logo-mark" src="open-symbol.svg" alt="OPEN" />
       </div>
       <div class="footer-meta">
         <span class="accent">MIT licensed</span> · built for the Solana community
@@ -1119,7 +1191,7 @@
           // small live shimmer (±6% of current height)
           const shimmer = 1 + Math.sin(t + i * 0.4) * 0.05 * eased;
           const heightPct = Math.max(2, eased * b.peak * b.jitter * shimmer);
-          b.el.style.height = heightPct + '%';
+          b.el.style.transform = 'scaleY(' + (heightPct / 100) + ')';
         }
 
         ticking = false;
@@ -1144,6 +1216,56 @@
         requestAnimationFrame(tick);
       }
       tick();
+    })();
+
+    // ============================================
+    // Always start at the top — browsers restore scroll position by default
+    // on reload, but this page has an intro animation that should always be
+    // visible from the top.
+    // ============================================
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
+    // ============================================
+    // Hero ambient dots — scattered green dots that pulse and slowly drift
+    // behind the title, like log blips. Random per-dot timing/position so the
+    // field never looks synced.
+    // ============================================
+    (function () {
+      const wrap = document.getElementById('heroDots');
+      if (!wrap) return;
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const COUNT = 70;
+      const frag = document.createDocumentFragment();
+      for (let i = 0; i < COUNT; i++) {
+        const d = document.createElement('div');
+        d.className = 'hero-dot';
+        const size  = 2 + Math.random() * 3;
+        const x     = Math.random() * 100;
+        const y     = Math.random() * 100;
+        const dur   = 2 + Math.random() * 3;
+        // Negative delay so dots start mid-cycle — avoids a synchronized flash
+        // when the page loads.
+        const delay = -Math.random() * 4;
+        const maxOp = 0.3 + Math.random() * 0.5;
+        // Slow drift in a random direction, ±25px
+        const dx    = ((Math.random() - 0.5) * 50).toFixed(1) + 'px';
+        const dy    = ((Math.random() - 0.5) * 50).toFixed(1) + 'px';
+        const drift = 7 + Math.random() * 7;
+        const driftDelay = -Math.random() * drift;
+
+        d.style.cssText =
+          'width:' + size + 'px;height:' + size + 'px;' +
+          'left:' + x + '%;top:' + y + '%;' +
+          '--dur:' + dur + 's;--delay:' + delay + 's;--max-op:' + maxOp + ';' +
+          '--dx:' + dx + ';--dy:' + dy + ';' +
+          '--drift:' + drift + 's;--drift-delay:' + driftDelay + 's;';
+        frag.appendChild(d);
+      }
+      wrap.appendChild(frag);
     })();
 
     // ============================================

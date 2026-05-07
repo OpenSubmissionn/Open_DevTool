@@ -89,3 +89,5 @@ sample-output.json
 
 # Test outputs
 sample-output.json
+
+.playwright-mcp/ 
