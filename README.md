@@ -6,6 +6,11 @@ A transaction profiler and visual debugger for Solana.
 
 Open takes any Solana transaction signature and turns it into a fully decoded execution profile — showing compute unit usage, CPI call trees, account state changes, and an insight layer that flags bottlenecks automatically.
 
+Open ships in two flavors — pick whichever fits your workflow:
+
+- **Web** — paste a signature in the browser, zero install. Live at **https://open-frontier-azure.vercel.app**
+- **CLI** — full power in the terminal: scripting, JSON/CSV output, custom RPCs
+
 ## Team Members: 
 <table align="center">
   <tr>
@@ -52,15 +57,72 @@ Open takes any Solana transaction signature and turns it into a fully decoded ex
   </tr>
 </table>
 
-## Installation
+## How to use
 
-Install globally with one command (requires Node.js 18+ and git):
+You can use Open in two ways. Both share the same analysis pipeline — CPI tree, CU profile, account diffs, insights, and a Solscan-style execution log.
+
+### Option 1 — Web (no install)
+
+The fastest way to try Open.
+
+1. Open **https://open-frontier-azure.vercel.app**
+2. Paste any mainnet or devnet transaction signature into the input
+3. Click **Analyze**
+
+If you don't have a signature handy, click **Live mainnet sample** to pull a fresh Jupiter v6 transaction directly from the chain.
+
+### Option 2 — CLI
+
+Best for scripting, batch jobs, custom RPCs, and JSON/CSV output.
+
+#### Install
+
+The CLI runs on Windows, macOS, and Linux. You need **Node.js 18 or newer** and **git** on your system before installing.
+
+**Windows**
+
+In **PowerShell** or **Command Prompt**:
+
+```powershell
+winget install OpenJS.NodeJS.LTS
+winget install Git.Git
+```
+
+Or download the installers manually: [nodejs.org](https://nodejs.org/) and [git-scm.com/download/win](https://git-scm.com/download/win). Restart the terminal after installing so the new `node`, `npm`, and `git` are on your `PATH`.
+
+**macOS**
+
+With [Homebrew](https://brew.sh/):
+
+```bash
+brew install node git
+```
+
+Or download Node from [nodejs.org](https://nodejs.org/); git ships with the Xcode Command Line Tools (`xcode-select --install`).
+
+**Linux (Debian / Ubuntu)**
+
+```bash
+sudo apt update
+sudo apt install -y nodejs npm git
+```
+
+If `node --version` returns less than 18, install a current LTS via [nvm](https://github.com/nvm-sh/nvm):
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+nvm install --lts
+```
+
+For Fedora/RHEL use `sudo dnf install nodejs git`; for Arch use `sudo pacman -S nodejs npm git`.
+
+**Then, on any OS, install the CLI globally:**
 
 ```bash
 npm install -g github:OpenSubmissionn/Submission_Open
 ```
 
-This makes the `open` command available globally. To verify:
+This makes the `open` command available globally. Verify:
 
 ```bash
 open --help
@@ -68,46 +130,39 @@ open --help
 
 > **macOS users:** macOS ships its own `open` command. Depending on your `PATH` order, the npm-installed `open` may shadow it. If that bothers you, invoke with `npx --package=github:OpenSubmissionn/Submission_Open open ...` instead.
 
-### Install from source (for contributors)
+#### Run
 
+Analyze a mainnet transaction (default network):
 ```bash
-git clone https://github.com/OpenSubmissionn/Submission_Open.git
-cd Submission_Open
-npm install
-npm run build
-npm link
+open tx <YOUR_TX_SIGNATURE>
 ```
 
-## Quickstart
-
-Example 1 — Full analysis as JSON:
+Full analysis as JSON (pipe into `jq`, save to file, etc.):
 ```bash
 open tx <YOUR_TX_SIGNATURE> --json
 ```
 
-Example 2 — Analyze on devnet:
+Devnet:
 ```bash
 open tx <YOUR_TX_SIGNATURE> --network devnet
 ```
 
-Example 3 — Custom RPC endpoint:
+Custom RPC endpoint:
 ```bash
 open tx <YOUR_TX_SIGNATURE> --rpc https://your-rpc-url.com
 ```
 
-Example 4 — CSV output (writes a file):
+CSV output (writes `<signature>.csv` in the current directory):
 ```bash
-open tx <YOUR_TX_SIGNATURE> --network mainnet --csv
+open tx <YOUR_TX_SIGNATURE> --csv
 ```
 
-Example 5 — CSV output to explicit path:
+CSV to a specific path:
 ```bash
-open tx <YOUR_TX_SIGNATURE> --network mainnet --csv --output ./my-tx-report.csv
+open tx <YOUR_TX_SIGNATURE> --csv --output ./my-tx-report.csv
 ```
 
-Note: when `--csv` is used without `--output`, the CLI writes a file named `<signature>.csv` in the current working directory.
-
-## CLI flags
+#### Flags
 
 | Flag | Type | Default | Description |
 |------|------|---------|-------------|
@@ -116,6 +171,17 @@ Note: when `--csv` is used without `--output`, the CLI writes a file named `<sig
 | `--rpc` | string | — | Custom RPC URL, overrides --network |
 | `--verbose` | boolean | false | Enable debug output |
 | `--output` | string | — | Save output to a file path |
+| `--csv` | boolean | false | Write a CSV report instead of printing to stdout |
+
+#### Install from source (for contributors)
+
+```bash
+git clone https://github.com/OpenSubmissionn/Submission_Open.git
+cd Submission_Open
+npm install
+npm run build
+npm link
+```
 
 ## Project structure
 
