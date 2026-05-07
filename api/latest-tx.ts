@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getLatestTx } from '../web/server';
+import { getLatestTx } from '../web/server.js';
 
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
   try {

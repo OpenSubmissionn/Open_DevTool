@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { analyze } from '../web/server';
+import { analyze } from '../web/server.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Accept both GET ?signature=... and POST { signature, network } so the
