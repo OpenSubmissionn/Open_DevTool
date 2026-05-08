@@ -1,4 +1,4 @@
-import { ParsedTransaction } from './types';
+import { ParsedTransaction } from './types.js';
 
 export type TxType =
   | 'swap'

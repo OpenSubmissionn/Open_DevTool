@@ -12,7 +12,7 @@
  * See docs/Extensibility_Decoder.md for the full guide.
  */
 
-import { instructionDiscriminator } from './orca/anchor-idl-orca';
+import { instructionDiscriminator } from './orca/anchor-idl-orca.js';
 import type { Idl } from '@coral-xyz/anchor';
 
 // ── 1. Program ID ─────────────────────────────────────────────────────────────

@@ -10,7 +10,7 @@
  * Returns aggregate CU metrics plus instruction-level details.
  */
 
-import { CUProfile, CUEntry } from './types';
+import { CUProfile, CUEntry } from './types.js';
 
 export function profileCU(logMessages: string[]): CUProfile {
   // Running totals for transaction-level CU metrics.

@@ -9,7 +9,7 @@
  * Returns only accounts with changes, sorted by role importance.
  */
 
-import type { AccountDiff, RawTransactionBundle, TokenBalance, TokenDelta } from './types';
+import type { AccountDiff, RawTransactionBundle, TokenBalance, TokenDelta } from './types.js';
 import BigNumber from 'bignumber.js';
 
 // Minimal shape from Solana message header needed to infer account roles.

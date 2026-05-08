@@ -1,4 +1,4 @@
-import type { ParsedInstruction, TokenInstruction } from '../types';
+import type { ParsedInstruction, TokenInstruction } from '../types.js';
 import { Buffer } from 'buffer';
 
 /**

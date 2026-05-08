@@ -7,8 +7,8 @@ import {
   PublicKey,
   SimulatedTransactionResponse,
 } from '@solana/web3.js';
-import { getConnection, withRetry } from './connection';
-import type { RawTransactionBundle, RawInstruction } from '../analysis/types';
+import { getConnection, withRetry } from './connection.js';
+import type { RawTransactionBundle, RawInstruction } from '../analysis/types.js';
 
 export type SimulationInputKind = 'base64' | 'path';
 

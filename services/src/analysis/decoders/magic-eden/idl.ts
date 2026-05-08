@@ -1,5 +1,5 @@
 import type { Idl } from '@coral-xyz/anchor';
-import { instructionDiscriminator } from '../orca/anchor-idl-orca';
+import { instructionDiscriminator } from '../orca/anchor-idl-orca.js';
 
 export const MAGIC_EDEN_PROGRAM_ID = 'MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8';
 
