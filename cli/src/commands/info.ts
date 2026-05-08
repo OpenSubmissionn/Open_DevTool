@@ -60,7 +60,6 @@ function colorStatus(status: ProgramEntry['decoderStatus']): string {
       return chalk.gray(status);
     default:
       return chalk.gray(String(status));
-
   }
 }
 

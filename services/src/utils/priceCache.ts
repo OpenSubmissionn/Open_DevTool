@@ -4,8 +4,7 @@ const CACHE_DURATION_MS = 5 * 60 * 1000;
 const FETCH_TIMEOUT_MS = 3_000;
 const FALLBACK_SOL_PRICE_USD = 180;
 
-const COINGECKO_URL =
-  'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd';
+const COINGECKO_URL = 'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd';
 
 async function fetchLiveSolPriceUSD(): Promise<number | null> {
   // Tests and offline runs disable this lookup; the cached fallback handles it.

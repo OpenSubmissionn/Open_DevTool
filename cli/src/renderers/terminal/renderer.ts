@@ -1123,11 +1123,7 @@ const renderTransferBreakdown = (transfers: TransferInfo[] | undefined) => {
       chalk.white('USD'),
       chalk.white('Spam?'),
     ],
-    colWidths: scaleCols(
-      [14, 14, 20, 46, 14, 10],
-      [9, 9, 10, 14, 7, 6],
-      WIDTH - 2
-    ),
+    colWidths: scaleCols([14, 14, 20, 46, 14, 10], [9, 9, 10, 14, 7, 6], WIDTH - 2),
     wordWrap: true,
     style: { head: [], border: [] },
   });
@@ -1173,11 +1169,7 @@ const renderAccountsTable = (accountDiffs: AccountDiff[]) => {
       chalk.white('SOL Δ'),
       chalk.white('Token Δ'),
     ],
-    colWidths: scaleCols(
-      [20, 12, 15, 20],
-      [12, 8, 11, 14],
-      WIDTH - 2
-    ),
+    colWidths: scaleCols([20, 12, 15, 20], [12, 8, 11, 14], WIDTH - 2),
     wordWrap: true,
     style: { head: [], border: [] },
   });

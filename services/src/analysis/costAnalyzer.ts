@@ -126,8 +126,7 @@ export function analyzeCosts(
       if (i === 0) delta += txFee;
 
       if (delta > 0) inflows.push({ pubkey: bundle.accountKeys[i], amount: delta, idx: i });
-      else if (delta < 0)
-        outflows.push({ pubkey: bundle.accountKeys[i], amount: -delta, idx: i });
+      else if (delta < 0) outflows.push({ pubkey: bundle.accountKeys[i], amount: -delta, idx: i });
     }
 
     // Process largest first so big transfers get matched before dust rebates.
