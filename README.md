@@ -4,7 +4,7 @@ A transaction profiler and visual debugger for Solana.
 
 ## What is Open?
 
-Open takes any Solana transaction signature and turns it into a fully decoded execution profile — showing compute unit usage, CPI call trees, account state changes, and an insight layer that flags bottlenecks automatically.
+Open takes any Solana transaction signature and turns it into a fully decoded execution profile — showing compute unit usage, CPI call trees, account state changes, and an insight layer that flags bottlenecks automatically. AI-generated optimization suggestions are layered on top of deterministic rule-based insights so the report is useful even without an LLM.
 
 Open ships in two flavors — pick whichever fits your workflow:
 
@@ -167,30 +167,61 @@ open tx <YOUR_TX_SIGNATURE> --csv --output ./my-tx-report.csv
 | Flag | Type | Default | Description |
 |------|------|---------|-------------|
 | `--json` | boolean | false | Output full analysis as JSON |
-| `--network` | mainnet or devnet | mainnet | Solana network to use |
-| `--rpc` | string | — | Custom RPC URL, overrides --network |
-| `--verbose` | boolean | false | Enable debug output |
-| `--output` | string | — | Save output to a file path |
-| `--csv` | boolean | false | Write a CSV report instead of printing to stdout |
+| `--csv` | boolean | false | Output a CSV row (writes a file by default) |
+| `--output <path>` | string | — | Save output to a specific file path |
+| `--network <name>` | mainnet \| devnet | mainnet | Solana network to use |
+| `--rpc <url>` | string | — | Custom RPC URL (overrides `--network`) |
+| `--no-cache` | boolean | false | Skip the IDL cache and re-fetch from chain |
+| `--verbose` | boolean | false | Enable per-stage timing and debug output |
 
-#### Install from source (for contributors)
+> When `--csv` is used without `--output`, the CLI writes a file named `<signature>.csv` in the current working directory.
+
+## AI-powered insights (optional)
+
+Open ships rule-based insights out of the box. To unlock AI-generated optimization suggestions, set one of:
+
+| Provider | Env var | Where to get a key |
+|---|---|---|
+| **Groq** (free tier, recommended) | `GROQ_API_KEY` | https://console.groq.com/keys (no credit card required) |
+| **Anthropic** (paid, Claude Sonnet) | `ANTHROPIC_API_KEY` | https://console.anthropic.com (~$5 minimum top-up) |
+
+Add to your `.env`:
 
 ```bash
-git clone https://github.com/OpenSubmissionn/Submission_Open.git
-cd Submission_Open
-npm install
-npm run build
-npm link
+GROQ_API_KEY=gsk_...
 ```
+
+Both providers use the same prompt and return the same shape — the CLI logs which one is active at the start of each run. Without a key, only rule-based insights render.
+
+Power-user overrides:
+
+| Env var | Effect |
+|---|---|
+| `MCP_ENDPOINT_URL` | POST the payload to a custom HTTP endpoint instead of calling the LLM directly |
+| `MCP_DISABLED=1` | Skip AI entirely (rule-based insights only) |
+| `MCP_MODEL` | Override the default model for the active provider |
+
+## Configuration
+
+To use a custom RPC by default, set `OPEN_RPC_URL`:
+
+```bash
+export OPEN_RPC_URL=https://your-rpc.example.com
+open tx <SIGNATURE>
+```
+
+Open also reads `HELIUS_API_KEY` for richer transaction parsing when available. See `.env.example` for the full list.
 
 ## Project structure
 
+```
 open/
 ├── cli/        # CLI entry point and terminal renderer
 ├── services/   # Analysis engine, RPC layer, decoders
-├── docs/       # Architecture and program registry docs
-├── programs/   # On-chain program code
-└── web/        # Web frontend
+├── scripts/    # Validation and benchmark scripts
+├── docs/       # Architecture, troubleshooting, schema references
+└── web/        # Web frontend (work in progress, post-hackathon)
+```
 
 ## Development
 
@@ -198,12 +229,22 @@ open/
 npm run test:all
 npm run coverage
 npm run lint
+npm run validate:decoders
 ```
 
-## Contributing
+See `CONTRIBUTING.md` for the contribution workflow and conventions.
 
-See CONTRIBUTING.md for guidelines.
+## Documentation
+
+| File | Topic |
+|---|---|
+| `docs/Architecture_OPEN.md` | System architecture |
+| `docs/Use_Cases.md` | Real-world usage scenarios |
+| `docs/Troubleshooting.md` | Common errors and fixes |
+| `docs/MCP_Request_Schema.md` | AI insight payload schema |
+| `docs/Program_Registry_Schema.md` | Decoder registry format |
+| `docs/Extensibility_Decoder.md` | How to add a new protocol decoder |
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).

@@ -1,7 +1,8 @@
-# Latency Benchmark — Week 3 Validation (Task 3.6.1)
+# Latency Benchmark
 
-End-to-end latency and IDL cache validation after parser optimizations
-(Task 3.2.1) and IDL cache (Task 3.3.1) landed in Week 3.
+End-to-end latency and IDL cache validation. The numbers below are
+the canonical baseline written by `npm run bench:latency` after the
+parser optimizations (Task 3.2.1) and IDL cache (Task 3.3.1) landed.
 
 > Run with `npm run bench:latency` from the repo root.
 > Raw timings: `benchmarks/latency-results.json`.

@@ -1382,7 +1382,17 @@ programs  →  (standalone, deployed on-chain — no JS dependency)
 
 ---
 
-## 7. 30-Day Build Plan  `[UPDATED]`
+## 7. 30-Day Build Plan  `[HISTORICAL]`
+
+> **Note:** This section is the original 30-day hackathon build plan, kept as
+> a historical record of how the project was scoped. The unchecked boxes
+> below reflect the state of the plan at the time it was written, not the
+> current state of the codebase. For what actually shipped, see
+> `CHANGELOG.md` (versions 0.1.0 through 0.3.0). Some line items
+> (`feeService`, `securityAnalyzer`, `suggestionSelector`,
+> `suggestionApplier`, full Surfpool simulation integration) were
+> de-scoped in favor of broader decoder coverage and the AI-provider
+> switching layer that landed in Week 4.
 
 ### Overview
 

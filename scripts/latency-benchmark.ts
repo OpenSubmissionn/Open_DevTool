@@ -20,7 +20,7 @@
  *
  * Outputs:
  *   - benchmarks/latency-results.json   (raw timings)
- *   - docs/Latency_Benchmark_Week3.md   (report with Mermaid chart)
+ *   - docs/Latency_Benchmark.md         (report with Mermaid chart)
  *
  * Run:
  *   npm run bench:latency
@@ -482,7 +482,7 @@ async function main() {
   );
   console.log(`  → ${jsonPath}`);
 
-  const reportPath = join(repoRoot, 'docs', 'Latency_Benchmark_Week3.md');
+  const reportPath = join(repoRoot, 'docs', 'Latency_Benchmark.md');
   writeFileSync(reportPath, buildReport(results));
   console.log(`  → ${reportPath}`);
 

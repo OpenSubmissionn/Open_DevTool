@@ -1,4 +1,4 @@
-# Metrics Dashboard — Week 3
+# Metrics Dashboard
 
 ## Performance Metrics
 
