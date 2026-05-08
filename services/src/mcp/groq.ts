@@ -4,9 +4,9 @@
  * runs Llama 3.3 70B with very low latency. Same response shape as the
  * Anthropic adapter so the caller can swap providers transparently.
  */
-import { buildPrompt } from './anthropic';
-import type { AnthropicResult } from './anthropic';
-import type { MCPPayload } from './client';
+import { buildPrompt } from './anthropic.js';
+import type { AnthropicResult } from './anthropic.js';
+import type { MCPPayload } from './client.js';
 
 export async function callGroq(
   payload: MCPPayload,

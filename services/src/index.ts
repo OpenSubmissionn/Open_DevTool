@@ -1,35 +1,35 @@
-export * from './analysis/types';
+export * from './analysis/types.js';
 export {
   getProgramName,
   getProgramInfo,
   isProgramKnown,
   getProgramsByCategory,
-} from './solana/programs';
+} from './solana/programs.js';
 
-export * from './analysis/accountDiff';
-export * from './analysis/txParser';
-export { ParsedLogs as ParsedLogsFromLogParser, parseLogsFromBundle } from './analysis/logParser';
-export * from './analysis/cuProfiler';
-export * from './analysis/cpiTreeBuilder';
-export * from './solana/idlcache';
-export type { IdlCacheOptions, FetchResult } from './solana/idlcache';
-export * from './analysis/merger';
-export { analyzeTransaction, mergeInsights } from './analysis/insightEngine';
-export { detectAnomalies } from './analysis/anomalyDetector';
+export * from './analysis/accountDiff.js';
+export * from './analysis/txParser.js';
+export { ParsedLogs as ParsedLogsFromLogParser, parseLogsFromBundle } from './analysis/logParser.js';
+export * from './analysis/cuProfiler.js';
+export * from './analysis/cpiTreeBuilder.js';
+export * from './solana/idlcache.js';
+export type { IdlCacheOptions, FetchResult } from './solana/idlcache.js';
+export * from './analysis/merger.js';
+export { analyzeTransaction, mergeInsights } from './analysis/insightEngine.js';
+export { detectAnomalies } from './analysis/anomalyDetector.js';
 export type {
   Anomaly,
   AnomalyType,
   AnomalySeverity,
   AnomalyReport,
-} from './analysis/anomalyDetector';
-export * from './analysis/renderer';
-export * from './solana/rpc';
-export * from './solana/connection';
-export * from './solana/simulationService';
+} from './analysis/anomalyDetector.js';
+export * from './analysis/renderer.js';
+export * from './solana/rpc.js';
+export * from './solana/connection.js';
+export * from './solana/simulationService.js';
 
 // Batch analysis
-export * from './analysis/batchAggregator';
+export * from './analysis/batchAggregator.js';
 
 // MCP Integration
-export * from './mcp/client';
-export * from './mcp/mcpInsightProvider';
+export * from './mcp/client.js';
+export * from './mcp/mcpInsightProvider.js';

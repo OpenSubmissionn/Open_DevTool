@@ -1,5 +1,5 @@
 import type { Idl } from '@coral-xyz/anchor';
-import { instructionDiscriminator } from '../orca/anchor-idl-orca';
+import { instructionDiscriminator } from '../orca/anchor-idl-orca.js';
 
 export const MARINADE_PROGRAM_ID = 'MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD';
 

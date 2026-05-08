@@ -106,7 +106,7 @@ Analyze a confirmed mainnet transaction:
 opendev tx 4W8cbHAkjJC3jKdFY39JFXtTakf5JK9rz6jyGPbbpKEqhweRYzwjveZasFin46WuApDeLoQRHieG3t5b3T7VXMRR --network mainnet
 ```
 
-Output as JSON:
+Full analysis as JSON (pipe into `jq`, save to file, etc.):
 ```bash
 opendev tx <signature> --json
 ```
@@ -121,7 +121,7 @@ Simulate an unsigned transaction:
 opendev simulate ./my-tx.b64
 ```
 
-Run analysis over a list of signatures:
+CSV to a specific path:
 ```bash
 opendev batch ./signatures.json --csv --output batch-report.csv
 ```

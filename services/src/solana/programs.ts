@@ -1,4 +1,4 @@
-import programsData from '../data/programs.json';
+import programsData from '../data/programs.json' with { type: 'json' };
 import axios from 'axios';
 
 // Simple in-memory cache to avoid redundant API calls during a single session.

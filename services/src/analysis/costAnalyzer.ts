@@ -1,4 +1,4 @@
-import { RawTransactionBundle, CUCost } from './types';
+import { RawTransactionBundle, CUCost } from './types.js';
 
 export interface TransferInfo {
   from: string;

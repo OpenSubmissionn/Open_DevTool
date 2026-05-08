@@ -1,13 +1,13 @@
 import { ComputeBudgetInstruction, ComputeBudgetProgram } from '@solana/web3.js';
-import { calculateCUCostFromCU } from './costAnalyzer';
-import type { CUCost } from './types';
-import { getSolPriceUSD } from '../utils/priceCache';
-import { RawTransactionBundle } from './types';
-import { AnalyzedTransaction, ParsedLogs, CUProfile, CPITree, AccountDiff } from './types';
-import { parseTransaction } from './txParser';
-import { IdlCache } from '../solana/idlcache';
-import { analyzeCosts } from './costAnalyzer';
-import { detectAnomalies } from './anomalyDetector';
+import { calculateCUCostFromCU } from './costAnalyzer.js';
+import type { CUCost } from './types.js';
+import { getSolPriceUSD } from '../utils/priceCache.js';
+import { RawTransactionBundle } from './types.js';
+import { AnalyzedTransaction, ParsedLogs, CUProfile, CPITree, AccountDiff } from './types.js';
+import { parseTransaction } from './txParser.js';
+import { IdlCache } from '../solana/idlcache.js';
+import { analyzeCosts } from './costAnalyzer.js';
+import { detectAnomalies } from './anomalyDetector.js';
 
 export interface MergeOptions {
   idlCache?: IdlCache;

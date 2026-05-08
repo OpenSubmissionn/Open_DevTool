@@ -4,7 +4,7 @@
  * key is missing, invalid, rate-limited, or out of credit, the caller falls
  * back to rule-based insights and surfaces a contextual message.
  */
-import type { MCPPayload } from './client';
+import type { MCPPayload } from './client.js';
 
 export interface AnthropicResult {
   suggestions: string[];
