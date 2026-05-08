@@ -40,7 +40,7 @@
     "url": "https://github.com/OpenSubmissionn/Open_DevTool/issues"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "type": "commonjs",
   "devDependencies": {

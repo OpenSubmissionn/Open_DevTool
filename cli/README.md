@@ -16,7 +16,7 @@ Or via npm directly:
 npm install -g github:OpenSubmissionn/Submission_Open
 ```
 
-This installs the `opendev` command globally. Requires Node.js 18+.
+This installs the `opendev` command globally. Requires Node.js 20+.
 
 If building from source:
 

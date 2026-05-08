@@ -5,7 +5,7 @@
 **Visual transaction profiler and debugger for Solana.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 [![CI](https://github.com/OpenSubmissionn/Open_DevTool/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/OpenSubmissionn/Open_DevTool/actions)
 
 Turn any Solana transaction signature into a fully decoded execution profile —
@@ -38,7 +38,7 @@ opendev --version
 
 ### Requirements
 
-- **Node.js 18+** (20 LTS recommended)
+- **Node.js 20+** (20 LTS recommended; some deps require Node 20+)
 - **git**
 - A terminal
 

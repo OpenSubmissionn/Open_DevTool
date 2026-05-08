@@ -18,7 +18,7 @@ set -e
 
 REPO_URL="https://github.com/OpenSubmissionn/Open_DevTool.git"
 REPO_BRANCH="main"
-MIN_NODE=18
+MIN_NODE=20
 
 # ── pretty output ──────────────────────────────────────────────────────────────
 if [ -t 1 ]; then
@@ -113,7 +113,10 @@ fi
 
 # ── Clone, build, and install ──────────────────────────────────────────────────
 TMPDIR="$(mktemp -d)"
-trap 'rm -rf "$TMPDIR"' EXIT INT TERM
+# Keep TMPDIR on error so the user can inspect; clean up only on success.
+cleanup_on_success() { rm -rf "$TMPDIR"; }
+cleanup_on_error()   { warn "Install dir kept for debugging: $TMPDIR"; }
+trap cleanup_on_error EXIT INT TERM
 
 say "Cloning $REPO_URL ($REPO_BRANCH)..."
 git clone --depth 1 --branch "$REPO_BRANCH" "$REPO_URL" "$TMPDIR/opendev" >/dev/null 2>&1 || {
@@ -123,25 +126,44 @@ git clone --depth 1 --branch "$REPO_BRANCH" "$REPO_URL" "$TMPDIR/opendev" >/dev/
 
 cd "$TMPDIR/opendev"
 
-say "Installing workspace dependencies..."
-npm install --silent --no-fund --no-audit
+say "Installing workspace dependencies (this takes ~1-2 minutes)..."
+if ! npm install --no-fund --no-audit --loglevel=error; then
+  err "npm install failed. Re-run with verbose output:"
+  err "  cd $TMPDIR/opendev && npm install"
+  err "Common fixes:"
+  err "  - Network issue: retry"
+  err "  - Permissions: rm -rf ~/.npm/_cacache and retry"
+  err "  - Node version mismatch: nvm use 20"
+  exit 1
+fi
 
 say "Building CLI..."
-npm run build --workspace cli --silent
+if ! npm run build --workspace cli --loglevel=error; then
+  err "Build failed. Inspect: cd $TMPDIR/opendev && npm run build --workspace cli"
+  exit 1
+fi
 
 say "Installing opendev globally..."
 # Install just the cli package, skipping the prepare script (already pre-built).
 # This sidesteps the "Workspaces not supported for global packages" error that
 # `npm install -g github:...` hits when the root package is a workspace root.
 cd cli
-npm install -g . --ignore-scripts --silent --no-fund --no-audit
+if ! npm install -g . --ignore-scripts --no-fund --no-audit --loglevel=error; then
+  err "Global install failed. Try with sudo (Linux) or run as Administrator (Windows)."
+  err "Or set a user-writable npm prefix:  npm config set prefix ~/.npm-global"
+  exit 1
+fi
 
 # ── Smoke test ─────────────────────────────────────────────────────────────────
+# Clean up tmp dir now that everything succeeded.
+trap cleanup_on_success EXIT
+
 if command -v opendev >/dev/null 2>&1; then
   ok "Installed: opendev $(opendev --version 2>/dev/null || echo unknown)"
   printf "\n%sopendev is ready.%s Try:\n\n  %sopendev tx <signature> --network mainnet%s\n\n" \
     "$BOLD" "$RESET" "$DIM" "$RESET"
 else
   warn "opendev binary not on PATH yet."
-  warn "Add this to your shell rc: export PATH=\"\$(npm config get prefix)/bin:\$PATH\""
+  warn "Add this to your shell rc:  export PATH=\"\$(npm config get prefix)/bin:\$PATH\""
+  warn "Then reload:                 source ~/.bashrc"
 fi
