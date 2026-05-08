@@ -131,9 +131,9 @@
       position: sticky;
       top: 0;
       z-index: 50;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      background: rgba(7, 7, 13, 0.7);
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      background: rgba(7, 7, 13, 0.78);
       border-bottom: 1px solid var(--border);
     }
 
@@ -371,11 +371,12 @@
     .demo-card {
       max-width: 1240px;
       margin: 0 auto 80px;
-      background: rgba(10, 10, 20, 0.7);
+      background: rgba(10, 10, 20, 0.82);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(24px) saturate(150%);
+      -webkit-backdrop-filter: blur(24px) saturate(150%);
     }
 
     .demo-tabs {
@@ -917,7 +918,8 @@
       font-size: 11px;
       color: var(--fg-dim);
       pointer-events: none;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
     }
 
     /* explanation tab — clickable instruction list + side detail card */
@@ -954,7 +956,9 @@
       padding: 12px 14px;
       border: 1px solid var(--border);
       border-radius: 10px;
-      background: rgba(13, 13, 24, 0.55);
+      background: rgba(13, 13, 24, 0.78);
+      backdrop-filter: blur(16px) saturate(140%);
+      -webkit-backdrop-filter: blur(16px) saturate(140%);
       cursor: pointer;
       transition: border-color 0.15s, background 0.15s, transform 0.15s;
     }
@@ -1339,8 +1343,9 @@
       padding: 30px 0;
       position: relative;
       z-index: 1;
-      background: rgba(7, 7, 13, 0.6);
-      backdrop-filter: blur(8px);
+      background: rgba(7, 7, 13, 0.72);
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
     }
 
     .footer-inner {

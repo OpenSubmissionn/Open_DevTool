@@ -1,10 +1,10 @@
 {
-  "name": "open",
-  "version": "1.0.0",
-  "description": "CLI debugger visual para transações Solana",
+  "name": "opendev",
+  "version": "0.3.0",
+  "description": "Visual transaction debugger and CU profiler for Solana — turn any signature into a fully decoded execution profile",
   "main": "index.js",
   "bin": {
-    "open": "cli/dist/open.js"
+    "opendev": "cli/dist/open.js"
   },
   "scripts": {
     "cli": "tsx cli/bin/open.ts",
