@@ -30,10 +30,9 @@ pnpm-debug.log*
 
 # Lockfiles (keep root, ignore nested duplicates)
 package-lock.json
-**/coverage/
+
 # External Claude skill submodules
 .agents/skills/ext/
-CLAUDE.local.md
 
 # Environment / secrets
 .env
@@ -43,15 +42,18 @@ CLAUDE.local.md
 *.key
 id_rsa*
 
-# Claude Code & MCP (local-only)
+# Claude Code & MCP (local tooling, não vai pro repo)
+.agents
 .agents/
 .claude
+.claude/
 .mcp.json
 .gitmodules
 CLAUDE.md
-.claude/
 CLAUDE.local.md
-
+.github/workflows/claude-code.yml
+.github/workflows/claude.yml
+.playwright-mcp/
 
 # IDE
 .vscode/
@@ -63,31 +65,5 @@ CLAUDE.local.md
 .DS_Store
 Thumbs.db
 
-.agents
-
-
-# Claude Code (local tooling, não vai pro repo)
-.claude/
-.github/workflows/claude-code.yml
-.github/workflows/claude.yml
-
 # Test outputs
 sample-output.json
-
-# Claude Code (local tooling, não vai pro repo)
-.claude/
-.github/workflows/claude-code.yml
-.github/workflows/claude.yml
-
-# Test outputs
-sample-output.json
-
-# Claude Code (local tooling, não vai pro repo)
-.claude/
-.github/workflows/claude-code.yml
-.github/workflows/claude.yml
-
-# Test outputs
-sample-output.json
-
-.playwright-mcp/ 

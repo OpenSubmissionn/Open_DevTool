@@ -43,7 +43,7 @@ can also tell whether the cost lives in your program or in our pipeline.
 |---|---|
 | `Transaction Summary` | total CU consumed and the requested limit |
 | `CPI Tree` | which programs consumed how much CU, indented by call depth |
-| `Insights` | top issues in actionability order, see [Insight_Ranking_Logic.md](Insight_Ranking_Logic.md) |
+| `Insights` | top issues in actionability order, see [AI_Insights.md](AI_Insights.md) |
 | `Cost Breakdown` | fee in SOL and USD, plus per-transfer USD impact |
 
 **Reading the insights**
