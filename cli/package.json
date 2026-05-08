@@ -32,12 +32,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OpenSubmissionn/Submission_Open.git",
+    "url": "git+https://github.com/OpenSubmissionn/Open_DevTool.git",
     "directory": "cli"
   },
-  "homepage": "https://github.com/OpenSubmissionn/Submission_Open#readme",
+  "homepage": "https://github.com/OpenSubmissionn/Open_DevTool#readme",
   "bugs": {
-    "url": "https://github.com/OpenSubmissionn/Submission_Open/issues"
+    "url": "https://github.com/OpenSubmissionn/Open_DevTool/issues"
   },
   "engines": {
     "node": ">=18"

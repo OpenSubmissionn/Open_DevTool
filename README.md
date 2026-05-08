@@ -119,7 +119,7 @@ For Fedora/RHEL use `sudo dnf install nodejs git`; for Arch use `sudo pacman -S 
 **Then, on any OS, install the CLI globally:**
 
 ```bash
-npm install -g github:OpenSubmissionn/Submission_Open
+npm install -g github:OpenSubmissionn/Open_DevTool
 ```
 
 This makes the `open` command available globally. Verify:
@@ -128,7 +128,7 @@ This makes the `open` command available globally. Verify:
 open --help
 ```
 
-> **macOS users:** macOS ships its own `open` command. Depending on your `PATH` order, the npm-installed `open` may shadow it. If that bothers you, invoke with `npx --package=github:OpenSubmissionn/Submission_Open open ...` instead.
+> **macOS users:** macOS ships its own `open` command. Depending on your `PATH` order, the npm-installed `open` may shadow it. If that bothers you, invoke with `npx --package=github:OpenSubmissionn/Open_DevTool open ...` instead.
 
 #### Run
 
