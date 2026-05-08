@@ -36295,10 +36295,10 @@ function buildCPITree(logMessages) {
 }
 
 // ../services/src/solana/idlcache.ts
-var import_fs = __toESM(require('fs'));
-var import_path2 = __toESM(require('path'));
-var import_os = __toESM(require('os'));
-var import_crypto = __toESM(require('crypto'));
+var import_fs = __toESM(require('fs'), 1);
+var import_path2 = __toESM(require('path'), 1);
+var import_os = __toESM(require('os'), 1);
+var import_crypto = __toESM(require('crypto'), 1);
 var DEFAULT_TTL_MS = 24 * 60 * 60 * 1e3;
 var DEFAULT_CACHE_DIR = import_path2.default.join(
   import_os.default.homedir(),
@@ -37661,7 +37661,7 @@ function renderJSON(analyzed, insights = []) {
 
 // ../services/src/solana/connection.ts
 var import_web317 = require('@solana/web3.js');
-var dotenv2 = __toESM(require('dotenv'));
+var dotenv2 = __toESM(require('dotenv'), 1);
 dotenv2.config();
 var HELIUS_RPC_URL = process.env.HELIUS_RPC_URL;
 var DEVNET_RPC_URL = 'https://api.devnet.solana.com';
@@ -37727,8 +37727,8 @@ var fetchTransaction = async (signature, network = 'devnet') => {
 };
 
 // ../services/src/solana/simulationService.ts
-var fs2 = __toESM(require('fs'));
-var crypto3 = __toESM(require('crypto'));
+var fs2 = __toESM(require('fs'), 1);
+var crypto3 = __toESM(require('crypto'), 1);
 var import_web318 = require('@solana/web3.js');
 var BASE58_REGEX = /^[1-9A-HJ-NP-Za-km-z]+$/;
 var BASE64_REGEX = /^[A-Za-z0-9+/=\s]+$/;
