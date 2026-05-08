@@ -18,7 +18,7 @@ suggestions on top of deterministic rule-based insights.
 
 ## Quick install (recommended)
 
-One-liner that detects your OS, ensures Node.js 18+ is installed, and installs `opendev` globally:
+One-liner that detects your OS, ensures Node.js 20+ is installed, and installs `opendev` globally:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/OpenSubmissionn/Open_DevTool/main/install.sh | sh
