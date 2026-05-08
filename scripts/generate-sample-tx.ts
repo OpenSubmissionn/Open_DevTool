@@ -33,7 +33,9 @@ const outPath = path.resolve(process.cwd(), 'sample-tx.b64');
 fs.writeFileSync(outPath, b64, 'utf-8');
 
 console.log(`Wrote ${outPath} (${b64.length} chars)`);
-console.log(`Payer:     ${payer.publicKey.toBase58()}  (no SOL — simulation will return AccountNotFound)`);
+console.log(
+  `Payer:     ${payer.publicKey.toBase58()}  (no SOL — simulation will return AccountNotFound)`
+);
 console.log(`Recipient: ${recipient.publicKey.toBase58()}`);
 console.log(``);
 console.log(`Now run:`);

@@ -4,7 +4,7 @@ Single source of truth for which Solana programs OPEN supports, the depth of tha
 
 **File:** `services/src/data/program-registry.json`
 **Validator:** `scripts/validate-program-registry.ts`
-**CLI surface:** `open info` and `open info <programId|name>`
+**CLI surface:** `opendev info` and `opendev info <programId|name>`
 
 ## Schema
 
@@ -30,7 +30,7 @@ The registry is a JSON array. Each entry conforms to:
 
 | Field | Required | Notes |
 |---|---|---|
-| `name` | yes | Human-readable. Used by `open info` for lookup and display. |
+| `name` | yes | Human-readable. Used by `opendev info` for lookup and display. |
 | `programId` | yes | On-chain program address. Must be unique across the registry. |
 | `framework` | yes | Constrains valid `benchmark.framework` values. |
 | `idl` | yes | Path is repo-relative (e.g. `services/src/analysis/decoders/anchor-defs/anchor-idl-jupiter.ts`). Validator confirms the file exists. `null` for programs without an IDL (Native). |
@@ -98,15 +98,15 @@ Exit codes: `0` on success, `1` on any validation failure.
 2. If the program has an Anchor IDL, drop the IDL file under `services/src/analysis/decoders/anchor-defs/` and reference it in the `idl` field.
 3. If you're adding a benchmark reference, ensure each operation listed exists in `framework-benchmarks.json` for the same framework. Add benchmark entries first if needed.
 4. Run `npm run validate:registry -- --write` from `scripts/` to populate `coverage` and refresh `lastUpdated`.
-5. Verify with `open info` (CLI) — the new program should appear in the table.
+5. Verify with `opendev info` (CLI) — the new program should appear in the table.
 6. Commit both the registry change and any new IDL files together.
 
 ## CLI integration
 
 ```
-open info                  # table view of all entries
-open info <programId>      # detail view by program ID
-open info "Marinade"       # detail view by name (substring match)
+opendev info                  # table view of all entries
+opendev info <programId>      # detail view by program ID
+opendev info "Marinade"       # detail view by name (substring match)
 ```
 
 The CLI reads the registry at runtime — no rebuild needed after a JSON edit.

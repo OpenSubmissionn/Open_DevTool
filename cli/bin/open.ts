@@ -40,9 +40,9 @@ const program = new Command();
 
 // 3. Set CLI metadata
 program
-  .name('open')
-  .description('OPEN - Solana Observability and CU Analysis CLI')
-  .version('0.1.0')
+  .name('opendev')
+  .description('opendev — Visual transaction debugger and CU profiler for Solana')
+  .version('0.3.0')
   .option('--verbose', 'Enable debug logging', false);
 
 // 4. Register commands

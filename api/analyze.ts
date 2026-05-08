@@ -16,7 +16,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'GET') {
     signature = String(req.query.signature ?? '');
-    network = (String(req.query.network ?? 'mainnet') as 'mainnet' | 'devnet');
+    network = String(req.query.network ?? 'mainnet') as 'mainnet' | 'devnet';
   } else if (req.method === 'POST') {
     const body = req.body ?? {};
     signature = body.signature ?? '';
