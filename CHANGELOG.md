@@ -4,6 +4,94 @@ All notable changes to OPEN CLI are tracked here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] — Week 4
+
+Theme: AI provider switching, decoder coverage expansion, and bug fixes
+from cross-platform integration testing.
+
+### Added
+
+- **Multi-provider AI insights** (`services/src/mcp/`) — the CLI now
+  calls Groq (free tier, Llama 3.3 70B) or Anthropic (Claude Sonnet 4.5)
+  directly using the user's own API key. Resolution order: `MCP_DISABLED`
+  → `MCP_ENDPOINT_URL` → `GROQ_API_KEY` → `ANTHROPIC_API_KEY` → rule-based
+  fallback. Each provider returns the same `{ suggestions: string[] }`
+  shape so the renderer is provider-agnostic.
+- **Provider banner** — at the start of each run, the CLI logs the active
+  AI provider and model (e.g. `[MCP] AI provider: Groq · llama-3.3-70b-versatile`)
+  so users know whose credits are being spent.
+- **Friendly degradation messages** — instead of generic
+  `[MCP] Degraded: HTTP 4xx`, the CLI now emits specific guidance for the
+  three common failure modes: missing key (with signup link), exhausted
+  credits, and provider rate limit. The pipeline continues with rule-based
+  insights in every case.
+- **Insight section split** — terminal renderer now groups the
+  `ACTIONABLE INSIGHTS` box into a `Rule-based` subsection followed by an
+  `AI-generated (<provider> · <model>)` subsection so the source of each
+  suggestion is unambiguous.
+- **Decoder coverage** — Magic Eden v2 (MMM), Squads Protocol V4, and
+  Drift Protocol added to the program registry. Magic Eden, Squads, and
+  Marinade IDLs moved into `services/src/analysis/decoders/anchor-defs/`.
+- **Documentation** — `docs/AI_Prompt_Sources.md` documents every
+  CU-optimization claim in the LLM prompt with its primary source URL,
+  so claims in AI suggestions are auditable.
+- **`LICENSE`** — MIT license file added.
+- **`CONTRIBUTING.md`** — contribution workflow, project layout, and
+  decoder-extension guide for new contributors.
+
+### Changed
+
+- **Prompt rewritten in English** with a structured knowledge base
+  organized by category (Anchor framework, compute budget, SPL Token,
+  CPI patterns, DEX-specific, reliability, Pinocchio). Each technique
+  cites concrete CU savings figures sourced from the Anchor Book,
+  Solana docs, Helius blog, and reproducible Mollusk benchmarks.
+- **README.md** — rewritten to document all five CLI commands
+  (`tx`, `simulate`, `batch`, `info`, `config`), all flags including
+  `--csv` and `--no-cache`, the AI provider configuration, and a clean
+  install path. Also fixes a broken reference to a missing
+  `CONTRIBUTING.md` (now exists).
+
+### Fixed
+
+- **`services/src/data/programs.json`** — corrected the Token Program,
+  Token-2022, Associated Token Account, and Metaplex Token Metadata
+  program IDs (the old entries had character transpositions and would
+  not match real on-chain transactions). Also corrected the Orca
+  Whirlpool ID and removed a fake "Phantom SOL" entry. The inline
+  override map in the terminal renderer is no longer strictly necessary,
+  but kept as a defense-in-depth fallback.
+- **`open info` crash on Magic Eden entry** — the registry had two
+  Magic Eden entries (one duplicate) both missing required fields
+  (`decoderStatus`, `coverage`, `lastUpdated`, `benchmark`). The first
+  entry was completed with proper marketplace operations
+  (`buy`, `sell`, `list`); the duplicate was removed. `colorStatus()`
+  in `cli/src/commands/info.ts` gained a `default` branch returning
+  `"unknown"` to prevent future unmapped statuses from crashing the
+  next `.padEnd()` call.
+- **Decoder import paths after merge** — `anchor-defs/anchor-idl-{marinade,magic-eden,squads}.ts`
+  were importing `./anchor-idl-orca` (which only exists at
+  `../orca/anchor-idl-orca`); corrected. `anchor-idl-squads.ts` was
+  using the deprecated `'publicKey'` IDL type; replaced with `'pubkey'`.
+- **Program registry conflicts** — duplicate `"idl"` keys in the
+  Jupiter, Orca, and Raydium entries (one pointing at the subdirectory
+  decoder, one pointing at a non-existent `anchor-defs/` path) were
+  resolved by keeping the subdirectory paths that actually exist.
+  Marinade entry had duplicate `coverage` and `lastUpdated` fields,
+  resolved.
+- **CI cross-platform `npm ci`** — switched the GitHub Actions workflow
+  to `npm install` because `npm ci` was failing on the Linux runner due
+  to lockfile drift triggered by Windows-side optional dependencies.
+
+### Notes
+
+- The `services/src/data/programs.json` file still contains many
+  fictional/placeholder program entries inherited from earlier
+  hackathon scaffolding. Only the high-traffic entries (Token
+  programs, ATA, Metaplex, Compute Budget, sysvars, and the protocols
+  in the decoder registry) are guaranteed accurate. A clean rewrite
+  is tracked for post-hackathon maintenance.
+
 ## [0.2.0] — Week 3
 
 Theme: program coverage expansion, anomaly detection, performance, and BI
@@ -89,13 +177,11 @@ integration.
 ### Notes
 
 - The `Phantom` decoder originally planned for Day 13 was dropped
-  because Phantom is a wallet, not an on-chain program. Replacement
-  decoder for a real on-chain program (Pump.fun or Tensor) is tracked
-  for Week 4.
-- `services/src/data/programs.json` still contains a few stale
-  placeholder program IDs; the terminal renderer ships an inline
-  override map for the most common programs (Token, Token-2022, ATA,
-  Compute Budget, Pump.fun, etc.) as a workaround. Tracked for cleanup.
+  because Phantom is a wallet, not an on-chain program. Squads V4 was
+  substituted in Week 4 as the multisig replacement.
+- `services/src/data/programs.json` had stale placeholder program IDs
+  for the SPL Token family — fixed in 0.3.0. The terminal renderer
+  retains an inline override map as a defense-in-depth fallback.
 
 ## [0.1.0] — Week 2
 

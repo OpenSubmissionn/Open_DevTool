@@ -28,7 +28,7 @@ describe('decodeSPLInstruction', () => {
       const data = dataBuffer.toString('base64');
 
       const ix: ParsedInstruction = {
-        programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+        programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         programName: 'Token Program',
         data,
         accounts: ['source123', 'dest456', 'auth789'],
@@ -54,7 +54,7 @@ describe('decodeSPLInstruction', () => {
       const data = dataBuffer.toString('base64');
 
       const ix: ParsedInstruction = {
-        programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+        programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         programName: 'Token Program',
         data,
         accounts: ['usdc_from', 'usdc_to', 'user'],
@@ -76,7 +76,7 @@ describe('decodeSPLInstruction', () => {
       const data = dataBuffer.toString('base64');
 
       const ix: ParsedInstruction = {
-        programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+        programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         programName: 'Token Program',
         data,
         accounts: ['mint123', 'dest456', 'mintauth789'],
@@ -106,7 +106,7 @@ describe('decodeSPLInstruction', () => {
       const data = dataBuffer.toString('base64');
 
       const ix: ParsedInstruction = {
-        programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+        programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         programName: 'Token Program',
         data,
         accounts: ['source123', 'mint456', 'dest789', 'auth000'],
@@ -127,7 +127,7 @@ describe('decodeSPLInstruction', () => {
 
     it('should handle pre-decoded TransferChecked', () => {
       const ix: ParsedInstruction = {
-        programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+        programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         programName: 'Token Program',
         data: '',
         accounts: [],
@@ -168,7 +168,7 @@ describe('decodeSPLInstruction', () => {
       const data = dataBuffer.toString('base64');
 
       const ix: ParsedInstruction = {
-        programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+        programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         programName: 'Token Program',
         data,
         accounts: ['source123', 'mint456', 'owner789'],
@@ -189,7 +189,7 @@ describe('decodeSPLInstruction', () => {
   describe('Pre-decoded instructions', () => {
     it('should handle pre-decoded Transfer', () => {
       const ix: ParsedInstruction = {
-        programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+        programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         programName: 'Token Program',
         data: '',
         accounts: [],
@@ -225,7 +225,7 @@ describe('decodeSPLInstruction', () => {
       const data = dataBuffer.toString('base64');
 
       const ix: ParsedInstruction = {
-        programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+        programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         programName: 'Token Program',
         data,
         accounts: [],
@@ -241,7 +241,7 @@ describe('decodeSPLInstruction', () => {
 
     it('should return null for empty data', () => {
       const ix: ParsedInstruction = {
-        programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+        programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         programName: 'Token Program',
         data: '',
         accounts: [],
@@ -255,7 +255,7 @@ describe('decodeSPLInstruction', () => {
 
     it('should handle decode errors gracefully', () => {
       const ix: ParsedInstruction = {
-        programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+        programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         programName: 'Token Program',
         data: 'INVALID_BASE64!@#$%',
         accounts: [],
@@ -277,7 +277,7 @@ describe('decodeSPLInstruction', () => {
       const data = dataBuffer.toString('base64');
 
       const ix: ParsedInstruction = {
-        programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+        programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         programName: 'Token Program',
         data,
         accounts: ['a', 'b', 'c'],
@@ -296,7 +296,7 @@ describe('decodeSPLInstruction', () => {
       const data = dataBuffer.toString('base64');
 
       const ix: ParsedInstruction = {
-        programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+        programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         programName: 'Token Program',
         data,
         accounts: ['a', 'b', 'c'],
