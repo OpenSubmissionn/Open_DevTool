@@ -1,7 +1,6 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
-import * as fs from 'fs';
-import * as path from 'path';
+import registryData from '../../../services/src/data/program-registry.json';
 
 interface BenchmarkRef {
   framework: string;
@@ -19,26 +18,34 @@ interface ProgramEntry {
   lastUpdated: string;
 }
 
-const REGISTRY_PATH = path.join(
-  __dirname,
-  '..',
-  '..',
-  '..',
-  'services',
-  'src',
-  'data',
-  'program-registry.json'
-);
-
+// Static JSON import (matches the pattern in services/src/solana/programs.ts).
+// The bundler inlines program-registry.json into the build output, so the
+// command works the same whether run via `tsx` (dev) or the bundled
+// `cli/dist/open.js` (post-build) — no fs/path resolution at runtime.
+//
+// Normalises every entry against ProgramEntry — fills sensible fallbacks for
+// missing fields and dedupes by programId — so a partially-filled or
+// accidentally-duplicated registry entry never crashes the renderer.
 function loadRegistry(): ProgramEntry[] {
-  try {
-    const raw = fs.readFileSync(REGISTRY_PATH, 'utf-8');
-    return JSON.parse(raw);
-  } catch (err) {
-    console.error(chalk.red(`Failed to load registry from ${REGISTRY_PATH}`));
-    if (err instanceof Error) console.error(chalk.red(err.message));
-    process.exit(1);
+  const raw = registryData as Partial<ProgramEntry>[];
+  const seen = new Set<string>();
+  const out: ProgramEntry[] = [];
+  for (const entry of raw) {
+    if (!entry.programId) continue; // skip headerless rows
+    if (seen.has(entry.programId)) continue; // dedupe by programId
+    seen.add(entry.programId);
+    out.push({
+      name: entry.name ?? '(unnamed)',
+      programId: entry.programId,
+      framework: entry.framework ?? 'unknown',
+      idl: entry.idl ?? null,
+      decoderStatus: entry.decoderStatus ?? 'none',
+      benchmark: entry.benchmark ?? null,
+      coverage: typeof entry.coverage === 'number' ? entry.coverage : 0,
+      lastUpdated: entry.lastUpdated ?? '—',
+    });
   }
+  return out;
 }
 
 function colorStatus(status: ProgramEntry['decoderStatus']): string {
@@ -52,7 +59,8 @@ function colorStatus(status: ProgramEntry['decoderStatus']): string {
     case 'none':
       return chalk.gray(status);
     default:
-      return chalk.gray('unknown');
+      return chalk.gray(String(status));
+
   }
 }
 

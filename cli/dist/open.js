@@ -5259,7 +5259,7 @@ function toFailure(result, context, struct8, value) {
     };
   }
   const {
-    path: path7,
+    path: path6,
     branch
   } = context;
   const {
@@ -5273,8 +5273,8 @@ function toFailure(result, context, struct8, value) {
     value,
     type: type2,
     refinement,
-    key: path7[path7.length - 1],
-    path: path7,
+    key: path6[path6.length - 1],
+    path: path6,
     branch,
     ...result,
     message
@@ -5296,13 +5296,13 @@ function* run(value, struct8, options) {
     options = {};
   }
   const {
-    path: path7 = [],
+    path: path6 = [],
     branch = [value],
     coerce: coerce2 = false,
     mask: mask2 = false
   } = options;
   const ctx = {
-    path: path7,
+    path: path6,
     branch
   };
   if (coerce2) {
@@ -5322,7 +5322,7 @@ function* run(value, struct8, options) {
   }
   for (let [k, v, s] of struct8.entries(value, ctx)) {
     const ts = run(v, s, {
-      path: k === void 0 ? path7 : [...path7, k],
+      path: k === void 0 ? path6 : [...path6, k],
       branch: k === void 0 ? branch : [...branch, v],
       coerce: coerce2,
       mask: mask2
@@ -5547,9 +5547,9 @@ var init_index_es = __esm({
           ...rest
         } = failure;
         const {
-          path: path7
+          path: path6
         } = failure;
-        const msg = path7.length === 0 ? message : "At path: " + path7.join(".") + " -- " + message;
+        const msg = path6.length === 0 ? message : "At path: " + path6.join(".") + " -- " + message;
         super(msg);
         this.value = void 0;
         this.key = void 0;
@@ -8994,14 +8994,14 @@ var require_url_state_machine = __commonJS({
       return url.replace(/\u0009|\u000A|\u000D/g, "");
     }
     function shortenPath(url) {
-      const path7 = url.path;
-      if (path7.length === 0) {
+      const path6 = url.path;
+      if (path6.length === 0) {
         return;
       }
-      if (url.scheme === "file" && path7.length === 1 && isNormalizedWindowsDriveLetter(path7[0])) {
+      if (url.scheme === "file" && path6.length === 1 && isNormalizedWindowsDriveLetter(path6[0])) {
         return;
       }
-      path7.pop();
+      path6.pop();
     }
     function includesCredentials(url) {
       return url.username !== "" || url.password !== "";
@@ -16439,17 +16439,17 @@ var init_accounts_resolver = __esm({
       resolveOptionals(accounts) {
         Object.assign(this._accounts, this.resolveOptionalsHelper(accounts, this._idlIx.accounts));
       }
-      get(path7) {
-        const ret = path7.reduce((acc, subPath) => acc && acc[subPath], this._accounts);
+      get(path6) {
+        const ret = path6.reduce((acc, subPath) => acc && acc[subPath], this._accounts);
         if (ret && ret.toBase58) {
           return ret;
         }
       }
-      set(path7, value) {
+      set(path6, value) {
         let cur = this._accounts;
-        path7.forEach((p, i) => {
+        path6.forEach((p, i) => {
           var _a2;
-          const isLast = i === path7.length - 1;
+          const isLast = i === path6.length - 1;
           if (isLast) {
             cur[p] = value;
           }
@@ -16500,12 +16500,12 @@ var init_accounts_resolver = __esm({
        * Accounts will only be resolved if they are declared next to each other to
        * reduce the chance of name collision.
        */
-      resolveEventCpi(accounts, path7 = []) {
+      resolveEventCpi(accounts, path6 = []) {
         for (const i in accounts) {
           const accountOrAccounts = accounts[i];
           if (isCompositeAccounts(accountOrAccounts)) {
             this.resolveEventCpi(accountOrAccounts.accounts, [
-              ...path7,
+              ...path6,
               accountOrAccounts.name
             ]);
           }
@@ -16515,8 +16515,8 @@ var init_accounts_resolver = __esm({
           const currentName = accounts[i].name;
           const nextName = accounts[nextIndex].name;
           if (currentName === "eventAuthority" && nextName === "program") {
-            const currentPath = [...path7, currentName];
-            const nextPath = [...path7, nextName];
+            const currentPath = [...path6, currentName];
+            const nextPath = [...path6, nextName];
             if (!this.get(currentPath)) {
               this.set(currentPath, import_web314.PublicKey.findProgramAddressSync([Buffer.from("__event_authority")], this._programId)[0]);
             }
@@ -16527,57 +16527,57 @@ var init_accounts_resolver = __esm({
           }
         }
       }
-      resolveConst(accounts, path7 = []) {
+      resolveConst(accounts, path6 = []) {
         for (const accountOrAccounts of accounts) {
           const name = accountOrAccounts.name;
           if (isCompositeAccounts(accountOrAccounts)) {
-            this.resolveConst(accountOrAccounts.accounts, [...path7, name]);
+            this.resolveConst(accountOrAccounts.accounts, [...path6, name]);
           } else {
             const account = accountOrAccounts;
-            if ((account.signer || account.address) && !this.get([...path7, name])) {
+            if ((account.signer || account.address) && !this.get([...path6, name])) {
               if (account.signer) {
                 if (!this._provider.wallet) {
                   throw new Error("This function requires the `Provider` interface implementor to have a `wallet` field.");
                 }
-                this.set([...path7, name], this._provider.wallet.publicKey);
+                this.set([...path6, name], this._provider.wallet.publicKey);
               }
               if (account.address) {
-                this.set([...path7, name], translateAddress(account.address));
+                this.set([...path6, name], translateAddress(account.address));
               }
             }
           }
         }
       }
-      async resolvePdasAndRelations(accounts, path7 = []) {
+      async resolvePdasAndRelations(accounts, path6 = []) {
         let found = 0;
         for (const accountOrAccounts of accounts) {
           const name = accountOrAccounts.name;
           if (isCompositeAccounts(accountOrAccounts)) {
-            found += await this.resolvePdasAndRelations(accountOrAccounts.accounts, [...path7, name]);
+            found += await this.resolvePdasAndRelations(accountOrAccounts.accounts, [...path6, name]);
           } else {
             const account = accountOrAccounts;
-            if ((account.pda || account.relations) && !this.get([...path7, name])) {
+            if ((account.pda || account.relations) && !this.get([...path6, name])) {
               found++;
               try {
                 if (account.pda) {
-                  const seeds = await Promise.all(account.pda.seeds.map((seed2) => this.toBuffer(seed2, path7)));
+                  const seeds = await Promise.all(account.pda.seeds.map((seed2) => this.toBuffer(seed2, path6)));
                   if (seeds.some((seed2) => !seed2)) {
                     continue;
                   }
-                  const programId = await this.parseProgramId(account, path7);
+                  const programId = await this.parseProgramId(account, path6);
                   const [pubkey] = import_web314.PublicKey.findProgramAddressSync(seeds, programId);
-                  this.set([...path7, name], pubkey);
+                  this.set([...path6, name], pubkey);
                 }
               } catch {
               }
               try {
                 if (account.relations) {
-                  const accountKey = this.get([...path7, account.relations[0]]);
+                  const accountKey = this.get([...path6, account.relations[0]]);
                   if (accountKey) {
                     const account2 = await this._accountStore.fetchAccount({
                       publicKey: accountKey
                     });
-                    this.set([...path7, name], account2[name]);
+                    this.set([...path6, name], account2[name]);
                   }
                 }
               } catch {
@@ -16587,25 +16587,25 @@ var init_accounts_resolver = __esm({
         }
         return found;
       }
-      async parseProgramId(account, path7 = []) {
+      async parseProgramId(account, path6 = []) {
         var _a2;
         if (!((_a2 = account.pda) === null || _a2 === void 0 ? void 0 : _a2.program)) {
           return this._programId;
         }
-        const buf = await this.toBuffer(account.pda.program, path7);
+        const buf = await this.toBuffer(account.pda.program, path6);
         if (!buf) {
           throw new Error(`Program seed not resolved: ${account.name}`);
         }
         return new import_web314.PublicKey(buf);
       }
-      async toBuffer(seed2, path7 = []) {
+      async toBuffer(seed2, path6 = []) {
         switch (seed2.kind) {
           case "const":
             return this.toBufferConst(seed2);
           case "arg":
             return await this.toBufferArg(seed2);
           case "account":
-            return await this.toBufferAccount(seed2, path7);
+            return await this.toBufferAccount(seed2, path6);
           default:
             throw new Error(`Unexpected seed: ${seed2}`);
         }
@@ -16614,21 +16614,21 @@ var init_accounts_resolver = __esm({
         return this.toBufferValue("bytes", seed2.value);
       }
       async toBufferArg(seed2) {
-        const [name, ...path7] = seed2.path.split(".");
+        const [name, ...path6] = seed2.path.split(".");
         const index = this._idlIx.args.findIndex((arg) => arg.name === name);
         if (index === -1) {
           throw new Error(`Unable to find argument for seed: ${name}`);
         }
-        const value = path7.reduce((acc, path8) => (acc !== null && acc !== void 0 ? acc : {})[path8], this._args[index]);
+        const value = path6.reduce((acc, path7) => (acc !== null && acc !== void 0 ? acc : {})[path7], this._args[index]);
         if (value === void 0) {
           return;
         }
-        const type2 = this.getType(this._idlIx.args[index].type, path7);
+        const type2 = this.getType(this._idlIx.args[index].type, path6);
         return this.toBufferValue(type2, value);
       }
-      async toBufferAccount(seed2, path7 = []) {
+      async toBufferAccount(seed2, path6 = []) {
         const [name, ...paths] = seed2.path.split(".");
-        const fieldPubkey = this.get([...path7, name]);
+        const fieldPubkey = this.get([...path6, name]);
         if (!fieldPubkey)
           return;
         if (!paths.length) {
@@ -16693,12 +16693,12 @@ var init_accounts_resolver = __esm({
        * Recursively get the type at some path of either a primitive or a user
        * defined struct.
        */
-      getType(type2, path7 = []) {
+      getType(type2, path6 = []) {
         var _a2;
         const typeName = (_a2 = type2 === null || type2 === void 0 ? void 0 : type2.defined) === null || _a2 === void 0 ? void 0 : _a2.name;
         if (typeName) {
           if (typeName === "tokenAccount") {
-            switch (path7.at(0)) {
+            switch (path6.at(0)) {
               case "mint":
               case "owner":
                 return "pubkey";
@@ -16706,14 +16706,14 @@ var init_accounts_resolver = __esm({
               case "delagatedAmount":
                 return "u64";
               default:
-                throw new Error(`Unknown token account path: ${path7}`);
+                throw new Error(`Unknown token account path: ${path6}`);
             }
           }
           const definedType = this._idlTypes.find((t) => t.name === typeName);
           if (!definedType) {
             throw new Error(`Type not found: ${typeName}`);
           }
-          const [fieldName, ...subPath] = path7;
+          const [fieldName, ...subPath] = path6;
           const fields = definedType.type.fields;
           const field = fields.find((field2) => field2.name === fieldName);
           if (!field) {
@@ -21231,8 +21231,8 @@ var require_compiler = __commonJS({
           valueAssignments.push(fullPath);
         }
       }
-      function pathAssigned(path7) {
-        return assignedPaths.indexOf(path7) !== -1;
+      function pathAssigned(path6) {
+        return assignedPaths.indexOf(path6) !== -1;
       }
       function reduceValueNode(node) {
         if (node.type === "Array") {
@@ -21256,20 +21256,20 @@ var require_compiler = __commonJS({
         return obj;
       }
       function setPath(node) {
-        var path7 = node.value;
-        var quotedPath = path7.map(quoteDottedString).join(".");
+        var path6 = node.value;
+        var quotedPath = path6.map(quoteDottedString).join(".");
         var line2 = node.line;
         var column = node.column;
         if (pathAssigned(quotedPath)) {
-          genError("Cannot redefine existing key '" + path7 + "'.", line2, column);
+          genError("Cannot redefine existing key '" + path6 + "'.", line2, column);
         }
         assignedPaths.push(quotedPath);
-        context = deepRef(data, path7, /* @__PURE__ */ Object.create(null), line2, column);
-        currentPath = path7;
+        context = deepRef(data, path6, /* @__PURE__ */ Object.create(null), line2, column);
+        currentPath = path6;
       }
       function addTableArray(node) {
-        var path7 = node.value;
-        var quotedPath = path7.map(quoteDottedString).join(".");
+        var path6 = node.value;
+        var quotedPath = path6.map(quoteDottedString).join(".");
         var line2 = node.line;
         var column = node.column;
         if (!pathAssigned(quotedPath)) {
@@ -21279,20 +21279,20 @@ var require_compiler = __commonJS({
           return p.indexOf(quotedPath) !== 0;
         });
         assignedPaths.push(quotedPath);
-        context = deepRef(data, path7, [], line2, column);
+        context = deepRef(data, path6, [], line2, column);
         currentPath = quotedPath;
         if (context instanceof Array) {
           var newObj = /* @__PURE__ */ Object.create(null);
           context.push(newObj);
           context = newObj;
         } else {
-          genError("Cannot redefine existing key '" + path7 + "'.", line2, column);
+          genError("Cannot redefine existing key '" + path6 + "'.", line2, column);
         }
       }
       function deepRef(start, keys, value, line2, column) {
         var traversed = [];
         var traversedPath = "";
-        var path7 = keys.join(".");
+        var path6 = keys.join(".");
         var ctx = start;
         for (var i = 0; i < keys.length; i++) {
           var key = keys[i];
@@ -21465,9 +21465,9 @@ var init_workspace = __esm({
         }
         if (workspaceCache[programName])
           return workspaceCache[programName];
-        const fs7 = require("fs");
-        const path7 = require("path");
-        const anchorToml = toml.parse(fs7.readFileSync("Anchor.toml"));
+        const fs6 = require("fs");
+        const path6 = require("path");
+        const anchorToml = toml.parse(fs6.readFileSync("Anchor.toml"));
         const clusterId = anchorToml.provider.cluster;
         const programEntry = (_b = (_a2 = anchorToml.programs) === null || _a2 === void 0 ? void 0 : _a2[clusterId]) === null || _b === void 0 ? void 0 : _b[programName];
         let idlPath;
@@ -21476,12 +21476,12 @@ var init_workspace = __esm({
           idlPath = programEntry.idl;
           programId = programEntry.address;
         } else {
-          idlPath = path7.join("target", "idl", `${programName}.json`);
+          idlPath = path6.join("target", "idl", `${programName}.json`);
         }
-        if (!fs7.existsSync(idlPath)) {
+        if (!fs6.existsSync(idlPath)) {
           throw new Error(`${idlPath} doesn't exist. Did you run \`anchor build\`?`);
         }
-        const idl = JSON.parse(fs7.readFileSync(idlPath));
+        const idl = JSON.parse(fs6.readFileSync(idlPath));
         if (programId) {
           idl.address = programId;
         }
@@ -30143,28 +30143,158 @@ var registerConfigCommand = (program3) => {
   });
 };
 
-// src/commands/info.ts
-var fs5 = __toESM(require("fs"));
-var path5 = __toESM(require("path"));
-var REGISTRY_PATH = path5.join(
-  __dirname,
-  "..",
-  "..",
-  "..",
-  "services",
-  "src",
-  "data",
-  "program-registry.json"
-);
-function loadRegistry() {
-  try {
-    const raw = fs5.readFileSync(REGISTRY_PATH, "utf-8");
-    return JSON.parse(raw);
-  } catch (err2) {
-    console.error(source_default.red(`Failed to load registry from ${REGISTRY_PATH}`));
-    if (err2 instanceof Error) console.error(source_default.red(err2.message));
-    process.exit(1);
+// ../services/src/data/program-registry.json
+var program_registry_default = [
+  {
+    name: "Jupiter Aggregator v6",
+    programId: "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+    framework: "Anchor",
+    idl: "services/src/analysis/decoders/jupiter/anchor-idl-jupiter.ts",
+    decoderStatus: "complete",
+    benchmark: {
+      framework: "Anchor",
+      operations: ["transfer", "create-account"]
+    },
+    coverage: 100,
+    lastUpdated: "2026-04-28"
+  },
+  {
+    name: "Orca Whirlpool",
+    programId: "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc",
+    framework: "Anchor",
+    idl: "services/src/analysis/decoders/orca/anchor-idl-orca.ts",
+    decoderStatus: "complete",
+    benchmark: {
+      framework: "Anchor",
+      operations: ["transfer", "create-account"]
+    },
+    coverage: 100,
+    lastUpdated: "2026-04-28"
+  },
+  {
+    name: "Magic Eden",
+    programId: "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8",
+    framework: "Anchor",
+    idl: "services/src/analysis/decoders/magic-eden/idl.ts",
+    decoderStatus: "complete",
+    benchmark: {
+      framework: "Anchor",
+      operations: ["transfer", "create-account"]
+    },
+    coverage: 100,
+    lastUpdated: "2026-05-07"
+  },
+  {
+    name: "Raydium Liquidity Pool v4",
+    programId: "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
+    framework: "Anchor",
+    idl: "services/src/analysis/decoders/raydium/anchor-idl-raydium.ts",
+    decoderStatus: "complete",
+    benchmark: {
+      framework: "Anchor",
+      operations: ["transfer", "create-account"]
+    },
+    coverage: 100,
+    lastUpdated: "2026-04-28"
+  },
+  {
+    name: "Marinade Finance",
+    programId: "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD",
+    framework: "Anchor",
+    idl: null,
+    decoderStatus: "planned",
+    benchmark: {
+      framework: "Anchor",
+      operations: ["transfer", "create-account"]
+    },
+    coverage: 0,
+    lastUpdated: "2026-04-28"
+  },
+  {
+    name: "SPL Token Program",
+    programId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    framework: "Native",
+    idl: null,
+    decoderStatus: "complete",
+    benchmark: {
+      framework: "Native",
+      operations: ["transfer", "create-account"]
+    },
+    coverage: 100,
+    lastUpdated: "2026-04-28"
+  },
+  {
+    name: "System Program",
+    programId: "11111111111111111111111111111111",
+    framework: "Native",
+    idl: null,
+    decoderStatus: "complete",
+    benchmark: {
+      framework: "Native",
+      operations: ["transfer", "create-account"]
+    },
+    coverage: 100,
+    lastUpdated: "2026-04-28"
+  },
+  {
+    name: "Magic Eden v2 (MMM)",
+    programId: "M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K",
+    framework: "Anchor",
+    idl: "services/src/analysis/decoders/anchor-defs/anchor-idl-magic-eden.ts",
+    decoderStatus: "complete",
+    benchmark: {
+      framework: "Anchor",
+      operations: ["transfer", "create-account"]
+    },
+    coverage: 100,
+    lastUpdated: "2026-04-29"
+  },
+  {
+    name: "Squads Protocol V4",
+    programId: "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+    framework: "Anchor",
+    idl: "services/src/analysis/decoders/anchor-defs/anchor-idl-squads.ts",
+    decoderStatus: "complete",
+    benchmark: {
+      framework: "Anchor",
+      operations: ["transfer", "create-account"]
+    },
+    coverage: 100,
+    lastUpdated: "2026-04-29"
+  },
+  {
+    name: "Drift Protocol",
+    programId: "dRiftyHA39MWEi3m9aunc5MzRF1JYU2HTr3TqqYo69m",
+    framework: "Anchor",
+    idl: null,
+    decoderStatus: "planned",
+    benchmark: null,
+    coverage: 0,
+    lastUpdated: "2026-04-27"
   }
+];
+
+// src/commands/info.ts
+function loadRegistry() {
+  const raw = program_registry_default;
+  const seen = /* @__PURE__ */ new Set();
+  const out = [];
+  for (const entry of raw) {
+    if (!entry.programId) continue;
+    if (seen.has(entry.programId)) continue;
+    seen.add(entry.programId);
+    out.push({
+      name: entry.name ?? "(unnamed)",
+      programId: entry.programId,
+      framework: entry.framework ?? "unknown",
+      idl: entry.idl ?? null,
+      decoderStatus: entry.decoderStatus ?? "none",
+      benchmark: entry.benchmark ?? null,
+      coverage: typeof entry.coverage === "number" ? entry.coverage : 0,
+      lastUpdated: entry.lastUpdated ?? "\u2014"
+    });
+  }
+  return out;
 }
 function colorStatus(status) {
   switch (status) {
@@ -30176,6 +30306,8 @@ function colorStatus(status) {
       return source_default.blue(status);
     case "none":
       return source_default.gray(status);
+    default:
+      return source_default.gray(String(status));
   }
 }
 function colorCoverage(coverage) {
@@ -30258,8 +30390,8 @@ var registerInfoCommand = (program3) => {
 };
 
 // src/commands/simulate.ts
-var fs6 = __toESM(require("fs"));
-var path6 = __toESM(require("path"));
+var fs5 = __toESM(require("fs"));
+var path5 = __toESM(require("path"));
 var import_ora3 = __toESM(require("ora"));
 function nowMs2() {
   return typeof process !== "undefined" && process.hrtime ? Number(process.hrtime.bigint() / 1000000n) : Date.now();
@@ -30407,8 +30539,8 @@ Error: ${err2.message}`));
         };
         const jsonOut = renderJSON(analyzed, insightsReport);
         if (options.output) {
-          const outPath = path6.resolve(options.output);
-          fs6.writeFileSync(outPath, jsonOut, "utf-8");
+          const outPath = path5.resolve(options.output);
+          fs5.writeFileSync(outPath, jsonOut, "utf-8");
           originalLog(`
 Report written to: ${outPath}`);
         } else {
@@ -30420,13 +30552,13 @@ Report written to: ${outPath}`);
       if (isCsv) {
         const csvOut = renderCSV(analyzed, insightsReport) + "\n";
         if (options.output) {
-          const outPath = path6.resolve(options.output);
-          fs6.writeFileSync(outPath, csvOut, "utf-8");
+          const outPath = path5.resolve(options.output);
+          fs5.writeFileSync(outPath, csvOut, "utf-8");
           originalLog(`
 CSV written to: ${outPath}`);
         } else {
-          const outPath = path6.resolve(`${bundle.signature}.csv`);
-          fs6.writeFileSync(outPath, csvOut, "utf-8");
+          const outPath = path5.resolve(`${bundle.signature}.csv`);
+          fs5.writeFileSync(outPath, csvOut, "utf-8");
           originalLog(`
 CSV written to: ${outPath}`);
         }
