@@ -1,9 +1,9 @@
 {
-  "name": "solana-open",
-  "version": "0.2.0",
+  "name": "opendev",
+  "version": "0.3.0",
   "description": "Visual transaction debugger and CU profiler for Solana — turn any signature into a fully decoded execution profile",
   "bin": {
-    "open": "dist/open.js"
+    "opendev": "dist/open.js"
   },
   "files": [
     "dist",
@@ -32,12 +32,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OpenSubmissionn/Submission_Open.git",
+    "url": "git+https://github.com/OpenSubmissionn/Open_DevTool.git",
     "directory": "cli"
   },
-  "homepage": "https://github.com/OpenSubmissionn/Submission_Open#readme",
+  "homepage": "https://github.com/OpenSubmissionn/Open_DevTool#readme",
   "bugs": {
-    "url": "https://github.com/OpenSubmissionn/Submission_Open/issues"
+    "url": "https://github.com/OpenSubmissionn/Open_DevTool/issues"
   },
   "engines": {
     "node": ">=18"

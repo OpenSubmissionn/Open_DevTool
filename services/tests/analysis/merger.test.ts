@@ -18,13 +18,7 @@ const cuProfileWith = (totalConsumed: number) => ({
 describe('mergeAnalysis', () => {
   it('should merge analysis into AnalyzedTransaction', async () => {
     const bundle = mockRPCBundle();
-    const result = await mergeAnalysis(
-      bundle,
-      baseLogs,
-      cuProfileWith(3000),
-      baseCpiTree,
-      []
-    );
+    const result = await mergeAnalysis(bundle, baseLogs, cuProfileWith(3000), baseCpiTree, []);
 
     expect(result.raw.signature).toBe('mockSignature123');
     expect(result.cuProfile.totalConsumed).toBeGreaterThanOrEqual(0);
@@ -129,9 +123,7 @@ describe('mergeAnalysis', () => {
 
     expect(result.cuCost?.priorityFeeLamports).toBe(2_500);
     // Back-derived from actual priority paid
-    expect(result.cuCost?.microLamportsPerCU).toBe(
-      Math.round((2_500 * 1_000_000) / 50_000)
-    );
+    expect(result.cuCost?.microLamportsPerCU).toBe(Math.round((2_500 * 1_000_000) / 50_000));
   });
 
   it('skips non-ComputeBudget instructions when extracting price', async () => {
@@ -194,10 +186,7 @@ describe('mergeAnalysis', () => {
       null
     );
 
-    expect(warnSpy).toHaveBeenCalledWith(
-      '[Merger] SOL price lookup failed:',
-      expect.any(Error)
-    );
+    expect(warnSpy).toHaveBeenCalledWith('[Merger] SOL price lookup failed:', expect.any(Error));
     expect(result.cuCost?.feeUSD).toBeNull();
 
     warnSpy.mockRestore();
@@ -210,14 +199,12 @@ describe('mergeAnalysis', () => {
     // We mock costAnalyzer to make it throw so the path is exercised.
     vi.resetModules();
     vi.doMock('../../src/analysis/costAnalyzer', async () => {
-      const actual = await vi.importActual<
-        typeof import('../../src/analysis/costAnalyzer')
-      >('../../src/analysis/costAnalyzer');
+      const actual = await vi.importActual<typeof import('../../src/analysis/costAnalyzer')>(
+        '../../src/analysis/costAnalyzer'
+      );
       return {
         ...actual,
-        calculateCUCostFromCU: vi
-          .fn()
-          .mockRejectedValue(new Error('mocked fallback failure')),
+        calculateCUCostFromCU: vi.fn().mockRejectedValue(new Error('mocked fallback failure')),
       };
     });
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});

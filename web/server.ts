@@ -102,7 +102,7 @@ function toCPITree(trace: ReturnType<typeof buildCPITree>): CPITree {
 
 function toParsedLogs(
   logMessages: string[],
-  parsed: ReturnType<typeof parseLogsFromBundle>,
+  parsed: ReturnType<typeof parseLogsFromBundle>
 ): ParsedLogs {
   return {
     raw: logMessages,
@@ -158,14 +158,18 @@ function aggregateProgramsFromCpi(cpi: CPITree): ProgramCU[] {
   return [...acc.values()].sort((a, b) => b.cuConsumed - a.cuConsumed);
 }
 
-function findCpiBottleneck(cpi: CPITree): { programId: string; programName: string; cuConsumed: number; depth: number } | null {
-  let best: { programId: string; programName: string; cuConsumed: number; depth: number } | null = null;
+function findCpiBottleneck(
+  cpi: CPITree
+): { programId: string; programName: string; cuConsumed: number; depth: number } | null {
+  let best: { programId: string; programName: string; cuConsumed: number; depth: number } | null =
+    null;
   const walk = (nodes: CPINode[]) => {
     for (const n of nodes) {
       const cu = n.cuConsumed ?? 0;
       // Skip Compute Budget and System ixs — they always show small CU and
       // would never be the meaningful bottleneck.
-      const skip = n.programId === 'ComputeBudget111111111111111111111111111111' ||
+      const skip =
+        n.programId === 'ComputeBudget111111111111111111111111111111' ||
         n.programId === '11111111111111111111111111111111';
       if (!skip && (!best || cu > best.cuConsumed)) {
         best = {
@@ -224,7 +228,7 @@ const SHORT = (s: string, head = 4, tail = 4) =>
 function buildAccountModel(
   cpi: CPITree,
   accountDiffs: ReturnType<typeof computeAccountDiffs>,
-  transfers: any[] = [],
+  transfers: any[] = []
 ): { nodes: ModelNode[]; edges: ModelEdge[] } {
   const nodes: ModelNode[] = [];
   const edges: ModelEdge[] = [];
@@ -288,12 +292,8 @@ function buildAccountModel(
   // ixs always sit at the front of the program list but never have any
   // logical relationship to accounts — drop them so the canvas stays
   // focused on the programs that actually move state.
-  const SYSTEM_NOISE = new Set([
-    'ComputeBudget111111111111111111111111111111',
-  ]);
-  const rootPrograms = cpi.root
-    .filter((p) => !SYSTEM_NOISE.has(p.programId))
-    .slice(0, 5);
+  const SYSTEM_NOISE = new Set(['ComputeBudget111111111111111111111111111111']);
+  const rootPrograms = cpi.root.filter((p) => !SYSTEM_NOISE.has(p.programId)).slice(0, 5);
   rootPrograms.forEach((p, i) => {
     const id = `root-${p.programId}-${i}`;
     pushNode({
@@ -320,7 +320,7 @@ function buildAccountModel(
   rootPrograms.forEach((p, i) => {
     const rootId = `root-${p.programId}-${i}`;
     const children = (p.children || []).filter(
-      (c) => c.programId !== p.programId, // ignore self-recursion noise
+      (c) => c.programId !== p.programId // ignore self-recursion noise
     );
     innerByRoot[rootId] = children;
   });
@@ -386,7 +386,11 @@ function buildAccountModel(
     if (isToken) {
       const tokenInner = innerNodes.find((n) => /Token/i.test(n.node.programName));
       if (tokenInner) {
-        edges.push({ from: tokenInner.id, to: id, label: tokenDelta.uiDelta > 0 ? 'credits' : 'debits' });
+        edges.push({
+          from: tokenInner.id,
+          to: id,
+          label: tokenDelta.uiDelta > 0 ? 'credits' : 'debits',
+        });
       }
     } else if (rootPrograms[0]) {
       edges.push({ from: `root-${rootPrograms[0].programId}-0`, to: id, label: 'updates' });
@@ -480,17 +484,21 @@ function rawIxToCommonShape(rawIx: any, accountKeys: string[]) {
   const programId =
     typeof rawIx?.programId === 'string'
       ? rawIx.programId
-      : rawIx?.programId?.toBase58?.() ??
-        (typeof rawIx?.programIdIndex === 'number' ? accountKeys[rawIx.programIdIndex] : '');
+      : (rawIx?.programId?.toBase58?.() ??
+        (typeof rawIx?.programIdIndex === 'number' ? accountKeys[rawIx.programIdIndex] : ''));
   const accounts: string[] = Array.isArray(rawIx?.accounts)
     ? rawIx.accounts.map((a: any) =>
-        typeof a === 'number' ? accountKeys[a] ?? `?${a}` : a?.toBase58?.() ?? String(a),
+        typeof a === 'number' ? (accountKeys[a] ?? `?${a}`) : (a?.toBase58?.() ?? String(a))
       )
     : [];
   let parsed = rawIx?.parsed && typeof rawIx.parsed === 'object' ? rawIx.parsed : null;
   // Compute Budget is the one common native program RPC doesn't decode for
   // us — manually shim it so the summarizer switch picks it up.
-  if (!parsed && programId === 'ComputeBudget111111111111111111111111111111' && typeof rawIx?.data === 'string') {
+  if (
+    !parsed &&
+    programId === 'ComputeBudget111111111111111111111111111111' &&
+    typeof rawIx?.data === 'string'
+  ) {
     parsed = decodeComputeBudgetData(rawIx.data);
   }
   return { programId: programId ?? '', accounts, parsed };
@@ -502,14 +510,13 @@ function summarizeInstruction(
   index: number,
   parsedIx: any | null,
   cuConsumed: number | null,
-  innerCount: number,
+  innerCount: number
 ): InstructionSummary {
   const { programId, accounts, parsed } = rawIxToCommonShape(rawIx, accountKeys);
   const programName = resolveProgramName(programId);
   // Prefer the RPC-decoded type for native programs, then the IDL-decoded
   // name for Anchor programs, then null.
-  const instructionName: string | null =
-    parsed?.type ?? parsedIx?.instructionName ?? null;
+  const instructionName: string | null = parsed?.type ?? parsedIx?.instructionName ?? null;
 
   const base: InstructionSummary = {
     index,
@@ -606,7 +613,9 @@ function summarizeInstruction(
               { label: 'Source ATA', value: info.source ?? '—', mono: true },
               { label: 'Destination ATA', value: info.destination ?? '—', mono: true },
               ...(info.mint ? [{ label: 'Mint', value: info.mint, mono: true }] : []),
-              ...(info.authority ? [{ label: 'Authority', value: info.authority, mono: true }] : []),
+              ...(info.authority
+                ? [{ label: 'Authority', value: info.authority, mono: true }]
+                : []),
             ],
           };
         case 'mintTo':
@@ -714,9 +723,7 @@ function summarizeInstruction(
             iconKind: 'compute',
             title: 'Set priority fee',
             summary: `Pays ${info.microLamports ?? 0} micro-lamports per CU as a priority bid (helps land in the next block).`,
-            details: [
-              { label: 'Price per CU', value: `${info.microLamports ?? 0} µLamports` },
-            ],
+            details: [{ label: 'Price per CU', value: `${info.microLamports ?? 0} µLamports` }],
           };
         case 'requestUnits':
         case 'requestHeapFrame':
@@ -757,8 +764,7 @@ function summarizeInstruction(
         sharedaccountsexactoutroute:
           'Jupiter exact-output swap using shared accounts (cheapest+smallest route).',
       };
-      const desc =
-        swapNameTexts[lc] ?? `Jupiter aggregator instruction \`${instructionName}\`.`;
+      const desc = swapNameTexts[lc] ?? `Jupiter aggregator instruction \`${instructionName}\`.`;
       return {
         ...base,
         iconKind: 'swap',
@@ -767,10 +773,7 @@ function summarizeInstruction(
       };
     }
 
-    if (
-      programId === 'whirLbMiicVdio4KfUV7LSu1DbjhokCWAN8DiwKx5hp' &&
-      lc.includes('swap')
-    ) {
+    if (programId === 'whirLbMiicVdio4KfUV7LSu1DbjhokCWAN8DiwKx5hp' && lc.includes('swap')) {
       return {
         ...base,
         iconKind: 'swap',
@@ -785,8 +788,7 @@ function summarizeInstruction(
         ...base,
         iconKind: 'swap',
         title: 'Swap on Raydium CLMM',
-        summary:
-          'Concentrated-liquidity swap on Raydium. Tick-array based, similar to Whirlpool.',
+        summary: 'Concentrated-liquidity swap on Raydium. Tick-array based, similar to Whirlpool.',
       };
     }
 
@@ -813,7 +815,8 @@ function summarizeInstruction(
           ...base,
           iconKind: 'create',
           title: 'Create NFT metadata',
-          summary: 'Creates the on-chain metadata account that names and links to the off-chain JSON.',
+          summary:
+            'Creates the on-chain metadata account that names and links to the off-chain JSON.',
         };
       }
     }
@@ -833,7 +836,7 @@ function summarizeInstruction(
 function buildInstructionSummaries(
   bundle: any,
   parsedInstructions: any[],
-  cpiTree: CPITree,
+  cpiTree: CPITree
 ): InstructionSummary[] {
   const message = bundle?.transaction?.message;
   const accountKeys: string[] = bundle?.accountKeys ?? [];
@@ -842,7 +845,7 @@ function buildInstructionSummaries(
   if (process.env.DEBUG_IXS === '1') {
     console.log('[ixs] count:', rawInstructions.length);
     rawInstructions.forEach((ix, i) =>
-      console.log('  raw['+i+']:', JSON.stringify(ix).slice(0, 200)),
+      console.log('  raw[' + i + ']:', JSON.stringify(ix).slice(0, 200))
     );
   }
 
@@ -875,7 +878,7 @@ interface ExecNode {
   status: 'success' | 'failed' | 'truncated';
   cuConsumed: number | null;
   cuLimit: number | null;
-  logs: string[];      // raw "Program log: ..." messages emitted by this program
+  logs: string[]; // raw "Program log: ..." messages emitted by this program
   returnData: string | null;
   errorMessage: string | null;
   children: ExecNode[];
@@ -934,15 +937,15 @@ function toExecNode(snapshot: any): ExecNode {
 const PROGRAM_LEARN: Record<string, { tagline: string }> = {
   '11111111111111111111111111111111': {
     tagline:
-      'Solana\'s System Program. Creates accounts, transfers SOL, allocates space and assigns ownership. Every native operation that doesn\'t involve a token routes through here.',
+      "Solana's System Program. Creates accounts, transfers SOL, allocates space and assigns ownership. Every native operation that doesn't involve a token routes through here.",
   },
   ComputeBudget111111111111111111111111111111: {
     tagline:
-      'A native program that lets the transaction set its own CU ceiling and offer a per-CU priority fee. It doesn\'t move state — it just configures how the validator schedules execution.',
+      "A native program that lets the transaction set its own CU ceiling and offer a per-CU priority fee. It doesn't move state — it just configures how the validator schedules execution.",
   },
   TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA: {
     tagline:
-      'Solana\'s native SPL Token Program. Handles transfers, mints, freezes and account initialization for fungible tokens.',
+      "Solana's native SPL Token Program. Handles transfers, mints, freezes and account initialization for fungible tokens.",
   },
   TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb: {
     tagline:
@@ -950,7 +953,7 @@ const PROGRAM_LEARN: Record<string, { tagline: string }> = {
   },
   ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL: {
     tagline:
-      'The Associated Token Account program. Derives a deterministic ATA pubkey from a wallet+mint pair and creates it on demand so users don\'t have to manage token-account addresses themselves.',
+      "The Associated Token Account program. Derives a deterministic ATA pubkey from a wallet+mint pair and creates it on demand so users don't have to manage token-account addresses themselves.",
   },
   metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s: {
     tagline:
@@ -997,7 +1000,7 @@ function buildLearn(
   computeUnitsLimit: number,
   totalCpiCount: number,
   maxDepth: number,
-  txType: string | undefined,
+  txType: string | undefined
 ): LearnPayload {
   // ── Programs ── one card per program that actually consumed CU. We
   // augment the static tagline with a tx-specific clause ("called Nx, used
@@ -1010,8 +1013,7 @@ function buildLearn(
       const tagline =
         PROGRAM_LEARN[p.programId]?.tagline ??
         `An on-chain program at ${p.programId.slice(0, 4)}…${p.programId.slice(-4)}. The local registry doesn\'t recognize it, so its purpose can\'t be summarised here.`;
-      const sharePct =
-        computeUnitsConsumed > 0 ? (p.cuConsumed / computeUnitsConsumed) * 100 : 0;
+      const sharePct = computeUnitsConsumed > 0 ? (p.cuConsumed / computeUnitsConsumed) * 100 : 0;
       const txClause = `In this transaction it was invoked ${p.count}× and consumed ${p.cuConsumed.toLocaleString()} CU (${sharePct.toFixed(0)}% of total).`;
       return { name: p.programName, description: `${tagline} ${txClause}` };
     });
@@ -1093,12 +1095,12 @@ function buildLearn(
 interface FlowParty {
   pubkey: string;
   role: 'signer' | 'writable' | 'readonly';
-  solDelta: number;        // lamports
-  solDeltaSol: number;     // formatted SOL
+  solDelta: number; // lamports
+  solDeltaSol: number; // formatted SOL
   usdValue: number | null; // priced via SOL price
   tokenDeltas: { mint: string; symbol?: string; uiDelta: number; decimals: number }[];
   isFeePayer: boolean;
-  label?: string;          // optional tag like "filler / relayer"
+  label?: string; // optional tag like "filler / relayer"
 }
 
 interface TxFlow {
@@ -1111,11 +1113,11 @@ interface TxFlow {
   // signer; in a limit-order fill or a relayed swap, it's the human user
   // who placed the order.
   intendedRecipient: FlowParty | null;
-  winners: FlowParty[];    // non-signer accounts with +SOL, sorted by gain desc
-  losers: FlowParty[];     // accounts with -SOL (excluding fee-only outflows)
-  totalSolPaidOut: number;        // lamports lost by losers
-  totalSolReceived: number;       // lamports gained by winners + signer
-  signerShareOfReceived: number;  // 0..1
+  winners: FlowParty[]; // non-signer accounts with +SOL, sorted by gain desc
+  losers: FlowParty[]; // accounts with -SOL (excluding fee-only outflows)
+  totalSolPaidOut: number; // lamports lost by losers
+  totalSolReceived: number; // lamports gained by winners + signer
+  signerShareOfReceived: number; // 0..1
   spread: { taker: string; lamports: number; sol: number; usd: number | null } | null;
   narrative: string;
   warnings: string[];
@@ -1130,7 +1132,7 @@ function buildTxFlow(
   accountDiffs: ReturnType<typeof computeAccountDiffs>,
   bundle: any,
   fee: number,
-  solPriceUsd: number | null,
+  solPriceUsd: number | null
 ): TxFlow {
   if (!accountDiffs?.length) {
     return {
@@ -1148,8 +1150,7 @@ function buildTxFlow(
     };
   }
 
-  const lamportsToUsd = (n: number) =>
-    solPriceUsd != null ? (n / 1e9) * solPriceUsd : null;
+  const lamportsToUsd = (n: number) => (solPriceUsd != null ? (n / 1e9) * solPriceUsd : null);
 
   // Build an ATA → owner-wallet map from the bundle's pre/postTokenBalances.
   // This lets us consolidate "Michael's LOBSTAR ATA" and "Michael's wallet"
@@ -1157,9 +1158,7 @@ function buildTxFlow(
   // the token outflow look like they happened to two unrelated parties.
   const ataOwners = new Map<string, string>();
   const accountKeys: string[] = bundle?.accountKeys ?? [];
-  const indexBalances = (
-    list: any[] | undefined,
-  ): void => {
+  const indexBalances = (list: any[] | undefined): void => {
     if (!Array.isArray(list)) return;
     for (const entry of list) {
       const idx = entry?.accountIndex;
@@ -1176,10 +1175,7 @@ function buildTxFlow(
   // get folded onto the owner's row so the flow view shows the wallet the
   // user actually cares about — not the program-owned ATA holding the tokens.
   const partyByKey = new Map<string, FlowParty>();
-  const ensureParty = (
-    key: string,
-    role: 'signer' | 'writable' | 'readonly',
-  ): FlowParty => {
+  const ensureParty = (key: string, role: 'signer' | 'writable' | 'readonly'): FlowParty => {
     let p = partyByKey.get(key);
     if (!p) {
       p = {
@@ -1211,10 +1207,7 @@ function buildTxFlow(
     const solParty = ensureParty(d.pubkey, d.role);
     solParty.solDelta += d.solDelta;
 
-    const tokenParty =
-      tokenTarget === d.pubkey
-        ? solParty
-        : ensureParty(tokenTarget, 'writable');
+    const tokenParty = tokenTarget === d.pubkey ? solParty : ensureParty(tokenTarget, 'writable');
     for (const t of d.tokenDeltas ?? []) {
       // Skip wSOL token deltas when there's an equivalent SOL delta — they
       // double-count the same lamports. wSOL mint is So11...1112.
@@ -1256,9 +1249,7 @@ function buildTxFlow(
 
   // Losers — anyone with negative SOL delta. We keep these in the table but
   // distinguish "real" payouts (>= 0.01 SOL) from fee-dust noise (< 0.005 SOL).
-  const losers = parties
-    .filter((p) => p.solDelta < 0)
-    .sort((a, b) => a.solDelta - b.solDelta);
+  const losers = parties.filter((p) => p.solDelta < 0).sort((a, b) => a.solDelta - b.solDelta);
 
   const totalSolPaidOut = losers
     .filter((p) => Math.abs(p.solDelta) >= 5_000_000) // >= 0.005 SOL — drop fee dust
@@ -1268,17 +1259,19 @@ function buildTxFlow(
     .reduce((sum, p) => sum + p.solDelta, 0);
 
   const signerShare =
-    totalSolReceived > 0 && signer && signer.solDelta > 0
-      ? signer.solDelta / totalSolReceived
-      : 0;
+    totalSolReceived > 0 && signer && signer.solDelta > 0 ? signer.solDelta / totalSolReceived : 0;
 
   // tokenSource — the wallet that lost the most token value. In limit-order
   // fills this is typically a program escrow PDA holding the maker's tokens.
   const tokenLosers = parties
     .filter((p) => p.tokenDeltas.some((t) => t.uiDelta < 0))
     .sort((a, b) => {
-      const aMax = Math.max(...a.tokenDeltas.filter((t) => t.uiDelta < 0).map((t) => Math.abs(t.uiDelta)));
-      const bMax = Math.max(...b.tokenDeltas.filter((t) => t.uiDelta < 0).map((t) => Math.abs(t.uiDelta)));
+      const aMax = Math.max(
+        ...a.tokenDeltas.filter((t) => t.uiDelta < 0).map((t) => Math.abs(t.uiDelta))
+      );
+      const bMax = Math.max(
+        ...b.tokenDeltas.filter((t) => t.uiDelta < 0).map((t) => Math.abs(t.uiDelta))
+      );
       return bMax - aMax;
     });
   const tokenSource = tokenLosers[0] ?? null;
@@ -1301,30 +1294,28 @@ function buildTxFlow(
 
   // Spread — what the signer kept while a different wallet bore the token
   // outflow. This is the canonical "filler captured arbitrage" number.
-  const spread = isFillerPattern && signer
-    ? {
-        taker: signer.pubkey,
-        lamports: signer.solDelta,
-        sol: signer.solDelta / 1e9,
-        usd: signer.usdValue,
-      }
-    : null;
+  const spread =
+    isFillerPattern && signer
+      ? {
+          taker: signer.pubkey,
+          lamports: signer.solDelta,
+          sol: signer.solDelta / 1e9,
+          usd: signer.usdValue,
+        }
+      : null;
 
   // Labels for the UI so each row reads as a role, not just a pubkey.
   if (signer) {
-    signer.label = isFillerPattern
-      ? 'signer · spread captured here'
-      : 'transaction signer';
+    signer.label = isFillerPattern ? 'signer · spread captured here' : 'transaction signer';
   }
   if (tokenSource && signer && tokenSource.pubkey !== signer.pubkey) {
-    tokenSource.label = intendedRecipient && tokenSource.pubkey === intendedRecipient.pubkey
-      ? 'maker / token-bearing wallet'
-      : 'token escrow / vault';
+    tokenSource.label =
+      intendedRecipient && tokenSource.pubkey === intendedRecipient.pubkey
+        ? 'maker / token-bearing wallet'
+        : 'token escrow / vault';
   }
   if (intendedRecipient && signer && intendedRecipient.pubkey !== signer.pubkey) {
-    intendedRecipient.label = isFillerPattern
-      ? 'intended recipient (maker)'
-      : 'recipient';
+    intendedRecipient.label = isFillerPattern ? 'intended recipient (maker)' : 'recipient';
   }
 
   // ── Warnings ──
@@ -1334,7 +1325,7 @@ function buildTxFlow(
   // tokens spent in this tx.
   if (isFillerPattern && signer && tokenSource) {
     warnings.push(
-      `Tokens (${tokenSource.tokenDeltas.find((t) => t.uiDelta < 0)?.uiDelta != null ? Math.abs(tokenSource.tokenDeltas.find((t) => t.uiDelta < 0)!.uiDelta).toLocaleString() + ' ' + (tokenSource.tokenDeltas.find((t) => t.uiDelta < 0)!.symbol ?? tokenSource.tokenDeltas.find((t) => t.uiDelta < 0)!.mint.slice(0, 4) + '…') : 'unknown'}) flowed out of ${shortPubkey(tokenSource.pubkey)}, but the transaction was signed by ${shortPubkey(signer.pubkey)}. This pattern is typical of a filler / relayer settling a pre-signed order — common in limit-order fills.`,
+      `Tokens (${tokenSource.tokenDeltas.find((t) => t.uiDelta < 0)?.uiDelta != null ? Math.abs(tokenSource.tokenDeltas.find((t) => t.uiDelta < 0)!.uiDelta).toLocaleString() + ' ' + (tokenSource.tokenDeltas.find((t) => t.uiDelta < 0)!.symbol ?? tokenSource.tokenDeltas.find((t) => t.uiDelta < 0)!.mint.slice(0, 4) + '…') : 'unknown'}) flowed out of ${shortPubkey(tokenSource.pubkey)}, but the transaction was signed by ${shortPubkey(signer.pubkey)}. This pattern is typical of a filler / relayer settling a pre-signed order — common in limit-order fills.`
     );
   }
 
@@ -1355,7 +1346,7 @@ function buildTxFlow(
     const signerSolStr = (signer.solDelta / 1e9).toFixed(4);
     const recipLabel = intendedRecipient ? shortPubkey(intendedRecipient.pubkey) : 'the maker';
     warnings.push(
-      `Signer kept ~${pctRetained.toFixed(0)}% of the SOL paid by liquidity pools (${signerSolStr} SOL), while ${recipLabel} only received ${recipSolStr} SOL. Consistent with an underpriced limit-order fill or MEV/arbitrage spread.`,
+      `Signer kept ~${pctRetained.toFixed(0)}% of the SOL paid by liquidity pools (${signerSolStr} SOL), while ${recipLabel} only received ${recipSolStr} SOL. Consistent with an underpriced limit-order fill or MEV/arbitrage spread.`
     );
   }
 
@@ -1371,7 +1362,7 @@ function buildTxFlow(
   ) {
     const pct = (intendedRecipient.solDelta / totalSolPaidOut) * 100;
     warnings.push(
-      `The signer received only ${pct.toFixed(0)}% of the total SOL paid out by liquidity pools. Worth checking for hidden fees or sandwich attacks.`,
+      `The signer received only ${pct.toFixed(0)}% of the total SOL paid out by liquidity pools. Worth checking for hidden fees or sandwich attacks.`
     );
   }
 
@@ -1387,9 +1378,10 @@ function buildTxFlow(
         : 'tokens';
       const outSolStr = (totalSolPaidOut / 1e9).toFixed(4);
       const signerGainStr = (signer.solDelta / 1e9).toFixed(4);
-      const recipPart = intendedRecipient && intendedRecipient.pubkey !== signer.pubkey
-        ? ` ${shortPubkey(intendedRecipient.pubkey)} received ${(intendedRecipient.solDelta / 1e9).toFixed(4)} SOL of that.`
-        : '';
+      const recipPart =
+        intendedRecipient && intendedRecipient.pubkey !== signer.pubkey
+          ? ` ${shortPubkey(intendedRecipient.pubkey)} received ${(intendedRecipient.solDelta / 1e9).toFixed(4)} SOL of that.`
+          : '';
       return `${tokenLabel} flowed out of ${shortPubkey(tokenSource.pubkey)}; liquidity pools paid ${outSolStr} SOL for them. The transaction was signed by ${shortPubkey(signer.pubkey)}, who pocketed ${signerGainStr} SOL.${recipPart}`;
     }
 
@@ -1430,9 +1422,7 @@ export async function analyze(signature: string, network: 'mainnet' | 'devnet') 
   const { Connection } = await import('@solana/web3.js');
   const { AnchorProvider } = await import('@coral-xyz/anchor');
   const rpcUrl =
-    network === 'mainnet'
-      ? 'https://api.mainnet-beta.solana.com'
-      : 'https://api.devnet.solana.com';
+    network === 'mainnet' ? 'https://api.mainnet-beta.solana.com' : 'https://api.devnet.solana.com';
   const anchorProvider = new AnchorProvider(
     new Connection(rpcUrl, 'confirmed'),
     {
@@ -1440,7 +1430,7 @@ export async function analyze(signature: string, network: 'mainnet' | 'devnet') 
       signTransaction: async (tx: any) => tx,
       signAllTransactions: async (txs: any) => txs,
     } as any,
-    { commitment: 'confirmed' },
+    { commitment: 'confirmed' }
   );
 
   const parsedLogSummary = parseLogsFromBundle(rawBundle.logMessages);
@@ -1461,7 +1451,7 @@ export async function analyze(signature: string, network: 'mainnet' | 'devnet') 
     cuProfile,
     cpiTree,
     accountDiffs,
-    { idlCache, anchorProvider },
+    { idlCache, anchorProvider }
   );
 
   const insightsReport = await analyzeTransaction(analyzed, [new McpInsightProvider()]);
@@ -1471,7 +1461,7 @@ export async function analyze(signature: string, network: 'mainnet' | 'devnet') 
   // instead — that's the path the CLI's flame graph also uses. Drop the
   // 0-CU Compute Budget rows so the bar chart isn't dominated by phantoms.
   const programs = aggregateProgramsFromCpi(cpiTree).filter(
-    (p) => p.cuConsumed > 0 && p.programId !== 'ComputeBudget111111111111111111111111111111',
+    (p) => p.cuConsumed > 0 && p.programId !== 'ComputeBudget111111111111111111111111111111'
   );
   const cpiBottleneck = findCpiBottleneck(cpiTree);
 
@@ -1509,7 +1499,7 @@ export async function analyze(signature: string, network: 'mainnet' | 'devnet') 
   const instructions = buildInstructionSummaries(
     rawBundle,
     analyzed.parsed?.instructions ?? [],
-    cpiTree,
+    cpiTree
   );
 
   // Money-trail / "transaction flow" summary that sits at the top of the
@@ -1521,7 +1511,7 @@ export async function analyze(signature: string, network: 'mainnet' | 'devnet') 
     analyzed.parsed.fee,
     analyzed.cuCost?.feeUSD != null && analyzed.cuCost.feeLamports
       ? (analyzed.cuCost.feeUSD / analyzed.cuCost.feeLamports) * 1e9
-      : null,
+      : null
   );
 
   // Learn-tab knowledge base. Composes per-program/per-account explanations
@@ -1534,7 +1524,7 @@ export async function analyze(signature: string, network: 'mainnet' | 'devnet') 
     cuProfile.totalLimit || 200_000,
     cpiTree.nodeCount,
     cpiTree.totalDepth,
-    analyzed.txType,
+    analyzed.txType
   );
 
   return {
@@ -1620,7 +1610,12 @@ const MIME: Record<string, string> = {
   '.ico': 'image/x-icon',
 };
 
-function send(res: http.ServerResponse, status: number, body: string | Buffer, headers: Record<string, string> = {}) {
+function send(
+  res: http.ServerResponse,
+  status: number,
+  body: string | Buffer,
+  headers: Record<string, string> = {}
+) {
   res.writeHead(status, {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -1736,8 +1731,7 @@ const server = http.createServer(async (req, res) => {
 // (`tsx web/server.ts` for local dev). When the file is imported as a module
 // — e.g. by api/*.ts on Vercel pulling in the exported analyze/getLatestTx —
 // we skip listen() so no port binding happens in serverless contexts.
-const isMainModule =
-  process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+const isMainModule = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isMainModule) {
   server.listen(PORT, () => {
     console.log(`\n  open dev server`);

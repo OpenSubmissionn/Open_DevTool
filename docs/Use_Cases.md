@@ -31,7 +31,7 @@ program.
 **Command**
 
 ```bash
-open tx <signature> --network mainnet --verbose
+opendev tx <signature> --network mainnet --verbose
 ```
 
 The `--verbose` flag prints per-stage timing and IDL cache metrics so you
@@ -77,7 +77,7 @@ bottleneck, and you want concrete suggestions instead of guesses.
 **Command**
 
 ```bash
-open tx <signature> --network mainnet --json > tx-analysis.json
+opendev tx <signature> --network mainnet --json > tx-analysis.json
 ```
 
 JSON output is the right format for optimisation work because it includes
@@ -115,7 +115,7 @@ reporting a stuck swap, or you are debugging why a deploy script reverts.
 **Command**
 
 ```bash
-open tx <signature> --network <mainnet|devnet> --verbose
+opendev tx <signature> --network <mainnet|devnet> --verbose
 ```
 
 **Step by step**
@@ -163,7 +163,7 @@ instead of a synthetic benchmark.
 **Command**
 
 ```bash
-open tx <signature> --network mainnet --json | jq '.frameworkComparison'
+opendev tx <signature> --network mainnet --json | jq '.frameworkComparison'
 ```
 
 `jq` is optional; without it just open the file and find the
@@ -281,7 +281,7 @@ Given a file `signatures.txt` with one signature per line:
 ```bash
 mkdir -p out
 while read -r sig; do
-  open tx "$sig" --network mainnet --json > "out/${sig}.json"
+  opendev tx "$sig" --network mainnet --json > "out/${sig}.json"
 done < signatures.txt
 
 # Aggregate: total CU, average fee, top bottlenecks

@@ -12,10 +12,7 @@ import {
 } from '@solana/web3.js';
 
 import * as connectionModule from '../../src/solana/connection';
-import {
-  detectInputKind,
-  simulateTransactionInput,
-} from '../../src/solana/simulationService';
+import { detectInputKind, simulateTransactionInput } from '../../src/solana/simulationService';
 
 const DUMMY_BLOCKHASH = '11111111111111111111111111111111';
 

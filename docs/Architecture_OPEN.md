@@ -23,7 +23,7 @@ The OPEN CLI is composed of **eleven primary layers** that form a sequential pip
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                      CLI ENTRY POINT                        │
-│    open tx <sig>  |  open simulate <tx>  |  open fees       │
+│    opendev tx <sig>  |  opendev simulate <tx>  |  opendev fees       │
 └──────────────────────────┬──────────────────────────────────┘
                             │
                             ▼
@@ -76,12 +76,12 @@ The OPEN CLI is composed of **eleven primary layers** that form a sequential pip
 └─────────────────────────────────────────────────────────────┘
 
   ┌─────────────────────────────────────────────────────────┐
-  │            SIMULATION SERVICE  [NEW]  (open simulate)   │
+  │            SIMULATION SERVICE  [NEW]  (opendev simulate)   │
   │   Surfpool.run integration · Security analysis engine   │
   └─────────────────────────────────────────────────────────┘
 
   ┌─────────────────────────────────────────────────────────┐
-  │            FEE ANALYZER  [NEW]  (open fees)             │
+  │            FEE ANALYZER  [NEW]  (opendev fees)             │
   │   getRecentPrioritizationFees · Eco/Normal/Fast/Turbo   │
   └─────────────────────────────────────────────────────────┘
 ```
@@ -96,8 +96,8 @@ The OPEN CLI is composed of **eleven primary layers** that form a sequential pip
 - The **Framework Comparator** receives the CU profile and instruction metadata, then queries a framework benchmark registry to estimate how much CU the same logic would consume under alternative frameworks.
 - The **Insight Engine** receives the `AnalyzedTransaction`, `CostAnalysis`, and `FrameworkComparison`, calls the MCP server, and returns a **structured, numbered list** of `AISuggestion` objects — not free-form prose.
 - The **Suggestion Selector** renders this numbered list in the terminal, accepts user input (`1`, `1,3`, `all`, `none`), and passes selected items to the **Suggestion Applier** (Phase 2) for optional file patching.
-- The **Simulation Service** is an independent pipeline triggered by `open simulate`. It sends a base64-encoded transaction to Surfpool.run and runs the Security Analysis Engine on the result.
-- The **Fee Analyzer** is an independent pipeline triggered by `open fees`. It calls `getRecentPrioritizationFees` and returns fee profiles for the four speed tiers.
+- The **Simulation Service** is an independent pipeline triggered by `opendev simulate`. It sends a base64-encoded transaction to Surfpool.run and runs the Security Analysis Engine on the result.
+- The **Fee Analyzer** is an independent pipeline triggered by `opendev fees`. It calls `getRecentPrioritizationFees` and returns fee profiles for the four speed tiers.
 - The final enriched object is passed to the **Output Renderer**, which either renders a rich terminal UI or serializes to JSON.
 
 ---
@@ -130,11 +130,11 @@ interface CLIOptions {
 **Registered commands:**
 
 ```
-open tx <signature>            # Full transaction analysis
-open simulate <base64-tx>      # [NEW] Pre-flight security simulation
-open fees                      # [NEW] Priority fee market overview
-open config set rpc <url>      # RPC endpoint config
-open config set ai <provider>  # [NEW] AI provider config
+opendev tx <signature>            # Full transaction analysis
+opendev simulate <base64-tx>      # [NEW] Pre-flight security simulation
+opendev fees                      # [NEW] Priority fee market overview
+opendev config set rpc <url>      # RPC endpoint config
+opendev config set ai <provider>  # [NEW] AI provider config
 ```
 
 **Dependencies:** None (entry point).
@@ -693,7 +693,7 @@ Context:
 
 ### 2.15 Simulation Service  `[NEW]`
 
-**Responsibility:** Accept a base64-encoded transaction, send it to the Surfpool.run simulation API (never to the live network), and run the Security Analysis Engine on the simulated result. Triggered by the `open simulate` command.
+**Responsibility:** Accept a base64-encoded transaction, send it to the Surfpool.run simulation API (never to the live network), and run the Security Analysis Engine on the simulated result. Triggered by the `opendev simulate` command.
 
 **File:** `services/src/solana/simulationService.ts`
 
@@ -767,7 +767,7 @@ interface SecurityFinding {
 }
 ```
 
-**Example terminal output (open simulate):**
+**Example terminal output (opendev simulate):**
 
 ```
 ════════════════════════════════════════════════
@@ -790,7 +790,7 @@ interface SecurityFinding {
 
 ### 2.17 Fee Analyzer  `[NEW]`
 
-**Responsibility:** Fetch recent priority fee data from the Solana RPC, compute statistical percentiles, and map them to four user-friendly speed profiles. Triggered by the `open fees` command.
+**Responsibility:** Fetch recent priority fee data from the Solana RPC, compute statistical percentiles, and map them to four user-friendly speed profiles. Triggered by the `opendev fees` command.
 
 **File:** `services/src/solana/feeService.ts`
 
@@ -827,7 +827,7 @@ interface FeeAnalysis {
 }
 ```
 
-**Example terminal output (open fees):**
+**Example terminal output (opendev fees):**
 
 ```
 ════════════════════════════════════════════════
@@ -986,14 +986,14 @@ interface FeeAnalysis {
 |---|---|---|
 | **Helius** | Primary | Best-in-class parsed transaction APIs, high rate limits, free tier available |
 | **QuickNode** | Fallback | Reliable, broad Solana support |
-| **Surfpool.run** | Simulation only | `open simulate` command — never used for live txs |
+| **Surfpool.run** | Simulation only | `opendev simulate` command — never used for live txs |
 | **Public RPC** | Development only | `api.mainnet-beta.solana.com` — too slow/rate-limited for production |
 
 ---
 
 ## 4. Data Flow
 
-### Full flow for `open tx <signature>`
+### Full flow for `opendev tx <signature>`
 
 ```
 1. CLI Entry Point
@@ -1048,7 +1048,7 @@ interface FeeAnalysis {
           renderTerminalUI(analyzed, cost, framework, insights, suggestions)
 ```
 
-### Flow for `open simulate <base64-tx>`
+### Flow for `opendev simulate <base64-tx>`
 
 ```
 1. CLI Entry Point
@@ -1064,7 +1064,7 @@ interface FeeAnalysis {
    └── renderSimulationUI(result, findings)
 ```
 
-### Flow for `open fees`
+### Flow for `opendev fees`
 
 ```
 1. CLI Entry Point
@@ -1089,9 +1089,9 @@ interface FeeAnalysis {
 ```mermaid
 graph TD
     A[User Terminal] --> B[CLI Entry Point\ncommander]
-    B --> B1[open tx]
-    B --> B2[open simulate NEW]
-    B --> B3[open fees NEW]
+    B --> B1[opendev tx]
+    B --> B2[opendev simulate NEW]
+    B --> B3[opendev fees NEW]
 
     B1 --> C[Config Manager\nloader.ts UPDATED]
     B1 --> D[Data Ingestion Layer]
@@ -1148,7 +1148,7 @@ sequenceDiagram
     participant Selector as Suggestion Selector
     participant Renderer
 
-    User->>CLI: open tx <sig> --network devnet
+    User->>CLI: opendev tx <sig> --network devnet
     CLI->>CLI: Parse args + load config (loader.ts)
     CLI->>RPC: getTransaction(sig, {maxSupportedVersion: 0})
     RPC-->>CLI: TransactionResponse (raw JSON)
@@ -1247,9 +1247,9 @@ open/
 │   ├── src/
 │   │   ├── commands/
 │   │   │   ├── tx.ts
-│   │   │   ├── config.ts              [UPD]  # Adds: open config set ai <provider>
-│   │   │   ├── simulate.ts            [NEW]  # open simulate <base64-tx>
-│   │   │   └── fees.ts                [NEW]  # open fees
+│   │   │   ├── config.ts              [UPD]  # Adds: opendev config set ai <provider>
+│   │   │   ├── simulate.ts            [NEW]  # opendev simulate <base64-tx>
+│   │   │   └── fees.ts                [NEW]  # opendev fees
 │   │   ├── config/
 │   │   │   ├── loader.ts              [UPD]  # Multi-source config + AIProviderConfig
 │   │   │   └── defaults.ts
@@ -1263,8 +1263,8 @@ open/
 │   │   │   │   ├── TransferBreakdown.tsx    # Per-transfer USD panel
 │   │   │   │   ├── FrameworkPanel.tsx       # Framework comparison panel
 │   │   │   │   ├── SuggestionPanel.tsx [NEW]  # Numbered AI suggestion list
-│   │   │   │   ├── SimulationPanel.tsx [NEW]  # open simulate output
-│   │   │   │   ├── FeesPanel.tsx       [NEW]  # open fees output
+│   │   │   │   ├── SimulationPanel.tsx [NEW]  # opendev simulate output
+│   │   │   │   ├── FeesPanel.tsx       [NEW]  # opendev fees output
 │   │   │   │   └── Insights.tsx        [UPD]  # Now renders AISuggestion[] via SuggestionPanel
 │   │   │   └── json.ts                 [UPD]  # Includes aiSuggestions[] in output
 │   │   └── utils/
@@ -1410,41 +1410,41 @@ programs  →  (standalone, deployed on-chain — no JS dependency)
 **Goal:** Get real transaction data out of Solana and into structured TypeScript objects. Establish config loading with AI provider support.
 
 - [ ] **Day 1–2:** Initialize repository. Set up TypeScript, `tsup`, `vitest`, ESLint. Create `bin/open.ts` entry point with `commander`. Register three top-level commands: `tx`, `simulate`, `fees`. Write `solana/connection.ts` and verify RPC connection to Helius devnet.
-- [ ] **Day 3:** Implement `config/loader.ts` **[NEW/UPD]**. Multi-source merge: env → `~/.open-cli/config.json` → `.env` → defaults. Add `AIProviderConfig` schema. Implement `open config set ai <provider> <key>` command.
+- [ ] **Day 3:** Implement `config/loader.ts` **[NEW/UPD]**. Multi-source merge: env → `~/.open-cli/config.json` → `.env` → defaults. Add `AIProviderConfig` schema. Implement `opendev config set ai <provider> <key>` command.
 - [ ] **Day 4:** Implement `solana/rpc.ts`. Call `getTransaction()` and handle edge cases: missing tx, network errors, versioned transactions.
 - [ ] **Day 5–6:** Implement `analysis/logParser.ts`. Write unit tests against 3 real devnet transaction log fixtures.
 - [ ] **Day 7:** Implement `solana/programs.ts` (known programs registry) and `data/framework-benchmarks.json`. Populate known programs and initial CU benchmarks for Anchor, Native, and Steel. Create `scripts/validate-benchmarks.ts`.
 
-**Week 1 exit criteria:** `open tx <sig>` prints raw structured JSON with log messages grouped by program. `open config set ai openai sk-...` persists correctly.
+**Week 1 exit criteria:** `opendev tx <sig>` prints raw structured JSON with log messages grouped by program. `opendev config set ai openai sk-...` persists correctly.
 
 ---
 
 ### Week 2 — Core Analysis + Fee Service (Days 8–14)
 
-**Goal:** Build the three core analysis modules, the Cost Analyzer, and the Fee Analyzer (`open fees`).
+**Goal:** Build the three core analysis modules, the Cost Analyzer, and the Fee Analyzer (`opendev fees`).
 
 - [ ] **Day 8–9:** Implement `analysis/cuProfiler.ts`. Parse CU per instruction, identify bottleneck. Write unit tests.
 - [ ] **Day 10–11:** Implement `analysis/cpiTreeBuilder.ts`. Build full CPINode tree using stack-based algorithm. Test against a Jupiter swap.
 - [ ] **Day 12:** Implement `analysis/accountDiff.ts`. Compute SOL and SPL token deltas. Write unit tests.
 - [ ] **Day 13:** Implement `analysis/costAnalyzer.ts`. Integrate Jupiter Price API for USD values. Implement spam detection heuristic. Write unit tests covering spam flags, zero-value transfers, and multi-token txs.
-- [ ] **Day 14:** Implement `solana/feeService.ts` **[NEW]**. Call `getRecentPrioritizationFees()`. Compute 25th/50th/75th/95th percentiles. Map to Eco/Normal/Fast/Turbo profiles. Fetch SOL/USD price. Wire into `open fees` command and render with `FeesPanel.tsx`. Write unit tests.
+- [ ] **Day 14:** Implement `solana/feeService.ts` **[NEW]**. Call `getRecentPrioritizationFees()`. Compute 25th/50th/75th/95th percentiles. Map to Eco/Normal/Fast/Turbo profiles. Fetch SOL/USD price. Wire into `opendev fees` command and render with `FeesPanel.tsx`. Write unit tests.
 
-**Week 2 exit criteria:** `open fees` renders a four-row fee table with USD estimates. All analysis modules have unit tests with >80% coverage.
+**Week 2 exit criteria:** `opendev fees` renders a four-row fee table with USD estimates. All analysis modules have unit tests with >80% coverage.
 
 ---
 
 ### Week 3 — Integration, Rendering & Simulation (Days 15–21)
 
-**Goal:** Connect the full `open tx` pipeline, build all terminal panels, and ship `open simulate`.
+**Goal:** Connect the full `opendev tx` pipeline, build all terminal panels, and ship `opendev simulate`.
 
 - [ ] **Day 15:** Implement `analysis/txParser.ts`. Decode top-level instructions via the programs registry. Integrate Anchor IDL decoding. Implement `analysis/merger.ts`. Wire all modules into a single pipeline.
 - [ ] **Day 16:** Implement `analysis/frameworkComparator.ts`. Detect framework from IDL discriminator presence. Compare against `framework-benchmarks.json`. Produce `FrameworkComparison` output.
-- [ ] **Day 17:** Implement `solana/simulationService.ts` **[NEW]**. Integrate Surfpool.run API. Deserialize base64 tx with `@solana/web3.js`. Wire into `open simulate` command.
+- [ ] **Day 17:** Implement `solana/simulationService.ts` **[NEW]**. Integrate Surfpool.run API. Deserialize base64 tx with `@solana/web3.js`. Wire into `opendev simulate` command.
 - [ ] **Day 18:** Implement `analysis/securityAnalyzer.ts` **[NEW]**. Code the 6 security rules from `CLAUDE.md`. Create `data/security-rules.json`. Write unit tests against `simulate-vulnerable.json` and `simulate-clean.json` fixtures. Render findings in `SimulationPanel.tsx`.
 - [ ] **Day 19–20:** Implement terminal renderer core. Build `Header.tsx`, `CUBar.tsx`, `CPITree.tsx`, `TransferBreakdown.tsx`, `FrameworkPanel.tsx`. Focus on clarity and correct spacing.
 - [ ] **Day 21:** End-to-end test with 5 real transactions (success, failed, high-CU, deep-CPI, simple transfer) and 2 simulated transactions (vulnerable, clean). Validate correctness across all scenarios.
 
-**Week 3 exit criteria:** `open tx <sig>` produces complete terminal output including transfer breakdown, framework comparison, CPI tree, and account diffs. `open simulate <tx>` outputs security findings. `open fees` works end-to-end.
+**Week 3 exit criteria:** `opendev tx <sig>` produces complete terminal output including transfer breakdown, framework comparison, CPI tree, and account diffs. `opendev simulate <tx>` outputs security findings. `opendev fees` works end-to-end.
 
 ---
 
@@ -1458,9 +1458,9 @@ programs  →  (standalone, deployed on-chain — no JS dependency)
 - [ ] **Day 25:** Stub `cli/suggestionApplier.ts` **[NEW — Phase 2 stub]**. For Phase 1, the applier logs the selected suggestion details to the terminal with a "copy this diff" prompt. Full file patching is deferred. Implement `renderers/json.ts` **[UPD]** to include `aiSuggestions[]` in JSON output.
 - [ ] **Day 26:** Write integration tests. Test the full CLI pipeline against fixture files for all 5 scenario types. Test `suggest-selector` input parsing edge cases.
 - [ ] **Day 27:** Expand `framework-benchmarks.json`. Add Anchor IDL decoding for Orca Whirlpool, Jupiter v6, Raydium. Polish terminal output: colors, spacing, pubkey truncation, suggestion diff coloring.
-- [ ] **Day 28:** Write `README.md` with installation, quickstart, and 3 example outputs. Write `DEMO.md` with 3 pre-selected devnet signatures showcasing: bottlenecked swap (numbered suggestions + selector), `open simulate` with security findings, and `open fees` table.
+- [ ] **Day 28:** Write `README.md` with installation, quickstart, and 3 example outputs. Write `DEMO.md` with 3 pre-selected devnet signatures showcasing: bottlenecked swap (numbered suggestions + selector), `opendev simulate` with security findings, and `opendev fees` table.
 - [ ] **Day 29:** `npm publish @open-dev/open`. Test clean install on a fresh machine. Fix packaging issues.
-- [ ] **Day 30:** Rehearse hackathon demo. Demo flow: `npm i -g @open-dev/open` → `open tx <bottlenecked-swap-sig>` → numbered suggestions → user types `1` → diff shown. Then `open simulate <encoded-tx>` → critical finding. Then `open fees` → fee table. Total: under 3 minutes.
+- [ ] **Day 30:** Rehearse hackathon demo. Demo flow: `npm i -g @open-dev/open` → `opendev tx <bottlenecked-swap-sig>` → numbered suggestions → user types `1` → diff shown. Then `opendev simulate <encoded-tx>` → critical finding. Then `opendev fees` → fee table. Total: under 3 minutes.
 
 **Week 4 exit criteria:** Published npm package. Three polished demo transactions. README with output screenshots. Sub-3-second time-to-insight validated. Numbered suggestion selector fully interactive.
 
