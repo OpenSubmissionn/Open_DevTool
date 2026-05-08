@@ -12,6 +12,16 @@ npm install -g solana-open
 
 This installs the `open` command globally. Requires Node.js 18+.
 
+If installing from the repository source instead of npm registry, run:
+
+```bash
+npm install
+npm run build
+npm link
+```
+
+That ensures `cli/dist/open.js` is generated before the CLI is used.
+
 > **macOS users:** macOS ships its own `open` command (it opens files/URLs). After installing this package, the npm-installed `open` may shadow the system one depending on your `PATH` order. If that bothers you, you can invoke it explicitly via `npx solana-open` instead.
 
 ## Quickstart

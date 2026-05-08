@@ -1,5 +1,13 @@
 #!/usr/bin/env node
 
+// Guard Node.js version before any runtime code loads.
+const minNodeMajor = 18;
+const nodeMajor = Number(process.versions.node.split('.')[0] || 0);
+if (nodeMajor < minNodeMajor) {
+  console.error(`OPEN CLI requires Node.js ${minNodeMajor} or later. Found ${process.version}.`);
+  process.exit(1);
+}
+
 // Detect JSON mode as early as possible (before any imports execute side effects)
 const isJsonMode = process.argv.includes('--json');
 
