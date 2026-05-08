@@ -8,7 +8,8 @@ export {
 
 export * from './analysis/accountDiff.js';
 export * from './analysis/txParser.js';
-export { ParsedLogs as ParsedLogsFromLogParser, parseLogsFromBundle } from './analysis/logParser.js';
+export type { ParsedLogs as ParsedLogsFromLogParser } from './analysis/logParser.js';
+export { parseLogsFromBundle } from './analysis/logParser.js';
 export * from './analysis/cuProfiler.js';
 export * from './analysis/cpiTreeBuilder.js';
 export * from './solana/idlcache.js';

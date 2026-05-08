@@ -6,8 +6,8 @@ getting set up, the conventions we follow, and how to send a useful PR.
 ## Getting started
 
 ```bash
-git clone https://github.com/OpenSubmissionn/Submission_Open.git
-cd Submission_Open
+git clone https://github.com/OpenSubmissionn/Open_DevTool.git
+cd Open_DevTool
 npm install
 npm run build
 npm run test:all

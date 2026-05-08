@@ -95,8 +95,8 @@ opendev tx <SIGNATURE>
 
 ## Links
 
-- [Source code](https://github.com/OpenSubmissionn/Submission_Open)
-- [Issues](https://github.com/OpenSubmissionn/Submission_Open/issues)
+- [Source code](https://github.com/OpenSubmissionn/Open_DevTool)
+- [Issues](https://github.com/OpenSubmissionn/Open_DevTool/issues)
 
 ## License
 

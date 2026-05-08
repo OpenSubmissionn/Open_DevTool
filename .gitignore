@@ -12,7 +12,7 @@ target/
 *.tsbuildinfo
 
 # Exception: ship the compiled CLI bundle so users can install via
-# `npm install -g github:OpenSubmissionn/Submission_Open` without a build step
+# `npm install -g github:OpenSubmissionn/Open_DevTool` without a build step
 !cli/dist/
 !cli/dist/**
 
