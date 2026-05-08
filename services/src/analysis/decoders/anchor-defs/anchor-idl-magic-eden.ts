@@ -1,5 +1,5 @@
 import type { Idl } from '@coral-xyz/anchor';
-import { instructionDiscriminator } from '../orca/anchor-idl-orca';
+import { instructionDiscriminator } from '../orca/anchor-idl-orca.js';
 
 // Magic Eden v2 (MMM) program — NFT marketplace.
 // Reference: https://github.com/metaplex-foundation/mmm

@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "build": "tsup bin/open.ts",
+    "prepare": "npm run build",
     "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:cli": "tsx bin/open.ts"

@@ -1,2 +1,2 @@
-export * from './idl';
-export * from './decoder';
+export * from './idl.js';
+export * from './decoder.js';

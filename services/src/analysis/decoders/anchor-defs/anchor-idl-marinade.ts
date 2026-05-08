@@ -4,12 +4,12 @@ import { instructionDiscriminator } from '../orca/anchor-idl-orca.js';
 export const MARINADE_PROGRAM_ID = 'MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD';
 
 export const MARINADE_IDL: Idl = {
-  address: MARINADE_PROGRAM_ID,
   metadata: {
-    name: 'marinade',
+    name: 'marinade_finance',
     version: '0.1.0',
     spec: '0.1.0',
   },
+  address: MARINADE_PROGRAM_ID,
   instructions: [
     {
       name: 'deposit',
@@ -57,7 +57,6 @@ export const MARINADE_IDL: Idl = {
         { name: 'new_ticket_account' },
         { name: 'clock' },
         { name: 'rent' },
-        { name: 'token_program' },
       ],
       args: [{ name: 'msol_amount', type: 'u64' }],
     },
@@ -95,40 +94,6 @@ export const MARINADE_IDL: Idl = {
         { name: 'stake_program' },
       ],
       args: [{ name: 'validator_index', type: 'u32' }],
-    },
-    {
-      name: 'add_liquidity',
-      discriminator: instructionDiscriminator('add_liquidity'),
-      accounts: [
-        { name: 'state' },
-        { name: 'lp_mint' },
-        { name: 'lp_mint_authority' },
-        { name: 'liq_pool_msol_leg' },
-        { name: 'liq_pool_sol_leg_pda' },
-        { name: 'transfer_from' },
-        { name: 'mint_to' },
-        { name: 'system_program' },
-        { name: 'token_program' },
-      ],
-      args: [{ name: 'lamports', type: 'u64' }],
-    },
-    {
-      name: 'remove_liquidity',
-      discriminator: instructionDiscriminator('remove_liquidity'),
-      accounts: [
-        { name: 'state' },
-        { name: 'lp_mint' },
-        { name: 'burn_from' },
-        { name: 'burn_from_authority' },
-        { name: 'transfer_sol_to' },
-        { name: 'transfer_msol_to' },
-        { name: 'liq_pool_sol_leg_pda' },
-        { name: 'liq_pool_msol_leg' },
-        { name: 'liq_pool_msol_leg_authority' },
-        { name: 'system_program' },
-        { name: 'token_program' },
-      ],
-      args: [{ name: 'tokens', type: 'u64' }],
     },
   ],
   accounts: [],

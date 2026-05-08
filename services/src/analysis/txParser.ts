@@ -13,10 +13,10 @@
  * Returns a ParsedTransaction with execution status and parsed instruction tree.
  */
 
-import { getProgramNameSync } from '../solana/programs';
-import { buildCPITree, type ExecutionSnapshot } from './cpiTreeBuilder';
-import { fetchIdlWithCache, IdlCache } from '../solana/idlcache';
-import type { ParsedInstruction, ParsedTransaction, RawTransactionBundle } from './types';
+import { getProgramNameSync } from '../solana/programs.js';
+import { buildCPITree, type ExecutionSnapshot } from './cpiTreeBuilder.js';
+import { fetchIdlWithCache, IdlCache } from '../solana/idlcache.js';
+import type { ParsedInstruction, ParsedTransaction, RawTransactionBundle } from './types.js';
 
 // [NEW] AnchorProvider is only needed when IDL decoding is active.
 // Import lazily to avoid hard-wiring the dep for callers that don't use it.

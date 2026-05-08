@@ -1,4 +1,4 @@
-import type { SolanaFramework } from '../analysis/frameworkComparator';
+import type { SolanaFramework } from '../analysis/frameworkComparator.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types

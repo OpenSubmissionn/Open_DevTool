@@ -1,5 +1,5 @@
 import type { Idl } from '@coral-xyz/anchor';
-import { instructionDiscriminator } from '../orca/anchor-idl-orca';
+import { instructionDiscriminator } from '../orca/anchor-idl-orca.js';
 
 export const JUPITER_V6_PROGRAM_ID = 'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4';
 

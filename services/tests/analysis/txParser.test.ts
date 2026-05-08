@@ -73,7 +73,7 @@ describe('parseTransaction', () => {
 
     expect(parsed.instructions[0].innerInstructions).toHaveLength(1);
     expect(parsed.instructions[0].innerInstructions[0]).toMatchObject({
-      programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+      programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
       programName: 'Token Program',
       accounts: [
         'SourceToken11111111111111111111111111111111',
@@ -84,7 +84,7 @@ describe('parseTransaction', () => {
     });
 
     expect(parsed.instructions[1]).toMatchObject({
-      programId: 'TokenkegQfeZyiNwAJsyFbPVwwQQfubRS6R8wDkxjn4',
+      programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
       programName: 'Token Program',
       accounts: [
         'SourceToken11111111111111111111111111111111',

@@ -403,7 +403,7 @@ export interface AnalyzedTransaction {
   /** Transfers detected in the transaction. */
   transfers?: TransferInfo[];
   /** Anomalies detected (spam, MEV, nondeterministic). Set by merger. */
-  anomalies?: import('./anomalyDetector').AnomalyReport;
+  anomalies?: import('./anomalyDetector.js').AnomalyReport;
   /** Detected transaction type, when available. */
   txType?: string;
   /** Optional metadata for CLI output (timings, etc). */

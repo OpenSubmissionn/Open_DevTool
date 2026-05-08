@@ -12,6 +12,7 @@
     "link": "npm run build && npm link",
     "dev": "npm run dev -w cli",
     "build": "npm run build --workspaces",
+    "prepare": "npm run build",
     "test": "vitest",
     "test:unit": "npm run test:unit --workspace @open/services",
     "test:integration": "npm run test:integration --workspace @open/services",
@@ -22,6 +23,9 @@
     "validate:benchmarks": "tsx scripts/validate-benchmarks.ts",
     "validate:decoders": "tsx scripts/validate-decoders.ts",
     "bench:latency": "tsx scripts/latency-benchmark.ts"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "keywords": [],
   "author": "Nicole",

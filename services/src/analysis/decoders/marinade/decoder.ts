@@ -1,7 +1,7 @@
-import type { DecodedAnchorInstruction } from '../anchor-idl';
-import { decodeAnchorInstruction } from '../anchor-idl';
-import type { ParsedInstruction } from '../../types';
-import { MARINADE_IDL, MARINADE_PROGRAM_ID } from './idl';
+import type { DecodedAnchorInstruction } from '../anchor-idl.js';
+import { decodeAnchorInstruction } from '../anchor-idl.js';
+import type { ParsedInstruction } from '../../types.js';
+import { MARINADE_IDL, MARINADE_PROGRAM_ID } from './idl.js';
 
 export interface MarinadeDecodedInstruction extends DecodedAnchorInstruction {
   lamports?: bigint;

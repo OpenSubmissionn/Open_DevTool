@@ -1,5 +1,5 @@
 import type { Idl } from '@coral-xyz/anchor';
-import { instructionDiscriminator } from '../orca/anchor-idl-orca';
+import { instructionDiscriminator } from '../orca/anchor-idl-orca.js';
 
 // Squads Protocol V4 — on-chain multisig "smart wallet" program.
 // Reference: https://github.com/Squads-Protocol/v4

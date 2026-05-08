@@ -1,6 +1,7 @@
 {
   "name": "@open/services",
   "version": "0.2.0",
+  "type": "module",
   "main": "src/index.ts",
   "types": "dist/index.d.ts",
   "scripts": {
