@@ -123,7 +123,6 @@ open/
 ├── cli/        # CLI entry point and terminal renderer
 ├── services/   # Analysis engine, RPC layer, decoders
 ├── docs/       # Architecture and program registry docs
-├── programs/   # On-chain program code
 └── web/        # Web frontend
 
 ## Development
