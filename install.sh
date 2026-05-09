@@ -158,12 +158,44 @@ fi
 # Clean up tmp dir now that everything succeeded.
 trap cleanup_on_success EXIT
 
-if command -v opendev >/dev/null 2>&1; then
-  ok "Installed: opendev $(opendev --version 2>/dev/null || echo unknown)"
-  printf "\n%sopendev is ready.%s Try:\n\n  %sopendev tx <signature> --network mainnet%s\n\n" \
-    "$BOLD" "$RESET" "$DIM" "$RESET"
-else
-  warn "opendev binary not on PATH yet."
-  warn "Add this to your shell rc:  export PATH=\"\$(npm config get prefix)/bin:\$PATH\""
-  warn "Then reload:                 source ~/.bashrc"
+# Find where npm actually put the bin (its prefix may differ from the user's
+# expectation — nvm, custom NPM_CONFIG_PREFIX, system vs user install, etc.).
+NPM_BIN_DIR="$(npm config get prefix 2>/dev/null)/bin"
+INSTALLED_BIN="$NPM_BIN_DIR/opendev"
+
+if [ ! -x "$INSTALLED_BIN" ]; then
+  err "opendev binary not found at $INSTALLED_BIN after install."
+  err "Inspect: ls -la $NPM_BIN_DIR/ | grep opendev"
+  exit 1
 fi
+
+ok "Installed: $INSTALLED_BIN ($("$INSTALLED_BIN" --version 2>/dev/null | tail -1 || echo unknown))"
+
+# Detect whether $NPM_BIN_DIR is on the user's interactive PATH. We can't
+# read the parent shell's PATH directly, but we inherited it — so we use
+# our own as a proxy.
+case ":$PATH:" in
+  *":$NPM_BIN_DIR:"*)
+    # Path is present in our (subshell) PATH. The parent shell that piped
+    # `| sh` has the same PATH, so it should work after `hash -r` (bash
+    # caches "command not found" lookups in some setups).
+    printf "\n%sopendev is ready.%s\n\n" "$BOLD" "$RESET"
+    printf "If your shell still says ${BOLD}opendev: command not found${RESET}, run:\n\n"
+    printf "  %shash -r${RESET}                 # clear bash command cache\n" "$DIM"
+    printf "  %sopendev --version${RESET}\n\n" "$DIM"
+    printf "Or open a new terminal. Then try:\n\n"
+    printf "  %sopendev tx <signature> --network mainnet${RESET}\n\n" "$DIM"
+    ;;
+  *)
+    # The npm prefix bin is NOT on PATH. Tell the user what to add.
+    warn "opendev was installed at: $INSTALLED_BIN"
+    warn "But that directory is not on your PATH."
+    printf "\nAdd this to %s~/.bashrc%s (or %s~/.zshrc%s if you use zsh):\n\n" \
+      "$BOLD" "$RESET" "$BOLD" "$RESET"
+    printf "  %sexport PATH=\"%s:\$PATH\"%s\n\n" "$DIM" "$NPM_BIN_DIR" "$RESET"
+    printf "Then reload:\n\n"
+    printf "  %ssource ~/.bashrc${RESET}\n\n" "$DIM"
+    printf "Or run opendev directly:\n\n"
+    printf "  %s%s --version${RESET}\n\n" "$DIM" "$INSTALLED_BIN"
+    ;;
+esac
