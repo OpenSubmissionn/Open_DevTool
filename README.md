@@ -16,6 +16,15 @@ suggestions on top of deterministic rule-based insights.
 
 ---
 
+## Two ways to use opendev
+
+- **Web** — [opendev-tx.vercel.app](https://opendev-tx.vercel.app/landing.html). No install, paste a signature and go.
+- **CLI** — `opendev tx <sig>` for daily debugging, scripting, JSON/CSV output. [Install ↓](#quick-install-recommended)
+
+Same analysis engine under the hood.
+
+---
+
 ## Quick install (recommended)
 
 One-liner that detects your OS, ensures Node.js 20+ is installed, and installs `opendev` globally:
