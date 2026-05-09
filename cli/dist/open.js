@@ -918,15 +918,15 @@ var require_route = __commonJS({
       };
     }
     function wrapConversion(toModel, graph) {
-      const path6 = [graph[toModel].parent, toModel];
+      const path7 = [graph[toModel].parent, toModel];
       let fn = conversions[graph[toModel].parent][toModel];
       let cur = graph[toModel].parent;
       while (graph[cur].parent) {
-        path6.unshift(graph[cur].parent);
+        path7.unshift(graph[cur].parent);
         fn = link(conversions[graph[cur].parent][cur], fn);
         cur = graph[cur].parent;
       }
-      fn.conversion = path6;
+      fn.conversion = path7;
       return fn;
     }
     module2.exports = function (fromModel) {
@@ -1188,7 +1188,7 @@ var require_has_flag = __commonJS({
 var require_supports_color = __commonJS({
   '../node_modules/supports-color/index.js'(exports2, module2) {
     'use strict';
-    var os2 = require('os');
+    var os3 = require('os');
     var tty = require('tty');
     var hasFlag = require_has_flag();
     var { env } = process;
@@ -1246,7 +1246,7 @@ var require_supports_color = __commonJS({
         return min;
       }
       if (process.platform === 'win32') {
-        const osRelease = os2.release().split('.');
+        const osRelease = os3.release().split('.');
         if (Number(osRelease[0]) >= 10 && Number(osRelease[2]) >= 10586) {
           return Number(osRelease[2]) >= 14931 ? 3 : 2;
         }
@@ -1411,14 +1411,14 @@ var require_templates = __commonJS({
       }
       return results;
     }
-    function buildStyle(chalk6, styles) {
+    function buildStyle(chalk7, styles) {
       const enabled = {};
       for (const layer of styles) {
         for (const style of layer.styles) {
           enabled[style[0]] = layer.inverse ? null : style.slice(1);
         }
       }
-      let current = chalk6;
+      let current = chalk7;
       for (const [styleName, styles2] of Object.entries(enabled)) {
         if (!Array.isArray(styles2)) {
           continue;
@@ -1430,7 +1430,7 @@ var require_templates = __commonJS({
       }
       return current;
     }
-    module2.exports = (chalk6, temporary) => {
+    module2.exports = (chalk7, temporary) => {
       const styles = [];
       const chunks2 = [];
       let chunk = [];
@@ -1440,13 +1440,13 @@ var require_templates = __commonJS({
         } else if (style) {
           const string2 = chunk.join('');
           chunk = [];
-          chunks2.push(styles.length === 0 ? string2 : buildStyle(chalk6, styles)(string2));
+          chunks2.push(styles.length === 0 ? string2 : buildStyle(chalk7, styles)(string2));
           styles.push({ inverse, styles: parseStyle(style) });
         } else if (close) {
           if (styles.length === 0) {
             throw new Error('Found extraneous } in Chalk template literal');
           }
-          chunks2.push(buildStyle(chalk6, styles)(chunk.join('')));
+          chunks2.push(buildStyle(chalk7, styles)(chunk.join('')));
           chunk = [];
           styles.pop();
         } else {
@@ -1489,16 +1489,16 @@ var require_source = __commonJS({
       }
     };
     var chalkFactory = (options) => {
-      const chalk7 = {};
-      applyOptions(chalk7, options);
-      chalk7.template = (...arguments_) => chalkTag(chalk7.template, ...arguments_);
-      Object.setPrototypeOf(chalk7, Chalk.prototype);
-      Object.setPrototypeOf(chalk7.template, chalk7);
-      chalk7.template.constructor = () => {
+      const chalk8 = {};
+      applyOptions(chalk8, options);
+      chalk8.template = (...arguments_) => chalkTag(chalk8.template, ...arguments_);
+      Object.setPrototypeOf(chalk8, Chalk.prototype);
+      Object.setPrototypeOf(chalk8.template, chalk8);
+      chalk8.template.constructor = () => {
         throw new Error('`chalk.constructor()` is deprecated. Use `new chalk.Instance()` instead.');
       };
-      chalk7.template.Instance = ChalkClass;
-      return chalk7.template;
+      chalk8.template.Instance = ChalkClass;
+      return chalk8.template;
     };
     function Chalk(options) {
       return chalkFactory(options);
@@ -1623,7 +1623,7 @@ var require_source = __commonJS({
       return openAll + string2 + closeAll;
     };
     var template;
-    var chalkTag = (chalk7, ...strings2) => {
+    var chalkTag = (chalk8, ...strings2) => {
       const [firstString] = strings2;
       if (!isArray(firstString) || !isArray(firstString.raw)) {
         return strings2.join(' ');
@@ -1639,14 +1639,14 @@ var require_source = __commonJS({
       if (template === void 0) {
         template = require_templates();
       }
-      return template(chalk7, parts.join(''));
+      return template(chalk8, parts.join(''));
     };
     Object.defineProperties(Chalk.prototype, styles);
-    var chalk6 = Chalk();
-    chalk6.supportsColor = stdoutColor;
-    chalk6.stderr = Chalk({ level: stderrColor ? stderrColor.level : 0 });
-    chalk6.stderr.supportsColor = stderrColor;
-    module2.exports = chalk6;
+    var chalk7 = Chalk();
+    chalk7.supportsColor = stdoutColor;
+    chalk7.stderr = Chalk({ level: stderrColor ? stderrColor.level : 0 });
+    chalk7.stderr.supportsColor = stderrColor;
+    module2.exports = chalk7;
   },
 });
 
@@ -6937,7 +6937,7 @@ function toFailure(result, context, struct8, value) {
       message: result,
     };
   }
-  const { path: path6, branch } = context;
+  const { path: path7, branch } = context;
   const { type: type2 } = struct8;
   const {
     refinement,
@@ -6953,8 +6953,8 @@ function toFailure(result, context, struct8, value) {
     value,
     type: type2,
     refinement,
-    key: path6[path6.length - 1],
-    path: path6,
+    key: path7[path7.length - 1],
+    path: path7,
     branch,
     ...result,
     message,
@@ -6976,13 +6976,13 @@ function* run(value, struct8, options) {
     options = {};
   }
   const {
-    path: path6 = [],
+    path: path7 = [],
     branch = [value],
     coerce: coerce2 = false,
     mask: mask2 = false,
   } = options;
   const ctx = {
-    path: path6,
+    path: path7,
     branch,
   };
   if (coerce2) {
@@ -7008,7 +7008,7 @@ function* run(value, struct8, options) {
   }
   for (let [k, v, s] of struct8.entries(value, ctx)) {
     const ts = run(v, s, {
-      path: k === void 0 ? path6 : [...path6, k],
+      path: k === void 0 ? path7 : [...path7, k],
       branch: k === void 0 ? branch : [...branch, v],
       coerce: coerce2,
       mask: mask2,
@@ -7244,8 +7244,8 @@ var init_index_es = __esm({
       constructor(failure, failures) {
         let cached;
         const { message, ...rest } = failure;
-        const { path: path6 } = failure;
-        const msg = path6.length === 0 ? message : 'At path: ' + path6.join('.') + ' -- ' + message;
+        const { path: path7 } = failure;
+        const msg = path7.length === 0 ? message : 'At path: ' + path7.join('.') + ' -- ' + message;
         super(msg);
         this.value = void 0;
         this.key = void 0;
@@ -19131,14 +19131,14 @@ var require_url_state_machine = __commonJS({
       return url.replace(/\u0009|\u000A|\u000D/g, '');
     }
     function shortenPath(url) {
-      const path6 = url.path;
-      if (path6.length === 0) {
+      const path7 = url.path;
+      if (path7.length === 0) {
         return;
       }
-      if (url.scheme === 'file' && path6.length === 1 && isNormalizedWindowsDriveLetter(path6[0])) {
+      if (url.scheme === 'file' && path7.length === 1 && isNormalizedWindowsDriveLetter(path7[0])) {
         return;
       }
-      path6.pop();
+      path7.pop();
     }
     function includesCredentials(url) {
       return url.username !== '' || url.password !== '';
@@ -27292,17 +27292,17 @@ var init_accounts_resolver = __esm({
       resolveOptionals(accounts) {
         Object.assign(this._accounts, this.resolveOptionalsHelper(accounts, this._idlIx.accounts));
       }
-      get(path6) {
-        const ret = path6.reduce((acc, subPath) => acc && acc[subPath], this._accounts);
+      get(path7) {
+        const ret = path7.reduce((acc, subPath) => acc && acc[subPath], this._accounts);
         if (ret && ret.toBase58) {
           return ret;
         }
       }
-      set(path6, value) {
+      set(path7, value) {
         let cur = this._accounts;
-        path6.forEach((p, i) => {
+        path7.forEach((p, i) => {
           var _a2;
-          const isLast = i === path6.length - 1;
+          const isLast = i === path7.length - 1;
           if (isLast) {
             cur[p] = value;
           }
@@ -27355,19 +27355,19 @@ var init_accounts_resolver = __esm({
        * Accounts will only be resolved if they are declared next to each other to
        * reduce the chance of name collision.
        */
-      resolveEventCpi(accounts, path6 = []) {
+      resolveEventCpi(accounts, path7 = []) {
         for (const i in accounts) {
           const accountOrAccounts = accounts[i];
           if (isCompositeAccounts(accountOrAccounts)) {
-            this.resolveEventCpi(accountOrAccounts.accounts, [...path6, accountOrAccounts.name]);
+            this.resolveEventCpi(accountOrAccounts.accounts, [...path7, accountOrAccounts.name]);
           }
           const nextIndex = +i + 1;
           if (nextIndex === accounts.length) return;
           const currentName = accounts[i].name;
           const nextName = accounts[nextIndex].name;
           if (currentName === 'eventAuthority' && nextName === 'program') {
-            const currentPath = [...path6, currentName];
-            const nextPath = [...path6, nextName];
+            const currentPath = [...path7, currentName];
+            const nextPath = [...path7, nextName];
             if (!this.get(currentPath)) {
               this.set(
                 currentPath,
@@ -27384,63 +27384,63 @@ var init_accounts_resolver = __esm({
           }
         }
       }
-      resolveConst(accounts, path6 = []) {
+      resolveConst(accounts, path7 = []) {
         for (const accountOrAccounts of accounts) {
           const name = accountOrAccounts.name;
           if (isCompositeAccounts(accountOrAccounts)) {
-            this.resolveConst(accountOrAccounts.accounts, [...path6, name]);
+            this.resolveConst(accountOrAccounts.accounts, [...path7, name]);
           } else {
             const account = accountOrAccounts;
-            if ((account.signer || account.address) && !this.get([...path6, name])) {
+            if ((account.signer || account.address) && !this.get([...path7, name])) {
               if (account.signer) {
                 if (!this._provider.wallet) {
                   throw new Error(
                     'This function requires the `Provider` interface implementor to have a `wallet` field.'
                   );
                 }
-                this.set([...path6, name], this._provider.wallet.publicKey);
+                this.set([...path7, name], this._provider.wallet.publicKey);
               }
               if (account.address) {
-                this.set([...path6, name], translateAddress(account.address));
+                this.set([...path7, name], translateAddress(account.address));
               }
             }
           }
         }
       }
-      async resolvePdasAndRelations(accounts, path6 = []) {
+      async resolvePdasAndRelations(accounts, path7 = []) {
         let found = 0;
         for (const accountOrAccounts of accounts) {
           const name = accountOrAccounts.name;
           if (isCompositeAccounts(accountOrAccounts)) {
             found += await this.resolvePdasAndRelations(accountOrAccounts.accounts, [
-              ...path6,
+              ...path7,
               name,
             ]);
           } else {
             const account = accountOrAccounts;
-            if ((account.pda || account.relations) && !this.get([...path6, name])) {
+            if ((account.pda || account.relations) && !this.get([...path7, name])) {
               found++;
               try {
                 if (account.pda) {
                   const seeds = await Promise.all(
-                    account.pda.seeds.map((seed2) => this.toBuffer(seed2, path6))
+                    account.pda.seeds.map((seed2) => this.toBuffer(seed2, path7))
                   );
                   if (seeds.some((seed2) => !seed2)) {
                     continue;
                   }
-                  const programId = await this.parseProgramId(account, path6);
+                  const programId = await this.parseProgramId(account, path7);
                   const [pubkey] = import_web314.PublicKey.findProgramAddressSync(seeds, programId);
-                  this.set([...path6, name], pubkey);
+                  this.set([...path7, name], pubkey);
                 }
               } catch {}
               try {
                 if (account.relations) {
-                  const accountKey = this.get([...path6, account.relations[0]]);
+                  const accountKey = this.get([...path7, account.relations[0]]);
                   if (accountKey) {
                     const account2 = await this._accountStore.fetchAccount({
                       publicKey: accountKey,
                     });
-                    this.set([...path6, name], account2[name]);
+                    this.set([...path7, name], account2[name]);
                   }
                 }
               } catch {}
@@ -27449,25 +27449,25 @@ var init_accounts_resolver = __esm({
         }
         return found;
       }
-      async parseProgramId(account, path6 = []) {
+      async parseProgramId(account, path7 = []) {
         var _a2;
         if (!((_a2 = account.pda) === null || _a2 === void 0 ? void 0 : _a2.program)) {
           return this._programId;
         }
-        const buf = await this.toBuffer(account.pda.program, path6);
+        const buf = await this.toBuffer(account.pda.program, path7);
         if (!buf) {
           throw new Error(`Program seed not resolved: ${account.name}`);
         }
         return new import_web314.PublicKey(buf);
       }
-      async toBuffer(seed2, path6 = []) {
+      async toBuffer(seed2, path7 = []) {
         switch (seed2.kind) {
           case 'const':
             return this.toBufferConst(seed2);
           case 'arg':
             return await this.toBufferArg(seed2);
           case 'account':
-            return await this.toBufferAccount(seed2, path6);
+            return await this.toBufferAccount(seed2, path7);
           default:
             throw new Error(`Unexpected seed: ${seed2}`);
         }
@@ -27476,24 +27476,24 @@ var init_accounts_resolver = __esm({
         return this.toBufferValue('bytes', seed2.value);
       }
       async toBufferArg(seed2) {
-        const [name, ...path6] = seed2.path.split('.');
+        const [name, ...path7] = seed2.path.split('.');
         const index = this._idlIx.args.findIndex((arg) => arg.name === name);
         if (index === -1) {
           throw new Error(`Unable to find argument for seed: ${name}`);
         }
-        const value = path6.reduce(
-          (acc, path7) => (acc !== null && acc !== void 0 ? acc : {})[path7],
+        const value = path7.reduce(
+          (acc, path8) => (acc !== null && acc !== void 0 ? acc : {})[path8],
           this._args[index]
         );
         if (value === void 0) {
           return;
         }
-        const type2 = this.getType(this._idlIx.args[index].type, path6);
+        const type2 = this.getType(this._idlIx.args[index].type, path7);
         return this.toBufferValue(type2, value);
       }
-      async toBufferAccount(seed2, path6 = []) {
+      async toBufferAccount(seed2, path7 = []) {
         const [name, ...paths] = seed2.path.split('.');
-        const fieldPubkey = this.get([...path6, name]);
+        const fieldPubkey = this.get([...path7, name]);
         if (!fieldPubkey) return;
         if (!paths.length) {
           return this.toBufferValue('pubkey', fieldPubkey);
@@ -27556,7 +27556,7 @@ var init_accounts_resolver = __esm({
        * Recursively get the type at some path of either a primitive or a user
        * defined struct.
        */
-      getType(type2, path6 = []) {
+      getType(type2, path7 = []) {
         var _a2;
         const typeName =
           (_a2 = type2 === null || type2 === void 0 ? void 0 : type2.defined) === null ||
@@ -27565,7 +27565,7 @@ var init_accounts_resolver = __esm({
             : _a2.name;
         if (typeName) {
           if (typeName === 'tokenAccount') {
-            switch (path6.at(0)) {
+            switch (path7.at(0)) {
               case 'mint':
               case 'owner':
                 return 'pubkey';
@@ -27573,14 +27573,14 @@ var init_accounts_resolver = __esm({
               case 'delagatedAmount':
                 return 'u64';
               default:
-                throw new Error(`Unknown token account path: ${path6}`);
+                throw new Error(`Unknown token account path: ${path7}`);
             }
           }
           const definedType = this._idlTypes.find((t) => t.name === typeName);
           if (!definedType) {
             throw new Error(`Type not found: ${typeName}`);
           }
-          const [fieldName, ...subPath] = path6;
+          const [fieldName, ...subPath] = path7;
           const fields = definedType.type.fields;
           const field = fields.find((field2) => field2.name === fieldName);
           if (!field) {
@@ -32398,8 +32398,8 @@ var require_compiler = __commonJS({
           valueAssignments.push(fullPath);
         }
       }
-      function pathAssigned(path6) {
-        return assignedPaths.indexOf(path6) !== -1;
+      function pathAssigned(path7) {
+        return assignedPaths.indexOf(path7) !== -1;
       }
       function reduceValueNode(node) {
         if (node.type === 'Array') {
@@ -32423,20 +32423,20 @@ var require_compiler = __commonJS({
         return obj;
       }
       function setPath(node) {
-        var path6 = node.value;
-        var quotedPath = path6.map(quoteDottedString).join('.');
+        var path7 = node.value;
+        var quotedPath = path7.map(quoteDottedString).join('.');
         var line2 = node.line;
         var column = node.column;
         if (pathAssigned(quotedPath)) {
-          genError("Cannot redefine existing key '" + path6 + "'.", line2, column);
+          genError("Cannot redefine existing key '" + path7 + "'.", line2, column);
         }
         assignedPaths.push(quotedPath);
-        context = deepRef(data, path6, /* @__PURE__ */ Object.create(null), line2, column);
-        currentPath = path6;
+        context = deepRef(data, path7, /* @__PURE__ */ Object.create(null), line2, column);
+        currentPath = path7;
       }
       function addTableArray(node) {
-        var path6 = node.value;
-        var quotedPath = path6.map(quoteDottedString).join('.');
+        var path7 = node.value;
+        var quotedPath = path7.map(quoteDottedString).join('.');
         var line2 = node.line;
         var column = node.column;
         if (!pathAssigned(quotedPath)) {
@@ -32446,20 +32446,20 @@ var require_compiler = __commonJS({
           return p.indexOf(quotedPath) !== 0;
         });
         assignedPaths.push(quotedPath);
-        context = deepRef(data, path6, [], line2, column);
+        context = deepRef(data, path7, [], line2, column);
         currentPath = quotedPath;
         if (context instanceof Array) {
           var newObj = /* @__PURE__ */ Object.create(null);
           context.push(newObj);
           context = newObj;
         } else {
-          genError("Cannot redefine existing key '" + path6 + "'.", line2, column);
+          genError("Cannot redefine existing key '" + path7 + "'.", line2, column);
         }
       }
       function deepRef(start, keys, value, line2, column) {
         var traversed = [];
         var traversedPath = '';
-        var path6 = keys.join('.');
+        var path7 = keys.join('.');
         var ctx = start;
         for (var i = 0; i < keys.length; i++) {
           var key = keys[i];
@@ -32642,9 +32642,9 @@ var init_workspace = __esm({
             programName = programName.replace(/\d+/g, (match) => '_' + match).replace('__', '_');
           }
           if (workspaceCache[programName]) return workspaceCache[programName];
-          const fs6 = require('fs');
-          const path6 = require('path');
-          const anchorToml = toml.parse(fs6.readFileSync('Anchor.toml'));
+          const fs7 = require('fs');
+          const path7 = require('path');
+          const anchorToml = toml.parse(fs7.readFileSync('Anchor.toml'));
           const clusterId = anchorToml.provider.cluster;
           const programEntry =
             (_b =
@@ -32658,12 +32658,12 @@ var init_workspace = __esm({
             idlPath = programEntry.idl;
             programId = programEntry.address;
           } else {
-            idlPath = path6.join('target', 'idl', `${programName}.json`);
+            idlPath = path7.join('target', 'idl', `${programName}.json`);
           }
-          if (!fs6.existsSync(idlPath)) {
+          if (!fs7.existsSync(idlPath)) {
             throw new Error(`${idlPath} doesn't exist. Did you run \`anchor build\`?`);
           }
-          const idl = JSON.parse(fs6.readFileSync(idlPath));
+          const idl = JSON.parse(fs7.readFileSync(idlPath));
           if (programId) {
             idl.address = programId;
           }
@@ -33144,7 +33144,7 @@ var require_has_flag2 = __commonJS({
 var require_supports_colors = __commonJS({
   '../node_modules/@colors/colors/lib/system/supports-colors.js'(exports2, module2) {
     'use strict';
-    var os2 = require('os');
+    var os3 = require('os');
     var hasFlag = require_has_flag2();
     var env = process.env;
     var forceColor = void 0;
@@ -33187,7 +33187,7 @@ var require_supports_colors = __commonJS({
       }
       var min = forceColor ? 1 : 0;
       if (process.platform === 'win32') {
-        var osRelease = os2.release().split('.');
+        var osRelease = os3.release().split('.');
         if (
           Number(process.versions.node.split('.')[0]) >= 8 &&
           Number(osRelease[0]) >= 10 &&
@@ -34436,24 +34436,97 @@ var import_commander = require('commander');
 // src/config/loader.ts
 var import_dotenv = __toESM(require('dotenv'));
 var import_path = __toESM(require('path'));
+
+// src/config/credentials.ts
+var import_node_fs = __toESM(require('fs'));
+var import_node_os = __toESM(require('os'));
+var import_node_path = __toESM(require('path'));
+var ENV_VAR_BY_PROVIDER = {
+  groq: 'GROQ_API_KEY',
+  anthropic: 'ANTHROPIC_API_KEY',
+};
+var SUPPORTED_PROVIDERS = ['groq', 'anthropic'];
+var DEFAULT_DIR = import_node_path.default.join(import_node_os.default.homedir(), '.opendev');
+var DEFAULT_FILE = import_node_path.default.join(DEFAULT_DIR, 'credentials.json');
+function credentialsPath() {
+  return process.env.OPENDEV_CREDS_PATH || DEFAULT_FILE;
+}
+function isProvider(value) {
+  return SUPPORTED_PROVIDERS.includes(value);
+}
+function envVarFor(provider) {
+  return ENV_VAR_BY_PROVIDER[provider];
+}
+function readStore() {
+  const file = credentialsPath();
+  try {
+    const raw = import_node_fs.default.readFileSync(file, 'utf8');
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') return parsed;
+    return {};
+  } catch {
+    return {};
+  }
+}
+function writeStore(store) {
+  const file = credentialsPath();
+  const dir = import_node_path.default.dirname(file);
+  if (!import_node_fs.default.existsSync(dir)) {
+    import_node_fs.default.mkdirSync(dir, { recursive: true, mode: 448 });
+  }
+  const tmp = `${file}.${process.pid}.tmp`;
+  import_node_fs.default.writeFileSync(tmp, JSON.stringify(store, null, 2), { mode: 384 });
+  import_node_fs.default.renameSync(tmp, file);
+  try {
+    import_node_fs.default.chmodSync(file, 384);
+  } catch {}
+}
+function getCredential(provider) {
+  const store = readStore();
+  return store[provider];
+}
+function setCredential(provider, key) {
+  const store = readStore();
+  store[provider] = key;
+  writeStore(store);
+}
+function removeCredential(provider) {
+  const store = readStore();
+  if (!(provider in store)) return false;
+  delete store[provider];
+  writeStore(store);
+  return true;
+}
+function applyCredentialsToEnv() {
+  const store = readStore();
+  for (const provider of SUPPORTED_PROVIDERS) {
+    const envName = envVarFor(provider);
+    if (process.env[envName]) continue;
+    const fromStore = store[provider];
+    if (fromStore) process.env[envName] = fromStore;
+  }
+}
+function maskKey(key) {
+  if (!key) return '';
+  if (key.length <= 12) return '*'.repeat(key.length);
+  return `${key.slice(0, 8)}\u2026${key.slice(-4)}`;
+}
+
+// src/config/loader.ts
 var envPath = import_path.default.resolve(__dirname, '../../.env');
 var config = {};
 var loadConfig = () => {
-  const result = import_dotenv.default.config({ path: envPath });
-  if (result.error) {
-  }
+  import_dotenv.default.config({ path: envPath });
+  applyCredentialsToEnv();
   config = {
     rpcUrl: process.env.OPEN_RPC_URL,
-    // Future expansion:
-    // configPath: process.env.OPEN_CONFIG_PATH || path.join(os.homedir(), '.open', 'config.json')
   };
-  console.log('[config] Scaffolding: Loaded configuration from .env stub.');
   return config;
 };
 
 // src/commands/tx.ts
-var fs3 = __toESM(require('fs'));
-var path3 = __toESM(require('path'));
+var fs4 = __toESM(require('fs'));
+var path4 = __toESM(require('path'));
 var import_ora = __toESM(require('ora'));
 var import_chalk2 = __toESM(require_source());
 
@@ -38794,7 +38867,7 @@ var fetchTransaction = async (signature, network = 'devnet') => {
 };
 
 // ../services/src/solana/simulationService.ts
-var fs2 = __toESM(require('fs'), 1);
+var fs3 = __toESM(require('fs'), 1);
 var crypto3 = __toESM(require('crypto'), 1);
 var import_web318 = require('@solana/web3.js');
 var BASE58_REGEX = /^[1-9A-HJ-NP-Za-km-z]+$/;
@@ -38803,7 +38876,7 @@ function truncate(s, max) {
   return s.length > max ? s.slice(0, max - 1) + '\u2026' : s;
 }
 function detectInputKind(input) {
-  if (fs2.existsSync(input) && fs2.statSync(input).isFile()) {
+  if (fs3.existsSync(input) && fs3.statSync(input).isFile()) {
     return 'path';
   }
   const trimmed = input.trim();
@@ -38820,7 +38893,7 @@ function detectInputKind(input) {
   );
 }
 function readBase64FromPath(filePath) {
-  const content = fs2.readFileSync(filePath, 'utf-8').trim();
+  const content = fs3.readFileSync(filePath, 'utf-8').trim();
   if (BASE64_REGEX.test(content)) {
     return content;
   }
@@ -39472,7 +39545,7 @@ async function callMcpEndpoint(url, payload) {
 }
 function warnNoKey() {
   console.warn(
-    '[MCP] No AI key configured. Rendering rule-based insights only.\n       Option 1 (free):  GROQ_API_KEY        -> https://console.groq.com/keys (Llama 3.3 70B, ~30 req/min)\n       Option 2 (paid):  ANTHROPIC_API_KEY   -> https://console.anthropic.com (Claude Sonnet, ~$0.003/run)\n       Set with:         opendev config set-key groq <KEY>   (or anthropic)'
+    '[MCP] No AI key configured. Rendering rule-based insights only.\n       Option 1 (free):  Groq        ->  https://console.groq.com/keys (Llama 3.3 70B, ~30 req/min)\n       Option 2 (paid):  Anthropic   ->  https://console.anthropic.com (Claude Sonnet, ~$0.003/run)\n       Save it once:     opendev config set-key groq <KEY>      # or anthropic\n       Inspect:          opendev config get-key'
   );
 }
 function warnDegraded(result) {
@@ -41141,8 +41214,8 @@ var registerTxCommand = (program3) => {
           analyzed._metadata.timings = timings;
           const jsonOut = renderJSON(analyzed, insightsReport);
           if (options.output) {
-            const outPath = path3.resolve(options.output);
-            fs3.writeFileSync(outPath, jsonOut, 'utf-8');
+            const outPath = path4.resolve(options.output);
+            fs4.writeFileSync(outPath, jsonOut, 'utf-8');
             originalLog(`
 Report written to: ${outPath}`);
             return;
@@ -41154,14 +41227,14 @@ Report written to: ${outPath}`);
           const csvOut = renderCSV(analyzed, insightsReport) + '\n';
           const defaultName = `${signature}.csv`;
           if (options.output) {
-            const outPath2 = path3.resolve(options.output);
-            fs3.writeFileSync(outPath2, csvOut, 'utf-8');
+            const outPath2 = path4.resolve(options.output);
+            fs4.writeFileSync(outPath2, csvOut, 'utf-8');
             originalLog(`
 CSV written to: ${outPath2}`);
             return;
           }
-          const outPath = path3.resolve(defaultName);
-          fs3.writeFileSync(outPath, csvOut, 'utf-8');
+          const outPath = path4.resolve(defaultName);
+          fs4.writeFileSync(outPath, csvOut, 'utf-8');
           originalLog(`
 CSV written to: ${outPath}`);
           return;
@@ -41199,18 +41272,18 @@ Detail: ${error.message}`)
 };
 
 // src/commands/batch.ts
-var fs4 = __toESM(require('fs'));
-var path4 = __toESM(require('path'));
+var fs5 = __toESM(require('fs'));
+var path5 = __toESM(require('path'));
 var import_chalk3 = __toESM(require_source());
 var import_ora2 = __toESM(require('ora'));
 function loadBatchFile(filePath) {
-  const resolved = path4.resolve(filePath);
-  if (!fs4.existsSync(resolved)) {
+  const resolved = path5.resolve(filePath);
+  if (!fs5.existsSync(resolved)) {
     throw new Error(`Batch file not found: ${resolved}`);
   }
   let raw;
   try {
-    raw = fs4.readFileSync(resolved, 'utf-8');
+    raw = fs5.readFileSync(resolved, 'utf-8');
   } catch {
     throw new Error(`Failed to read batch file: ${resolved}`);
   }
@@ -41409,8 +41482,8 @@ Processing ${signatures.length} transaction(s) on ${network} (concurrency: ${con
         const rows = [csvHeader(), ...entries.map((e) => csvRow(e.analyzed, e.insights))];
         const csv = rows.join('\n') + '\n';
         if (options.output) {
-          const outPath = path4.resolve(options.output);
-          fs4.writeFileSync(outPath, csv, 'utf-8');
+          const outPath = path5.resolve(options.output);
+          fs5.writeFileSync(outPath, csv, 'utf-8');
           console.log(
             import_chalk3.default.green(`
 CSV written to: ${outPath}`)
@@ -41423,8 +41496,8 @@ CSV written to: ${outPath}`)
       if (options.json || options.output) {
         const json = JSON.stringify(report, null, 2);
         if (options.output) {
-          const outPath = path4.resolve(options.output);
-          fs4.writeFileSync(outPath, json, 'utf-8');
+          const outPath = path5.resolve(options.output);
+          fs5.writeFileSync(outPath, json, 'utf-8');
           console.log(
             import_chalk3.default.green(`
 Report written to: ${outPath}`)
@@ -41439,24 +41512,120 @@ Report written to: ${outPath}`)
 };
 
 // src/commands/config.ts
+var import_chalk4 = __toESM(require_source());
 var registerConfigCommand = (program3) => {
-  const configCommand = program3.command('config').description('Manage OPEN CLI configuration');
+  const configCommand = program3.command('config').description('Manage opendev CLI configuration');
   configCommand
-    .command('set')
-    .description('Update a configuration value')
-    .command('rpc')
-    .argument('<url>', 'The Solana RPC URL to use')
-    .description('Set the default Solana RPC URL')
+    .command('set-key')
+    .description(
+      'Save an AI provider API key to ~/.opendev/credentials.json (chmod 600).\n\n  Supported providers: ' +
+        SUPPORTED_PROVIDERS.join(', ') +
+        '\n\n  Examples:\n    opendev config set-key groq gsk_xxxxxxxxxxxxxxxx\n    opendev config set-key anthropic sk-ant-xxxxxxxxxxxx\n\n  Get a key:\n    Groq (free):     https://console.groq.com/keys\n    Anthropic (paid): https://console.anthropic.com'
+    )
+    .argument('<provider>', `which AI provider (${SUPPORTED_PROVIDERS.join(' | ')})`)
+    .argument('<key>', 'the API key')
+    .action((provider, key) => {
+      if (!isProvider(provider)) {
+        console.error(
+          import_chalk4.default.red(
+            `Unknown provider "${provider}". Supported: ${SUPPORTED_PROVIDERS.join(', ')}.`
+          )
+        );
+        process.exit(1);
+      }
+      if (!key || key.length < 8) {
+        console.error(
+          import_chalk4.default.red('Key looks too short. Did you paste the full value?')
+        );
+        process.exit(1);
+      }
+      setCredential(provider, key);
+      console.log(
+        `${import_chalk4.default.green('\u2713')} Saved ${import_chalk4.default.bold(provider)} key (${maskKey(key)}) to ${credentialsPath()}`
+      );
+      console.log(import_chalk4.default.gray(`  This will be used as ${envVarFor(provider)}.`));
+    });
+  configCommand
+    .command('get-key')
+    .description('Show which AI keys are configured (values are masked).')
+    .argument('[provider]', 'limit to a single provider (optional)')
+    .action((provider) => {
+      const targets = provider
+        ? isProvider(provider)
+          ? [provider]
+          : []
+        : [...SUPPORTED_PROVIDERS];
+      if (provider && !isProvider(provider)) {
+        console.error(
+          import_chalk4.default.red(
+            `Unknown provider "${provider}". Supported: ${SUPPORTED_PROVIDERS.join(', ')}.`
+          )
+        );
+        process.exit(1);
+      }
+      console.log(`Credentials store: ${credentialsPath()}
+`);
+      for (const p of targets) {
+        const fromStore = getCredential(p);
+        const fromEnv = process.env[envVarFor(p)];
+        let source;
+        let value;
+        if (fromEnv && fromEnv !== fromStore) {
+          source = import_chalk4.default.yellow('env');
+          value = maskKey(fromEnv);
+        } else if (fromStore) {
+          source = import_chalk4.default.green('store');
+          value = maskKey(fromStore);
+        } else {
+          source = import_chalk4.default.gray('\u2014');
+          value = import_chalk4.default.gray('not set');
+        }
+        console.log(`  ${import_chalk4.default.bold(p.padEnd(10))} ${source.padEnd(20)} ${value}`);
+      }
+    });
+  configCommand
+    .command('remove-key')
+    .description('Delete an AI provider key from the credentials store.')
+    .argument('<provider>', `which provider (${SUPPORTED_PROVIDERS.join(' | ')})`)
+    .action((provider) => {
+      if (!isProvider(provider)) {
+        console.error(
+          import_chalk4.default.red(
+            `Unknown provider "${provider}". Supported: ${SUPPORTED_PROVIDERS.join(', ')}.`
+          )
+        );
+        process.exit(1);
+      }
+      const removed = removeCredential(provider);
+      if (removed) {
+        console.log(
+          `${import_chalk4.default.green('\u2713')} Removed ${import_chalk4.default.bold(provider)} from ${credentialsPath()}`
+        );
+      } else {
+        console.log(
+          `${import_chalk4.default.gray('\u2014')} ${import_chalk4.default.bold(provider)} was not in the store.`
+        );
+      }
+    });
+  configCommand
+    .command('set-rpc')
+    .description('Set the default Solana RPC URL (currently shown only \u2014 persistence WIP)')
+    .argument('<url>', 'the Solana RPC URL to use')
     .action((url) => {
-      console.log(`--- Config Set RPC (Stub) ---`);
-      console.log(`URL Received: ${url}`);
-      console.log(`Current loaded RPC (from .env): ${config.rpcUrl}`);
-      console.log('\nStatus: Saving to ~/.open/config.json is NOT IMPLEMENTED YET.');
+      console.log(
+        import_chalk4.default.yellow('\u26A0 RPC URL persistence is not yet implemented.')
+      );
+      console.log(`Received: ${url}`);
+      console.log(`Currently loaded RPC (from .env): ${config.rpcUrl ?? '(none)'}`);
+      console.log('');
+      console.log(
+        import_chalk4.default.gray('For now, set OPEN_RPC_URL in your shell or in a .env file.')
+      );
     });
 };
 
 // src/commands/info.ts
-var import_chalk4 = __toESM(require_source());
+var import_chalk5 = __toESM(require_source());
 
 // ../services/src/data/program-registry.json
 var program_registry_default = [
@@ -41614,23 +41783,23 @@ function loadRegistry() {
 function colorStatus(status) {
   switch (status) {
     case 'complete':
-      return import_chalk4.default.green(status);
+      return import_chalk5.default.green(status);
     case 'partial':
-      return import_chalk4.default.yellow(status);
+      return import_chalk5.default.yellow(status);
     case 'planned':
-      return import_chalk4.default.blue(status);
+      return import_chalk5.default.blue(status);
     case 'none':
-      return import_chalk4.default.gray(status);
+      return import_chalk5.default.gray(status);
     default:
-      return import_chalk4.default.gray(String(status));
+      return import_chalk5.default.gray(String(status));
   }
 }
 function colorCoverage(coverage) {
   const text = `${coverage}%`.padStart(4);
-  if (coverage >= 100) return import_chalk4.default.green(text);
-  if (coverage >= 66) return import_chalk4.default.yellow(text);
-  if (coverage >= 33) return import_chalk4.default.cyan(text);
-  return import_chalk4.default.gray(text);
+  if (coverage >= 100) return import_chalk5.default.green(text);
+  if (coverage >= 66) return import_chalk5.default.yellow(text);
+  if (coverage >= 33) return import_chalk5.default.cyan(text);
+  return import_chalk5.default.gray(text);
 }
 function truncate3(s, max) {
   return s.length > max ? s.slice(0, max - 1) + '\u2026' : s;
@@ -41644,17 +41813,17 @@ function renderTable(entries) {
     benchmark: 8,
   };
   const header =
-    import_chalk4.default.bold('Name'.padEnd(cols.name)) +
-    import_chalk4.default.bold('Framework'.padEnd(cols.framework)) +
-    import_chalk4.default.bold('Coverage'.padStart(cols.coverage)) +
+    import_chalk5.default.bold('Name'.padEnd(cols.name)) +
+    import_chalk5.default.bold('Framework'.padEnd(cols.framework)) +
+    import_chalk5.default.bold('Coverage'.padStart(cols.coverage)) +
     '  ' +
-    import_chalk4.default.bold('Decoder'.padEnd(cols.decoder)) +
-    import_chalk4.default.bold('Benchmark'.padEnd(cols.benchmark));
-  const sep = import_chalk4.default.gray(
+    import_chalk5.default.bold('Decoder'.padEnd(cols.decoder)) +
+    import_chalk5.default.bold('Benchmark'.padEnd(cols.benchmark));
+  const sep = import_chalk5.default.gray(
     '\u2500'.repeat(cols.name + cols.framework + cols.coverage + cols.decoder + cols.benchmark + 2)
   );
   console.log('');
-  console.log(import_chalk4.default.bold('OPEN \u2014 Program Registry'));
+  console.log(import_chalk5.default.bold('OPEN \u2014 Program Registry'));
   console.log(sep);
   console.log(header);
   console.log(sep);
@@ -41666,15 +41835,15 @@ function renderTable(entries) {
       '  ' +
       colorStatus(entry.decoderStatus).padEnd(cols.decoder + 10) +
       (entry.benchmark
-        ? import_chalk4.default.green('  \u2713')
-        : import_chalk4.default.gray('  \u2014'));
+        ? import_chalk5.default.green('  \u2713')
+        : import_chalk5.default.gray('  \u2014'));
     console.log(row);
   }
   console.log(sep);
   const total = entries.length;
   const ready = entries.filter((e) => e.coverage === 100).length;
   console.log(
-    import_chalk4.default.dim(
+    import_chalk5.default.dim(
       `${ready}/${total} programs at full coverage  \u2022  ${total} total entries`
     )
   );
@@ -41682,27 +41851,27 @@ function renderTable(entries) {
 }
 function renderDetail(entry) {
   console.log('');
-  console.log(import_chalk4.default.bold(entry.name));
-  console.log(import_chalk4.default.gray('\u2500'.repeat(entry.name.length)));
-  console.log(`${import_chalk4.default.dim('Program ID:    ')}${entry.programId}`);
-  console.log(`${import_chalk4.default.dim('Framework:     ')}${entry.framework}`);
+  console.log(import_chalk5.default.bold(entry.name));
+  console.log(import_chalk5.default.gray('\u2500'.repeat(entry.name.length)));
+  console.log(`${import_chalk5.default.dim('Program ID:    ')}${entry.programId}`);
+  console.log(`${import_chalk5.default.dim('Framework:     ')}${entry.framework}`);
   console.log(
-    `${import_chalk4.default.dim('Coverage:      ')}${colorCoverage(entry.coverage).trim()}`
+    `${import_chalk5.default.dim('Coverage:      ')}${colorCoverage(entry.coverage).trim()}`
   );
-  console.log(`${import_chalk4.default.dim('Decoder:       ')}${colorStatus(entry.decoderStatus)}`);
+  console.log(`${import_chalk5.default.dim('Decoder:       ')}${colorStatus(entry.decoderStatus)}`);
   console.log(
-    `${import_chalk4.default.dim('IDL:           ')}${entry.idl ?? import_chalk4.default.gray('(none)')}`
+    `${import_chalk5.default.dim('IDL:           ')}${entry.idl ?? import_chalk5.default.gray('(none)')}`
   );
   if (entry.benchmark) {
     console.log(
-      `${import_chalk4.default.dim('Benchmark:     ')}${entry.benchmark.framework} \u2192 ${entry.benchmark.operations.join(', ')}`
+      `${import_chalk5.default.dim('Benchmark:     ')}${entry.benchmark.framework} \u2192 ${entry.benchmark.operations.join(', ')}`
     );
   } else {
     console.log(
-      `${import_chalk4.default.dim('Benchmark:     ')}${import_chalk4.default.gray('(none)')}`
+      `${import_chalk5.default.dim('Benchmark:     ')}${import_chalk5.default.gray('(none)')}`
     );
   }
-  console.log(`${import_chalk4.default.dim('Last updated:  ')}${entry.lastUpdated}`);
+  console.log(`${import_chalk5.default.dim('Last updated:  ')}${entry.lastUpdated}`);
   console.log('');
 }
 function findEntry(entries, query) {
@@ -41721,8 +41890,8 @@ var registerInfoCommand = (program3) => {
       if (query) {
         const entry = findEntry(registry, query);
         if (!entry) {
-          console.error(import_chalk4.default.red(`No program matches "${query}"`));
-          console.log(import_chalk4.default.dim(`Run "open info" to list all available programs.`));
+          console.error(import_chalk5.default.red(`No program matches "${query}"`));
+          console.log(import_chalk5.default.dim(`Run "open info" to list all available programs.`));
           process.exit(1);
         }
         renderDetail(entry);
@@ -41733,10 +41902,10 @@ var registerInfoCommand = (program3) => {
 };
 
 // src/commands/simulate.ts
-var fs5 = __toESM(require('fs'));
-var path5 = __toESM(require('path'));
+var fs6 = __toESM(require('fs'));
+var path6 = __toESM(require('path'));
 var import_ora3 = __toESM(require('ora'));
-var import_chalk5 = __toESM(require_source());
+var import_chalk6 = __toESM(require_source());
 function nowMs2() {
   return typeof process !== 'undefined' && process.hrtime
     ? Number(process.hrtime.bigint() / 1000000n)
@@ -41744,22 +41913,22 @@ function nowMs2() {
 }
 function printSimulationBanner(meta) {
   const status = meta.success
-    ? import_chalk5.default.green.bold('WOULD SUCCEED')
-    : import_chalk5.default.red.bold('WOULD FAIL');
-  const sep = import_chalk5.default.gray('\u2500'.repeat(64));
+    ? import_chalk6.default.green.bold('WOULD SUCCEED')
+    : import_chalk6.default.red.bold('WOULD FAIL');
+  const sep = import_chalk6.default.gray('\u2500'.repeat(64));
   console.log('');
-  console.log(import_chalk5.default.cyan.bold('SIMULATED \xB7 NOT BROADCAST'));
+  console.log(import_chalk6.default.cyan.bold('SIMULATED \xB7 NOT BROADCAST'));
   console.log(sep);
-  console.log(`${import_chalk5.default.dim('Verdict:       ')}${status}`);
-  console.log(`${import_chalk5.default.dim('Input kind:    ')}${meta.inputKind}`);
+  console.log(`${import_chalk6.default.dim('Verdict:       ')}${status}`);
+  console.log(`${import_chalk6.default.dim('Input kind:    ')}${meta.inputKind}`);
   if (meta.errorJson) {
     console.log(
-      `${import_chalk5.default.dim('Error:         ')}${import_chalk5.default.red(meta.errorJson)}`
+      `${import_chalk6.default.dim('Error:         ')}${import_chalk6.default.red(meta.errorJson)}`
     );
   }
   if (meta.returnData) {
     console.log(
-      `${import_chalk5.default.dim('Return data:   ')}${meta.returnData.programId} \u2192 ${meta.returnData.data}`
+      `${import_chalk6.default.dim('Return data:   ')}${meta.returnData.programId} \u2192 ${meta.returnData.data}`
     );
   }
   console.log(sep);
@@ -41768,16 +41937,16 @@ function printTimings2(timings) {
   const pad = (s) => s.padEnd(22, ' ');
   for (const t of timings) {
     console.log(
-      import_chalk5.default.gray('  \u251C\u2500'),
-      import_chalk5.default.cyan(pad(t.stage)),
-      import_chalk5.default.yellow(`${t.durationMs.toFixed(1)} ms`)
+      import_chalk6.default.gray('  \u251C\u2500'),
+      import_chalk6.default.cyan(pad(t.stage)),
+      import_chalk6.default.yellow(`${t.durationMs.toFixed(1)} ms`)
     );
   }
   const total = timings.reduce((acc, t) => acc + t.durationMs, 0);
   console.log(
-    import_chalk5.default.gray('  \u2514\u2500'),
-    import_chalk5.default.bold('Total'),
-    import_chalk5.default.green(`${total.toFixed(1)} ms`)
+    import_chalk6.default.gray('  \u2514\u2500'),
+    import_chalk6.default.bold('Total'),
+    import_chalk6.default.green(`${total.toFixed(1)} ms`)
   );
 }
 var registerSimulateCommand = (program3) => {
@@ -41810,7 +41979,7 @@ var registerSimulateCommand = (program3) => {
       };
       const network = (options.network ?? 'mainnet').toLowerCase();
       if (network !== 'mainnet' && network !== 'devnet') {
-        errorLog(import_chalk5.default.red('\nError: Invalid network.'));
+        errorLog(import_chalk6.default.red('\nError: Invalid network.'));
         process.exitCode = 1;
         return;
       }
@@ -41824,7 +41993,7 @@ var registerSimulateCommand = (program3) => {
 `);
         } else {
           errorLog(
-            import_chalk5.default.red(`
+            import_chalk6.default.red(`
 Error: ${err2.message}`)
           );
         }
@@ -41841,7 +42010,7 @@ Error: ${err2.message}`)
       });
       const timings = [];
       const spinner = (0, import_ora3.default)(
-        import_chalk5.default.cyan('Simulating transaction...')
+        import_chalk6.default.cyan('Simulating transaction...')
       );
       if (!isMachineOutput) spinner.start();
       try {
@@ -41874,7 +42043,7 @@ Error: ${err2.message}`)
         );
         timings.push({ stage: 'init_anchor_provider', durationMs: nowMs2() - anchorStart });
         if (!isMachineOutput)
-          spinner.text = import_chalk5.default.cyan('Parsing simulated logs and CU...');
+          spinner.text = import_chalk6.default.cyan('Parsing simulated logs and CU...');
         const parseStart = nowMs2();
         const parsedLogSummary = parseLogsFromBundle(bundle.logMessages);
         const cuProfile = profileCU(bundle.logMessages);
@@ -41882,7 +42051,7 @@ Error: ${err2.message}`)
         const cpiTree = toCPITree(cpiTrace);
         const accountDiffs = computeAccountDiffs(bundle);
         timings.push({ stage: 'parse_logs_and_cu', durationMs: nowMs2() - parseStart });
-        if (!isMachineOutput) spinner.text = import_chalk5.default.cyan('Decoding instructions...');
+        if (!isMachineOutput) spinner.text = import_chalk6.default.cyan('Decoding instructions...');
         const decodeStart = nowMs2();
         const analyzed = await mergeAnalysis(
           bundle,
@@ -41893,13 +42062,13 @@ Error: ${err2.message}`)
           { idlCache, anchorProvider }
         );
         timings.push({ stage: 'decode_instructions', durationMs: nowMs2() - decodeStart });
-        if (!isMachineOutput) spinner.text = import_chalk5.default.cyan('Generating insights...');
+        if (!isMachineOutput) spinner.text = import_chalk6.default.cyan('Generating insights...');
         const insightsStart = nowMs2();
         const mcpProvider = new McpInsightProvider();
         const insightsReport = await analyzeTransaction(analyzed, [mcpProvider]);
         timings.push({ stage: 'analyze_transaction', durationMs: nowMs2() - insightsStart });
         if (!isMachineOutput) {
-          spinner.succeed(import_chalk5.default.green('Simulation analysis complete'));
+          spinner.succeed(import_chalk6.default.green('Simulation analysis complete'));
         }
         if (isJson) {
           if (!analyzed._metadata) analyzed._metadata = {};
@@ -41914,8 +42083,8 @@ Error: ${err2.message}`)
           };
           const jsonOut = renderJSON(analyzed, insightsReport);
           if (options.output) {
-            const outPath = path5.resolve(options.output);
-            fs5.writeFileSync(outPath, jsonOut, 'utf-8');
+            const outPath = path6.resolve(options.output);
+            fs6.writeFileSync(outPath, jsonOut, 'utf-8');
             originalLog(`
 Report written to: ${outPath}`);
           } else {
@@ -41927,13 +42096,13 @@ Report written to: ${outPath}`);
         if (isCsv) {
           const csvOut = renderCSV(analyzed, insightsReport) + '\n';
           if (options.output) {
-            const outPath = path5.resolve(options.output);
-            fs5.writeFileSync(outPath, csvOut, 'utf-8');
+            const outPath = path6.resolve(options.output);
+            fs6.writeFileSync(outPath, csvOut, 'utf-8');
             originalLog(`
 CSV written to: ${outPath}`);
           } else {
-            const outPath = path5.resolve(`${bundle.signature}.csv`);
-            fs5.writeFileSync(outPath, csvOut, 'utf-8');
+            const outPath = path6.resolve(`${bundle.signature}.csv`);
+            fs6.writeFileSync(outPath, csvOut, 'utf-8');
             originalLog(`
 CSV written to: ${outPath}`);
           }
@@ -41944,7 +42113,7 @@ CSV written to: ${outPath}`);
         const totalMsForHeader = timings.reduce((acc, t) => acc + t.durationMs, 0);
         renderTerminal(analyzed, insightsReport, network, totalMsForHeader);
         if (verbose) {
-          console.log(import_chalk5.default.bold.cyan('\n[Pipeline Timings]'));
+          console.log(import_chalk6.default.bold.cyan('\n[Pipeline Timings]'));
           printTimings2(timings);
         }
         if (!meta.success) process.exitCode = 1;
@@ -41955,9 +42124,9 @@ CSV written to: ${outPath}`);
           process.stdout.write(`error,${err2.message?.replace(/"/g, '""') ?? ''}
 `);
         } else {
-          spinner.fail(import_chalk5.default.red('Simulation failed'));
+          spinner.fail(import_chalk6.default.red('Simulation failed'));
           console.error(
-            import_chalk5.default.yellow(`
+            import_chalk6.default.yellow(`
 Detail: ${err2.message}`)
           );
         }
