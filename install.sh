@@ -144,11 +144,27 @@ if ! npm run build --workspace cli --loglevel=error; then
 fi
 
 say "Installing opendev globally..."
-# Install just the cli package, skipping the prepare script (already pre-built).
-# This sidesteps the "Workspaces not supported for global packages" error that
-# `npm install -g github:...` hits when the root package is a workspace root.
+# Pack cli/ into a tarball first, then install globally from that tarball.
+# This ensures the pre-built dist/ is included (npm pack respects the
+# package.json "files" field) and bypasses the "Workspaces not supported
+# for global packages" error that bites when installing a workspace root.
+# --ignore-scripts skips the prepare rebuild since we already built above.
 cd cli
-if ! npm install -g . --ignore-scripts --no-fund --no-audit --loglevel=error; then
+TARBALL="$(npm pack --silent 2>/dev/null | tail -1)"
+if [ -z "$TARBALL" ] || [ ! -f "$TARBALL" ]; then
+  err "Failed to pack cli/ into a tarball."
+  err "Inspect: cd $TMPDIR/opendev/cli && npm pack"
+  exit 1
+fi
+
+# Sanity-check the tarball actually contains dist/open.js.
+if ! tar -tzf "$TARBALL" | grep -q "package/dist/open.js"; then
+  err "Tarball $TARBALL is missing dist/open.js."
+  err "Inspect: tar -tzf $TMPDIR/opendev/cli/$TARBALL | head -30"
+  exit 1
+fi
+
+if ! npm install -g "$TARBALL" --ignore-scripts --no-fund --no-audit --loglevel=error; then
   err "Global install failed. Try with sudo (Linux) or run as Administrator (Windows)."
   err "Or set a user-writable npm prefix:  npm config set prefix ~/.npm-global"
   exit 1
@@ -163,13 +179,40 @@ trap cleanup_on_success EXIT
 NPM_BIN_DIR="$(npm config get prefix 2>/dev/null)/bin"
 INSTALLED_BIN="$NPM_BIN_DIR/opendev"
 
-if [ ! -x "$INSTALLED_BIN" ]; then
+if [ ! -e "$INSTALLED_BIN" ]; then
   err "opendev binary not found at $INSTALLED_BIN after install."
-  err "Inspect: ls -la $NPM_BIN_DIR/ | grep opendev"
+  err "Inspect:  ls -la $NPM_BIN_DIR/ | grep opendev"
   exit 1
 fi
 
-ok "Installed: $INSTALLED_BIN ($("$INSTALLED_BIN" --version 2>/dev/null | tail -1 || echo unknown))"
+# Resolve the symlink target and verify it actually exists. A broken
+# symlink (e.g. dist/open.js missing from the global install) shows up
+# as 'opendev: command not found' even though the symlink itself is on
+# PATH — this is the failure mode user @anajuliarrod hit on WSL.
+SYMLINK_TARGET="$(readlink -f "$INSTALLED_BIN" 2>/dev/null || echo "")"
+if [ -z "$SYMLINK_TARGET" ] || [ ! -f "$SYMLINK_TARGET" ]; then
+  err "opendev symlink at $INSTALLED_BIN is broken."
+  err "  Target: ${SYMLINK_TARGET:-<unresolved>}"
+  err "  This usually means dist/open.js was not packed into the tarball."
+  err "Inspect:  ls -la $INSTALLED_BIN ; ls -la \$(dirname $SYMLINK_TARGET) 2>/dev/null"
+  exit 1
+fi
+
+if [ ! -x "$INSTALLED_BIN" ]; then
+  err "opendev binary at $INSTALLED_BIN is not executable."
+  err "Fix:  chmod +x $INSTALLED_BIN"
+  exit 1
+fi
+
+# Verify it actually runs (catches shebang issues, broken Node version, etc).
+if ! "$INSTALLED_BIN" --version >/dev/null 2>&1; then
+  err "opendev installed at $INSTALLED_BIN but failed to execute."
+  err "Inspect:  $INSTALLED_BIN --version"
+  err "  (common cause: shebang points at a Node version that does not exist)"
+  exit 1
+fi
+
+ok "Installed: $INSTALLED_BIN ($("$INSTALLED_BIN" --version 2>/dev/null | tail -1))"
 
 # Detect whether $NPM_BIN_DIR is on the user's interactive PATH. We can't
 # read the parent shell's PATH directly, but we inherited it — so we use
