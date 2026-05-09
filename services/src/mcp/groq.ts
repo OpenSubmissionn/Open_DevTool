@@ -41,14 +41,14 @@ export async function callGroq(
       return {
         suggestions: [],
         degraded: 'auth',
-        message: 'GROQ_API_KEY inválida ou sem permissão.',
+        message: 'GROQ_API_KEY invalid or lacks permission.',
       };
     }
     if (response.status === 429) {
       return {
         suggestions: [],
         degraded: 'rate_limit',
-        message: 'Groq rate limit atingido. Aguarde alguns segundos e tente de novo.',
+        message: 'Groq rate limit reached. Wait a few seconds and try again.',
       };
     }
     return {

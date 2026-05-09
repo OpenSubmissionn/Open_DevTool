@@ -39277,22 +39277,21 @@ async function callAnthropic(payload, apiKey, model, signal) {
       return {
         suggestions: [],
         degraded: 'auth',
-        message: 'ANTHROPIC_API_KEY inv\xE1lida ou sem permiss\xE3o.',
+        message: 'ANTHROPIC_API_KEY invalid or lacks permission.',
       };
     }
     if (response.status === 429) {
       return {
         suggestions: [],
         degraded: 'rate_limit',
-        message: 'Anthropic rate limit atingido. Aguarde alguns segundos e tente de novo.',
+        message: 'Anthropic rate limit reached. Wait a few seconds and try again.',
       };
     }
     if (response.status === 400 && /credit/i.test(text2)) {
       return {
         suggestions: [],
         degraded: 'no_credit',
-        message:
-          'Cr\xE9ditos da Anthropic esgotados nesta conta. Recarregue em console.anthropic.com.',
+        message: 'Anthropic credits exhausted for this account. Top up at console.anthropic.com.',
       };
     }
     return {
@@ -39353,14 +39352,14 @@ async function callGroq(payload, apiKey, model, signal) {
       return {
         suggestions: [],
         degraded: 'auth',
-        message: 'GROQ_API_KEY inv\xE1lida ou sem permiss\xE3o.',
+        message: 'GROQ_API_KEY invalid or lacks permission.',
       };
     }
     if (response.status === 429) {
       return {
         suggestions: [],
         degraded: 'rate_limit',
-        message: 'Groq rate limit atingido. Aguarde alguns segundos e tente de novo.',
+        message: 'Groq rate limit reached. Wait a few seconds and try again.',
       };
     }
     return {
@@ -39473,27 +39472,29 @@ async function callMcpEndpoint(url, payload) {
 }
 function warnNoKey() {
   console.warn(
-    '[MCP] Nenhuma chave de AI configurada. Rendering rule-based insights only.\n       Op\xE7\xE3o 1 (gratuito):  GROQ_API_KEY        \u2192 https://console.groq.com/keys (Llama 3.3 70B, ~30 req/min)\n       Op\xE7\xE3o 2 (pago):      ANTHROPIC_API_KEY   \u2192 https://console.anthropic.com (Claude Sonnet, ~$0.003/an\xE1lise)'
+    '[MCP] No AI key configured. Rendering rule-based insights only.\n       Option 1 (free):  GROQ_API_KEY        -> https://console.groq.com/keys (Llama 3.3 70B, ~30 req/min)\n       Option 2 (paid):  ANTHROPIC_API_KEY   -> https://console.anthropic.com (Claude Sonnet, ~$0.003/run)\n       Set with:         opendev config set-key groq <KEY>   (or anthropic)'
   );
 }
 function warnDegraded(result) {
   switch (result.degraded) {
     case 'no_credit':
       console.warn(
-        `[MCP] ${result.message ?? 'Sem cr\xE9ditos.'} Rendering rule-based insights only.`
+        `[MCP] ${result.message ?? 'No credits left.'} Rendering rule-based insights only.`
       );
       return;
     case 'rate_limit':
-      console.warn(`[MCP] ${result.message ?? 'Rate limit.'} Rendering rule-based insights only.`);
+      console.warn(
+        `[MCP] ${result.message ?? 'Rate limit reached.'} Rendering rule-based insights only.`
+      );
       return;
     case 'auth':
       console.warn(
-        `[MCP] ${result.message ?? 'Auth falhou.'} Verifique sua ANTHROPIC_API_KEY. Rendering rule-based insights only.`
+        `[MCP] ${result.message ?? 'Auth failed.'} Check your ANTHROPIC_API_KEY. Rendering rule-based insights only.`
       );
       return;
     default:
       console.warn(
-        `[MCP] AI insights indispon\xEDveis (${result.message ?? 'erro desconhecido'}). Rendering rule-based insights only.`
+        `[MCP] AI insights unavailable (${result.message ?? 'unknown error'}). Rendering rule-based insights only.`
       );
   }
 }
@@ -39941,9 +39942,15 @@ var GAP = 3;
 var RIGHT_W = INNER - LEFT_W - GAP;
 var BUDGET_LIMIT_DEFAULT = 2e5;
 var applyResponsiveLayout = () => {
-  const cols = process.stdout.columns;
-  if (!cols) return;
-  const target = Math.max(90, Math.min(200, cols - 2));
+  const envOverride = parseInt(process.env.OPEN_TERMINAL_WIDTH ?? '', 10);
+  let target;
+  if (Number.isFinite(envOverride) && envOverride > 0) {
+    target = envOverride;
+  } else if (process.stdout.columns && process.stdout.columns > 0) {
+    target = Math.max(90, Math.min(200, process.stdout.columns - 2));
+  } else {
+    target = 110;
+  }
   WIDTH = target;
   INNER = WIDTH - 4;
   LEFT_W = Math.floor((INNER - GAP) * 0.65);
@@ -39951,13 +39958,39 @@ var applyResponsiveLayout = () => {
   TREE_BAR_W = Math.max(14, Math.min(40, Math.floor(LEFT_W * 0.35)));
   TREE_RIGHT_W = 1 + TREE_BAR_W + 1 + TREE_PCT_W + 2 + TREE_CU_W;
 };
+var truncateVisible = (s, target) => {
+  if ((0, import_string_width.default)(s) <= target) return s;
+  let out = '';
+  let visible = 0;
+  let i = 0;
+  while (i < s.length && visible < target) {
+    if (s.charCodeAt(i) === 27) {
+      const end = s.indexOf('m', i);
+      if (end === -1) break;
+      out += s.slice(i, end + 1);
+      i = end + 1;
+      continue;
+    }
+    const ch = s[i];
+    const w = (0, import_string_width.default)(ch);
+    if (visible + w > target) break;
+    out += ch;
+    visible += w;
+    i += 1;
+  }
+  return out + '\x1B[0m';
+};
 var padVisible = (s, target) => {
   const pad = target - (0, import_string_width.default)(s);
-  return pad > 0 ? s + ' '.repeat(pad) : s;
+  if (pad > 0) return s + ' '.repeat(pad);
+  if (pad === 0) return s;
+  return truncateVisible(s, target);
 };
 var padVisibleStart = (s, target) => {
   const pad = target - (0, import_string_width.default)(s);
-  return pad > 0 ? ' '.repeat(pad) + s : s;
+  if (pad > 0) return ' '.repeat(pad) + s;
+  if (pad === 0) return s;
+  return truncateVisible(s, target);
 };
 var centerPad = (s, width) => {
   const sw = (0, import_string_width.default)(s);
@@ -40138,22 +40171,6 @@ function dashboardHeaderRow(signature, success, slot, network, durationMs) {
     INNER - (0, import_string_width.default)(left) - (0, import_string_width.default)(right)
   );
   return left + ' '.repeat(fill) + right;
-}
-function dashboardTabBarLines(active = 'Flame') {
-  const tabs = ['Flame', 'CPI Tree', 'Accounts', 'Graph', 'Learn'];
-  const parts = [];
-  const underlineParts = [];
-  for (const t of tabs) {
-    const isActive = t === active;
-    parts.push(isActive ? import_chalk.default.green.bold(t) : import_chalk.default.gray(t));
-    underlineParts.push(
-      isActive ? import_chalk.default.green('\u2500'.repeat(t.length)) : ' '.repeat(t.length)
-    );
-  }
-  return {
-    tabLine: parts.join('   '),
-    underlineLine: underlineParts.join('   '),
-  };
 }
 var TREE_BAR_W = 32;
 var TREE_PCT_W = 6;
@@ -40660,10 +40677,6 @@ function renderDashboard(analyzed, insights, network, durationMs) {
   console.log(boxTop());
   console.log(boxRow(dashboardHeaderRow(signature, analyzed.success, slot, network, durationMs)));
   console.log(boxDivider());
-  const { tabLine, underlineLine } = dashboardTabBarLines('Flame');
-  console.log(boxRow(tabLine));
-  console.log(boxRow(underlineLine));
-  console.log(boxDivider());
   console.log(boxBlank());
   for (let i = 0; i < maxLen; i++) {
     console.log(boxTwoCol(leftLines[i], rightLines[i]));
@@ -41005,9 +41018,9 @@ var registerTxCommand = (program3) => {
   program3
     .command('tx <signature> [network]')
     .description(
-      'Full analysis of a Solana transaction.\n\n  --verbose: Displays detailed timing for each stage in the terminal and includes timings in the JSON under _metadata.timings.'
+      'Full analysis of a confirmed Solana transaction.\n\n  <network> (positional, optional)  mainnet | devnet  (default: mainnet)\n\n  Equivalent forms:\n    opendev tx <signature>                  # defaults to mainnet\n    opendev tx <signature> mainnet          # positional\n    opendev tx <signature> --network devnet # flag (overrides positional)\n\n  --verbose: print per-stage timings in the terminal and include them in --json output under _metadata.timings.\n\n  Layout: render auto-fits to your terminal width. If the dashboard breaks on a non-standard terminal,\n  override with:  OPEN_TERMINAL_WIDTH=110 opendev tx <signature>'
     )
-    .option('--network <type>', 'Solana network (mainnet/devnet)')
+    .option('--network <name>', 'Solana network: mainnet or devnet (default: mainnet)')
     .option('--json', 'Output results in structured JSON format', false)
     .option('--csv', 'Output a single CSV row (with header) for BI tools', false)
     .option('--output <path>', 'Write JSON/CSV output to file instead of stdout')
@@ -41771,9 +41784,9 @@ var registerSimulateCommand = (program3) => {
   program3
     .command('simulate <input>')
     .description(
-      'Simulate a Solana transaction that has not been broadcast yet, and produce the same insight panel as `open tx`.\n\n  <input> auto-detects: base64 transaction blob, or file path containing one.\n  For confirmed on-chain transactions use `open tx <signature>` instead.'
+      'Simulate an unsigned Solana transaction and produce the same insight panel as `opendev tx`.\n\n  <input> auto-detects: base64 transaction blob, or file path containing one.\n  For confirmed on-chain transactions use `opendev tx <signature>` instead.'
     )
-    .option('--network <type>', 'Solana network (mainnet/devnet)', 'mainnet')
+    .option('--network <name>', 'Solana network: mainnet or devnet (default: mainnet)', 'mainnet')
     .option('--rpc <url>', 'Custom RPC URL (e.g. http://localhost:8899 for surfpool local)')
     .option('--json', 'Output results in structured JSON format', false)
     .option('--csv', 'Output a single CSV row (with header) for BI tools', false)

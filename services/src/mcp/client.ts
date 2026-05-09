@@ -174,9 +174,10 @@ async function callMcpEndpoint(url: string, payload: MCPPayload): Promise<MCPIns
 
 function warnNoKey(): void {
   console.warn(
-    '[MCP] Nenhuma chave de AI configurada. Rendering rule-based insights only.\n' +
-      '       Opção 1 (gratuito):  GROQ_API_KEY        → https://console.groq.com/keys (Llama 3.3 70B, ~30 req/min)\n' +
-      '       Opção 2 (pago):      ANTHROPIC_API_KEY   → https://console.anthropic.com (Claude Sonnet, ~$0.003/análise)'
+    '[MCP] No AI key configured. Rendering rule-based insights only.\n' +
+      '       Option 1 (free):  GROQ_API_KEY        -> https://console.groq.com/keys (Llama 3.3 70B, ~30 req/min)\n' +
+      '       Option 2 (paid):  ANTHROPIC_API_KEY   -> https://console.anthropic.com (Claude Sonnet, ~$0.003/run)\n' +
+      '       Set with:         opendev config set-key groq <KEY>   (or anthropic)'
   );
 }
 
@@ -184,20 +185,22 @@ function warnDegraded(result: AnthropicResult): void {
   switch (result.degraded) {
     case 'no_credit':
       console.warn(
-        `[MCP] ${result.message ?? 'Sem créditos.'} Rendering rule-based insights only.`
+        `[MCP] ${result.message ?? 'No credits left.'} Rendering rule-based insights only.`
       );
       return;
     case 'rate_limit':
-      console.warn(`[MCP] ${result.message ?? 'Rate limit.'} Rendering rule-based insights only.`);
+      console.warn(
+        `[MCP] ${result.message ?? 'Rate limit reached.'} Rendering rule-based insights only.`
+      );
       return;
     case 'auth':
       console.warn(
-        `[MCP] ${result.message ?? 'Auth falhou.'} Verifique sua ANTHROPIC_API_KEY. Rendering rule-based insights only.`
+        `[MCP] ${result.message ?? 'Auth failed.'} Check your ANTHROPIC_API_KEY. Rendering rule-based insights only.`
       );
       return;
     default:
       console.warn(
-        `[MCP] AI insights indisponíveis (${result.message ?? 'erro desconhecido'}). Rendering rule-based insights only.`
+        `[MCP] AI insights unavailable (${result.message ?? 'unknown error'}). Rendering rule-based insights only.`
       );
   }
 }

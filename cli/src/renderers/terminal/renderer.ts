@@ -37,14 +37,26 @@ const BUDGET_LIMIT_DEFAULT = 200_000;
 
 // Recompute layout for the current terminal width. Called once per render.
 // Preserves the original 65/35 left/right split so the visual proportions
-// stay consistent. Skips when stdout isn't a TTY (`columns` undefined) so
-// piped output keeps the canonical 145-col layout.
+// stay consistent.
+//
+// Width resolution order:
+//   1. OPEN_TERMINAL_WIDTH env var — explicit user override
+//   2. process.stdout.columns      — TTY-detected width
+//   3. 110-col fallback            — narrower than the old 145 default so
+//      output doesn't blow past the right edge on macOS Terminal.app's
+//      default 80-col window or other unknown terminals.
 const applyResponsiveLayout = () => {
-  const cols = process.stdout.columns;
-  if (!cols) return;
-  // -2 for the leading '  ' indent before the outer frame. Min 90 keeps the
-  // KPI cards readable; max 200 stops it stretching absurdly on wide screens.
-  const target = Math.max(90, Math.min(200, cols - 2));
+  const envOverride = parseInt(process.env.OPEN_TERMINAL_WIDTH ?? '', 10);
+  let target: number;
+  if (Number.isFinite(envOverride) && envOverride > 0) {
+    target = envOverride;
+  } else if (process.stdout.columns && process.stdout.columns > 0) {
+    // -2 for the leading '  ' indent before the outer frame. Min 90 keeps
+    // KPI cards readable; max 200 stops it stretching absurdly on wide screens.
+    target = Math.max(90, Math.min(200, process.stdout.columns - 2));
+  } else {
+    target = 110;
+  }
   WIDTH = target;
   INNER = WIDTH - 4;
   LEFT_W = Math.floor((INNER - GAP) * 0.65);
@@ -61,14 +73,49 @@ const applyResponsiveLayout = () => {
 // which is why the box borders kept drifting. `string-width` measures the
 // rendered width, so we pad against that instead.
 
+// ANSI-aware truncation. `string-width` correctly ignores the invisible
+// bytes from chalk so we can compute visible length, but slicing the
+// string by char count would chop ANSI codes mid-sequence and bleed
+// colour into surrounding cells. We walk the string char-by-char and
+// stop once we've accumulated `target` printable cells, copying any
+// pending ANSI escape sequences verbatim. Always re-appends a reset so
+// chalk styles don't leak past the cell.
+const truncateVisible = (s: string, target: number): string => {
+  if (stringWidth(s) <= target) return s;
+  let out = '';
+  let visible = 0;
+  let i = 0;
+  while (i < s.length && visible < target) {
+    if (s.charCodeAt(i) === 0x1b /* ESC */) {
+      // Copy the entire ANSI escape sequence (ends at the first letter).
+      const end = s.indexOf('m', i);
+      if (end === -1) break;
+      out += s.slice(i, end + 1);
+      i = end + 1;
+      continue;
+    }
+    const ch = s[i];
+    const w = stringWidth(ch);
+    if (visible + w > target) break;
+    out += ch;
+    visible += w;
+    i += 1;
+  }
+  return out + '\x1b[0m';
+};
+
 const padVisible = (s: string, target: number): string => {
   const pad = target - stringWidth(s);
-  return pad > 0 ? s + ' '.repeat(pad) : s;
+  if (pad > 0) return s + ' '.repeat(pad);
+  if (pad === 0) return s;
+  return truncateVisible(s, target);
 };
 
 const padVisibleStart = (s: string, target: number): string => {
   const pad = target - stringWidth(s);
-  return pad > 0 ? ' '.repeat(pad) + s : s;
+  if (pad > 0) return ' '.repeat(pad) + s;
+  if (pad === 0) return s;
+  return truncateVisible(s, target);
 };
 
 const centerPad = (s: string, width: number): string => {
@@ -418,22 +465,16 @@ function dashboardHeaderRow(
 // which sub-view is in play. The active tab gets green bold + a green
 // underline; the others stay grey.
 
-function dashboardTabBarLines(active: string = 'Flame'): {
+// Tab bar was removed in v0.3.x — the tabs (Flame, CPI Tree, Accounts, Graph,
+// Learn) advertised an interactive dashboard that doesn't exist in a terminal
+// (text isn't clickable). Each section now renders inline below the header.
+// Function kept as a no-op to preserve the shape callers expect; if we ever
+// add a real TUI mode we can fill this in again.
+function dashboardTabBarLines(_active: string = 'Flame'): {
   tabLine: string;
   underlineLine: string;
 } {
-  const tabs = ['Flame', 'CPI Tree', 'Accounts', 'Graph', 'Learn'];
-  const parts: string[] = [];
-  const underlineParts: string[] = [];
-  for (const t of tabs) {
-    const isActive = t === active;
-    parts.push(isActive ? chalk.green.bold(t) : chalk.gray(t));
-    underlineParts.push(isActive ? chalk.green('─'.repeat(t.length)) : ' '.repeat(t.length));
-  }
-  return {
-    tabLine: parts.join('   '),
-    underlineLine: underlineParts.join('   '),
-  };
+  return { tabLine: '', underlineLine: '' };
 }
 
 // ─── DASHBOARD: CALL TREE (bar + % + CU, threshold-coloured per row) ────────
@@ -1070,10 +1111,8 @@ function renderDashboard(
   console.log(boxTop());
   console.log(boxRow(dashboardHeaderRow(signature, analyzed.success, slot, network, durationMs)));
   console.log(boxDivider());
-  const { tabLine, underlineLine } = dashboardTabBarLines('Flame');
-  console.log(boxRow(tabLine));
-  console.log(boxRow(underlineLine));
-  console.log(boxDivider());
+  // Tab bar removed in v0.3.x — tabs were not interactive in a terminal.
+  // Every section now renders inline below.
   console.log(boxBlank());
   for (let i = 0; i < maxLen; i++) {
     console.log(boxTwoCol(leftLines[i], rightLines[i]));
