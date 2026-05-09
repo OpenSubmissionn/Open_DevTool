@@ -5259,7 +5259,7 @@ function toFailure(result, context, struct8, value) {
     };
   }
   const {
-    path: path6,
+    path: path7,
     branch
   } = context;
   const {
@@ -5273,8 +5273,8 @@ function toFailure(result, context, struct8, value) {
     value,
     type: type2,
     refinement,
-    key: path6[path6.length - 1],
-    path: path6,
+    key: path7[path7.length - 1],
+    path: path7,
     branch,
     ...result,
     message
@@ -5296,13 +5296,13 @@ function* run(value, struct8, options) {
     options = {};
   }
   const {
-    path: path6 = [],
+    path: path7 = [],
     branch = [value],
     coerce: coerce2 = false,
     mask: mask2 = false
   } = options;
   const ctx = {
-    path: path6,
+    path: path7,
     branch
   };
   if (coerce2) {
@@ -5322,7 +5322,7 @@ function* run(value, struct8, options) {
   }
   for (let [k, v, s] of struct8.entries(value, ctx)) {
     const ts = run(v, s, {
-      path: k === void 0 ? path6 : [...path6, k],
+      path: k === void 0 ? path7 : [...path7, k],
       branch: k === void 0 ? branch : [...branch, v],
       coerce: coerce2,
       mask: mask2
@@ -5547,9 +5547,9 @@ var init_index_es = __esm({
           ...rest
         } = failure;
         const {
-          path: path6
+          path: path7
         } = failure;
-        const msg = path6.length === 0 ? message : "At path: " + path6.join(".") + " -- " + message;
+        const msg = path7.length === 0 ? message : "At path: " + path7.join(".") + " -- " + message;
         super(msg);
         this.value = void 0;
         this.key = void 0;
@@ -8994,14 +8994,14 @@ var require_url_state_machine = __commonJS({
       return url.replace(/\u0009|\u000A|\u000D/g, "");
     }
     function shortenPath(url) {
-      const path6 = url.path;
-      if (path6.length === 0) {
+      const path7 = url.path;
+      if (path7.length === 0) {
         return;
       }
-      if (url.scheme === "file" && path6.length === 1 && isNormalizedWindowsDriveLetter(path6[0])) {
+      if (url.scheme === "file" && path7.length === 1 && isNormalizedWindowsDriveLetter(path7[0])) {
         return;
       }
-      path6.pop();
+      path7.pop();
     }
     function includesCredentials(url) {
       return url.username !== "" || url.password !== "";
@@ -10109,7 +10109,7 @@ function consumeBody() {
   let accum = [];
   let accumBytes = 0;
   let abort = false;
-  return new Body.Promise(function(resolve4, reject) {
+  return new Body.Promise(function(resolve5, reject) {
     let resTimeout;
     if (_this4.timeout) {
       resTimeout = setTimeout(function() {
@@ -10143,7 +10143,7 @@ function consumeBody() {
       }
       clearTimeout(resTimeout);
       try {
-        resolve4(Buffer.concat(accum, accumBytes));
+        resolve5(Buffer.concat(accum, accumBytes));
       } catch (err2) {
         reject(new FetchError(`Could not create Buffer from response body for ${_this4.url}: ${err2.message}`, "system", err2));
       }
@@ -10406,7 +10406,7 @@ function fetch2(url, opts) {
     throw new Error("native promise missing, set fetch.Promise to your favorite alternative");
   }
   Body.Promise = fetch2.Promise;
-  return new fetch2.Promise(function(resolve4, reject) {
+  return new fetch2.Promise(function(resolve5, reject) {
     const request = new Request(url, opts);
     const options = getNodeRequestOptions(request);
     const send = (options.protocol === "https:" ? import_https.default : import_http.default).request;
@@ -10539,7 +10539,7 @@ function fetch2(url, opts) {
               requestOpts.body = void 0;
               requestOpts.headers.delete("content-length");
             }
-            resolve4(fetch2(new Request(locationURL, requestOpts)));
+            resolve5(fetch2(new Request(locationURL, requestOpts)));
             finalize();
             return;
         }
@@ -10560,7 +10560,7 @@ function fetch2(url, opts) {
       const codings = headers.get("Content-Encoding");
       if (!request.compress || request.method === "HEAD" || codings === null || res.statusCode === 204 || res.statusCode === 304) {
         response = new Response(body, response_options);
-        resolve4(response);
+        resolve5(response);
         return;
       }
       const zlibOptions = {
@@ -10570,7 +10570,7 @@ function fetch2(url, opts) {
       if (codings == "gzip" || codings == "x-gzip") {
         body = body.pipe(import_zlib.default.createGunzip(zlibOptions));
         response = new Response(body, response_options);
-        resolve4(response);
+        resolve5(response);
         return;
       }
       if (codings == "deflate" || codings == "x-deflate") {
@@ -10582,12 +10582,12 @@ function fetch2(url, opts) {
             body = body.pipe(import_zlib.default.createInflateRaw());
           }
           response = new Response(body, response_options);
-          resolve4(response);
+          resolve5(response);
         });
         raw.on("end", function() {
           if (!response) {
             response = new Response(body, response_options);
-            resolve4(response);
+            resolve5(response);
           }
         });
         return;
@@ -10595,11 +10595,11 @@ function fetch2(url, opts) {
       if (codings == "br" && typeof import_zlib.default.createBrotliDecompress === "function") {
         body = body.pipe(import_zlib.default.createBrotliDecompress());
         response = new Response(body, response_options);
-        resolve4(response);
+        resolve5(response);
         return;
       }
       response = new Response(body, response_options);
-      resolve4(response);
+      resolve5(response);
     });
     writeToStream(req, request);
   });
@@ -16439,17 +16439,17 @@ var init_accounts_resolver = __esm({
       resolveOptionals(accounts) {
         Object.assign(this._accounts, this.resolveOptionalsHelper(accounts, this._idlIx.accounts));
       }
-      get(path6) {
-        const ret = path6.reduce((acc, subPath) => acc && acc[subPath], this._accounts);
+      get(path7) {
+        const ret = path7.reduce((acc, subPath) => acc && acc[subPath], this._accounts);
         if (ret && ret.toBase58) {
           return ret;
         }
       }
-      set(path6, value) {
+      set(path7, value) {
         let cur = this._accounts;
-        path6.forEach((p, i) => {
+        path7.forEach((p, i) => {
           var _a2;
-          const isLast = i === path6.length - 1;
+          const isLast = i === path7.length - 1;
           if (isLast) {
             cur[p] = value;
           }
@@ -16500,12 +16500,12 @@ var init_accounts_resolver = __esm({
        * Accounts will only be resolved if they are declared next to each other to
        * reduce the chance of name collision.
        */
-      resolveEventCpi(accounts, path6 = []) {
+      resolveEventCpi(accounts, path7 = []) {
         for (const i in accounts) {
           const accountOrAccounts = accounts[i];
           if (isCompositeAccounts(accountOrAccounts)) {
             this.resolveEventCpi(accountOrAccounts.accounts, [
-              ...path6,
+              ...path7,
               accountOrAccounts.name
             ]);
           }
@@ -16515,8 +16515,8 @@ var init_accounts_resolver = __esm({
           const currentName = accounts[i].name;
           const nextName = accounts[nextIndex].name;
           if (currentName === "eventAuthority" && nextName === "program") {
-            const currentPath = [...path6, currentName];
-            const nextPath = [...path6, nextName];
+            const currentPath = [...path7, currentName];
+            const nextPath = [...path7, nextName];
             if (!this.get(currentPath)) {
               this.set(currentPath, import_web314.PublicKey.findProgramAddressSync([Buffer.from("__event_authority")], this._programId)[0]);
             }
@@ -16527,57 +16527,57 @@ var init_accounts_resolver = __esm({
           }
         }
       }
-      resolveConst(accounts, path6 = []) {
+      resolveConst(accounts, path7 = []) {
         for (const accountOrAccounts of accounts) {
           const name = accountOrAccounts.name;
           if (isCompositeAccounts(accountOrAccounts)) {
-            this.resolveConst(accountOrAccounts.accounts, [...path6, name]);
+            this.resolveConst(accountOrAccounts.accounts, [...path7, name]);
           } else {
             const account = accountOrAccounts;
-            if ((account.signer || account.address) && !this.get([...path6, name])) {
+            if ((account.signer || account.address) && !this.get([...path7, name])) {
               if (account.signer) {
                 if (!this._provider.wallet) {
                   throw new Error("This function requires the `Provider` interface implementor to have a `wallet` field.");
                 }
-                this.set([...path6, name], this._provider.wallet.publicKey);
+                this.set([...path7, name], this._provider.wallet.publicKey);
               }
               if (account.address) {
-                this.set([...path6, name], translateAddress(account.address));
+                this.set([...path7, name], translateAddress(account.address));
               }
             }
           }
         }
       }
-      async resolvePdasAndRelations(accounts, path6 = []) {
+      async resolvePdasAndRelations(accounts, path7 = []) {
         let found = 0;
         for (const accountOrAccounts of accounts) {
           const name = accountOrAccounts.name;
           if (isCompositeAccounts(accountOrAccounts)) {
-            found += await this.resolvePdasAndRelations(accountOrAccounts.accounts, [...path6, name]);
+            found += await this.resolvePdasAndRelations(accountOrAccounts.accounts, [...path7, name]);
           } else {
             const account = accountOrAccounts;
-            if ((account.pda || account.relations) && !this.get([...path6, name])) {
+            if ((account.pda || account.relations) && !this.get([...path7, name])) {
               found++;
               try {
                 if (account.pda) {
-                  const seeds = await Promise.all(account.pda.seeds.map((seed2) => this.toBuffer(seed2, path6)));
+                  const seeds = await Promise.all(account.pda.seeds.map((seed2) => this.toBuffer(seed2, path7)));
                   if (seeds.some((seed2) => !seed2)) {
                     continue;
                   }
-                  const programId = await this.parseProgramId(account, path6);
+                  const programId = await this.parseProgramId(account, path7);
                   const [pubkey] = import_web314.PublicKey.findProgramAddressSync(seeds, programId);
-                  this.set([...path6, name], pubkey);
+                  this.set([...path7, name], pubkey);
                 }
               } catch {
               }
               try {
                 if (account.relations) {
-                  const accountKey = this.get([...path6, account.relations[0]]);
+                  const accountKey = this.get([...path7, account.relations[0]]);
                   if (accountKey) {
                     const account2 = await this._accountStore.fetchAccount({
                       publicKey: accountKey
                     });
-                    this.set([...path6, name], account2[name]);
+                    this.set([...path7, name], account2[name]);
                   }
                 }
               } catch {
@@ -16587,25 +16587,25 @@ var init_accounts_resolver = __esm({
         }
         return found;
       }
-      async parseProgramId(account, path6 = []) {
+      async parseProgramId(account, path7 = []) {
         var _a2;
         if (!((_a2 = account.pda) === null || _a2 === void 0 ? void 0 : _a2.program)) {
           return this._programId;
         }
-        const buf = await this.toBuffer(account.pda.program, path6);
+        const buf = await this.toBuffer(account.pda.program, path7);
         if (!buf) {
           throw new Error(`Program seed not resolved: ${account.name}`);
         }
         return new import_web314.PublicKey(buf);
       }
-      async toBuffer(seed2, path6 = []) {
+      async toBuffer(seed2, path7 = []) {
         switch (seed2.kind) {
           case "const":
             return this.toBufferConst(seed2);
           case "arg":
             return await this.toBufferArg(seed2);
           case "account":
-            return await this.toBufferAccount(seed2, path6);
+            return await this.toBufferAccount(seed2, path7);
           default:
             throw new Error(`Unexpected seed: ${seed2}`);
         }
@@ -16614,21 +16614,21 @@ var init_accounts_resolver = __esm({
         return this.toBufferValue("bytes", seed2.value);
       }
       async toBufferArg(seed2) {
-        const [name, ...path6] = seed2.path.split(".");
+        const [name, ...path7] = seed2.path.split(".");
         const index = this._idlIx.args.findIndex((arg) => arg.name === name);
         if (index === -1) {
           throw new Error(`Unable to find argument for seed: ${name}`);
         }
-        const value = path6.reduce((acc, path7) => (acc !== null && acc !== void 0 ? acc : {})[path7], this._args[index]);
+        const value = path7.reduce((acc, path8) => (acc !== null && acc !== void 0 ? acc : {})[path8], this._args[index]);
         if (value === void 0) {
           return;
         }
-        const type2 = this.getType(this._idlIx.args[index].type, path6);
+        const type2 = this.getType(this._idlIx.args[index].type, path7);
         return this.toBufferValue(type2, value);
       }
-      async toBufferAccount(seed2, path6 = []) {
+      async toBufferAccount(seed2, path7 = []) {
         const [name, ...paths] = seed2.path.split(".");
-        const fieldPubkey = this.get([...path6, name]);
+        const fieldPubkey = this.get([...path7, name]);
         if (!fieldPubkey)
           return;
         if (!paths.length) {
@@ -16693,12 +16693,12 @@ var init_accounts_resolver = __esm({
        * Recursively get the type at some path of either a primitive or a user
        * defined struct.
        */
-      getType(type2, path6 = []) {
+      getType(type2, path7 = []) {
         var _a2;
         const typeName = (_a2 = type2 === null || type2 === void 0 ? void 0 : type2.defined) === null || _a2 === void 0 ? void 0 : _a2.name;
         if (typeName) {
           if (typeName === "tokenAccount") {
-            switch (path6.at(0)) {
+            switch (path7.at(0)) {
               case "mint":
               case "owner":
                 return "pubkey";
@@ -16706,14 +16706,14 @@ var init_accounts_resolver = __esm({
               case "delagatedAmount":
                 return "u64";
               default:
-                throw new Error(`Unknown token account path: ${path6}`);
+                throw new Error(`Unknown token account path: ${path7}`);
             }
           }
           const definedType = this._idlTypes.find((t) => t.name === typeName);
           if (!definedType) {
             throw new Error(`Type not found: ${typeName}`);
           }
-          const [fieldName, ...subPath] = path6;
+          const [fieldName, ...subPath] = path7;
           const fields = definedType.type.fields;
           const field = fields.find((field2) => field2.name === fieldName);
           if (!field) {
@@ -17633,7 +17633,7 @@ var require_parser = __commonJS({
         this.name = "SyntaxError";
       }
       peg$subclass(SyntaxError, Error);
-      function parse2(input) {
+      function parse3(input) {
         var options = arguments.length > 1 ? arguments[1] : {}, peg$FAILED = {}, peg$startRuleFunctions = { start: peg$parsestart }, peg$startRuleFunction = peg$parsestart, peg$c0 = [], peg$c1 = function() {
           return nodes;
         }, peg$c2 = peg$FAILED, peg$c3 = "#", peg$c4 = { type: "literal", value: "#", description: '"#"' }, peg$c5 = void 0, peg$c6 = { type: "any", description: "any character" }, peg$c7 = "[", peg$c8 = { type: "literal", value: "[", description: '"["' }, peg$c9 = "]", peg$c10 = { type: "literal", value: "]", description: '"]"' }, peg$c11 = function(name) {
@@ -21169,7 +21169,7 @@ var require_parser = __commonJS({
       }
       return {
         SyntaxError,
-        parse: parse2
+        parse: parse3
       };
     })();
   }
@@ -21231,8 +21231,8 @@ var require_compiler = __commonJS({
           valueAssignments.push(fullPath);
         }
       }
-      function pathAssigned(path6) {
-        return assignedPaths.indexOf(path6) !== -1;
+      function pathAssigned(path7) {
+        return assignedPaths.indexOf(path7) !== -1;
       }
       function reduceValueNode(node) {
         if (node.type === "Array") {
@@ -21256,20 +21256,20 @@ var require_compiler = __commonJS({
         return obj;
       }
       function setPath(node) {
-        var path6 = node.value;
-        var quotedPath = path6.map(quoteDottedString).join(".");
+        var path7 = node.value;
+        var quotedPath = path7.map(quoteDottedString).join(".");
         var line2 = node.line;
         var column = node.column;
         if (pathAssigned(quotedPath)) {
-          genError("Cannot redefine existing key '" + path6 + "'.", line2, column);
+          genError("Cannot redefine existing key '" + path7 + "'.", line2, column);
         }
         assignedPaths.push(quotedPath);
-        context = deepRef(data, path6, /* @__PURE__ */ Object.create(null), line2, column);
-        currentPath = path6;
+        context = deepRef(data, path7, /* @__PURE__ */ Object.create(null), line2, column);
+        currentPath = path7;
       }
       function addTableArray(node) {
-        var path6 = node.value;
-        var quotedPath = path6.map(quoteDottedString).join(".");
+        var path7 = node.value;
+        var quotedPath = path7.map(quoteDottedString).join(".");
         var line2 = node.line;
         var column = node.column;
         if (!pathAssigned(quotedPath)) {
@@ -21279,20 +21279,20 @@ var require_compiler = __commonJS({
           return p.indexOf(quotedPath) !== 0;
         });
         assignedPaths.push(quotedPath);
-        context = deepRef(data, path6, [], line2, column);
+        context = deepRef(data, path7, [], line2, column);
         currentPath = quotedPath;
         if (context instanceof Array) {
           var newObj = /* @__PURE__ */ Object.create(null);
           context.push(newObj);
           context = newObj;
         } else {
-          genError("Cannot redefine existing key '" + path6 + "'.", line2, column);
+          genError("Cannot redefine existing key '" + path7 + "'.", line2, column);
         }
       }
       function deepRef(start, keys, value, line2, column) {
         var traversed = [];
         var traversedPath = "";
-        var path6 = keys.join(".");
+        var path7 = keys.join(".");
         var ctx = start;
         for (var i = 0; i < keys.length; i++) {
           var key = keys[i];
@@ -21465,9 +21465,9 @@ var init_workspace = __esm({
         }
         if (workspaceCache[programName])
           return workspaceCache[programName];
-        const fs6 = require("fs");
-        const path6 = require("path");
-        const anchorToml = toml.parse(fs6.readFileSync("Anchor.toml"));
+        const fs7 = require("fs");
+        const path7 = require("path");
+        const anchorToml = toml.parse(fs7.readFileSync("Anchor.toml"));
         const clusterId = anchorToml.provider.cluster;
         const programEntry = (_b = (_a2 = anchorToml.programs) === null || _a2 === void 0 ? void 0 : _a2[clusterId]) === null || _b === void 0 ? void 0 : _b[programName];
         let idlPath;
@@ -21476,12 +21476,12 @@ var init_workspace = __esm({
           idlPath = programEntry.idl;
           programId = programEntry.address;
         } else {
-          idlPath = path6.join("target", "idl", `${programName}.json`);
+          idlPath = path7.join("target", "idl", `${programName}.json`);
         }
-        if (!fs6.existsSync(idlPath)) {
+        if (!fs7.existsSync(idlPath)) {
           throw new Error(`${idlPath} doesn't exist. Did you run \`anchor build\`?`);
         }
-        const idl = JSON.parse(fs6.readFileSync(idlPath));
+        const idl = JSON.parse(fs7.readFileSync(idlPath));
         if (programId) {
           idl.address = programId;
         }
@@ -23271,8 +23271,8 @@ var loadConfig = () => {
 };
 
 // src/commands/tx.ts
-var fs3 = __toESM(require("fs"));
-var path3 = __toESM(require("path"));
+var fs4 = __toESM(require("fs"));
+var path4 = __toESM(require("path"));
 var import_ora = __toESM(require("ora"));
 
 // ../node_modules/chalk/source/vendor/ansi-styles/index.js
@@ -27722,7 +27722,7 @@ var withRetry2 = async (fn) => {
       lastError = error;
       const backoff = INITIAL_BACKOFF * Math.pow(2, attempt);
       console.warn(`Attempt ${attempt + 1} failed. Retrying in ${backoff}ms...`);
-      await new Promise((resolve4) => setTimeout(resolve4, backoff));
+      await new Promise((resolve5) => setTimeout(resolve5, backoff));
     }
   }
   throw lastError;
@@ -27763,17 +27763,230 @@ var fetchTransaction = async (signature, network = "devnet") => {
 };
 
 // ../services/src/solana/simulationService.ts
-var fs2 = __toESM(require("fs"), 1);
+var fs3 = __toESM(require("fs"), 1);
 var crypto3 = __toESM(require("crypto"), 1);
 var import_web318 = require("@solana/web3.js");
+
+// ../services/src/solana/sourceRunner.ts
+var import_child_process = require("child_process");
+var fs2 = __toESM(require("fs"), 1);
+var path3 = __toESM(require("path"), 1);
+var DEFAULT_TIMEOUT_MS = 9e4;
+var BASE64_LINE_REGEX = /^[A-Za-z0-9+/]+={0,2}$/;
+var MIN_BASE64_LEN = 100;
+var STDERR_TAIL_LINES = 20;
+function detectSourceKind(input) {
+  if (!fs2.existsSync(input)) return null;
+  const stat = fs2.statSync(input);
+  if (stat.isDirectory()) {
+    return fs2.existsSync(path3.join(input, "Cargo.toml")) ? "rust-source" : null;
+  }
+  if (!stat.isFile()) return null;
+  const ext = path3.extname(input).toLowerCase();
+  if (ext === ".rs") return "rust-source";
+  if (ext === ".ts" || ext === ".mts" || ext === ".cts") return "ts-source";
+  if (ext === ".js" || ext === ".mjs" || ext === ".cjs") return "js-source";
+  return null;
+}
+function findCargoRoot(startPath) {
+  let current = path3.resolve(startPath);
+  if (fs2.statSync(current).isFile()) {
+    current = path3.dirname(current);
+  }
+  const root = path3.parse(current).root;
+  while (current !== root) {
+    if (fs2.existsSync(path3.join(current, "Cargo.toml"))) return current;
+    current = path3.dirname(current);
+  }
+  return null;
+}
+function buildCommand(kind, absInput) {
+  if (kind === "rust-source") {
+    const cargoRoot = findCargoRoot(absInput);
+    if (!cargoRoot) {
+      throw new Error(
+        `No Cargo.toml found from "${absInput}" upward. Initialize a Rust project (cargo init) or pass the project root.`
+      );
+    }
+    return { cmd: "cargo", args: ["run", "--release", "--quiet"], cwd: cargoRoot };
+  }
+  if (kind === "ts-source") {
+    return {
+      cmd: "npx",
+      args: ["-y", "tsx", absInput],
+      cwd: path3.dirname(absInput)
+    };
+  }
+  return { cmd: "node", args: [absInput], cwd: path3.dirname(absInput) };
+}
+function quoteArgForWindowsShell(arg) {
+  if (!/[\s"&|<>^()%!]/.test(arg)) return arg;
+  return `"${arg.replace(/"/g, '\\"')}"`;
+}
+function killProcessTree(pid) {
+  if (pid === void 0) return;
+  if (process.platform === "win32") {
+    try {
+      (0, import_child_process.spawn)("taskkill", ["/pid", String(pid), "/T", "/F"], {
+        stdio: "ignore",
+        windowsHide: true
+      });
+    } catch {
+    }
+    return;
+  }
+  try {
+    process.kill(pid, "SIGKILL");
+  } catch {
+  }
+}
+function extractBase64(stdout) {
+  const lines = stdout.split(/\r?\n/);
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const trimmed = lines[i].trim();
+    if (trimmed.length >= MIN_BASE64_LEN && BASE64_LINE_REGEX.test(trimmed)) {
+      return trimmed;
+    }
+  }
+  return null;
+}
+function lastLines(buf, count) {
+  return buf.split(/\r?\n/).filter((l) => l.length > 0).slice(-count);
+}
+async function runSourceFile(rawInput, options = {}) {
+  const kind = detectSourceKind(rawInput);
+  if (!kind) {
+    throw new Error(
+      `"${rawInput}" is not a recognized source file (.rs, .ts, .js, .mjs, .cjs) or Rust project directory.`
+    );
+  }
+  const absInput = path3.resolve(rawInput);
+  const { cmd, args, cwd } = buildCommand(kind, absInput);
+  const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const commandStr = `${cmd} ${args.join(" ")}`;
+  const isWindows = process.platform === "win32";
+  const spawnTarget = isWindows ? [cmd, ...args.map(quoteArgForWindowsShell)].join(" ") : cmd;
+  const spawnArgs = isWindows ? [] : args;
+  const start = Date.now();
+  return new Promise((resolve5, reject) => {
+    const child = (0, import_child_process.spawn)(spawnTarget, spawnArgs, {
+      cwd,
+      env: { ...process.env, ...options.env },
+      stdio: ["ignore", "pipe", "pipe"],
+      shell: isWindows,
+      windowsHide: true
+    });
+    let stdout = "";
+    let stderr = "";
+    let timedOut = false;
+    let killed = false;
+    const timer = setTimeout(() => {
+      timedOut = true;
+      killed = true;
+      killProcessTree(child.pid);
+    }, timeoutMs);
+    child.stdout.on("data", (chunk) => {
+      const text = chunk.toString("utf-8");
+      stdout += text;
+      if (options.onProgress) {
+        for (const line2 of text.split(/\r?\n/)) {
+          if (line2.trim().length > 0) options.onProgress(line2, "stdout");
+        }
+      }
+    });
+    child.stderr.on("data", (chunk) => {
+      const text = chunk.toString("utf-8");
+      stderr += text;
+      if (options.onProgress) {
+        for (const line2 of text.split(/\r?\n/)) {
+          if (line2.trim().length > 0) options.onProgress(line2, "stderr");
+        }
+      }
+    });
+    child.on("error", (err2) => {
+      clearTimeout(timer);
+      if (err2.code === "ENOENT") {
+        const installHint = kind === "rust-source" ? "Install Rust from https://rustup.rs" : kind === "ts-source" ? "Install Node.js 18+ and ensure npx is on PATH" : "Install Node.js 18+";
+        reject(new Error(`Command not found: "${cmd}". ${installHint}.`));
+        return;
+      }
+      reject(new Error(`Failed to spawn "${cmd}": ${err2.message}`));
+    });
+    child.on("close", (exitCode) => {
+      clearTimeout(timer);
+      const durationMs = Date.now() - start;
+      const code = exitCode ?? -1;
+      if (timedOut) {
+        const tail = lastLines(stderr, STDERR_TAIL_LINES).join("\n");
+        reject(
+          new Error(
+            `Runner timed out after ${timeoutMs}ms (${commandStr}).
+` + (tail ? `Last stderr:
+${tail}` : "")
+          )
+        );
+        return;
+      }
+      if (killed) {
+        reject(new Error(`Runner was killed (${commandStr}).`));
+        return;
+      }
+      if (code !== 0) {
+        const tail = lastLines(stderr, STDERR_TAIL_LINES).join("\n");
+        reject(
+          new Error(
+            `Runner exited with code ${code} (${commandStr}).
+` + (tail ? `Last stderr:
+${tail}` : "")
+          )
+        );
+        return;
+      }
+      const base64 = extractBase64(stdout);
+      if (!base64) {
+        const stdoutTail = lastLines(stdout, 5).join("\n") || "<empty>";
+        const stderrTail = lastLines(stderr, 5).join("\n") || "<empty>";
+        reject(
+          new Error(
+            `Runner finished but produced no base64 transaction on stdout.
+Expected the last non-empty stdout line to be the base64-serialized tx (>= ${MIN_BASE64_LEN} chars).
+Last stdout:
+${stdoutTail}
+
+Last stderr:
+${stderrTail}`
+          )
+        );
+        return;
+      }
+      resolve5({
+        base64,
+        meta: {
+          kind,
+          command: commandStr,
+          cwd,
+          durationMs,
+          exitCode: code
+        }
+      });
+    });
+  });
+}
+
+// ../services/src/solana/simulationService.ts
 var BASE58_REGEX = /^[1-9A-HJ-NP-Za-km-z]+$/;
 var BASE64_REGEX = /^[A-Za-z0-9+/=\s]+$/;
 function truncate(s, max) {
   return s.length > max ? s.slice(0, max - 1) + "\u2026" : s;
 }
 function detectInputKind(input) {
-  if (fs2.existsSync(input) && fs2.statSync(input).isFile()) {
-    return "path";
+  if (fs3.existsSync(input)) {
+    const sourceKind = detectSourceKind(input);
+    if (sourceKind) return sourceKind;
+    if (fs3.statSync(input).isFile()) return "path";
+    throw new Error(
+      `"${truncate(input, 64)}" is a directory but doesn't contain a Cargo.toml. Pass a .b64/.json file, a .ts/.js source file, a .rs file, or a Rust project root.`
+    );
   }
   const trimmed = input.trim();
   if ((trimmed.length === 87 || trimmed.length === 88) && BASE58_REGEX.test(trimmed)) {
@@ -27785,11 +27998,11 @@ function detectInputKind(input) {
     return "base64";
   }
   throw new Error(
-    `Unable to detect input kind for "${truncate(input, 32)}". Expected a base64 transaction blob or a file path.`
+    `Unable to detect input kind for "${truncate(input, 32)}". Expected a base64 transaction blob, a file path, or a source file (.rs/.ts/.js).`
   );
 }
 function readBase64FromPath(filePath) {
-  const content = fs2.readFileSync(filePath, "utf-8").trim();
+  const content = fs3.readFileSync(filePath, "utf-8").trim();
   if (BASE64_REGEX.test(content)) {
     return content;
   }
@@ -27922,12 +28135,25 @@ async function simulateTransactionInput(rawInput, options = {}) {
   const network = options.network ?? "mainnet";
   const connection = getConnection(options.rpcUrl, network);
   let tx;
+  let runnerMeta;
   const source = rawInput;
   if (kind === "base64") {
     tx = deserializeTx(rawInput.trim());
-  } else {
+  } else if (kind === "path") {
     const base64 = readBase64FromPath(rawInput);
     tx = deserializeTx(base64);
+  } else {
+    if (options.allowExec === false) {
+      throw new Error(
+        `Refusing to execute source file "${rawInput}" because --no-exec is set. Pass a base64 blob or a .b64/.json file instead.`
+      );
+    }
+    const result = await runSourceFile(rawInput, {
+      timeoutMs: options.execTimeoutMs,
+      onProgress: options.onRunnerProgress
+    });
+    runnerMeta = result.meta;
+    tx = deserializeTx(result.base64);
   }
   const { accountKeys, instructions, recentBlockhash } = buildCompiledMessage(tx);
   const accountKeysAsStrings = accountKeys.map((k) => k.toBase58());
@@ -27992,7 +28218,8 @@ async function simulateTransactionInput(rawInput, options = {}) {
     returnData,
     rawResponse: value,
     accountChanges,
-    isSimulated: true
+    isSimulated: true,
+    runnerMeta
   };
   return { bundle, meta };
 }
@@ -29853,8 +30080,8 @@ var registerTxCommand = (program3) => {
         analyzed._metadata.timings = timings;
         const jsonOut = renderJSON(analyzed, insightsReport);
         if (options.output) {
-          const outPath = path3.resolve(options.output);
-          fs3.writeFileSync(outPath, jsonOut, "utf-8");
+          const outPath = path4.resolve(options.output);
+          fs4.writeFileSync(outPath, jsonOut, "utf-8");
           originalLog(`
 Report written to: ${outPath}`);
           return;
@@ -29866,14 +30093,14 @@ Report written to: ${outPath}`);
         const csvOut = renderCSV(analyzed, insightsReport) + "\n";
         const defaultName = `${signature}.csv`;
         if (options.output) {
-          const outPath2 = path3.resolve(options.output);
-          fs3.writeFileSync(outPath2, csvOut, "utf-8");
+          const outPath2 = path4.resolve(options.output);
+          fs4.writeFileSync(outPath2, csvOut, "utf-8");
           originalLog(`
 CSV written to: ${outPath2}`);
           return;
         }
-        const outPath = path3.resolve(defaultName);
-        fs3.writeFileSync(outPath, csvOut, "utf-8");
+        const outPath = path4.resolve(defaultName);
+        fs4.writeFileSync(outPath, csvOut, "utf-8");
         originalLog(`
 CSV written to: ${outPath}`);
         return;
@@ -29909,17 +30136,17 @@ Detail: ${error.message}`));
 };
 
 // src/commands/batch.ts
-var fs4 = __toESM(require("fs"));
-var path4 = __toESM(require("path"));
+var fs5 = __toESM(require("fs"));
+var path5 = __toESM(require("path"));
 var import_ora2 = __toESM(require("ora"));
 function loadBatchFile(filePath) {
-  const resolved = path4.resolve(filePath);
-  if (!fs4.existsSync(resolved)) {
+  const resolved = path5.resolve(filePath);
+  if (!fs5.existsSync(resolved)) {
     throw new Error(`Batch file not found: ${resolved}`);
   }
   let raw;
   try {
-    raw = fs4.readFileSync(resolved, "utf-8");
+    raw = fs5.readFileSync(resolved, "utf-8");
   } catch {
     throw new Error(`Failed to read batch file: ${resolved}`);
   }
@@ -30093,8 +30320,8 @@ Processing ${signatures.length} transaction(s) on ${network} (concurrency: ${con
       const rows = [csvHeader(), ...entries.map((e) => csvRow(e.analyzed, e.insights))];
       const csv = rows.join("\n") + "\n";
       if (options.output) {
-        const outPath = path4.resolve(options.output);
-        fs4.writeFileSync(outPath, csv, "utf-8");
+        const outPath = path5.resolve(options.output);
+        fs5.writeFileSync(outPath, csv, "utf-8");
         console.log(source_default.green(`
 CSV written to: ${outPath}`));
       } else {
@@ -30105,8 +30332,8 @@ CSV written to: ${outPath}`));
     if (options.json || options.output) {
       const json = JSON.stringify(report, null, 2);
       if (options.output) {
-        const outPath = path4.resolve(options.output);
-        fs4.writeFileSync(outPath, json, "utf-8");
+        const outPath = path5.resolve(options.output);
+        fs5.writeFileSync(outPath, json, "utf-8");
         console.log(source_default.green(`
 Report written to: ${outPath}`));
       } else {
@@ -30376,8 +30603,8 @@ var registerInfoCommand = (program3) => {
 };
 
 // src/commands/simulate.ts
-var fs5 = __toESM(require("fs"));
-var path5 = __toESM(require("path"));
+var fs6 = __toESM(require("fs"));
+var path6 = __toESM(require("path"));
 var import_ora3 = __toESM(require("ora"));
 function nowMs2() {
   return typeof process !== "undefined" && process.hrtime ? Number(process.hrtime.bigint() / 1000000n) : Date.now();
@@ -30390,6 +30617,11 @@ function printSimulationBanner(meta) {
   console.log(sep);
   console.log(`${source_default.dim("Verdict:       ")}${status}`);
   console.log(`${source_default.dim("Input kind:    ")}${meta.inputKind}`);
+  if (meta.runnerMeta) {
+    console.log(
+      `${source_default.dim("Runner:        ")}${meta.runnerMeta.command} ${source_default.dim(`(${meta.runnerMeta.durationMs}ms)`)}`
+    );
+  }
   if (meta.errorJson) {
     console.log(`${source_default.dim("Error:         ")}${source_default.red(meta.errorJson)}`);
   }
@@ -30398,6 +30630,15 @@ function printSimulationBanner(meta) {
       `${source_default.dim("Return data:   ")}${meta.returnData.programId} \u2192 ${meta.returnData.data}`
     );
   }
+  console.log(sep);
+}
+function printExecWarning(input, kind) {
+  const sep = source_default.yellow("\u2500".repeat(64));
+  console.log("");
+  console.log(sep);
+  console.log(source_default.yellow.bold("  EXECUTING USER CODE"));
+  console.log(source_default.yellow(`  ${kind}: ${input}`));
+  console.log(source_default.dim("  (use --no-exec to refuse running source files)"));
   console.log(sep);
 }
 function printTimings2(timings) {
@@ -30414,8 +30655,12 @@ function printTimings2(timings) {
 }
 var registerSimulateCommand = (program3) => {
   program3.command("simulate <input>").description(
-    "Simulate a Solana transaction that has not been broadcast yet, and produce the same insight panel as `open tx`.\n\n  <input> auto-detects: base64 transaction blob, or file path containing one.\n  For confirmed on-chain transactions use `open tx <signature>` instead."
-  ).option("--network <type>", "Solana network (mainnet/devnet)", "mainnet").option("--rpc <url>", "Custom RPC URL (e.g. http://localhost:8899 for surfpool local)").option("--json", "Output results in structured JSON format", false).option("--csv", "Output a single CSV row (with header) for BI tools", false).option("--output <path>", "Write JSON/CSV output to file instead of stdout").option("--no-cache", "Skip IDL cache and force network re-fetch").option("--verbose", "Show detailed timing for each pipeline stage").option("--no-replace-blockhash", "Do not replace recent blockhash on simulation").option("--sig-verify", "Verify signatures during simulation", false).action(async (input, options) => {
+    "Simulate a Solana transaction that has not been broadcast yet, and produce the same insight panel as `open tx`.\n\n  <input> auto-detects:\n    \u2022 base64 transaction blob\n    \u2022 .b64 / .json file containing the blob\n    \u2022 .ts / .js / .mjs / .cjs source file that prints the base64 tx on stdout\n    \u2022 .rs source file or Rust project directory (Cargo.toml) \u2014 runner cargo run --release\n\n  For confirmed on-chain transactions use `open tx <signature>` instead."
+  ).option("--network <type>", "Solana network (mainnet/devnet)", "mainnet").option("--rpc <url>", "Custom RPC URL (e.g. http://localhost:8899 for surfpool local)").option("--json", "Output results in structured JSON format", false).option("--csv", "Output a single CSV row (with header) for BI tools", false).option("--output <path>", "Write JSON/CSV output to file instead of stdout").option("--no-cache", "Skip IDL cache and force network re-fetch").option("--verbose", "Show detailed timing for each pipeline stage").option("--no-replace-blockhash", "Do not replace recent blockhash on simulation").option("--sig-verify", "Verify signatures during simulation", false).option("--no-exec", "Refuse to execute source files (.rs/.ts/.js)").option(
+    "--exec-timeout <seconds>",
+    "Max seconds to wait for the source-file runner (default 90)",
+    (v) => parseInt(v, 10)
+  ).action(async (input, options) => {
     const isJson = options.json === true;
     const isCsv = options.csv === true;
     const isMachineOutput = isJson || isCsv;
@@ -30436,8 +30681,9 @@ var registerSimulateCommand = (program3) => {
       process.exitCode = 1;
       return;
     }
+    let detectedKind;
     try {
-      detectInputKind(input);
+      detectedKind = detectInputKind(input);
     } catch (err2) {
       if (isJson) {
         process.stdout.write(JSON.stringify({ error: err2.message }, null, 2));
@@ -30459,8 +30705,31 @@ Error: ${err2.message}`));
       noCache: options.cache === false,
       verbose: !isMachineOutput && verbose
     });
+    const allowExec = options.exec !== false;
+    const isSourceKind = detectedKind === "rust-source" || detectedKind === "ts-source" || detectedKind === "js-source";
+    if (isSourceKind && !allowExec) {
+      const msg = `--no-exec is set, but "${input}" is a source file (${detectedKind}).`;
+      if (isJson) {
+        process.stdout.write(JSON.stringify({ error: msg }, null, 2));
+      } else if (isCsv) {
+        process.stdout.write(`error,${msg.replace(/"/g, '""')}
+`);
+      } else {
+        errorLog(source_default.red(`
+Error: ${msg}`));
+      }
+      process.exitCode = 1;
+      console.log = originalLog;
+      console.error = originalError;
+      return;
+    }
+    if (isSourceKind && !isMachineOutput) {
+      printExecWarning(input, detectedKind);
+    }
+    const execTimeoutMs = typeof options.execTimeout === "number" && !isNaN(options.execTimeout) ? options.execTimeout * 1e3 : void 0;
     const timings = [];
-    const spinner = (0, import_ora3.default)(source_default.cyan("Simulating transaction..."));
+    const initialSpinnerText = isSourceKind ? source_default.cyan(`Running ${detectedKind} runner...`) : source_default.cyan("Simulating transaction...");
+    const spinner = (0, import_ora3.default)(initialSpinnerText);
     if (!isMachineOutput) spinner.start();
     try {
       const simStart = nowMs2();
@@ -30468,9 +30737,17 @@ Error: ${err2.message}`));
         network,
         rpcUrl: options.rpc,
         replaceRecentBlockhash: options.replaceBlockhash !== false,
-        sigVerify: options.sigVerify === true
+        sigVerify: options.sigVerify === true,
+        allowExec,
+        execTimeoutMs,
+        onRunnerProgress: !isMachineOutput && verbose ? (line2, stream) => {
+          spinner.text = stream === "stderr" ? source_default.cyan("Runner: ") + source_default.dim(line2.slice(0, 80)) : source_default.cyan("Runner stdout: ") + source_default.dim(line2.slice(0, 80));
+        } : void 0
       });
-      timings.push({ stage: "simulate_transaction", durationMs: nowMs2() - simStart });
+      timings.push({
+        stage: isSourceKind ? "run_source_and_simulate" : "simulate_transaction",
+        durationMs: nowMs2() - simStart
+      });
       const anchorStart = nowMs2();
       const { Connection: Connection4 } = await import("@solana/web3.js");
       const { AnchorProvider: AnchorProvider2 } = await Promise.resolve().then(() => (init_esm(), esm_exports));
@@ -30525,8 +30802,8 @@ Error: ${err2.message}`));
         };
         const jsonOut = renderJSON(analyzed, insightsReport);
         if (options.output) {
-          const outPath = path5.resolve(options.output);
-          fs5.writeFileSync(outPath, jsonOut, "utf-8");
+          const outPath = path6.resolve(options.output);
+          fs6.writeFileSync(outPath, jsonOut, "utf-8");
           originalLog(`
 Report written to: ${outPath}`);
         } else {
@@ -30538,13 +30815,13 @@ Report written to: ${outPath}`);
       if (isCsv) {
         const csvOut = renderCSV(analyzed, insightsReport) + "\n";
         if (options.output) {
-          const outPath = path5.resolve(options.output);
-          fs5.writeFileSync(outPath, csvOut, "utf-8");
+          const outPath = path6.resolve(options.output);
+          fs6.writeFileSync(outPath, csvOut, "utf-8");
           originalLog(`
 CSV written to: ${outPath}`);
         } else {
-          const outPath = path5.resolve(`${bundle.signature}.csv`);
-          fs5.writeFileSync(outPath, csvOut, "utf-8");
+          const outPath = path6.resolve(`${bundle.signature}.csv`);
+          fs6.writeFileSync(outPath, csvOut, "utf-8");
           originalLog(`
 CSV written to: ${outPath}`);
         }

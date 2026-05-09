@@ -18,6 +18,7 @@ import {
   McpInsightProvider,
   renderJSON,
   type SimulationMeta,
+  type SimulationInputKind,
 } from '@open/services';
 
 import { toCPITree, toParsedLogs } from '../utils/pipeline';
@@ -38,6 +39,11 @@ function printSimulationBanner(meta: SimulationMeta): void {
   console.log(sep);
   console.log(`${chalk.dim('Verdict:       ')}${status}`);
   console.log(`${chalk.dim('Input kind:    ')}${meta.inputKind}`);
+  if (meta.runnerMeta) {
+    console.log(
+      `${chalk.dim('Runner:        ')}${meta.runnerMeta.command} ${chalk.dim(`(${meta.runnerMeta.durationMs}ms)`)}`
+    );
+  }
   if (meta.errorJson) {
     console.log(`${chalk.dim('Error:         ')}${chalk.red(meta.errorJson)}`);
   }
@@ -46,6 +52,16 @@ function printSimulationBanner(meta: SimulationMeta): void {
       `${chalk.dim('Return data:   ')}${meta.returnData.programId} → ${meta.returnData.data}`
     );
   }
+  console.log(sep);
+}
+
+function printExecWarning(input: string, kind: SimulationInputKind): void {
+  const sep = chalk.yellow('─'.repeat(64));
+  console.log('');
+  console.log(sep);
+  console.log(chalk.yellow.bold('  EXECUTING USER CODE'));
+  console.log(chalk.yellow(`  ${kind}: ${input}`));
+  console.log(chalk.dim('  (use --no-exec to refuse running source files)'));
   console.log(sep);
 }
 
@@ -66,7 +82,7 @@ export const registerSimulateCommand = (program: Command) => {
   program
     .command('simulate <input>')
     .description(
-      'Simulate a Solana transaction that has not been broadcast yet, and produce the same insight panel as `open tx`.\n\n  <input> auto-detects: base64 transaction blob, or file path containing one.\n  For confirmed on-chain transactions use `open tx <signature>` instead.'
+      'Simulate a Solana transaction that has not been broadcast yet, and produce the same insight panel as `open tx`.\n\n  <input> auto-detects:\n    • base64 transaction blob\n    • .b64 / .json file containing the blob\n    • .ts / .js / .mjs / .cjs source file that prints the base64 tx on stdout\n    • .rs source file or Rust project directory (Cargo.toml) — runner cargo run --release\n\n  For confirmed on-chain transactions use `open tx <signature>` instead.'
     )
     .option('--network <type>', 'Solana network (mainnet/devnet)', 'mainnet')
     .option('--rpc <url>', 'Custom RPC URL (e.g. http://localhost:8899 for surfpool local)')
@@ -77,6 +93,12 @@ export const registerSimulateCommand = (program: Command) => {
     .option('--verbose', 'Show detailed timing for each pipeline stage')
     .option('--no-replace-blockhash', 'Do not replace recent blockhash on simulation')
     .option('--sig-verify', 'Verify signatures during simulation', false)
+    .option('--no-exec', 'Refuse to execute source files (.rs/.ts/.js)')
+    .option(
+      '--exec-timeout <seconds>',
+      'Max seconds to wait for the source-file runner (default 90)',
+      (v) => parseInt(v, 10)
+    )
     .action(async (input: string, options: any) => {
       const isJson = options.json === true;
       const isCsv = options.csv === true;
@@ -101,8 +123,9 @@ export const registerSimulateCommand = (program: Command) => {
         return;
       }
 
+      let detectedKind: SimulationInputKind;
       try {
-        detectInputKind(input);
+        detectedKind = detectInputKind(input);
       } catch (err: any) {
         if (isJson) {
           process.stdout.write(JSON.stringify({ error: err.message }, null, 2));
@@ -124,8 +147,40 @@ export const registerSimulateCommand = (program: Command) => {
         verbose: !isMachineOutput && verbose,
       });
 
+      const allowExec = options.exec !== false;
+      const isSourceKind =
+        detectedKind === 'rust-source' ||
+        detectedKind === 'ts-source' ||
+        detectedKind === 'js-source';
+
+      if (isSourceKind && !allowExec) {
+        const msg = `--no-exec is set, but "${input}" is a source file (${detectedKind}).`;
+        if (isJson) {
+          process.stdout.write(JSON.stringify({ error: msg }, null, 2));
+        } else if (isCsv) {
+          process.stdout.write(`error,${msg.replace(/"/g, '""')}\n`);
+        } else {
+          errorLog(chalk.red(`\nError: ${msg}`));
+        }
+        process.exitCode = 1;
+        console.log = originalLog;
+        console.error = originalError;
+        return;
+      }
+      if (isSourceKind && !isMachineOutput) {
+        printExecWarning(input, detectedKind);
+      }
+
+      const execTimeoutMs =
+        typeof options.execTimeout === 'number' && !isNaN(options.execTimeout)
+          ? options.execTimeout * 1000
+          : undefined;
+
       const timings: { stage: string; durationMs: number }[] = [];
-      const spinner = ora(chalk.cyan('Simulating transaction...'));
+      const initialSpinnerText = isSourceKind
+        ? chalk.cyan(`Running ${detectedKind} runner...`)
+        : chalk.cyan('Simulating transaction...');
+      const spinner = ora(initialSpinnerText);
       if (!isMachineOutput) spinner.start();
 
       try {
@@ -135,8 +190,22 @@ export const registerSimulateCommand = (program: Command) => {
           rpcUrl: options.rpc,
           replaceRecentBlockhash: options.replaceBlockhash !== false,
           sigVerify: options.sigVerify === true,
+          allowExec,
+          execTimeoutMs,
+          onRunnerProgress:
+            !isMachineOutput && verbose
+              ? (line, stream) => {
+                  spinner.text =
+                    stream === 'stderr'
+                      ? chalk.cyan('Runner: ') + chalk.dim(line.slice(0, 80))
+                      : chalk.cyan('Runner stdout: ') + chalk.dim(line.slice(0, 80));
+                }
+              : undefined,
         });
-        timings.push({ stage: 'simulate_transaction', durationMs: nowMs() - simStart });
+        timings.push({
+          stage: isSourceKind ? 'run_source_and_simulate' : 'simulate_transaction',
+          durationMs: nowMs() - simStart,
+        });
 
         const anchorStart = nowMs();
         const { Connection } = await import('@solana/web3.js');
