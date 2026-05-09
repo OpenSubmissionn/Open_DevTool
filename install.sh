@@ -105,6 +105,33 @@ for cmd in git npm; do
   fi
 done
 
+# ── Pre-flight: detect root-owned npm cache (common macOS issue) ───────────────
+# After a previous `sudo npm` somewhere in your history, files in ~/.npm are
+# owned by root. Subsequent unprivileged `npm install` then fails with EACCES.
+# npm itself surfaces this hint, but we detect it up front and offer to fix.
+NPM_CACHE_DIR="${NPM_CONFIG_CACHE:-$HOME/.npm}"
+if [ -d "$NPM_CACHE_DIR" ]; then
+  # `stat -f` is BSD (macOS); `stat -c` is GNU (Linux). Try BSD first.
+  CACHE_OWNER="$(stat -f '%u' "$NPM_CACHE_DIR" 2>/dev/null || stat -c '%u' "$NPM_CACHE_DIR" 2>/dev/null || echo "")"
+  CURRENT_UID="$(id -u)"
+  if [ -n "$CACHE_OWNER" ] && [ "$CACHE_OWNER" = "0" ] && [ "$CURRENT_UID" != "0" ]; then
+    warn "$NPM_CACHE_DIR is owned by root, which will trigger EACCES errors."
+    warn "This is a leftover from a previous \`sudo npm\` somewhere in your history."
+    if prompt_yes "Fix it now (runs sudo chown -R \$(id -u):\$(id -g) $NPM_CACHE_DIR)?"; then
+      sudo chown -R "$CURRENT_UID:$(id -g)" "$NPM_CACHE_DIR" || {
+        err "chown failed. Run it manually and re-run this installer:"
+        err "  sudo chown -R \$(id -u):\$(id -g) $NPM_CACHE_DIR"
+        exit 1
+      }
+      ok "Cache ownership fixed."
+    else
+      err "Cannot proceed. Run manually and re-run this installer:"
+      err "  sudo chown -R \$(id -u):\$(id -g) $NPM_CACHE_DIR"
+      exit 1
+    fi
+  fi
+fi
+
 # ── Clean up any partial previous install ──────────────────────────────────────
 if command -v opendev >/dev/null 2>&1; then
   say "Removing previous opendev install..."
@@ -127,13 +154,37 @@ git clone --depth 1 --branch "$REPO_BRANCH" "$REPO_URL" "$TMPDIR/opendev" >/dev/
 cd "$TMPDIR/opendev"
 
 say "Installing workspace dependencies (this takes ~1-2 minutes)..."
-if ! npm install --no-fund --no-audit --loglevel=error; then
-  err "npm install failed. Re-run with verbose output:"
-  err "  cd $TMPDIR/opendev && npm install"
-  err "Common fixes:"
-  err "  - Network issue: retry"
-  err "  - Permissions: rm -rf ~/.npm/_cacache and retry"
-  err "  - Node version mismatch: nvm use 20"
+NPM_INSTALL_LOG="$TMPDIR/npm-install.log"
+# Capture output to a log so we can grep for known errors after, while still
+# showing realtime output via tee. We swallow tee's exit code via a subshell
+# trick so $? after the pipeline reflects npm's status (POSIX-portable since
+# we don't rely on pipefail, which not all sh implementations support).
+( npm install --no-fund --no-audit --loglevel=error 2>&1 ; echo "__NPM_RC__:$?" ) | tee "$NPM_INSTALL_LOG"
+NPM_RC="$(grep -E '^__NPM_RC__:' "$NPM_INSTALL_LOG" | tail -1 | sed 's/__NPM_RC__://')"
+if [ "${NPM_RC:-1}" -ne 0 ]; then
+  err "npm install failed."
+  if grep -q "EACCES" "$NPM_INSTALL_LOG"; then
+    err ""
+    err "EACCES detected. The most likely cause is root-owned files in your"
+    err "npm cache from a previous \`sudo npm\`. Fix permanently with:"
+    err ""
+    err "    sudo chown -R \$(id -u):\$(id -g) $NPM_CACHE_DIR"
+    err ""
+    err "Then re-run the curl one-liner. This is a one-time fix per machine."
+  elif grep -q "EINTEGRITY" "$NPM_INSTALL_LOG"; then
+    err ""
+    err "EINTEGRITY (corrupted cache or registry hiccup). Fix with:"
+    err "    npm cache clean --force"
+    err "Then re-run."
+  else
+    err "Re-run with verbose output to diagnose:"
+    err "  cd $TMPDIR/opendev && npm install"
+    err ""
+    err "Common fixes:"
+    err "  - Node version mismatch:  nvm use 20"
+    err "  - Network issue:          retry the curl one-liner"
+    err "  - Cache corruption:       npm cache clean --force"
+  fi
   exit 1
 fi
 
