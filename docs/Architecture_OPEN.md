@@ -693,7 +693,33 @@ Context:
 
 ### 2.15 Simulation Service  `[NEW]`
 
-**Responsibility:** Accept a base64-encoded transaction, send it to the Surfpool.run simulation API (never to the live network), and run the Security Analysis Engine on the simulated result. Triggered by the `opendev simulate` command.
+**Responsibility:** Accept any of:
+- a base64-encoded transaction string,
+- a `.b64`/`.json` file containing one,
+- **a source file (`.rs`, `.ts`, `.js`, `.mjs`, `.cjs`) or Rust project directory that builds a transaction and prints its base64 to stdout** (see §2.15.1),
+
+then route it through Solana's `simulateTransaction` RPC (sigVerify=false, replaceRecentBlockhash=true by default) and feed the resulting bundle into the same analysis pipeline as `opendev tx`. Triggered by the `opendev simulate` command.
+
+#### 2.15.1 Source-File Runner
+
+**File:** `services/src/solana/sourceRunner.ts`
+
+When the input resolves to a source file or Rust project, the runner spawns the appropriate toolchain, captures stdout, and extracts the **last non-empty line** that is ≥100 characters and matches the base64 alphabet. That string is then fed back into the same `simulateTransactionInput` flow used for raw base64.
+
+| Input | Spawned command | cwd |
+|---|---|---|
+| `.rs` file | `cargo run --release --quiet` | nearest ancestor with `Cargo.toml` |
+| Directory with `Cargo.toml` | `cargo run --release --quiet` | the directory |
+| `.ts` / `.mts` / `.cts` | `npx -y tsx <abs path>` | file's parent dir |
+| `.js` / `.mjs` / `.cjs` | `node <abs path>` | file's parent dir |
+
+**TypeScript caveat — top-level await:** `tsx` chooses CJS or ESM output by reading the **nearest ancestor `package.json`**. If that file does not declare `"type": "module"`, `tsx` emits CJS, and CJS does not allow top-level `await`. A `.ts` script with top-level `await` will fail at compile time with `Top-level await is currently not supported with the "cjs" output format`. Three resolutions: rename the file to `.mts` (forces ESM regardless of `package.json`), add `"type": "module"` to the relevant `package.json`, or wrap the body in `async function main() { … } main()`. See the README's "Source-file runners → TypeScript caveat" section for examples.
+
+**Cross-platform `node_modules` caveat (WSL on `/mnt/c/...`):** if the script's `node_modules` was installed on a different OS than the one currently running the runner, native binaries (e.g. `esbuild`, used internally by `tsx`) will not match the platform and the runner will exit with a "esbuild was installed for a different platform" error. Reinstall (`rm -rf node_modules && npm install`) on the platform where you'll run `opendev simulate`, or check the project out into a native filesystem (e.g. `~/dev/...` instead of `/mnt/c/...`).
+
+Defaults: 90-second timeout (configurable via `--exec-timeout <seconds>`), `--no-exec` flag to refuse any source kind. A yellow `EXECUTING USER CODE` banner is printed before the spawn in interactive mode.
+
+The runner emits a `SourceRunnerMeta` ({ kind, command, cwd, durationMs, exitCode }) which is propagated into `SimulationMeta.runnerMeta` and surfaced in the JSON output.
 
 **File:** `services/src/solana/simulationService.ts`
 
