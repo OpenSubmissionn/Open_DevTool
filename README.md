@@ -5,7 +5,7 @@
 **Visual transaction profiler and debugger for Solana.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 [![CI](https://github.com/OpenSubmissionn/Open_DevTool/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/OpenSubmissionn/Open_DevTool/actions)
 
 Turn any Solana transaction signature into a fully decoded execution profile —
@@ -18,7 +18,7 @@ suggestions on top of deterministic rule-based insights.
 
 ## Quick install (recommended)
 
-One-liner that detects your OS, ensures Node.js 18+ is installed, and installs `opendev` globally:
+One-liner that detects your OS, ensures Node.js 20+ is installed, and installs `opendev` globally:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/OpenSubmissionn/Open_DevTool/main/install.sh | sh
@@ -38,7 +38,7 @@ opendev --version
 
 ### Requirements
 
-- **Node.js 18+** (20 LTS recommended)
+- **Node.js 20+** (20 LTS recommended; some deps require Node 20+)
 - **git**
 - A terminal
 

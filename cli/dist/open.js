@@ -5259,7 +5259,7 @@ function toFailure(result, context, struct8, value) {
     };
   }
   const {
-    path: path7,
+    path: path8,
     branch
   } = context;
   const {
@@ -5273,8 +5273,8 @@ function toFailure(result, context, struct8, value) {
     value,
     type: type2,
     refinement,
-    key: path7[path7.length - 1],
-    path: path7,
+    key: path8[path8.length - 1],
+    path: path8,
     branch,
     ...result,
     message
@@ -5296,13 +5296,13 @@ function* run(value, struct8, options) {
     options = {};
   }
   const {
-    path: path7 = [],
+    path: path8 = [],
     branch = [value],
     coerce: coerce2 = false,
     mask: mask2 = false
   } = options;
   const ctx = {
-    path: path7,
+    path: path8,
     branch
   };
   if (coerce2) {
@@ -5322,7 +5322,7 @@ function* run(value, struct8, options) {
   }
   for (let [k, v, s] of struct8.entries(value, ctx)) {
     const ts = run(v, s, {
-      path: k === void 0 ? path7 : [...path7, k],
+      path: k === void 0 ? path8 : [...path8, k],
       branch: k === void 0 ? branch : [...branch, v],
       coerce: coerce2,
       mask: mask2
@@ -5547,9 +5547,9 @@ var init_index_es = __esm({
           ...rest
         } = failure;
         const {
-          path: path7
+          path: path8
         } = failure;
-        const msg = path7.length === 0 ? message : "At path: " + path7.join(".") + " -- " + message;
+        const msg = path8.length === 0 ? message : "At path: " + path8.join(".") + " -- " + message;
         super(msg);
         this.value = void 0;
         this.key = void 0;
@@ -8994,14 +8994,14 @@ var require_url_state_machine = __commonJS({
       return url.replace(/\u0009|\u000A|\u000D/g, "");
     }
     function shortenPath(url) {
-      const path7 = url.path;
-      if (path7.length === 0) {
+      const path8 = url.path;
+      if (path8.length === 0) {
         return;
       }
-      if (url.scheme === "file" && path7.length === 1 && isNormalizedWindowsDriveLetter(path7[0])) {
+      if (url.scheme === "file" && path8.length === 1 && isNormalizedWindowsDriveLetter(path8[0])) {
         return;
       }
-      path7.pop();
+      path8.pop();
     }
     function includesCredentials(url) {
       return url.username !== "" || url.password !== "";
@@ -16439,17 +16439,17 @@ var init_accounts_resolver = __esm({
       resolveOptionals(accounts) {
         Object.assign(this._accounts, this.resolveOptionalsHelper(accounts, this._idlIx.accounts));
       }
-      get(path7) {
-        const ret = path7.reduce((acc, subPath) => acc && acc[subPath], this._accounts);
+      get(path8) {
+        const ret = path8.reduce((acc, subPath) => acc && acc[subPath], this._accounts);
         if (ret && ret.toBase58) {
           return ret;
         }
       }
-      set(path7, value) {
+      set(path8, value) {
         let cur = this._accounts;
-        path7.forEach((p, i) => {
+        path8.forEach((p, i) => {
           var _a2;
-          const isLast = i === path7.length - 1;
+          const isLast = i === path8.length - 1;
           if (isLast) {
             cur[p] = value;
           }
@@ -16500,12 +16500,12 @@ var init_accounts_resolver = __esm({
        * Accounts will only be resolved if they are declared next to each other to
        * reduce the chance of name collision.
        */
-      resolveEventCpi(accounts, path7 = []) {
+      resolveEventCpi(accounts, path8 = []) {
         for (const i in accounts) {
           const accountOrAccounts = accounts[i];
           if (isCompositeAccounts(accountOrAccounts)) {
             this.resolveEventCpi(accountOrAccounts.accounts, [
-              ...path7,
+              ...path8,
               accountOrAccounts.name
             ]);
           }
@@ -16515,8 +16515,8 @@ var init_accounts_resolver = __esm({
           const currentName = accounts[i].name;
           const nextName = accounts[nextIndex].name;
           if (currentName === "eventAuthority" && nextName === "program") {
-            const currentPath = [...path7, currentName];
-            const nextPath = [...path7, nextName];
+            const currentPath = [...path8, currentName];
+            const nextPath = [...path8, nextName];
             if (!this.get(currentPath)) {
               this.set(currentPath, import_web314.PublicKey.findProgramAddressSync([Buffer.from("__event_authority")], this._programId)[0]);
             }
@@ -16527,57 +16527,57 @@ var init_accounts_resolver = __esm({
           }
         }
       }
-      resolveConst(accounts, path7 = []) {
+      resolveConst(accounts, path8 = []) {
         for (const accountOrAccounts of accounts) {
           const name = accountOrAccounts.name;
           if (isCompositeAccounts(accountOrAccounts)) {
-            this.resolveConst(accountOrAccounts.accounts, [...path7, name]);
+            this.resolveConst(accountOrAccounts.accounts, [...path8, name]);
           } else {
             const account = accountOrAccounts;
-            if ((account.signer || account.address) && !this.get([...path7, name])) {
+            if ((account.signer || account.address) && !this.get([...path8, name])) {
               if (account.signer) {
                 if (!this._provider.wallet) {
                   throw new Error("This function requires the `Provider` interface implementor to have a `wallet` field.");
                 }
-                this.set([...path7, name], this._provider.wallet.publicKey);
+                this.set([...path8, name], this._provider.wallet.publicKey);
               }
               if (account.address) {
-                this.set([...path7, name], translateAddress(account.address));
+                this.set([...path8, name], translateAddress(account.address));
               }
             }
           }
         }
       }
-      async resolvePdasAndRelations(accounts, path7 = []) {
+      async resolvePdasAndRelations(accounts, path8 = []) {
         let found = 0;
         for (const accountOrAccounts of accounts) {
           const name = accountOrAccounts.name;
           if (isCompositeAccounts(accountOrAccounts)) {
-            found += await this.resolvePdasAndRelations(accountOrAccounts.accounts, [...path7, name]);
+            found += await this.resolvePdasAndRelations(accountOrAccounts.accounts, [...path8, name]);
           } else {
             const account = accountOrAccounts;
-            if ((account.pda || account.relations) && !this.get([...path7, name])) {
+            if ((account.pda || account.relations) && !this.get([...path8, name])) {
               found++;
               try {
                 if (account.pda) {
-                  const seeds = await Promise.all(account.pda.seeds.map((seed2) => this.toBuffer(seed2, path7)));
+                  const seeds = await Promise.all(account.pda.seeds.map((seed2) => this.toBuffer(seed2, path8)));
                   if (seeds.some((seed2) => !seed2)) {
                     continue;
                   }
-                  const programId = await this.parseProgramId(account, path7);
+                  const programId = await this.parseProgramId(account, path8);
                   const [pubkey] = import_web314.PublicKey.findProgramAddressSync(seeds, programId);
-                  this.set([...path7, name], pubkey);
+                  this.set([...path8, name], pubkey);
                 }
               } catch {
               }
               try {
                 if (account.relations) {
-                  const accountKey = this.get([...path7, account.relations[0]]);
+                  const accountKey = this.get([...path8, account.relations[0]]);
                   if (accountKey) {
                     const account2 = await this._accountStore.fetchAccount({
                       publicKey: accountKey
                     });
-                    this.set([...path7, name], account2[name]);
+                    this.set([...path8, name], account2[name]);
                   }
                 }
               } catch {
@@ -16587,25 +16587,25 @@ var init_accounts_resolver = __esm({
         }
         return found;
       }
-      async parseProgramId(account, path7 = []) {
+      async parseProgramId(account, path8 = []) {
         var _a2;
         if (!((_a2 = account.pda) === null || _a2 === void 0 ? void 0 : _a2.program)) {
           return this._programId;
         }
-        const buf = await this.toBuffer(account.pda.program, path7);
+        const buf = await this.toBuffer(account.pda.program, path8);
         if (!buf) {
           throw new Error(`Program seed not resolved: ${account.name}`);
         }
         return new import_web314.PublicKey(buf);
       }
-      async toBuffer(seed2, path7 = []) {
+      async toBuffer(seed2, path8 = []) {
         switch (seed2.kind) {
           case "const":
             return this.toBufferConst(seed2);
           case "arg":
             return await this.toBufferArg(seed2);
           case "account":
-            return await this.toBufferAccount(seed2, path7);
+            return await this.toBufferAccount(seed2, path8);
           default:
             throw new Error(`Unexpected seed: ${seed2}`);
         }
@@ -16614,21 +16614,21 @@ var init_accounts_resolver = __esm({
         return this.toBufferValue("bytes", seed2.value);
       }
       async toBufferArg(seed2) {
-        const [name, ...path7] = seed2.path.split(".");
+        const [name, ...path8] = seed2.path.split(".");
         const index = this._idlIx.args.findIndex((arg) => arg.name === name);
         if (index === -1) {
           throw new Error(`Unable to find argument for seed: ${name}`);
         }
-        const value = path7.reduce((acc, path8) => (acc !== null && acc !== void 0 ? acc : {})[path8], this._args[index]);
+        const value = path8.reduce((acc, path9) => (acc !== null && acc !== void 0 ? acc : {})[path9], this._args[index]);
         if (value === void 0) {
           return;
         }
-        const type2 = this.getType(this._idlIx.args[index].type, path7);
+        const type2 = this.getType(this._idlIx.args[index].type, path8);
         return this.toBufferValue(type2, value);
       }
-      async toBufferAccount(seed2, path7 = []) {
+      async toBufferAccount(seed2, path8 = []) {
         const [name, ...paths] = seed2.path.split(".");
-        const fieldPubkey = this.get([...path7, name]);
+        const fieldPubkey = this.get([...path8, name]);
         if (!fieldPubkey)
           return;
         if (!paths.length) {
@@ -16693,12 +16693,12 @@ var init_accounts_resolver = __esm({
        * Recursively get the type at some path of either a primitive or a user
        * defined struct.
        */
-      getType(type2, path7 = []) {
+      getType(type2, path8 = []) {
         var _a2;
         const typeName = (_a2 = type2 === null || type2 === void 0 ? void 0 : type2.defined) === null || _a2 === void 0 ? void 0 : _a2.name;
         if (typeName) {
           if (typeName === "tokenAccount") {
-            switch (path7.at(0)) {
+            switch (path8.at(0)) {
               case "mint":
               case "owner":
                 return "pubkey";
@@ -16706,14 +16706,14 @@ var init_accounts_resolver = __esm({
               case "delagatedAmount":
                 return "u64";
               default:
-                throw new Error(`Unknown token account path: ${path7}`);
+                throw new Error(`Unknown token account path: ${path8}`);
             }
           }
           const definedType = this._idlTypes.find((t) => t.name === typeName);
           if (!definedType) {
             throw new Error(`Type not found: ${typeName}`);
           }
-          const [fieldName, ...subPath] = path7;
+          const [fieldName, ...subPath] = path8;
           const fields = definedType.type.fields;
           const field = fields.find((field2) => field2.name === fieldName);
           if (!field) {
@@ -21231,8 +21231,8 @@ var require_compiler = __commonJS({
           valueAssignments.push(fullPath);
         }
       }
-      function pathAssigned(path7) {
-        return assignedPaths.indexOf(path7) !== -1;
+      function pathAssigned(path8) {
+        return assignedPaths.indexOf(path8) !== -1;
       }
       function reduceValueNode(node) {
         if (node.type === "Array") {
@@ -21256,20 +21256,20 @@ var require_compiler = __commonJS({
         return obj;
       }
       function setPath(node) {
-        var path7 = node.value;
-        var quotedPath = path7.map(quoteDottedString).join(".");
+        var path8 = node.value;
+        var quotedPath = path8.map(quoteDottedString).join(".");
         var line2 = node.line;
         var column = node.column;
         if (pathAssigned(quotedPath)) {
-          genError("Cannot redefine existing key '" + path7 + "'.", line2, column);
+          genError("Cannot redefine existing key '" + path8 + "'.", line2, column);
         }
         assignedPaths.push(quotedPath);
-        context = deepRef(data, path7, /* @__PURE__ */ Object.create(null), line2, column);
-        currentPath = path7;
+        context = deepRef(data, path8, /* @__PURE__ */ Object.create(null), line2, column);
+        currentPath = path8;
       }
       function addTableArray(node) {
-        var path7 = node.value;
-        var quotedPath = path7.map(quoteDottedString).join(".");
+        var path8 = node.value;
+        var quotedPath = path8.map(quoteDottedString).join(".");
         var line2 = node.line;
         var column = node.column;
         if (!pathAssigned(quotedPath)) {
@@ -21279,20 +21279,20 @@ var require_compiler = __commonJS({
           return p.indexOf(quotedPath) !== 0;
         });
         assignedPaths.push(quotedPath);
-        context = deepRef(data, path7, [], line2, column);
+        context = deepRef(data, path8, [], line2, column);
         currentPath = quotedPath;
         if (context instanceof Array) {
           var newObj = /* @__PURE__ */ Object.create(null);
           context.push(newObj);
           context = newObj;
         } else {
-          genError("Cannot redefine existing key '" + path7 + "'.", line2, column);
+          genError("Cannot redefine existing key '" + path8 + "'.", line2, column);
         }
       }
       function deepRef(start, keys, value, line2, column) {
         var traversed = [];
         var traversedPath = "";
-        var path7 = keys.join(".");
+        var path8 = keys.join(".");
         var ctx = start;
         for (var i = 0; i < keys.length; i++) {
           var key = keys[i];
@@ -21465,9 +21465,9 @@ var init_workspace = __esm({
         }
         if (workspaceCache[programName])
           return workspaceCache[programName];
-        const fs7 = require("fs");
-        const path7 = require("path");
-        const anchorToml = toml.parse(fs7.readFileSync("Anchor.toml"));
+        const fs8 = require("fs");
+        const path8 = require("path");
+        const anchorToml = toml.parse(fs8.readFileSync("Anchor.toml"));
         const clusterId = anchorToml.provider.cluster;
         const programEntry = (_b = (_a2 = anchorToml.programs) === null || _a2 === void 0 ? void 0 : _a2[clusterId]) === null || _b === void 0 ? void 0 : _b[programName];
         let idlPath;
@@ -21476,12 +21476,12 @@ var init_workspace = __esm({
           idlPath = programEntry.idl;
           programId = programEntry.address;
         } else {
-          idlPath = path7.join("target", "idl", `${programName}.json`);
+          idlPath = path8.join("target", "idl", `${programName}.json`);
         }
-        if (!fs7.existsSync(idlPath)) {
+        if (!fs8.existsSync(idlPath)) {
           throw new Error(`${idlPath} doesn't exist. Did you run \`anchor build\`?`);
         }
-        const idl = JSON.parse(fs7.readFileSync(idlPath));
+        const idl = JSON.parse(fs8.readFileSync(idlPath));
         if (programId) {
           idl.address = programId;
         }
@@ -21961,7 +21961,7 @@ var require_has_flag = __commonJS({
 var require_supports_colors = __commonJS({
   "../node_modules/@colors/colors/lib/system/supports-colors.js"(exports2, module2) {
     "use strict";
-    var os3 = require("os");
+    var os4 = require("os");
     var hasFlag2 = require_has_flag();
     var env2 = process.env;
     var forceColor = void 0;
@@ -21999,7 +21999,7 @@ var require_supports_colors = __commonJS({
       }
       var min = forceColor ? 1 : 0;
       if (process.platform === "win32") {
-        var osRelease = os3.release().split(".");
+        var osRelease = os4.release().split(".");
         if (Number(process.versions.node.split(".")[0]) >= 8 && Number(osRelease[0]) >= 10 && Number(osRelease[2]) >= 10586) {
           return Number(osRelease[2]) >= 14931 ? 3 : 2;
         }
@@ -23255,24 +23255,98 @@ var import_commander = require("commander");
 // src/config/loader.ts
 var import_dotenv = __toESM(require("dotenv"));
 var import_path = __toESM(require("path"));
+
+// src/config/credentials.ts
+var import_node_fs = __toESM(require("fs"));
+var import_node_os = __toESM(require("os"));
+var import_node_path = __toESM(require("path"));
+var ENV_VAR_BY_PROVIDER = {
+  groq: "GROQ_API_KEY",
+  anthropic: "ANTHROPIC_API_KEY"
+};
+var SUPPORTED_PROVIDERS = ["groq", "anthropic"];
+var DEFAULT_DIR = import_node_path.default.join(import_node_os.default.homedir(), ".opendev");
+var DEFAULT_FILE = import_node_path.default.join(DEFAULT_DIR, "credentials.json");
+function credentialsPath() {
+  return process.env.OPENDEV_CREDS_PATH || DEFAULT_FILE;
+}
+function isProvider(value) {
+  return SUPPORTED_PROVIDERS.includes(value);
+}
+function envVarFor(provider) {
+  return ENV_VAR_BY_PROVIDER[provider];
+}
+function readStore() {
+  const file = credentialsPath();
+  try {
+    const raw = import_node_fs.default.readFileSync(file, "utf8");
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object") return parsed;
+    return {};
+  } catch {
+    return {};
+  }
+}
+function writeStore(store) {
+  const file = credentialsPath();
+  const dir = import_node_path.default.dirname(file);
+  if (!import_node_fs.default.existsSync(dir)) {
+    import_node_fs.default.mkdirSync(dir, { recursive: true, mode: 448 });
+  }
+  const tmp = `${file}.${process.pid}.tmp`;
+  import_node_fs.default.writeFileSync(tmp, JSON.stringify(store, null, 2), { mode: 384 });
+  import_node_fs.default.renameSync(tmp, file);
+  try {
+    import_node_fs.default.chmodSync(file, 384);
+  } catch {
+  }
+}
+function getCredential(provider) {
+  const store = readStore();
+  return store[provider];
+}
+function setCredential(provider, key) {
+  const store = readStore();
+  store[provider] = key;
+  writeStore(store);
+}
+function removeCredential(provider) {
+  const store = readStore();
+  if (!(provider in store)) return false;
+  delete store[provider];
+  writeStore(store);
+  return true;
+}
+function applyCredentialsToEnv() {
+  const store = readStore();
+  for (const provider of SUPPORTED_PROVIDERS) {
+    const envName = envVarFor(provider);
+    if (process.env[envName]) continue;
+    const fromStore = store[provider];
+    if (fromStore) process.env[envName] = fromStore;
+  }
+}
+function maskKey(key) {
+  if (!key) return "";
+  if (key.length <= 12) return "*".repeat(key.length);
+  return `${key.slice(0, 8)}\u2026${key.slice(-4)}`;
+}
+
+// src/config/loader.ts
 var envPath = import_path.default.resolve(__dirname, "../../.env");
 var config = {};
 var loadConfig = () => {
-  const result = import_dotenv.default.config({ path: envPath });
-  if (result.error) {
-  }
+  import_dotenv.default.config({ path: envPath });
+  applyCredentialsToEnv();
   config = {
     rpcUrl: process.env.OPEN_RPC_URL
-    // Future expansion:
-    // configPath: process.env.OPEN_CONFIG_PATH || path.join(os.homedir(), '.open', 'config.json')
   };
-  console.log("[config] Scaffolding: Loaded configuration from .env stub.");
   return config;
 };
 
 // src/commands/tx.ts
-var fs4 = __toESM(require("fs"));
-var path4 = __toESM(require("path"));
+var fs5 = __toESM(require("fs"));
+var path5 = __toESM(require("path"));
 var import_ora = __toESM(require("ora"));
 
 // ../node_modules/chalk/source/vendor/ansi-styles/index.js
@@ -23463,7 +23537,7 @@ var ansi_styles_default = ansiStyles;
 
 // ../node_modules/chalk/source/vendor/supports-color/index.js
 var import_node_process = __toESM(require("process"), 1);
-var import_node_os = __toESM(require("os"), 1);
+var import_node_os2 = __toESM(require("os"), 1);
 var import_node_tty = __toESM(require("tty"), 1);
 function hasFlag(flag, argv = globalThis.Deno ? globalThis.Deno.args : import_node_process.default.argv) {
   const prefix = flag.startsWith("-") ? "" : flag.length === 1 ? "-" : "--";
@@ -23528,7 +23602,7 @@ function _supportsColor(haveStream, { streamIsTTY, sniffFlags = true } = {}) {
     return min;
   }
   if (import_node_process.default.platform === "win32") {
-    const osRelease = import_node_os.default.release().split(".");
+    const osRelease = import_node_os2.default.release().split(".");
     if (Number(osRelease[0]) >= 10 && Number(osRelease[2]) >= 10586) {
       return Number(osRelease[2]) >= 14931 ? 3 : 2;
     }
@@ -27763,40 +27837,40 @@ var fetchTransaction = async (signature, network = "devnet") => {
 };
 
 // ../services/src/solana/simulationService.ts
-var fs3 = __toESM(require("fs"), 1);
+var fs4 = __toESM(require("fs"), 1);
 var crypto3 = __toESM(require("crypto"), 1);
 var import_web318 = require("@solana/web3.js");
 
 // ../services/src/solana/sourceRunner.ts
 var import_child_process = require("child_process");
-var fs2 = __toESM(require("fs"), 1);
-var path3 = __toESM(require("path"), 1);
+var fs3 = __toESM(require("fs"), 1);
+var path4 = __toESM(require("path"), 1);
 var DEFAULT_TIMEOUT_MS = 9e4;
 var BASE64_LINE_REGEX = /^[A-Za-z0-9+/]+={0,2}$/;
 var MIN_BASE64_LEN = 100;
 var STDERR_TAIL_LINES = 20;
 function detectSourceKind(input) {
-  if (!fs2.existsSync(input)) return null;
-  const stat = fs2.statSync(input);
+  if (!fs3.existsSync(input)) return null;
+  const stat = fs3.statSync(input);
   if (stat.isDirectory()) {
-    return fs2.existsSync(path3.join(input, "Cargo.toml")) ? "rust-source" : null;
+    return fs3.existsSync(path4.join(input, "Cargo.toml")) ? "rust-source" : null;
   }
   if (!stat.isFile()) return null;
-  const ext = path3.extname(input).toLowerCase();
+  const ext = path4.extname(input).toLowerCase();
   if (ext === ".rs") return "rust-source";
   if (ext === ".ts" || ext === ".mts" || ext === ".cts") return "ts-source";
   if (ext === ".js" || ext === ".mjs" || ext === ".cjs") return "js-source";
   return null;
 }
 function findCargoRoot(startPath) {
-  let current = path3.resolve(startPath);
-  if (fs2.statSync(current).isFile()) {
-    current = path3.dirname(current);
+  let current = path4.resolve(startPath);
+  if (fs3.statSync(current).isFile()) {
+    current = path4.dirname(current);
   }
-  const root = path3.parse(current).root;
+  const root = path4.parse(current).root;
   while (current !== root) {
-    if (fs2.existsSync(path3.join(current, "Cargo.toml"))) return current;
-    current = path3.dirname(current);
+    if (fs3.existsSync(path4.join(current, "Cargo.toml"))) return current;
+    current = path4.dirname(current);
   }
   return null;
 }
@@ -27814,10 +27888,10 @@ function buildCommand(kind, absInput) {
     return {
       cmd: "npx",
       args: ["-y", "tsx", absInput],
-      cwd: path3.dirname(absInput)
+      cwd: path4.dirname(absInput)
     };
   }
-  return { cmd: "node", args: [absInput], cwd: path3.dirname(absInput) };
+  return { cmd: "node", args: [absInput], cwd: path4.dirname(absInput) };
 }
 function quoteArgForWindowsShell(arg) {
   if (!/[\s"&|<>^()%!]/.test(arg)) return arg;
@@ -27860,7 +27934,7 @@ async function runSourceFile(rawInput, options = {}) {
       `"${rawInput}" is not a recognized source file (.rs, .ts, .js, .mjs, .cjs) or Rust project directory.`
     );
   }
-  const absInput = path3.resolve(rawInput);
+  const absInput = path4.resolve(rawInput);
   const { cmd, args, cwd } = buildCommand(kind, absInput);
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const commandStr = `${cmd} ${args.join(" ")}`;
@@ -27980,10 +28054,10 @@ function truncate(s, max) {
   return s.length > max ? s.slice(0, max - 1) + "\u2026" : s;
 }
 function detectInputKind(input) {
-  if (fs3.existsSync(input)) {
+  if (fs4.existsSync(input)) {
     const sourceKind = detectSourceKind(input);
     if (sourceKind) return sourceKind;
-    if (fs3.statSync(input).isFile()) return "path";
+    if (fs4.statSync(input).isFile()) return "path";
     throw new Error(
       `"${truncate(input, 64)}" is a directory but doesn't contain a Cargo.toml. Pass a .b64/.json file, a .ts/.js source file, a .rs file, or a Rust project root.`
     );
@@ -28002,7 +28076,7 @@ function detectInputKind(input) {
   );
 }
 function readBase64FromPath(filePath) {
-  const content = fs3.readFileSync(filePath, "utf-8").trim();
+  const content = fs4.readFileSync(filePath, "utf-8").trim();
   if (BASE64_REGEX.test(content)) {
     return content;
   }
@@ -28448,21 +28522,21 @@ async function callAnthropic(payload, apiKey, model, signal) {
       return {
         suggestions: [],
         degraded: "auth",
-        message: "ANTHROPIC_API_KEY inv\xE1lida ou sem permiss\xE3o."
+        message: "ANTHROPIC_API_KEY invalid or lacks permission."
       };
     }
     if (response.status === 429) {
       return {
         suggestions: [],
         degraded: "rate_limit",
-        message: "Anthropic rate limit atingido. Aguarde alguns segundos e tente de novo."
+        message: "Anthropic rate limit reached. Wait a few seconds and try again."
       };
     }
     if (response.status === 400 && /credit/i.test(text2)) {
       return {
         suggestions: [],
         degraded: "no_credit",
-        message: "Cr\xE9ditos da Anthropic esgotados nesta conta. Recarregue em console.anthropic.com."
+        message: "Anthropic credits exhausted for this account. Top up at console.anthropic.com."
       };
     }
     return {
@@ -28521,14 +28595,14 @@ async function callGroq(payload, apiKey, model, signal) {
       return {
         suggestions: [],
         degraded: "auth",
-        message: "GROQ_API_KEY inv\xE1lida ou sem permiss\xE3o."
+        message: "GROQ_API_KEY invalid or lacks permission."
       };
     }
     if (response.status === 429) {
       return {
         suggestions: [],
         degraded: "rate_limit",
-        message: "Groq rate limit atingido. Aguarde alguns segundos e tente de novo."
+        message: "Groq rate limit reached. Wait a few seconds and try again."
       };
     }
     return {
@@ -28637,27 +28711,29 @@ async function callMcpEndpoint(url, payload) {
 }
 function warnNoKey() {
   console.warn(
-    "[MCP] Nenhuma chave de AI configurada. Rendering rule-based insights only.\n       Op\xE7\xE3o 1 (gratuito):  GROQ_API_KEY        \u2192 https://console.groq.com/keys (Llama 3.3 70B, ~30 req/min)\n       Op\xE7\xE3o 2 (pago):      ANTHROPIC_API_KEY   \u2192 https://console.anthropic.com (Claude Sonnet, ~$0.003/an\xE1lise)"
+    "[MCP] No AI key configured. Rendering rule-based insights only.\n       Option 1 (free):  Groq        ->  https://console.groq.com/keys (Llama 3.3 70B, ~30 req/min)\n       Option 2 (paid):  Anthropic   ->  https://console.anthropic.com (Claude Sonnet, ~$0.003/run)\n       Save it once:     opendev config set-key groq <KEY>      # or anthropic\n       Inspect:          opendev config get-key"
   );
 }
 function warnDegraded(result) {
   switch (result.degraded) {
     case "no_credit":
       console.warn(
-        `[MCP] ${result.message ?? "Sem cr\xE9ditos."} Rendering rule-based insights only.`
+        `[MCP] ${result.message ?? "No credits left."} Rendering rule-based insights only.`
       );
       return;
     case "rate_limit":
-      console.warn(`[MCP] ${result.message ?? "Rate limit."} Rendering rule-based insights only.`);
+      console.warn(
+        `[MCP] ${result.message ?? "Rate limit reached."} Rendering rule-based insights only.`
+      );
       return;
     case "auth":
       console.warn(
-        `[MCP] ${result.message ?? "Auth falhou."} Verifique sua ANTHROPIC_API_KEY. Rendering rule-based insights only.`
+        `[MCP] ${result.message ?? "Auth failed."} Check your ANTHROPIC_API_KEY. Rendering rule-based insights only.`
       );
       return;
     default:
       console.warn(
-        `[MCP] AI insights indispon\xEDveis (${result.message ?? "erro desconhecido"}). Rendering rule-based insights only.`
+        `[MCP] AI insights unavailable (${result.message ?? "unknown error"}). Rendering rule-based insights only.`
       );
   }
 }
@@ -29078,9 +29154,15 @@ var GAP = 3;
 var RIGHT_W = INNER - LEFT_W - GAP;
 var BUDGET_LIMIT_DEFAULT = 2e5;
 var applyResponsiveLayout = () => {
-  const cols = process.stdout.columns;
-  if (!cols) return;
-  const target = Math.max(90, Math.min(200, cols - 2));
+  const envOverride = parseInt(process.env.OPEN_TERMINAL_WIDTH ?? "", 10);
+  let target;
+  if (Number.isFinite(envOverride) && envOverride > 0) {
+    target = envOverride;
+  } else if (process.stdout.columns && process.stdout.columns > 0) {
+    target = Math.max(90, Math.min(200, process.stdout.columns - 2));
+  } else {
+    target = 110;
+  }
   WIDTH = target;
   INNER = WIDTH - 4;
   LEFT_W = Math.floor((INNER - GAP) * 0.65);
@@ -29088,13 +29170,39 @@ var applyResponsiveLayout = () => {
   TREE_BAR_W = Math.max(14, Math.min(40, Math.floor(LEFT_W * 0.35)));
   TREE_RIGHT_W = 1 + TREE_BAR_W + 1 + TREE_PCT_W + 2 + TREE_CU_W;
 };
+var truncateVisible = (s, target) => {
+  if ((0, import_string_width.default)(s) <= target) return s;
+  let out = "";
+  let visible = 0;
+  let i = 0;
+  while (i < s.length && visible < target) {
+    if (s.charCodeAt(i) === 27) {
+      const end = s.indexOf("m", i);
+      if (end === -1) break;
+      out += s.slice(i, end + 1);
+      i = end + 1;
+      continue;
+    }
+    const ch = s[i];
+    const w = (0, import_string_width.default)(ch);
+    if (visible + w > target) break;
+    out += ch;
+    visible += w;
+    i += 1;
+  }
+  return out + "\x1B[0m";
+};
 var padVisible = (s, target) => {
   const pad = target - (0, import_string_width.default)(s);
-  return pad > 0 ? s + " ".repeat(pad) : s;
+  if (pad > 0) return s + " ".repeat(pad);
+  if (pad === 0) return s;
+  return truncateVisible(s, target);
 };
 var padVisibleStart = (s, target) => {
   const pad = target - (0, import_string_width.default)(s);
-  return pad > 0 ? " ".repeat(pad) + s : s;
+  if (pad > 0) return " ".repeat(pad) + s;
+  if (pad === 0) return s;
+  return truncateVisible(s, target);
 };
 var centerPad = (s, width) => {
   const sw = (0, import_string_width.default)(s);
@@ -29246,20 +29354,6 @@ function dashboardHeaderRow(signature, success, slot, network, durationMs) {
   const right = `${status}${dur}`;
   const fill = Math.max(1, INNER - (0, import_string_width.default)(left) - (0, import_string_width.default)(right));
   return left + " ".repeat(fill) + right;
-}
-function dashboardTabBarLines(active = "Flame") {
-  const tabs = ["Flame", "CPI Tree", "Accounts", "Graph", "Learn"];
-  const parts = [];
-  const underlineParts = [];
-  for (const t of tabs) {
-    const isActive = t === active;
-    parts.push(isActive ? source_default.green.bold(t) : source_default.gray(t));
-    underlineParts.push(isActive ? source_default.green("\u2500".repeat(t.length)) : " ".repeat(t.length));
-  }
-  return {
-    tabLine: parts.join("   "),
-    underlineLine: underlineParts.join("   ")
-  };
 }
 var TREE_BAR_W = 32;
 var TREE_PCT_W = 6;
@@ -29661,10 +29755,6 @@ function renderDashboard(analyzed, insights, network, durationMs) {
   console.log(boxTop());
   console.log(boxRow(dashboardHeaderRow(signature, analyzed.success, slot, network, durationMs)));
   console.log(boxDivider());
-  const { tabLine, underlineLine } = dashboardTabBarLines("Flame");
-  console.log(boxRow(tabLine));
-  console.log(boxRow(underlineLine));
-  console.log(boxDivider());
   console.log(boxBlank());
   for (let i = 0; i < maxLen; i++) {
     console.log(boxTwoCol(leftLines[i], rightLines[i]));
@@ -29968,8 +30058,8 @@ function printTimings(timings) {
 }
 var registerTxCommand = (program3) => {
   program3.command("tx <signature> [network]").description(
-    "Full analysis of a Solana transaction.\n\n  --verbose: Displays detailed timing for each stage in the terminal and includes timings in the JSON under _metadata.timings."
-  ).option("--network <type>", "Solana network (mainnet/devnet)").option("--json", "Output results in structured JSON format", false).option("--csv", "Output a single CSV row (with header) for BI tools", false).option("--output <path>", "Write JSON/CSV output to file instead of stdout").option("--no-cache", "Skip IDL cache and force network re-fetch").option("--verbose", "Show detailed timing for each pipeline stage").action(async (signature, networkArg, options) => {
+    "Full analysis of a confirmed Solana transaction.\n\n  <network> (positional, optional)  mainnet | devnet  (default: mainnet)\n\n  Equivalent forms:\n    opendev tx <signature>                  # defaults to mainnet\n    opendev tx <signature> mainnet          # positional\n    opendev tx <signature> --network devnet # flag (overrides positional)\n\n  --verbose: print per-stage timings in the terminal and include them in --json output under _metadata.timings.\n\n  Layout: render auto-fits to your terminal width. If the dashboard breaks on a non-standard terminal,\n  override with:  OPEN_TERMINAL_WIDTH=110 opendev tx <signature>"
+  ).option("--network <name>", "Solana network: mainnet or devnet (default: mainnet)").option("--json", "Output results in structured JSON format", false).option("--csv", "Output a single CSV row (with header) for BI tools", false).option("--output <path>", "Write JSON/CSV output to file instead of stdout").option("--no-cache", "Skip IDL cache and force network re-fetch").option("--verbose", "Show detailed timing for each pipeline stage").action(async (signature, networkArg, options) => {
     const isJson = options.json === true;
     const isCsv = options.csv === true;
     const isMachineOutput = isJson || isCsv;
@@ -30080,8 +30170,8 @@ var registerTxCommand = (program3) => {
         analyzed._metadata.timings = timings;
         const jsonOut = renderJSON(analyzed, insightsReport);
         if (options.output) {
-          const outPath = path4.resolve(options.output);
-          fs4.writeFileSync(outPath, jsonOut, "utf-8");
+          const outPath = path5.resolve(options.output);
+          fs5.writeFileSync(outPath, jsonOut, "utf-8");
           originalLog(`
 Report written to: ${outPath}`);
           return;
@@ -30093,14 +30183,14 @@ Report written to: ${outPath}`);
         const csvOut = renderCSV(analyzed, insightsReport) + "\n";
         const defaultName = `${signature}.csv`;
         if (options.output) {
-          const outPath2 = path4.resolve(options.output);
-          fs4.writeFileSync(outPath2, csvOut, "utf-8");
+          const outPath2 = path5.resolve(options.output);
+          fs5.writeFileSync(outPath2, csvOut, "utf-8");
           originalLog(`
 CSV written to: ${outPath2}`);
           return;
         }
-        const outPath = path4.resolve(defaultName);
-        fs4.writeFileSync(outPath, csvOut, "utf-8");
+        const outPath = path5.resolve(defaultName);
+        fs5.writeFileSync(outPath, csvOut, "utf-8");
         originalLog(`
 CSV written to: ${outPath}`);
         return;
@@ -30136,17 +30226,17 @@ Detail: ${error.message}`));
 };
 
 // src/commands/batch.ts
-var fs5 = __toESM(require("fs"));
-var path5 = __toESM(require("path"));
+var fs6 = __toESM(require("fs"));
+var path6 = __toESM(require("path"));
 var import_ora2 = __toESM(require("ora"));
 function loadBatchFile(filePath) {
-  const resolved = path5.resolve(filePath);
-  if (!fs5.existsSync(resolved)) {
+  const resolved = path6.resolve(filePath);
+  if (!fs6.existsSync(resolved)) {
     throw new Error(`Batch file not found: ${resolved}`);
   }
   let raw;
   try {
-    raw = fs5.readFileSync(resolved, "utf-8");
+    raw = fs6.readFileSync(resolved, "utf-8");
   } catch {
     throw new Error(`Failed to read batch file: ${resolved}`);
   }
@@ -30320,8 +30410,8 @@ Processing ${signatures.length} transaction(s) on ${network} (concurrency: ${con
       const rows = [csvHeader(), ...entries.map((e) => csvRow(e.analyzed, e.insights))];
       const csv = rows.join("\n") + "\n";
       if (options.output) {
-        const outPath = path5.resolve(options.output);
-        fs5.writeFileSync(outPath, csv, "utf-8");
+        const outPath = path6.resolve(options.output);
+        fs6.writeFileSync(outPath, csv, "utf-8");
         console.log(source_default.green(`
 CSV written to: ${outPath}`));
       } else {
@@ -30332,8 +30422,8 @@ CSV written to: ${outPath}`));
     if (options.json || options.output) {
       const json = JSON.stringify(report, null, 2);
       if (options.output) {
-        const outPath = path5.resolve(options.output);
-        fs5.writeFileSync(outPath, json, "utf-8");
+        const outPath = path6.resolve(options.output);
+        fs6.writeFileSync(outPath, json, "utf-8");
         console.log(source_default.green(`
 Report written to: ${outPath}`));
       } else {
@@ -30347,12 +30437,76 @@ Report written to: ${outPath}`));
 
 // src/commands/config.ts
 var registerConfigCommand = (program3) => {
-  const configCommand = program3.command("config").description("Manage OPEN CLI configuration");
-  configCommand.command("set").description("Update a configuration value").command("rpc").argument("<url>", "The Solana RPC URL to use").description("Set the default Solana RPC URL").action((url) => {
-    console.log(`--- Config Set RPC (Stub) ---`);
-    console.log(`URL Received: ${url}`);
-    console.log(`Current loaded RPC (from .env): ${config.rpcUrl}`);
-    console.log("\nStatus: Saving to ~/.open/config.json is NOT IMPLEMENTED YET.");
+  const configCommand = program3.command("config").description("Manage opendev CLI configuration");
+  configCommand.command("set-key").description(
+    "Save an AI provider API key to ~/.opendev/credentials.json (chmod 600).\n\n  Supported providers: " + SUPPORTED_PROVIDERS.join(", ") + "\n\n  Examples:\n    opendev config set-key groq gsk_xxxxxxxxxxxxxxxx\n    opendev config set-key anthropic sk-ant-xxxxxxxxxxxx\n\n  Get a key:\n    Groq (free):     https://console.groq.com/keys\n    Anthropic (paid): https://console.anthropic.com"
+  ).argument("<provider>", `which AI provider (${SUPPORTED_PROVIDERS.join(" | ")})`).argument("<key>", "the API key").action((provider, key) => {
+    if (!isProvider(provider)) {
+      console.error(
+        source_default.red(`Unknown provider "${provider}". Supported: ${SUPPORTED_PROVIDERS.join(", ")}.`)
+      );
+      process.exit(1);
+    }
+    if (!key || key.length < 8) {
+      console.error(source_default.red("Key looks too short. Did you paste the full value?"));
+      process.exit(1);
+    }
+    setCredential(provider, key);
+    console.log(
+      `${source_default.green("\u2713")} Saved ${source_default.bold(provider)} key (${maskKey(key)}) to ${credentialsPath()}`
+    );
+    console.log(source_default.gray(`  This will be used as ${envVarFor(provider)}.`));
+  });
+  configCommand.command("get-key").description("Show which AI keys are configured (values are masked).").argument("[provider]", "limit to a single provider (optional)").action((provider) => {
+    const targets = provider ? isProvider(provider) ? [provider] : [] : [...SUPPORTED_PROVIDERS];
+    if (provider && !isProvider(provider)) {
+      console.error(
+        source_default.red(`Unknown provider "${provider}". Supported: ${SUPPORTED_PROVIDERS.join(", ")}.`)
+      );
+      process.exit(1);
+    }
+    console.log(`Credentials store: ${credentialsPath()}
+`);
+    for (const p of targets) {
+      const fromStore = getCredential(p);
+      const fromEnv = process.env[envVarFor(p)];
+      let source;
+      let value;
+      if (fromEnv && fromEnv !== fromStore) {
+        source = source_default.yellow("env");
+        value = maskKey(fromEnv);
+      } else if (fromStore) {
+        source = source_default.green("store");
+        value = maskKey(fromStore);
+      } else {
+        source = source_default.gray("\u2014");
+        value = source_default.gray("not set");
+      }
+      console.log(`  ${source_default.bold(p.padEnd(10))} ${source.padEnd(20)} ${value}`);
+    }
+  });
+  configCommand.command("remove-key").description("Delete an AI provider key from the credentials store.").argument("<provider>", `which provider (${SUPPORTED_PROVIDERS.join(" | ")})`).action((provider) => {
+    if (!isProvider(provider)) {
+      console.error(
+        source_default.red(`Unknown provider "${provider}". Supported: ${SUPPORTED_PROVIDERS.join(", ")}.`)
+      );
+      process.exit(1);
+    }
+    const removed = removeCredential(provider);
+    if (removed) {
+      console.log(
+        `${source_default.green("\u2713")} Removed ${source_default.bold(provider)} from ${credentialsPath()}`
+      );
+    } else {
+      console.log(`${source_default.gray("\u2014")} ${source_default.bold(provider)} was not in the store.`);
+    }
+  });
+  configCommand.command("set-rpc").description("Set the default Solana RPC URL (currently shown only \u2014 persistence WIP)").argument("<url>", "the Solana RPC URL to use").action((url) => {
+    console.log(source_default.yellow("\u26A0 RPC URL persistence is not yet implemented."));
+    console.log(`Received: ${url}`);
+    console.log(`Currently loaded RPC (from .env): ${config.rpcUrl ?? "(none)"}`);
+    console.log("");
+    console.log(source_default.gray("For now, set OPEN_RPC_URL in your shell or in a .env file."));
   });
 };
 
@@ -30603,8 +30757,8 @@ var registerInfoCommand = (program3) => {
 };
 
 // src/commands/simulate.ts
-var fs6 = __toESM(require("fs"));
-var path6 = __toESM(require("path"));
+var fs7 = __toESM(require("fs"));
+var path7 = __toESM(require("path"));
 var import_ora3 = __toESM(require("ora"));
 function nowMs2() {
   return typeof process !== "undefined" && process.hrtime ? Number(process.hrtime.bigint() / 1000000n) : Date.now();
@@ -30655,8 +30809,8 @@ function printTimings2(timings) {
 }
 var registerSimulateCommand = (program3) => {
   program3.command("simulate <input>").description(
-    "Simulate a Solana transaction that has not been broadcast yet, and produce the same insight panel as `open tx`.\n\n  <input> auto-detects:\n    \u2022 base64 transaction blob\n    \u2022 .b64 / .json file containing the blob\n    \u2022 .ts / .js / .mjs / .cjs source file that prints the base64 tx on stdout\n    \u2022 .rs source file or Rust project directory (Cargo.toml) \u2014 runner cargo run --release\n\n  For confirmed on-chain transactions use `open tx <signature>` instead."
-  ).option("--network <type>", "Solana network (mainnet/devnet)", "mainnet").option("--rpc <url>", "Custom RPC URL (e.g. http://localhost:8899 for surfpool local)").option("--json", "Output results in structured JSON format", false).option("--csv", "Output a single CSV row (with header) for BI tools", false).option("--output <path>", "Write JSON/CSV output to file instead of stdout").option("--no-cache", "Skip IDL cache and force network re-fetch").option("--verbose", "Show detailed timing for each pipeline stage").option("--no-replace-blockhash", "Do not replace recent blockhash on simulation").option("--sig-verify", "Verify signatures during simulation", false).option("--no-exec", "Refuse to execute source files (.rs/.ts/.js)").option(
+    "Simulate a Solana transaction that has not been broadcast yet, and produce the same insight panel as `opendev tx`.\n\n  <input> auto-detects:\n    \u2022 base64 transaction blob\n    \u2022 .b64 / .json file containing the blob\n    \u2022 .ts / .js / .mjs / .cjs source file that prints the base64 tx on stdout\n    \u2022 .rs source file or Rust project directory (Cargo.toml) \u2014 runner cargo run --release\n\n  For confirmed on-chain transactions use `opendev tx <signature>` instead."
+  ).option("--network <name>", "Solana network: mainnet or devnet (default: mainnet)", "mainnet").option("--rpc <url>", "Custom RPC URL (e.g. http://localhost:8899 for surfpool local)").option("--json", "Output results in structured JSON format", false).option("--csv", "Output a single CSV row (with header) for BI tools", false).option("--output <path>", "Write JSON/CSV output to file instead of stdout").option("--no-cache", "Skip IDL cache and force network re-fetch").option("--verbose", "Show detailed timing for each pipeline stage").option("--no-replace-blockhash", "Do not replace recent blockhash on simulation").option("--sig-verify", "Verify signatures during simulation", false).option("--no-exec", "Refuse to execute source files (.rs/.ts/.js)").option(
     "--exec-timeout <seconds>",
     "Max seconds to wait for the source-file runner (default 90)",
     (v) => parseInt(v, 10)
@@ -30802,8 +30956,8 @@ Error: ${msg}`));
         };
         const jsonOut = renderJSON(analyzed, insightsReport);
         if (options.output) {
-          const outPath = path6.resolve(options.output);
-          fs6.writeFileSync(outPath, jsonOut, "utf-8");
+          const outPath = path7.resolve(options.output);
+          fs7.writeFileSync(outPath, jsonOut, "utf-8");
           originalLog(`
 Report written to: ${outPath}`);
         } else {
@@ -30815,13 +30969,13 @@ Report written to: ${outPath}`);
       if (isCsv) {
         const csvOut = renderCSV(analyzed, insightsReport) + "\n";
         if (options.output) {
-          const outPath = path6.resolve(options.output);
-          fs6.writeFileSync(outPath, csvOut, "utf-8");
+          const outPath = path7.resolve(options.output);
+          fs7.writeFileSync(outPath, csvOut, "utf-8");
           originalLog(`
 CSV written to: ${outPath}`);
         } else {
-          const outPath = path6.resolve(`${bundle.signature}.csv`);
-          fs6.writeFileSync(outPath, csvOut, "utf-8");
+          const outPath = path7.resolve(`${bundle.signature}.csv`);
+          fs7.writeFileSync(outPath, csvOut, "utf-8");
           originalLog(`
 CSV written to: ${outPath}`);
         }

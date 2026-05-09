@@ -40,7 +40,7 @@
     "url": "https://github.com/OpenSubmissionn/Open_DevTool/issues"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "type": "commonjs",
   "devDependencies": {
@@ -53,7 +53,7 @@
     "@solana/web3.js": "^1.98.4",
     "commander": "^11.1.0",
     "dotenv": "^16.6.1",
-    "ora": "^9.3.0",
+    "ora": "^5.4.1",
     "string-width": "^4.2.3"
   }
 }

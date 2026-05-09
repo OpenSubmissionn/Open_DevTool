@@ -129,22 +129,21 @@ export async function callAnthropic(
       return {
         suggestions: [],
         degraded: 'auth',
-        message: 'ANTHROPIC_API_KEY inválida ou sem permissão.',
+        message: 'ANTHROPIC_API_KEY invalid or lacks permission.',
       };
     }
     if (response.status === 429) {
       return {
         suggestions: [],
         degraded: 'rate_limit',
-        message: 'Anthropic rate limit atingido. Aguarde alguns segundos e tente de novo.',
+        message: 'Anthropic rate limit reached. Wait a few seconds and try again.',
       };
     }
     if (response.status === 400 && /credit/i.test(text)) {
       return {
         suggestions: [],
         degraded: 'no_credit',
-        message:
-          'Créditos da Anthropic esgotados nesta conta. Recarregue em console.anthropic.com.',
+        message: 'Anthropic credits exhausted for this account. Top up at console.anthropic.com.',
       };
     }
     return {
