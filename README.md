@@ -169,9 +169,10 @@ List supported programs and decoder coverage:
 opendev info
 ```
 
-Show the resolved CLI configuration:
+Set up AI insights (optional but recommended — free with Groq):
 ```bash
-opendev config
+opendev login              # opens browser, paste key, validates, saves
+opendev config get-key     # confirm what's configured
 ```
 
 ---
@@ -184,7 +185,11 @@ opendev config
 | `opendev simulate <input>` | Simulate an unsigned transaction (base64 blob or file path) |
 | `opendev batch <file>` | Run analysis over a list of signatures from a JSON file |
 | `opendev info` | Show registered programs, decoder status, and coverage |
-| `opendev config` | Show the resolved CLI configuration |
+| `opendev login [provider]` | Browser-assisted setup for AI insights (default: groq) |
+| `opendev config set-key <provider> <key>` | Save an AI provider API key from a script |
+| `opendev config get-key [provider]` | List configured keys (values masked) and their source |
+| `opendev config remove-key <provider>` | Delete a key from the credential store |
+| `opendev config set-rpc <url>` | Set the default Solana RPC URL |
 
 Run `opendev <command> --help` for the full flag list.
 
@@ -206,19 +211,31 @@ Run `opendev <command> --help` for the full flag list.
 
 ## AI-powered insights (optional)
 
-opendev ships rule-based insights out of the box. To unlock AI-generated optimization suggestions, set one of the following keys in your `.env`:
+opendev ships rule-based insights out of the box. To unlock AI-generated optimization suggestions, you need an API key from one of:
 
-| Provider | Env var | Free tier |
+| Provider | Free tier | Get a key |
 |---|---|---|
-| **Groq** (recommended) | `GROQ_API_KEY` | ✅ no credit card — get one at [console.groq.com/keys](https://console.groq.com/keys) |
-| **Anthropic** | `ANTHROPIC_API_KEY` | ❌ $5 minimum top-up — [console.anthropic.com](https://console.anthropic.com) |
+| **Groq** (recommended) | ✅ no credit card | [console.groq.com/keys](https://console.groq.com/keys) |
+| **Anthropic** | ❌ $5 minimum top-up | [console.anthropic.com](https://console.anthropic.com) |
+
+The fastest path is `opendev login`, which opens the keys page in your browser, prompts for the key with masked input, validates it against the provider's API, and saves it to `~/.opendev/credentials.json` (chmod 600):
 
 ```bash
-# .env
-GROQ_API_KEY=gsk_...
+opendev login              # defaults to groq
+opendev login anthropic    # if you have a paid key
 ```
 
-Both providers use the same prompt and return the same shape — the CLI logs which one is active at the start of each run. Without a key, only rule-based insights render.
+If you prefer scripted setup (CI / dotfiles):
+
+```bash
+opendev config set-key groq gsk_...
+opendev config set-key anthropic sk-ant-...
+opendev config get-key                       # confirm what's stored
+```
+
+Or — if you don't want to install anything new and prefer the classic env var route — `GROQ_API_KEY` / `ANTHROPIC_API_KEY` in your shell or `.env` still works. Resolution order is: shell exports → `.env` in the install dir → `~/.opendev/credentials.json`. Without any key, only rule-based insights render.
+
+Both providers use the same prompt and return the same shape — the CLI logs which one is active at the start of each run.
 
 Power-user overrides:
 
@@ -237,6 +254,8 @@ Custom RPC default:
 export OPEN_RPC_URL=https://your-rpc.example.com
 opendev tx <SIGNATURE>
 ```
+
+Persisted state lives in `~/.opendev/credentials.json` (chmod 600). Today it only holds AI provider keys written by `opendev login` and `opendev config set-key`. Override the path with `OPENDEV_CREDS_PATH` if needed (useful for tests).
 
 opendev also reads `HELIUS_API_KEY` for richer transaction parsing when available. See `.env.example` for the full list.
 
