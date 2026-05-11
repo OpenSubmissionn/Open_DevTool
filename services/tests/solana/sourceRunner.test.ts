@@ -142,4 +142,37 @@ describe('runSourceFile - js runner', () => {
     fs.writeFileSync(f, `setTimeout(() => {}, 60000);`);
     await expect(runSourceFile(f, { timeoutMs: 500 })).rejects.toThrow(/timed out/i);
   });
+
+  it('streams stdout and stderr lines through onProgress', async () => {
+    const f = path.join(tmpDir, 'progress.cjs');
+    const fakeB64 = 'B'.repeat(120);
+    fs.writeFileSync(
+      f,
+      `console.log("step-1");\nconsole.error("warn-1");\nconsole.log("${fakeB64}");`
+    );
+    const events: { line: string; stream: 'stdout' | 'stderr' }[] = [];
+    const result = await runSourceFile(f, {
+      timeoutMs: 10_000,
+      onProgress: (line, stream) => events.push({ line, stream }),
+    });
+    expect(result.base64).toBe(fakeB64);
+    expect(events.some((e) => e.stream === 'stdout' && e.line.includes('step-1'))).toBe(true);
+    expect(events.some((e) => e.stream === 'stderr' && e.line.includes('warn-1'))).toBe(true);
+  });
+
+  it('rejects when input is not a recognized source file', async () => {
+    const f = path.join(tmpDir, 'note.txt');
+    fs.writeFileSync(f, 'hello');
+    await expect(runSourceFile(f, { timeoutMs: 1_000 })).rejects.toThrow(/not a recognized/i);
+  });
+
+  it('finds Cargo.toml by walking up from a nested .rs path', () => {
+    const root = fs.mkdtempSync(path.join(tmpDir, 'cargo-walk-'));
+    fs.writeFileSync(path.join(root, 'Cargo.toml'), '[package]\nname="x"');
+    const nested = path.join(root, 'src');
+    fs.mkdirSync(nested);
+    const rs = path.join(nested, 'main.rs');
+    fs.writeFileSync(rs, 'fn main() {}');
+    expect(detectSourceKind(rs)).toBe('rust-source');
+  });
 });
