@@ -1270,10 +1270,10 @@ var require_supports_color = __commonJS({
         return 3;
       }
       if ('TERM_PROGRAM' in env) {
-        const version = parseInt((env.TERM_PROGRAM_VERSION || '').split('.')[0], 10);
+        const version2 = parseInt((env.TERM_PROGRAM_VERSION || '').split('.')[0], 10);
         switch (env.TERM_PROGRAM) {
           case 'iTerm.app':
-            return version >= 3 ? 3 : 2;
+            return version2 >= 3 ? 3 : 2;
           case 'Apple_Terminal':
             return 2;
         }
@@ -33212,10 +33212,10 @@ var require_supports_colors = __commonJS({
         return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env.TEAMCITY_VERSION) ? 1 : 0;
       }
       if ('TERM_PROGRAM' in env) {
-        var version = parseInt((env.TERM_PROGRAM_VERSION || '').split('.')[0], 10);
+        var version2 = parseInt((env.TERM_PROGRAM_VERSION || '').split('.')[0], 10);
         switch (env.TERM_PROGRAM) {
           case 'iTerm.app':
-            return version >= 3 ? 3 : 2;
+            return version2 >= 3 ? 3 : 2;
           case 'Hyper':
             return 3;
           case 'Apple_Terminal':
@@ -37566,14 +37566,14 @@ var IdlCache = class {
    * Persists an IDL to disk. Write failures are swallowed — the freshly-
    * fetched IDL is still usable even if the cache write fails.
    */
-  set(programId, idl, version = 'unknown') {
+  set(programId, idl, version2 = 'unknown') {
     if (this.noCache) return;
     try {
       this.ensureCacheDirSync();
       const entry = {
         idl,
         programId,
-        version,
+        version: version2,
         fetchedAt: Date.now(),
         checksum: sha256short(idl),
       };
@@ -37582,7 +37582,7 @@ var IdlCache = class {
         JSON.stringify(entry, null, 2),
         'utf-8'
       );
-      verboseLog(this.verbose, `stored  ${programId} ver=${version}`);
+      verboseLog(this.verbose, `stored  ${programId} ver=${version2}`);
     } catch (err2) {
       verboseLog(this.verbose, `write-err ${programId}: ${String(err2)}`);
     }
@@ -42138,6 +42138,9 @@ Detail: ${err2.message}`)
     });
 };
 
+// package.json
+var version = '0.4.0';
+
 // bin/open.ts
 var minNodeMajor = 18;
 var nodeMajor = Number(process.versions.node.split('.')[0] || 0);
@@ -42160,7 +42163,7 @@ var program2 = new import_commander.Command();
 program2
   .name('opendev')
   .description('opendev \u2014 Visual transaction debugger and CU profiler for Solana')
-  .version('0.3.0')
+  .version(version)
   .option('--verbose', 'Enable debug logging', false);
 registerTxCommand(program2);
 registerBatchCommand(program2);

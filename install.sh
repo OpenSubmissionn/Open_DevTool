@@ -263,7 +263,32 @@ if ! "$INSTALLED_BIN" --version >/dev/null 2>&1; then
   exit 1
 fi
 
-ok "Installed: $INSTALLED_BIN ($("$INSTALLED_BIN" --version 2>/dev/null | tail -1))"
+INSTALLED_VERSION="$("$INSTALLED_BIN" --version 2>/dev/null | tail -1)"
+ok "Installed: $INSTALLED_BIN ($INSTALLED_VERSION)"
+
+# Detect a stale `opendev` earlier on PATH that would shadow what we just
+# installed. Common cause: a previous install put opendev in a different
+# npm prefix (e.g. /usr/local/bin via sudo) which sits ahead of nvm's bin
+# in PATH. Symptom: user runs `opendev --help` and sees old behavior even
+# though install reported success.
+WHICH_BIN="$(command -v opendev 2>/dev/null || true)"
+if [ -n "$WHICH_BIN" ] && [ "$WHICH_BIN" != "$INSTALLED_BIN" ]; then
+  # Resolve symlinks so we compare real paths, not symlink names.
+  WHICH_REAL="$(readlink -f "$WHICH_BIN" 2>/dev/null || echo "$WHICH_BIN")"
+  INSTALLED_REAL="$(readlink -f "$INSTALLED_BIN" 2>/dev/null || echo "$INSTALLED_BIN")"
+  if [ "$WHICH_REAL" != "$INSTALLED_REAL" ]; then
+    warn "A different 'opendev' is earlier on your PATH:"
+    warn "  On PATH:   $WHICH_BIN  ($("$WHICH_BIN" --version 2>/dev/null | tail -1 || echo "broken"))"
+    warn "  Installed: $INSTALLED_BIN  ($INSTALLED_VERSION)"
+    warn ""
+    warn "Your shell will run the one on PATH, not the one we just installed."
+    warn "Remove the stale copy with one of these:"
+    warn "  rm '$WHICH_BIN'                          # if you own it"
+    warn "  sudo rm '$WHICH_BIN'                     # if root owns it"
+    warn ""
+    warn "Then run:   hash -r  &&  opendev --version"
+  fi
+fi
 
 # Detect whether $NPM_BIN_DIR is on the user's interactive PATH. We can't
 # read the parent shell's PATH directly, but we inherited it — so we use
