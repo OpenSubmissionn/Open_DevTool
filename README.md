@@ -465,6 +465,10 @@ opendev/
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Run `npm run test:all` and `npm run validate:decoders` before opening a PR.
 
+## Security
+
+Production dependency tree has **0 known vulnerabilities** (`npm run audit:prod` to verify). The `npm audit` default output also flags 8 advisories in dev-only dependencies (transitive deps of `@vercel/node`, used only for build-time TypeScript types of the Vercel serverless functions). These never reach a user's installed CLI or the Vercel runtime — the published package only ships `dist/open.js` after tsup bundling. If you need to confirm before shipping in a regulated environment, run `npm audit --omit=dev` and you should see `found 0 vulnerabilities`.
+
 ---
 
 ## Maintainers

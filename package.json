@@ -22,7 +22,8 @@
     "format": "prettier --write \"**/*.ts\"",
     "validate:benchmarks": "tsx scripts/validate-benchmarks.ts",
     "validate:decoders": "tsx scripts/validate-decoders.ts",
-    "bench:latency": "tsx scripts/latency-benchmark.ts"
+    "bench:latency": "tsx scripts/latency-benchmark.ts",
+    "audit:prod": "npm audit --omit=dev"
   },
   "engines": {
     "node": ">=20"
