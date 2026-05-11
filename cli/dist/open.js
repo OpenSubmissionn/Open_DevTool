@@ -45,6 +45,1611 @@ var __toESM = (mod, isNodeMode, target) => (
 );
 var __toCommonJS = (mod) => __copyProps(__defProp({}, '__esModule', { value: true }), mod);
 
+// ../node_modules/color-name/index.js
+var require_color_name = __commonJS({
+  '../node_modules/color-name/index.js'(exports2, module2) {
+    'use strict';
+    module2.exports = {
+      aliceblue: [240, 248, 255],
+      antiquewhite: [250, 235, 215],
+      aqua: [0, 255, 255],
+      aquamarine: [127, 255, 212],
+      azure: [240, 255, 255],
+      beige: [245, 245, 220],
+      bisque: [255, 228, 196],
+      black: [0, 0, 0],
+      blanchedalmond: [255, 235, 205],
+      blue: [0, 0, 255],
+      blueviolet: [138, 43, 226],
+      brown: [165, 42, 42],
+      burlywood: [222, 184, 135],
+      cadetblue: [95, 158, 160],
+      chartreuse: [127, 255, 0],
+      chocolate: [210, 105, 30],
+      coral: [255, 127, 80],
+      cornflowerblue: [100, 149, 237],
+      cornsilk: [255, 248, 220],
+      crimson: [220, 20, 60],
+      cyan: [0, 255, 255],
+      darkblue: [0, 0, 139],
+      darkcyan: [0, 139, 139],
+      darkgoldenrod: [184, 134, 11],
+      darkgray: [169, 169, 169],
+      darkgreen: [0, 100, 0],
+      darkgrey: [169, 169, 169],
+      darkkhaki: [189, 183, 107],
+      darkmagenta: [139, 0, 139],
+      darkolivegreen: [85, 107, 47],
+      darkorange: [255, 140, 0],
+      darkorchid: [153, 50, 204],
+      darkred: [139, 0, 0],
+      darksalmon: [233, 150, 122],
+      darkseagreen: [143, 188, 143],
+      darkslateblue: [72, 61, 139],
+      darkslategray: [47, 79, 79],
+      darkslategrey: [47, 79, 79],
+      darkturquoise: [0, 206, 209],
+      darkviolet: [148, 0, 211],
+      deeppink: [255, 20, 147],
+      deepskyblue: [0, 191, 255],
+      dimgray: [105, 105, 105],
+      dimgrey: [105, 105, 105],
+      dodgerblue: [30, 144, 255],
+      firebrick: [178, 34, 34],
+      floralwhite: [255, 250, 240],
+      forestgreen: [34, 139, 34],
+      fuchsia: [255, 0, 255],
+      gainsboro: [220, 220, 220],
+      ghostwhite: [248, 248, 255],
+      gold: [255, 215, 0],
+      goldenrod: [218, 165, 32],
+      gray: [128, 128, 128],
+      green: [0, 128, 0],
+      greenyellow: [173, 255, 47],
+      grey: [128, 128, 128],
+      honeydew: [240, 255, 240],
+      hotpink: [255, 105, 180],
+      indianred: [205, 92, 92],
+      indigo: [75, 0, 130],
+      ivory: [255, 255, 240],
+      khaki: [240, 230, 140],
+      lavender: [230, 230, 250],
+      lavenderblush: [255, 240, 245],
+      lawngreen: [124, 252, 0],
+      lemonchiffon: [255, 250, 205],
+      lightblue: [173, 216, 230],
+      lightcoral: [240, 128, 128],
+      lightcyan: [224, 255, 255],
+      lightgoldenrodyellow: [250, 250, 210],
+      lightgray: [211, 211, 211],
+      lightgreen: [144, 238, 144],
+      lightgrey: [211, 211, 211],
+      lightpink: [255, 182, 193],
+      lightsalmon: [255, 160, 122],
+      lightseagreen: [32, 178, 170],
+      lightskyblue: [135, 206, 250],
+      lightslategray: [119, 136, 153],
+      lightslategrey: [119, 136, 153],
+      lightsteelblue: [176, 196, 222],
+      lightyellow: [255, 255, 224],
+      lime: [0, 255, 0],
+      limegreen: [50, 205, 50],
+      linen: [250, 240, 230],
+      magenta: [255, 0, 255],
+      maroon: [128, 0, 0],
+      mediumaquamarine: [102, 205, 170],
+      mediumblue: [0, 0, 205],
+      mediumorchid: [186, 85, 211],
+      mediumpurple: [147, 112, 219],
+      mediumseagreen: [60, 179, 113],
+      mediumslateblue: [123, 104, 238],
+      mediumspringgreen: [0, 250, 154],
+      mediumturquoise: [72, 209, 204],
+      mediumvioletred: [199, 21, 133],
+      midnightblue: [25, 25, 112],
+      mintcream: [245, 255, 250],
+      mistyrose: [255, 228, 225],
+      moccasin: [255, 228, 181],
+      navajowhite: [255, 222, 173],
+      navy: [0, 0, 128],
+      oldlace: [253, 245, 230],
+      olive: [128, 128, 0],
+      olivedrab: [107, 142, 35],
+      orange: [255, 165, 0],
+      orangered: [255, 69, 0],
+      orchid: [218, 112, 214],
+      palegoldenrod: [238, 232, 170],
+      palegreen: [152, 251, 152],
+      paleturquoise: [175, 238, 238],
+      palevioletred: [219, 112, 147],
+      papayawhip: [255, 239, 213],
+      peachpuff: [255, 218, 185],
+      peru: [205, 133, 63],
+      pink: [255, 192, 203],
+      plum: [221, 160, 221],
+      powderblue: [176, 224, 230],
+      purple: [128, 0, 128],
+      rebeccapurple: [102, 51, 153],
+      red: [255, 0, 0],
+      rosybrown: [188, 143, 143],
+      royalblue: [65, 105, 225],
+      saddlebrown: [139, 69, 19],
+      salmon: [250, 128, 114],
+      sandybrown: [244, 164, 96],
+      seagreen: [46, 139, 87],
+      seashell: [255, 245, 238],
+      sienna: [160, 82, 45],
+      silver: [192, 192, 192],
+      skyblue: [135, 206, 235],
+      slateblue: [106, 90, 205],
+      slategray: [112, 128, 144],
+      slategrey: [112, 128, 144],
+      snow: [255, 250, 250],
+      springgreen: [0, 255, 127],
+      steelblue: [70, 130, 180],
+      tan: [210, 180, 140],
+      teal: [0, 128, 128],
+      thistle: [216, 191, 216],
+      tomato: [255, 99, 71],
+      turquoise: [64, 224, 208],
+      violet: [238, 130, 238],
+      wheat: [245, 222, 179],
+      white: [255, 255, 255],
+      whitesmoke: [245, 245, 245],
+      yellow: [255, 255, 0],
+      yellowgreen: [154, 205, 50],
+    };
+  },
+});
+
+// ../node_modules/color-convert/conversions.js
+var require_conversions = __commonJS({
+  '../node_modules/color-convert/conversions.js'(exports2, module2) {
+    var cssKeywords = require_color_name();
+    var reverseKeywords = {};
+    for (const key of Object.keys(cssKeywords)) {
+      reverseKeywords[cssKeywords[key]] = key;
+    }
+    var convert2 = {
+      rgb: { channels: 3, labels: 'rgb' },
+      hsl: { channels: 3, labels: 'hsl' },
+      hsv: { channels: 3, labels: 'hsv' },
+      hwb: { channels: 3, labels: 'hwb' },
+      cmyk: { channels: 4, labels: 'cmyk' },
+      xyz: { channels: 3, labels: 'xyz' },
+      lab: { channels: 3, labels: 'lab' },
+      lch: { channels: 3, labels: 'lch' },
+      hex: { channels: 1, labels: ['hex'] },
+      keyword: { channels: 1, labels: ['keyword'] },
+      ansi16: { channels: 1, labels: ['ansi16'] },
+      ansi256: { channels: 1, labels: ['ansi256'] },
+      hcg: { channels: 3, labels: ['h', 'c', 'g'] },
+      apple: { channels: 3, labels: ['r16', 'g16', 'b16'] },
+      gray: { channels: 1, labels: ['gray'] },
+    };
+    module2.exports = convert2;
+    for (const model of Object.keys(convert2)) {
+      if (!('channels' in convert2[model])) {
+        throw new Error('missing channels property: ' + model);
+      }
+      if (!('labels' in convert2[model])) {
+        throw new Error('missing channel labels property: ' + model);
+      }
+      if (convert2[model].labels.length !== convert2[model].channels) {
+        throw new Error('channel and label counts mismatch: ' + model);
+      }
+      const { channels, labels } = convert2[model];
+      delete convert2[model].channels;
+      delete convert2[model].labels;
+      Object.defineProperty(convert2[model], 'channels', { value: channels });
+      Object.defineProperty(convert2[model], 'labels', { value: labels });
+    }
+    convert2.rgb.hsl = function (rgb) {
+      const r = rgb[0] / 255;
+      const g = rgb[1] / 255;
+      const b = rgb[2] / 255;
+      const min = Math.min(r, g, b);
+      const max = Math.max(r, g, b);
+      const delta = max - min;
+      let h;
+      let s;
+      if (max === min) {
+        h = 0;
+      } else if (r === max) {
+        h = (g - b) / delta;
+      } else if (g === max) {
+        h = 2 + (b - r) / delta;
+      } else if (b === max) {
+        h = 4 + (r - g) / delta;
+      }
+      h = Math.min(h * 60, 360);
+      if (h < 0) {
+        h += 360;
+      }
+      const l = (min + max) / 2;
+      if (max === min) {
+        s = 0;
+      } else if (l <= 0.5) {
+        s = delta / (max + min);
+      } else {
+        s = delta / (2 - max - min);
+      }
+      return [h, s * 100, l * 100];
+    };
+    convert2.rgb.hsv = function (rgb) {
+      let rdif;
+      let gdif;
+      let bdif;
+      let h;
+      let s;
+      const r = rgb[0] / 255;
+      const g = rgb[1] / 255;
+      const b = rgb[2] / 255;
+      const v = Math.max(r, g, b);
+      const diff = v - Math.min(r, g, b);
+      const diffc = function (c) {
+        return (v - c) / 6 / diff + 1 / 2;
+      };
+      if (diff === 0) {
+        h = 0;
+        s = 0;
+      } else {
+        s = diff / v;
+        rdif = diffc(r);
+        gdif = diffc(g);
+        bdif = diffc(b);
+        if (r === v) {
+          h = bdif - gdif;
+        } else if (g === v) {
+          h = 1 / 3 + rdif - bdif;
+        } else if (b === v) {
+          h = 2 / 3 + gdif - rdif;
+        }
+        if (h < 0) {
+          h += 1;
+        } else if (h > 1) {
+          h -= 1;
+        }
+      }
+      return [h * 360, s * 100, v * 100];
+    };
+    convert2.rgb.hwb = function (rgb) {
+      const r = rgb[0];
+      const g = rgb[1];
+      let b = rgb[2];
+      const h = convert2.rgb.hsl(rgb)[0];
+      const w = (1 / 255) * Math.min(r, Math.min(g, b));
+      b = 1 - (1 / 255) * Math.max(r, Math.max(g, b));
+      return [h, w * 100, b * 100];
+    };
+    convert2.rgb.cmyk = function (rgb) {
+      const r = rgb[0] / 255;
+      const g = rgb[1] / 255;
+      const b = rgb[2] / 255;
+      const k = Math.min(1 - r, 1 - g, 1 - b);
+      const c = (1 - r - k) / (1 - k) || 0;
+      const m = (1 - g - k) / (1 - k) || 0;
+      const y = (1 - b - k) / (1 - k) || 0;
+      return [c * 100, m * 100, y * 100, k * 100];
+    };
+    function comparativeDistance(x, y) {
+      return (x[0] - y[0]) ** 2 + (x[1] - y[1]) ** 2 + (x[2] - y[2]) ** 2;
+    }
+    convert2.rgb.keyword = function (rgb) {
+      const reversed = reverseKeywords[rgb];
+      if (reversed) {
+        return reversed;
+      }
+      let currentClosestDistance = Infinity;
+      let currentClosestKeyword;
+      for (const keyword of Object.keys(cssKeywords)) {
+        const value = cssKeywords[keyword];
+        const distance = comparativeDistance(rgb, value);
+        if (distance < currentClosestDistance) {
+          currentClosestDistance = distance;
+          currentClosestKeyword = keyword;
+        }
+      }
+      return currentClosestKeyword;
+    };
+    convert2.keyword.rgb = function (keyword) {
+      return cssKeywords[keyword];
+    };
+    convert2.rgb.xyz = function (rgb) {
+      let r = rgb[0] / 255;
+      let g = rgb[1] / 255;
+      let b = rgb[2] / 255;
+      r = r > 0.04045 ? ((r + 0.055) / 1.055) ** 2.4 : r / 12.92;
+      g = g > 0.04045 ? ((g + 0.055) / 1.055) ** 2.4 : g / 12.92;
+      b = b > 0.04045 ? ((b + 0.055) / 1.055) ** 2.4 : b / 12.92;
+      const x = r * 0.4124 + g * 0.3576 + b * 0.1805;
+      const y = r * 0.2126 + g * 0.7152 + b * 0.0722;
+      const z = r * 0.0193 + g * 0.1192 + b * 0.9505;
+      return [x * 100, y * 100, z * 100];
+    };
+    convert2.rgb.lab = function (rgb) {
+      const xyz = convert2.rgb.xyz(rgb);
+      let x = xyz[0];
+      let y = xyz[1];
+      let z = xyz[2];
+      x /= 95.047;
+      y /= 100;
+      z /= 108.883;
+      x = x > 8856e-6 ? x ** (1 / 3) : 7.787 * x + 16 / 116;
+      y = y > 8856e-6 ? y ** (1 / 3) : 7.787 * y + 16 / 116;
+      z = z > 8856e-6 ? z ** (1 / 3) : 7.787 * z + 16 / 116;
+      const l = 116 * y - 16;
+      const a = 500 * (x - y);
+      const b = 200 * (y - z);
+      return [l, a, b];
+    };
+    convert2.hsl.rgb = function (hsl) {
+      const h = hsl[0] / 360;
+      const s = hsl[1] / 100;
+      const l = hsl[2] / 100;
+      let t2;
+      let t3;
+      let val;
+      if (s === 0) {
+        val = l * 255;
+        return [val, val, val];
+      }
+      if (l < 0.5) {
+        t2 = l * (1 + s);
+      } else {
+        t2 = l + s - l * s;
+      }
+      const t1 = 2 * l - t2;
+      const rgb = [0, 0, 0];
+      for (let i = 0; i < 3; i++) {
+        t3 = h + (1 / 3) * -(i - 1);
+        if (t3 < 0) {
+          t3++;
+        }
+        if (t3 > 1) {
+          t3--;
+        }
+        if (6 * t3 < 1) {
+          val = t1 + (t2 - t1) * 6 * t3;
+        } else if (2 * t3 < 1) {
+          val = t2;
+        } else if (3 * t3 < 2) {
+          val = t1 + (t2 - t1) * (2 / 3 - t3) * 6;
+        } else {
+          val = t1;
+        }
+        rgb[i] = val * 255;
+      }
+      return rgb;
+    };
+    convert2.hsl.hsv = function (hsl) {
+      const h = hsl[0];
+      let s = hsl[1] / 100;
+      let l = hsl[2] / 100;
+      let smin = s;
+      const lmin = Math.max(l, 0.01);
+      l *= 2;
+      s *= l <= 1 ? l : 2 - l;
+      smin *= lmin <= 1 ? lmin : 2 - lmin;
+      const v = (l + s) / 2;
+      const sv = l === 0 ? (2 * smin) / (lmin + smin) : (2 * s) / (l + s);
+      return [h, sv * 100, v * 100];
+    };
+    convert2.hsv.rgb = function (hsv) {
+      const h = hsv[0] / 60;
+      const s = hsv[1] / 100;
+      let v = hsv[2] / 100;
+      const hi = Math.floor(h) % 6;
+      const f = h - Math.floor(h);
+      const p = 255 * v * (1 - s);
+      const q = 255 * v * (1 - s * f);
+      const t = 255 * v * (1 - s * (1 - f));
+      v *= 255;
+      switch (hi) {
+        case 0:
+          return [v, t, p];
+        case 1:
+          return [q, v, p];
+        case 2:
+          return [p, v, t];
+        case 3:
+          return [p, q, v];
+        case 4:
+          return [t, p, v];
+        case 5:
+          return [v, p, q];
+      }
+    };
+    convert2.hsv.hsl = function (hsv) {
+      const h = hsv[0];
+      const s = hsv[1] / 100;
+      const v = hsv[2] / 100;
+      const vmin = Math.max(v, 0.01);
+      let sl;
+      let l;
+      l = (2 - s) * v;
+      const lmin = (2 - s) * vmin;
+      sl = s * vmin;
+      sl /= lmin <= 1 ? lmin : 2 - lmin;
+      sl = sl || 0;
+      l /= 2;
+      return [h, sl * 100, l * 100];
+    };
+    convert2.hwb.rgb = function (hwb) {
+      const h = hwb[0] / 360;
+      let wh = hwb[1] / 100;
+      let bl = hwb[2] / 100;
+      const ratio = wh + bl;
+      let f;
+      if (ratio > 1) {
+        wh /= ratio;
+        bl /= ratio;
+      }
+      const i = Math.floor(6 * h);
+      const v = 1 - bl;
+      f = 6 * h - i;
+      if ((i & 1) !== 0) {
+        f = 1 - f;
+      }
+      const n = wh + f * (v - wh);
+      let r;
+      let g;
+      let b;
+      switch (i) {
+        default:
+        case 6:
+        case 0:
+          r = v;
+          g = n;
+          b = wh;
+          break;
+        case 1:
+          r = n;
+          g = v;
+          b = wh;
+          break;
+        case 2:
+          r = wh;
+          g = v;
+          b = n;
+          break;
+        case 3:
+          r = wh;
+          g = n;
+          b = v;
+          break;
+        case 4:
+          r = n;
+          g = wh;
+          b = v;
+          break;
+        case 5:
+          r = v;
+          g = wh;
+          b = n;
+          break;
+      }
+      return [r * 255, g * 255, b * 255];
+    };
+    convert2.cmyk.rgb = function (cmyk) {
+      const c = cmyk[0] / 100;
+      const m = cmyk[1] / 100;
+      const y = cmyk[2] / 100;
+      const k = cmyk[3] / 100;
+      const r = 1 - Math.min(1, c * (1 - k) + k);
+      const g = 1 - Math.min(1, m * (1 - k) + k);
+      const b = 1 - Math.min(1, y * (1 - k) + k);
+      return [r * 255, g * 255, b * 255];
+    };
+    convert2.xyz.rgb = function (xyz) {
+      const x = xyz[0] / 100;
+      const y = xyz[1] / 100;
+      const z = xyz[2] / 100;
+      let r;
+      let g;
+      let b;
+      r = x * 3.2406 + y * -1.5372 + z * -0.4986;
+      g = x * -0.9689 + y * 1.8758 + z * 0.0415;
+      b = x * 0.0557 + y * -0.204 + z * 1.057;
+      r = r > 31308e-7 ? 1.055 * r ** (1 / 2.4) - 0.055 : r * 12.92;
+      g = g > 31308e-7 ? 1.055 * g ** (1 / 2.4) - 0.055 : g * 12.92;
+      b = b > 31308e-7 ? 1.055 * b ** (1 / 2.4) - 0.055 : b * 12.92;
+      r = Math.min(Math.max(0, r), 1);
+      g = Math.min(Math.max(0, g), 1);
+      b = Math.min(Math.max(0, b), 1);
+      return [r * 255, g * 255, b * 255];
+    };
+    convert2.xyz.lab = function (xyz) {
+      let x = xyz[0];
+      let y = xyz[1];
+      let z = xyz[2];
+      x /= 95.047;
+      y /= 100;
+      z /= 108.883;
+      x = x > 8856e-6 ? x ** (1 / 3) : 7.787 * x + 16 / 116;
+      y = y > 8856e-6 ? y ** (1 / 3) : 7.787 * y + 16 / 116;
+      z = z > 8856e-6 ? z ** (1 / 3) : 7.787 * z + 16 / 116;
+      const l = 116 * y - 16;
+      const a = 500 * (x - y);
+      const b = 200 * (y - z);
+      return [l, a, b];
+    };
+    convert2.lab.xyz = function (lab) {
+      const l = lab[0];
+      const a = lab[1];
+      const b = lab[2];
+      let x;
+      let y;
+      let z;
+      y = (l + 16) / 116;
+      x = a / 500 + y;
+      z = y - b / 200;
+      const y2 = y ** 3;
+      const x2 = x ** 3;
+      const z2 = z ** 3;
+      y = y2 > 8856e-6 ? y2 : (y - 16 / 116) / 7.787;
+      x = x2 > 8856e-6 ? x2 : (x - 16 / 116) / 7.787;
+      z = z2 > 8856e-6 ? z2 : (z - 16 / 116) / 7.787;
+      x *= 95.047;
+      y *= 100;
+      z *= 108.883;
+      return [x, y, z];
+    };
+    convert2.lab.lch = function (lab) {
+      const l = lab[0];
+      const a = lab[1];
+      const b = lab[2];
+      let h;
+      const hr = Math.atan2(b, a);
+      h = (hr * 360) / 2 / Math.PI;
+      if (h < 0) {
+        h += 360;
+      }
+      const c = Math.sqrt(a * a + b * b);
+      return [l, c, h];
+    };
+    convert2.lch.lab = function (lch) {
+      const l = lch[0];
+      const c = lch[1];
+      const h = lch[2];
+      const hr = (h / 360) * 2 * Math.PI;
+      const a = c * Math.cos(hr);
+      const b = c * Math.sin(hr);
+      return [l, a, b];
+    };
+    convert2.rgb.ansi16 = function (args, saturation = null) {
+      const [r, g, b] = args;
+      let value = saturation === null ? convert2.rgb.hsv(args)[2] : saturation;
+      value = Math.round(value / 50);
+      if (value === 0) {
+        return 30;
+      }
+      let ansi =
+        30 + ((Math.round(b / 255) << 2) | (Math.round(g / 255) << 1) | Math.round(r / 255));
+      if (value === 2) {
+        ansi += 60;
+      }
+      return ansi;
+    };
+    convert2.hsv.ansi16 = function (args) {
+      return convert2.rgb.ansi16(convert2.hsv.rgb(args), args[2]);
+    };
+    convert2.rgb.ansi256 = function (args) {
+      const r = args[0];
+      const g = args[1];
+      const b = args[2];
+      if (r === g && g === b) {
+        if (r < 8) {
+          return 16;
+        }
+        if (r > 248) {
+          return 231;
+        }
+        return Math.round(((r - 8) / 247) * 24) + 232;
+      }
+      const ansi =
+        16 +
+        36 * Math.round((r / 255) * 5) +
+        6 * Math.round((g / 255) * 5) +
+        Math.round((b / 255) * 5);
+      return ansi;
+    };
+    convert2.ansi16.rgb = function (args) {
+      let color = args % 10;
+      if (color === 0 || color === 7) {
+        if (args > 50) {
+          color += 3.5;
+        }
+        color = (color / 10.5) * 255;
+        return [color, color, color];
+      }
+      const mult = (~~(args > 50) + 1) * 0.5;
+      const r = (color & 1) * mult * 255;
+      const g = ((color >> 1) & 1) * mult * 255;
+      const b = ((color >> 2) & 1) * mult * 255;
+      return [r, g, b];
+    };
+    convert2.ansi256.rgb = function (args) {
+      if (args >= 232) {
+        const c = (args - 232) * 10 + 8;
+        return [c, c, c];
+      }
+      args -= 16;
+      let rem;
+      const r = (Math.floor(args / 36) / 5) * 255;
+      const g = (Math.floor((rem = args % 36) / 6) / 5) * 255;
+      const b = ((rem % 6) / 5) * 255;
+      return [r, g, b];
+    };
+    convert2.rgb.hex = function (args) {
+      const integer =
+        ((Math.round(args[0]) & 255) << 16) +
+        ((Math.round(args[1]) & 255) << 8) +
+        (Math.round(args[2]) & 255);
+      const string2 = integer.toString(16).toUpperCase();
+      return '000000'.substring(string2.length) + string2;
+    };
+    convert2.hex.rgb = function (args) {
+      const match = args.toString(16).match(/[a-f0-9]{6}|[a-f0-9]{3}/i);
+      if (!match) {
+        return [0, 0, 0];
+      }
+      let colorString = match[0];
+      if (match[0].length === 3) {
+        colorString = colorString
+          .split('')
+          .map((char) => {
+            return char + char;
+          })
+          .join('');
+      }
+      const integer = parseInt(colorString, 16);
+      const r = (integer >> 16) & 255;
+      const g = (integer >> 8) & 255;
+      const b = integer & 255;
+      return [r, g, b];
+    };
+    convert2.rgb.hcg = function (rgb) {
+      const r = rgb[0] / 255;
+      const g = rgb[1] / 255;
+      const b = rgb[2] / 255;
+      const max = Math.max(Math.max(r, g), b);
+      const min = Math.min(Math.min(r, g), b);
+      const chroma = max - min;
+      let grayscale;
+      let hue;
+      if (chroma < 1) {
+        grayscale = min / (1 - chroma);
+      } else {
+        grayscale = 0;
+      }
+      if (chroma <= 0) {
+        hue = 0;
+      } else if (max === r) {
+        hue = ((g - b) / chroma) % 6;
+      } else if (max === g) {
+        hue = 2 + (b - r) / chroma;
+      } else {
+        hue = 4 + (r - g) / chroma;
+      }
+      hue /= 6;
+      hue %= 1;
+      return [hue * 360, chroma * 100, grayscale * 100];
+    };
+    convert2.hsl.hcg = function (hsl) {
+      const s = hsl[1] / 100;
+      const l = hsl[2] / 100;
+      const c = l < 0.5 ? 2 * s * l : 2 * s * (1 - l);
+      let f = 0;
+      if (c < 1) {
+        f = (l - 0.5 * c) / (1 - c);
+      }
+      return [hsl[0], c * 100, f * 100];
+    };
+    convert2.hsv.hcg = function (hsv) {
+      const s = hsv[1] / 100;
+      const v = hsv[2] / 100;
+      const c = s * v;
+      let f = 0;
+      if (c < 1) {
+        f = (v - c) / (1 - c);
+      }
+      return [hsv[0], c * 100, f * 100];
+    };
+    convert2.hcg.rgb = function (hcg) {
+      const h = hcg[0] / 360;
+      const c = hcg[1] / 100;
+      const g = hcg[2] / 100;
+      if (c === 0) {
+        return [g * 255, g * 255, g * 255];
+      }
+      const pure = [0, 0, 0];
+      const hi = (h % 1) * 6;
+      const v = hi % 1;
+      const w = 1 - v;
+      let mg = 0;
+      switch (Math.floor(hi)) {
+        case 0:
+          pure[0] = 1;
+          pure[1] = v;
+          pure[2] = 0;
+          break;
+        case 1:
+          pure[0] = w;
+          pure[1] = 1;
+          pure[2] = 0;
+          break;
+        case 2:
+          pure[0] = 0;
+          pure[1] = 1;
+          pure[2] = v;
+          break;
+        case 3:
+          pure[0] = 0;
+          pure[1] = w;
+          pure[2] = 1;
+          break;
+        case 4:
+          pure[0] = v;
+          pure[1] = 0;
+          pure[2] = 1;
+          break;
+        default:
+          pure[0] = 1;
+          pure[1] = 0;
+          pure[2] = w;
+      }
+      mg = (1 - c) * g;
+      return [(c * pure[0] + mg) * 255, (c * pure[1] + mg) * 255, (c * pure[2] + mg) * 255];
+    };
+    convert2.hcg.hsv = function (hcg) {
+      const c = hcg[1] / 100;
+      const g = hcg[2] / 100;
+      const v = c + g * (1 - c);
+      let f = 0;
+      if (v > 0) {
+        f = c / v;
+      }
+      return [hcg[0], f * 100, v * 100];
+    };
+    convert2.hcg.hsl = function (hcg) {
+      const c = hcg[1] / 100;
+      const g = hcg[2] / 100;
+      const l = g * (1 - c) + 0.5 * c;
+      let s = 0;
+      if (l > 0 && l < 0.5) {
+        s = c / (2 * l);
+      } else if (l >= 0.5 && l < 1) {
+        s = c / (2 * (1 - l));
+      }
+      return [hcg[0], s * 100, l * 100];
+    };
+    convert2.hcg.hwb = function (hcg) {
+      const c = hcg[1] / 100;
+      const g = hcg[2] / 100;
+      const v = c + g * (1 - c);
+      return [hcg[0], (v - c) * 100, (1 - v) * 100];
+    };
+    convert2.hwb.hcg = function (hwb) {
+      const w = hwb[1] / 100;
+      const b = hwb[2] / 100;
+      const v = 1 - b;
+      const c = v - w;
+      let g = 0;
+      if (c < 1) {
+        g = (v - c) / (1 - c);
+      }
+      return [hwb[0], c * 100, g * 100];
+    };
+    convert2.apple.rgb = function (apple) {
+      return [(apple[0] / 65535) * 255, (apple[1] / 65535) * 255, (apple[2] / 65535) * 255];
+    };
+    convert2.rgb.apple = function (rgb) {
+      return [(rgb[0] / 255) * 65535, (rgb[1] / 255) * 65535, (rgb[2] / 255) * 65535];
+    };
+    convert2.gray.rgb = function (args) {
+      return [(args[0] / 100) * 255, (args[0] / 100) * 255, (args[0] / 100) * 255];
+    };
+    convert2.gray.hsl = function (args) {
+      return [0, 0, args[0]];
+    };
+    convert2.gray.hsv = convert2.gray.hsl;
+    convert2.gray.hwb = function (gray) {
+      return [0, 100, gray[0]];
+    };
+    convert2.gray.cmyk = function (gray) {
+      return [0, 0, 0, gray[0]];
+    };
+    convert2.gray.lab = function (gray) {
+      return [gray[0], 0, 0];
+    };
+    convert2.gray.hex = function (gray) {
+      const val = Math.round((gray[0] / 100) * 255) & 255;
+      const integer = (val << 16) + (val << 8) + val;
+      const string2 = integer.toString(16).toUpperCase();
+      return '000000'.substring(string2.length) + string2;
+    };
+    convert2.rgb.gray = function (rgb) {
+      const val = (rgb[0] + rgb[1] + rgb[2]) / 3;
+      return [(val / 255) * 100];
+    };
+  },
+});
+
+// ../node_modules/color-convert/route.js
+var require_route = __commonJS({
+  '../node_modules/color-convert/route.js'(exports2, module2) {
+    var conversions = require_conversions();
+    function buildGraph() {
+      const graph = {};
+      const models = Object.keys(conversions);
+      for (let len = models.length, i = 0; i < len; i++) {
+        graph[models[i]] = {
+          // http://jsperf.com/1-vs-infinity
+          // micro-opt, but this is simple.
+          distance: -1,
+          parent: null,
+        };
+      }
+      return graph;
+    }
+    function deriveBFS(fromModel) {
+      const graph = buildGraph();
+      const queue = [fromModel];
+      graph[fromModel].distance = 0;
+      while (queue.length) {
+        const current = queue.pop();
+        const adjacents = Object.keys(conversions[current]);
+        for (let len = adjacents.length, i = 0; i < len; i++) {
+          const adjacent = adjacents[i];
+          const node = graph[adjacent];
+          if (node.distance === -1) {
+            node.distance = graph[current].distance + 1;
+            node.parent = current;
+            queue.unshift(adjacent);
+          }
+        }
+      }
+      return graph;
+    }
+    function link(from, to) {
+      return function (args) {
+        return to(from(args));
+      };
+    }
+    function wrapConversion(toModel, graph) {
+      const path7 = [graph[toModel].parent, toModel];
+      let fn = conversions[graph[toModel].parent][toModel];
+      let cur = graph[toModel].parent;
+      while (graph[cur].parent) {
+        path7.unshift(graph[cur].parent);
+        fn = link(conversions[graph[cur].parent][cur], fn);
+        cur = graph[cur].parent;
+      }
+      fn.conversion = path7;
+      return fn;
+    }
+    module2.exports = function (fromModel) {
+      const graph = deriveBFS(fromModel);
+      const conversion = {};
+      const models = Object.keys(graph);
+      for (let len = models.length, i = 0; i < len; i++) {
+        const toModel = models[i];
+        const node = graph[toModel];
+        if (node.parent === null) {
+          continue;
+        }
+        conversion[toModel] = wrapConversion(toModel, graph);
+      }
+      return conversion;
+    };
+  },
+});
+
+// ../node_modules/color-convert/index.js
+var require_color_convert = __commonJS({
+  '../node_modules/color-convert/index.js'(exports2, module2) {
+    var conversions = require_conversions();
+    var route = require_route();
+    var convert2 = {};
+    var models = Object.keys(conversions);
+    function wrapRaw(fn) {
+      const wrappedFn = function (...args) {
+        const arg0 = args[0];
+        if (arg0 === void 0 || arg0 === null) {
+          return arg0;
+        }
+        if (arg0.length > 1) {
+          args = arg0;
+        }
+        return fn(args);
+      };
+      if ('conversion' in fn) {
+        wrappedFn.conversion = fn.conversion;
+      }
+      return wrappedFn;
+    }
+    function wrapRounded(fn) {
+      const wrappedFn = function (...args) {
+        const arg0 = args[0];
+        if (arg0 === void 0 || arg0 === null) {
+          return arg0;
+        }
+        if (arg0.length > 1) {
+          args = arg0;
+        }
+        const result = fn(args);
+        if (typeof result === 'object') {
+          for (let len = result.length, i = 0; i < len; i++) {
+            result[i] = Math.round(result[i]);
+          }
+        }
+        return result;
+      };
+      if ('conversion' in fn) {
+        wrappedFn.conversion = fn.conversion;
+      }
+      return wrappedFn;
+    }
+    models.forEach((fromModel) => {
+      convert2[fromModel] = {};
+      Object.defineProperty(convert2[fromModel], 'channels', {
+        value: conversions[fromModel].channels,
+      });
+      Object.defineProperty(convert2[fromModel], 'labels', {
+        value: conversions[fromModel].labels,
+      });
+      const routes = route(fromModel);
+      const routeModels = Object.keys(routes);
+      routeModels.forEach((toModel) => {
+        const fn = routes[toModel];
+        convert2[fromModel][toModel] = wrapRounded(fn);
+        convert2[fromModel][toModel].raw = wrapRaw(fn);
+      });
+    });
+    module2.exports = convert2;
+  },
+});
+
+// ../node_modules/ansi-styles/index.js
+var require_ansi_styles = __commonJS({
+  '../node_modules/ansi-styles/index.js'(exports2, module2) {
+    'use strict';
+    var wrapAnsi16 =
+      (fn, offset2) =>
+      (...args) => {
+        const code = fn(...args);
+        return `\x1B[${code + offset2}m`;
+      };
+    var wrapAnsi256 =
+      (fn, offset2) =>
+      (...args) => {
+        const code = fn(...args);
+        return `\x1B[${38 + offset2};5;${code}m`;
+      };
+    var wrapAnsi16m =
+      (fn, offset2) =>
+      (...args) => {
+        const rgb = fn(...args);
+        return `\x1B[${38 + offset2};2;${rgb[0]};${rgb[1]};${rgb[2]}m`;
+      };
+    var ansi2ansi = (n) => n;
+    var rgb2rgb = (r, g, b) => [r, g, b];
+    var setLazyProperty = (object, property, get) => {
+      Object.defineProperty(object, property, {
+        get: () => {
+          const value = get();
+          Object.defineProperty(object, property, {
+            value,
+            enumerable: true,
+            configurable: true,
+          });
+          return value;
+        },
+        enumerable: true,
+        configurable: true,
+      });
+    };
+    var colorConvert;
+    var makeDynamicStyles = (wrap, targetSpace, identity, isBackground) => {
+      if (colorConvert === void 0) {
+        colorConvert = require_color_convert();
+      }
+      const offset2 = isBackground ? 10 : 0;
+      const styles = {};
+      for (const [sourceSpace, suite] of Object.entries(colorConvert)) {
+        const name = sourceSpace === 'ansi16' ? 'ansi' : sourceSpace;
+        if (sourceSpace === targetSpace) {
+          styles[name] = wrap(identity, offset2);
+        } else if (typeof suite === 'object') {
+          styles[name] = wrap(suite[targetSpace], offset2);
+        }
+      }
+      return styles;
+    };
+    function assembleStyles() {
+      const codes = /* @__PURE__ */ new Map();
+      const styles = {
+        modifier: {
+          reset: [0, 0],
+          // 21 isn't widely supported and 22 does the same thing
+          bold: [1, 22],
+          dim: [2, 22],
+          italic: [3, 23],
+          underline: [4, 24],
+          inverse: [7, 27],
+          hidden: [8, 28],
+          strikethrough: [9, 29],
+        },
+        color: {
+          black: [30, 39],
+          red: [31, 39],
+          green: [32, 39],
+          yellow: [33, 39],
+          blue: [34, 39],
+          magenta: [35, 39],
+          cyan: [36, 39],
+          white: [37, 39],
+          // Bright color
+          blackBright: [90, 39],
+          redBright: [91, 39],
+          greenBright: [92, 39],
+          yellowBright: [93, 39],
+          blueBright: [94, 39],
+          magentaBright: [95, 39],
+          cyanBright: [96, 39],
+          whiteBright: [97, 39],
+        },
+        bgColor: {
+          bgBlack: [40, 49],
+          bgRed: [41, 49],
+          bgGreen: [42, 49],
+          bgYellow: [43, 49],
+          bgBlue: [44, 49],
+          bgMagenta: [45, 49],
+          bgCyan: [46, 49],
+          bgWhite: [47, 49],
+          // Bright color
+          bgBlackBright: [100, 49],
+          bgRedBright: [101, 49],
+          bgGreenBright: [102, 49],
+          bgYellowBright: [103, 49],
+          bgBlueBright: [104, 49],
+          bgMagentaBright: [105, 49],
+          bgCyanBright: [106, 49],
+          bgWhiteBright: [107, 49],
+        },
+      };
+      styles.color.gray = styles.color.blackBright;
+      styles.bgColor.bgGray = styles.bgColor.bgBlackBright;
+      styles.color.grey = styles.color.blackBright;
+      styles.bgColor.bgGrey = styles.bgColor.bgBlackBright;
+      for (const [groupName, group] of Object.entries(styles)) {
+        for (const [styleName, style] of Object.entries(group)) {
+          styles[styleName] = {
+            open: `\x1B[${style[0]}m`,
+            close: `\x1B[${style[1]}m`,
+          };
+          group[styleName] = styles[styleName];
+          codes.set(style[0], style[1]);
+        }
+        Object.defineProperty(styles, groupName, {
+          value: group,
+          enumerable: false,
+        });
+      }
+      Object.defineProperty(styles, 'codes', {
+        value: codes,
+        enumerable: false,
+      });
+      styles.color.close = '\x1B[39m';
+      styles.bgColor.close = '\x1B[49m';
+      setLazyProperty(styles.color, 'ansi', () =>
+        makeDynamicStyles(wrapAnsi16, 'ansi16', ansi2ansi, false)
+      );
+      setLazyProperty(styles.color, 'ansi256', () =>
+        makeDynamicStyles(wrapAnsi256, 'ansi256', ansi2ansi, false)
+      );
+      setLazyProperty(styles.color, 'ansi16m', () =>
+        makeDynamicStyles(wrapAnsi16m, 'rgb', rgb2rgb, false)
+      );
+      setLazyProperty(styles.bgColor, 'ansi', () =>
+        makeDynamicStyles(wrapAnsi16, 'ansi16', ansi2ansi, true)
+      );
+      setLazyProperty(styles.bgColor, 'ansi256', () =>
+        makeDynamicStyles(wrapAnsi256, 'ansi256', ansi2ansi, true)
+      );
+      setLazyProperty(styles.bgColor, 'ansi16m', () =>
+        makeDynamicStyles(wrapAnsi16m, 'rgb', rgb2rgb, true)
+      );
+      return styles;
+    }
+    Object.defineProperty(module2, 'exports', {
+      enumerable: true,
+      get: assembleStyles,
+    });
+  },
+});
+
+// ../node_modules/has-flag/index.js
+var require_has_flag = __commonJS({
+  '../node_modules/has-flag/index.js'(exports2, module2) {
+    'use strict';
+    module2.exports = (flag, argv = process.argv) => {
+      const prefix = flag.startsWith('-') ? '' : flag.length === 1 ? '-' : '--';
+      const position = argv.indexOf(prefix + flag);
+      const terminatorPosition = argv.indexOf('--');
+      return position !== -1 && (terminatorPosition === -1 || position < terminatorPosition);
+    };
+  },
+});
+
+// ../node_modules/supports-color/index.js
+var require_supports_color = __commonJS({
+  '../node_modules/supports-color/index.js'(exports2, module2) {
+    'use strict';
+    var os3 = require('os');
+    var tty = require('tty');
+    var hasFlag = require_has_flag();
+    var { env } = process;
+    var forceColor;
+    if (
+      hasFlag('no-color') ||
+      hasFlag('no-colors') ||
+      hasFlag('color=false') ||
+      hasFlag('color=never')
+    ) {
+      forceColor = 0;
+    } else if (
+      hasFlag('color') ||
+      hasFlag('colors') ||
+      hasFlag('color=true') ||
+      hasFlag('color=always')
+    ) {
+      forceColor = 1;
+    }
+    if ('FORCE_COLOR' in env) {
+      if (env.FORCE_COLOR === 'true') {
+        forceColor = 1;
+      } else if (env.FORCE_COLOR === 'false') {
+        forceColor = 0;
+      } else {
+        forceColor = env.FORCE_COLOR.length === 0 ? 1 : Math.min(parseInt(env.FORCE_COLOR, 10), 3);
+      }
+    }
+    function translateLevel(level) {
+      if (level === 0) {
+        return false;
+      }
+      return {
+        level,
+        hasBasic: true,
+        has256: level >= 2,
+        has16m: level >= 3,
+      };
+    }
+    function supportsColor(haveStream, streamIsTTY) {
+      if (forceColor === 0) {
+        return 0;
+      }
+      if (hasFlag('color=16m') || hasFlag('color=full') || hasFlag('color=truecolor')) {
+        return 3;
+      }
+      if (hasFlag('color=256')) {
+        return 2;
+      }
+      if (haveStream && !streamIsTTY && forceColor === void 0) {
+        return 0;
+      }
+      const min = forceColor || 0;
+      if (env.TERM === 'dumb') {
+        return min;
+      }
+      if (process.platform === 'win32') {
+        const osRelease = os3.release().split('.');
+        if (Number(osRelease[0]) >= 10 && Number(osRelease[2]) >= 10586) {
+          return Number(osRelease[2]) >= 14931 ? 3 : 2;
+        }
+        return 1;
+      }
+      if ('CI' in env) {
+        if (
+          ['TRAVIS', 'CIRCLECI', 'APPVEYOR', 'GITLAB_CI', 'GITHUB_ACTIONS', 'BUILDKITE'].some(
+            (sign) => sign in env
+          ) ||
+          env.CI_NAME === 'codeship'
+        ) {
+          return 1;
+        }
+        return min;
+      }
+      if ('TEAMCITY_VERSION' in env) {
+        return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env.TEAMCITY_VERSION) ? 1 : 0;
+      }
+      if (env.COLORTERM === 'truecolor') {
+        return 3;
+      }
+      if ('TERM_PROGRAM' in env) {
+        const version2 = parseInt((env.TERM_PROGRAM_VERSION || '').split('.')[0], 10);
+        switch (env.TERM_PROGRAM) {
+          case 'iTerm.app':
+            return version2 >= 3 ? 3 : 2;
+          case 'Apple_Terminal':
+            return 2;
+        }
+      }
+      if (/-256(color)?$/i.test(env.TERM)) {
+        return 2;
+      }
+      if (/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(env.TERM)) {
+        return 1;
+      }
+      if ('COLORTERM' in env) {
+        return 1;
+      }
+      return min;
+    }
+    function getSupportLevel(stream) {
+      const level = supportsColor(stream, stream && stream.isTTY);
+      return translateLevel(level);
+    }
+    module2.exports = {
+      supportsColor: getSupportLevel,
+      stdout: translateLevel(supportsColor(true, tty.isatty(1))),
+      stderr: translateLevel(supportsColor(true, tty.isatty(2))),
+    };
+  },
+});
+
+// node_modules/chalk/source/util.js
+var require_util = __commonJS({
+  'node_modules/chalk/source/util.js'(exports2, module2) {
+    'use strict';
+    var stringReplaceAll = (string2, substring, replacer) => {
+      let index = string2.indexOf(substring);
+      if (index === -1) {
+        return string2;
+      }
+      const substringLength = substring.length;
+      let endIndex = 0;
+      let returnValue = '';
+      do {
+        returnValue += string2.substr(endIndex, index - endIndex) + substring + replacer;
+        endIndex = index + substringLength;
+        index = string2.indexOf(substring, endIndex);
+      } while (index !== -1);
+      returnValue += string2.substr(endIndex);
+      return returnValue;
+    };
+    var stringEncaseCRLFWithFirstIndex = (string2, prefix, postfix, index) => {
+      let endIndex = 0;
+      let returnValue = '';
+      do {
+        const gotCR = string2[index - 1] === '\r';
+        returnValue +=
+          string2.substr(endIndex, (gotCR ? index - 1 : index) - endIndex) +
+          prefix +
+          (gotCR ? '\r\n' : '\n') +
+          postfix;
+        endIndex = index + 1;
+        index = string2.indexOf('\n', endIndex);
+      } while (index !== -1);
+      returnValue += string2.substr(endIndex);
+      return returnValue;
+    };
+    module2.exports = {
+      stringReplaceAll,
+      stringEncaseCRLFWithFirstIndex,
+    };
+  },
+});
+
+// node_modules/chalk/source/templates.js
+var require_templates = __commonJS({
+  'node_modules/chalk/source/templates.js'(exports2, module2) {
+    'use strict';
+    var TEMPLATE_REGEX =
+      /(?:\\(u(?:[a-f\d]{4}|\{[a-f\d]{1,6}\})|x[a-f\d]{2}|.))|(?:\{(~)?(\w+(?:\([^)]*\))?(?:\.\w+(?:\([^)]*\))?)*)(?:[ \t]|(?=\r?\n)))|(\})|((?:.|[\r\n\f])+?)/gi;
+    var STYLE_REGEX = /(?:^|\.)(\w+)(?:\(([^)]*)\))?/g;
+    var STRING_REGEX = /^(['"])((?:\\.|(?!\1)[^\\])*)\1$/;
+    var ESCAPE_REGEX = /\\(u(?:[a-f\d]{4}|{[a-f\d]{1,6}})|x[a-f\d]{2}|.)|([^\\])/gi;
+    var ESCAPES = /* @__PURE__ */ new Map([
+      ['n', '\n'],
+      ['r', '\r'],
+      ['t', '	'],
+      ['b', '\b'],
+      ['f', '\f'],
+      ['v', '\v'],
+      ['0', '\0'],
+      ['\\', '\\'],
+      ['e', '\x1B'],
+      ['a', '\x07'],
+    ]);
+    function unescape(c) {
+      const u = c[0] === 'u';
+      const bracket = c[1] === '{';
+      if ((u && !bracket && c.length === 5) || (c[0] === 'x' && c.length === 3)) {
+        return String.fromCharCode(parseInt(c.slice(1), 16));
+      }
+      if (u && bracket) {
+        return String.fromCodePoint(parseInt(c.slice(2, -1), 16));
+      }
+      return ESCAPES.get(c) || c;
+    }
+    function parseArguments(name, arguments_) {
+      const results = [];
+      const chunks2 = arguments_.trim().split(/\s*,\s*/g);
+      let matches;
+      for (const chunk of chunks2) {
+        const number2 = Number(chunk);
+        if (!Number.isNaN(number2)) {
+          results.push(number2);
+        } else if ((matches = chunk.match(STRING_REGEX))) {
+          results.push(
+            matches[2].replace(ESCAPE_REGEX, (m, escape, character) =>
+              escape ? unescape(escape) : character
+            )
+          );
+        } else {
+          throw new Error(`Invalid Chalk template style argument: ${chunk} (in style '${name}')`);
+        }
+      }
+      return results;
+    }
+    function parseStyle(style) {
+      STYLE_REGEX.lastIndex = 0;
+      const results = [];
+      let matches;
+      while ((matches = STYLE_REGEX.exec(style)) !== null) {
+        const name = matches[1];
+        if (matches[2]) {
+          const args = parseArguments(name, matches[2]);
+          results.push([name].concat(args));
+        } else {
+          results.push([name]);
+        }
+      }
+      return results;
+    }
+    function buildStyle(chalk7, styles) {
+      const enabled = {};
+      for (const layer of styles) {
+        for (const style of layer.styles) {
+          enabled[style[0]] = layer.inverse ? null : style.slice(1);
+        }
+      }
+      let current = chalk7;
+      for (const [styleName, styles2] of Object.entries(enabled)) {
+        if (!Array.isArray(styles2)) {
+          continue;
+        }
+        if (!(styleName in current)) {
+          throw new Error(`Unknown Chalk style: ${styleName}`);
+        }
+        current = styles2.length > 0 ? current[styleName](...styles2) : current[styleName];
+      }
+      return current;
+    }
+    module2.exports = (chalk7, temporary) => {
+      const styles = [];
+      const chunks2 = [];
+      let chunk = [];
+      temporary.replace(TEMPLATE_REGEX, (m, escapeCharacter, inverse, style, close, character) => {
+        if (escapeCharacter) {
+          chunk.push(unescape(escapeCharacter));
+        } else if (style) {
+          const string2 = chunk.join('');
+          chunk = [];
+          chunks2.push(styles.length === 0 ? string2 : buildStyle(chalk7, styles)(string2));
+          styles.push({ inverse, styles: parseStyle(style) });
+        } else if (close) {
+          if (styles.length === 0) {
+            throw new Error('Found extraneous } in Chalk template literal');
+          }
+          chunks2.push(buildStyle(chalk7, styles)(chunk.join('')));
+          chunk = [];
+          styles.pop();
+        } else {
+          chunk.push(character);
+        }
+      });
+      chunks2.push(chunk.join(''));
+      if (styles.length > 0) {
+        const errMessage = `Chalk template literal is missing ${styles.length} closing bracket${styles.length === 1 ? '' : 's'} (\`}\`)`;
+        throw new Error(errMessage);
+      }
+      return chunks2.join('');
+    };
+  },
+});
+
+// node_modules/chalk/source/index.js
+var require_source = __commonJS({
+  'node_modules/chalk/source/index.js'(exports2, module2) {
+    'use strict';
+    var ansiStyles = require_ansi_styles();
+    var { stdout: stdoutColor, stderr: stderrColor } = require_supports_color();
+    var { stringReplaceAll, stringEncaseCRLFWithFirstIndex } = require_util();
+    var { isArray } = Array;
+    var levelMapping = ['ansi', 'ansi', 'ansi256', 'ansi16m'];
+    var styles = /* @__PURE__ */ Object.create(null);
+    var applyOptions = (object, options = {}) => {
+      if (
+        options.level &&
+        !(Number.isInteger(options.level) && options.level >= 0 && options.level <= 3)
+      ) {
+        throw new Error('The `level` option should be an integer from 0 to 3');
+      }
+      const colorLevel = stdoutColor ? stdoutColor.level : 0;
+      object.level = options.level === void 0 ? colorLevel : options.level;
+    };
+    var ChalkClass = class {
+      constructor(options) {
+        return chalkFactory(options);
+      }
+    };
+    var chalkFactory = (options) => {
+      const chalk8 = {};
+      applyOptions(chalk8, options);
+      chalk8.template = (...arguments_) => chalkTag(chalk8.template, ...arguments_);
+      Object.setPrototypeOf(chalk8, Chalk.prototype);
+      Object.setPrototypeOf(chalk8.template, chalk8);
+      chalk8.template.constructor = () => {
+        throw new Error('`chalk.constructor()` is deprecated. Use `new chalk.Instance()` instead.');
+      };
+      chalk8.template.Instance = ChalkClass;
+      return chalk8.template;
+    };
+    function Chalk(options) {
+      return chalkFactory(options);
+    }
+    for (const [styleName, style] of Object.entries(ansiStyles)) {
+      styles[styleName] = {
+        get() {
+          const builder = createBuilder(
+            this,
+            createStyler(style.open, style.close, this._styler),
+            this._isEmpty
+          );
+          Object.defineProperty(this, styleName, { value: builder });
+          return builder;
+        },
+      };
+    }
+    styles.visible = {
+      get() {
+        const builder = createBuilder(this, this._styler, true);
+        Object.defineProperty(this, 'visible', { value: builder });
+        return builder;
+      },
+    };
+    var usedModels = ['rgb', 'hex', 'keyword', 'hsl', 'hsv', 'hwb', 'ansi', 'ansi256'];
+    for (const model of usedModels) {
+      styles[model] = {
+        get() {
+          const { level } = this;
+          return function (...arguments_) {
+            const styler = createStyler(
+              ansiStyles.color[levelMapping[level]][model](...arguments_),
+              ansiStyles.color.close,
+              this._styler
+            );
+            return createBuilder(this, styler, this._isEmpty);
+          };
+        },
+      };
+    }
+    for (const model of usedModels) {
+      const bgModel = 'bg' + model[0].toUpperCase() + model.slice(1);
+      styles[bgModel] = {
+        get() {
+          const { level } = this;
+          return function (...arguments_) {
+            const styler = createStyler(
+              ansiStyles.bgColor[levelMapping[level]][model](...arguments_),
+              ansiStyles.bgColor.close,
+              this._styler
+            );
+            return createBuilder(this, styler, this._isEmpty);
+          };
+        },
+      };
+    }
+    var proto = Object.defineProperties(() => {}, {
+      ...styles,
+      level: {
+        enumerable: true,
+        get() {
+          return this._generator.level;
+        },
+        set(level) {
+          this._generator.level = level;
+        },
+      },
+    });
+    var createStyler = (open, close, parent) => {
+      let openAll;
+      let closeAll;
+      if (parent === void 0) {
+        openAll = open;
+        closeAll = close;
+      } else {
+        openAll = parent.openAll + open;
+        closeAll = close + parent.closeAll;
+      }
+      return {
+        open,
+        close,
+        openAll,
+        closeAll,
+        parent,
+      };
+    };
+    var createBuilder = (self, _styler, _isEmpty) => {
+      const builder = (...arguments_) => {
+        if (isArray(arguments_[0]) && isArray(arguments_[0].raw)) {
+          return applyStyle(builder, chalkTag(builder, ...arguments_));
+        }
+        return applyStyle(
+          builder,
+          arguments_.length === 1 ? '' + arguments_[0] : arguments_.join(' ')
+        );
+      };
+      Object.setPrototypeOf(builder, proto);
+      builder._generator = self;
+      builder._styler = _styler;
+      builder._isEmpty = _isEmpty;
+      return builder;
+    };
+    var applyStyle = (self, string2) => {
+      if (self.level <= 0 || !string2) {
+        return self._isEmpty ? '' : string2;
+      }
+      let styler = self._styler;
+      if (styler === void 0) {
+        return string2;
+      }
+      const { openAll, closeAll } = styler;
+      if (string2.indexOf('\x1B') !== -1) {
+        while (styler !== void 0) {
+          string2 = stringReplaceAll(string2, styler.close, styler.open);
+          styler = styler.parent;
+        }
+      }
+      const lfIndex = string2.indexOf('\n');
+      if (lfIndex !== -1) {
+        string2 = stringEncaseCRLFWithFirstIndex(string2, closeAll, openAll, lfIndex);
+      }
+      return openAll + string2 + closeAll;
+    };
+    var template;
+    var chalkTag = (chalk8, ...strings2) => {
+      const [firstString] = strings2;
+      if (!isArray(firstString) || !isArray(firstString.raw)) {
+        return strings2.join(' ');
+      }
+      const arguments_ = strings2.slice(1);
+      const parts = [firstString.raw[0]];
+      for (let i = 1; i < firstString.length; i++) {
+        parts.push(
+          String(arguments_[i - 1]).replace(/[{}\\]/g, '\\$&'),
+          String(firstString.raw[i])
+        );
+      }
+      if (template === void 0) {
+        template = require_templates();
+      }
+      return template(chalk8, parts.join(''));
+    };
+    Object.defineProperties(Chalk.prototype, styles);
+    var chalk7 = Chalk();
+    chalk7.supportsColor = stdoutColor;
+    chalk7.stderr = Chalk({ level: stderrColor ? stderrColor.level : 0 });
+    chalk7.stderr.supportsColor = stderrColor;
+    module2.exports = chalk7;
+  },
+});
+
 // ../node_modules/@coral-xyz/anchor/dist/esm/utils/common.js
 function chunks(array3, size) {
   return Array.apply(0, new Array(Math.ceil(array3.length / size))).map((_, index) =>
@@ -80,14 +1685,14 @@ var init_nodewallet = __esm({
         this.payer = payer;
       }
       static local() {
-        const process3 = require('process');
-        if (!process3.env.ANCHOR_WALLET || process3.env.ANCHOR_WALLET === '') {
+        const process2 = require('process');
+        if (!process2.env.ANCHOR_WALLET || process2.env.ANCHOR_WALLET === '') {
           throw new Error('expected environment variable `ANCHOR_WALLET` is not set.');
         }
         const payer = import_web3.Keypair.fromSecretKey(
           import_buffer.Buffer.from(
             JSON.parse(
-              require('fs').readFileSync(process3.env.ANCHOR_WALLET, {
+              require('fs').readFileSync(process2.env.ANCHOR_WALLET, {
                 encoding: 'utf-8',
               })
             )
@@ -5332,7 +6937,7 @@ function toFailure(result, context, struct8, value) {
       message: result,
     };
   }
-  const { path: path6, branch } = context;
+  const { path: path7, branch } = context;
   const { type: type2 } = struct8;
   const {
     refinement,
@@ -5348,8 +6953,8 @@ function toFailure(result, context, struct8, value) {
     value,
     type: type2,
     refinement,
-    key: path6[path6.length - 1],
-    path: path6,
+    key: path7[path7.length - 1],
+    path: path7,
     branch,
     ...result,
     message,
@@ -5371,13 +6976,13 @@ function* run(value, struct8, options) {
     options = {};
   }
   const {
-    path: path6 = [],
+    path: path7 = [],
     branch = [value],
     coerce: coerce2 = false,
     mask: mask2 = false,
   } = options;
   const ctx = {
-    path: path6,
+    path: path7,
     branch,
   };
   if (coerce2) {
@@ -5403,7 +7008,7 @@ function* run(value, struct8, options) {
   }
   for (let [k, v, s] of struct8.entries(value, ctx)) {
     const ts = run(v, s, {
-      path: k === void 0 ? path6 : [...path6, k],
+      path: k === void 0 ? path7 : [...path7, k],
       branch: k === void 0 ? branch : [...branch, v],
       coerce: coerce2,
       mask: mask2,
@@ -5639,8 +7244,8 @@ var init_index_es = __esm({
       constructor(failure, failures) {
         let cached;
         const { message, ...rest } = failure;
-        const { path: path6 } = failure;
-        const msg = path6.length === 0 ? message : 'At path: ' + path6.join('.') + ' -- ' + message;
+        const { path: path7 } = failure;
+        const msg = path7.length === 0 ? message : 'At path: ' + path7.join('.') + ' -- ' + message;
         super(msg);
         this.value = void 0;
         this.key = void 0;
@@ -6000,8 +7605,8 @@ var init_provider = __esm({
         if (isBrowser) {
           throw new Error(`Provider env is not available on browser.`);
         }
-        const process3 = require('process');
-        const url = process3.env.ANCHOR_PROVIDER_URL;
+        const process2 = require('process');
+        const url = process2.env.ANCHOR_PROVIDER_URL;
         if (url === void 0) {
           throw new Error('ANCHOR_PROVIDER_URL is not defined');
         }
@@ -17526,14 +19131,14 @@ var require_url_state_machine = __commonJS({
       return url.replace(/\u0009|\u000A|\u000D/g, '');
     }
     function shortenPath(url) {
-      const path6 = url.path;
-      if (path6.length === 0) {
+      const path7 = url.path;
+      if (path7.length === 0) {
         return;
       }
-      if (url.scheme === 'file' && path6.length === 1 && isNormalizedWindowsDriveLetter(path6[0])) {
+      if (url.scheme === 'file' && path7.length === 1 && isNormalizedWindowsDriveLetter(path7[0])) {
         return;
       }
-      path6.pop();
+      path7.pop();
     }
     function includesCredentials(url) {
       return url.username !== '' || url.password !== '';
@@ -19014,8 +20619,8 @@ function isRequest(input) {
   return typeof input === 'object' && typeof input[INTERNALS$2] === 'object';
 }
 function isAbortSignal(signal) {
-  const proto2 = signal && typeof signal === 'object' && Object.getPrototypeOf(signal);
-  return !!(proto2 && proto2.constructor.name === 'AbortSignal');
+  const proto = signal && typeof signal === 'object' && Object.getPrototypeOf(signal);
+  return !!(proto && proto.constructor.name === 'AbortSignal');
 }
 function getNodeRequestOptions(request) {
   const parsedURL = request[INTERNALS$2].parsedURL;
@@ -19576,11 +21181,11 @@ var init_lib = __esm({
       json: { enumerable: true },
       text: { enumerable: true },
     });
-    Body.mixIn = function (proto2) {
+    Body.mixIn = function (proto) {
       for (const name of Object.getOwnPropertyNames(Body.prototype)) {
-        if (!(name in proto2)) {
+        if (!(name in proto)) {
           const desc = Object.getOwnPropertyDescriptor(Body.prototype, name);
-          Object.defineProperty(proto2, name, desc);
+          Object.defineProperty(proto, name, desc);
         }
       }
     };
@@ -25687,17 +27292,17 @@ var init_accounts_resolver = __esm({
       resolveOptionals(accounts) {
         Object.assign(this._accounts, this.resolveOptionalsHelper(accounts, this._idlIx.accounts));
       }
-      get(path6) {
-        const ret = path6.reduce((acc, subPath) => acc && acc[subPath], this._accounts);
+      get(path7) {
+        const ret = path7.reduce((acc, subPath) => acc && acc[subPath], this._accounts);
         if (ret && ret.toBase58) {
           return ret;
         }
       }
-      set(path6, value) {
+      set(path7, value) {
         let cur = this._accounts;
-        path6.forEach((p, i) => {
+        path7.forEach((p, i) => {
           var _a2;
-          const isLast = i === path6.length - 1;
+          const isLast = i === path7.length - 1;
           if (isLast) {
             cur[p] = value;
           }
@@ -25750,19 +27355,19 @@ var init_accounts_resolver = __esm({
        * Accounts will only be resolved if they are declared next to each other to
        * reduce the chance of name collision.
        */
-      resolveEventCpi(accounts, path6 = []) {
+      resolveEventCpi(accounts, path7 = []) {
         for (const i in accounts) {
           const accountOrAccounts = accounts[i];
           if (isCompositeAccounts(accountOrAccounts)) {
-            this.resolveEventCpi(accountOrAccounts.accounts, [...path6, accountOrAccounts.name]);
+            this.resolveEventCpi(accountOrAccounts.accounts, [...path7, accountOrAccounts.name]);
           }
           const nextIndex = +i + 1;
           if (nextIndex === accounts.length) return;
           const currentName = accounts[i].name;
           const nextName = accounts[nextIndex].name;
           if (currentName === 'eventAuthority' && nextName === 'program') {
-            const currentPath = [...path6, currentName];
-            const nextPath = [...path6, nextName];
+            const currentPath = [...path7, currentName];
+            const nextPath = [...path7, nextName];
             if (!this.get(currentPath)) {
               this.set(
                 currentPath,
@@ -25779,63 +27384,63 @@ var init_accounts_resolver = __esm({
           }
         }
       }
-      resolveConst(accounts, path6 = []) {
+      resolveConst(accounts, path7 = []) {
         for (const accountOrAccounts of accounts) {
           const name = accountOrAccounts.name;
           if (isCompositeAccounts(accountOrAccounts)) {
-            this.resolveConst(accountOrAccounts.accounts, [...path6, name]);
+            this.resolveConst(accountOrAccounts.accounts, [...path7, name]);
           } else {
             const account = accountOrAccounts;
-            if ((account.signer || account.address) && !this.get([...path6, name])) {
+            if ((account.signer || account.address) && !this.get([...path7, name])) {
               if (account.signer) {
                 if (!this._provider.wallet) {
                   throw new Error(
                     'This function requires the `Provider` interface implementor to have a `wallet` field.'
                   );
                 }
-                this.set([...path6, name], this._provider.wallet.publicKey);
+                this.set([...path7, name], this._provider.wallet.publicKey);
               }
               if (account.address) {
-                this.set([...path6, name], translateAddress(account.address));
+                this.set([...path7, name], translateAddress(account.address));
               }
             }
           }
         }
       }
-      async resolvePdasAndRelations(accounts, path6 = []) {
+      async resolvePdasAndRelations(accounts, path7 = []) {
         let found = 0;
         for (const accountOrAccounts of accounts) {
           const name = accountOrAccounts.name;
           if (isCompositeAccounts(accountOrAccounts)) {
             found += await this.resolvePdasAndRelations(accountOrAccounts.accounts, [
-              ...path6,
+              ...path7,
               name,
             ]);
           } else {
             const account = accountOrAccounts;
-            if ((account.pda || account.relations) && !this.get([...path6, name])) {
+            if ((account.pda || account.relations) && !this.get([...path7, name])) {
               found++;
               try {
                 if (account.pda) {
                   const seeds = await Promise.all(
-                    account.pda.seeds.map((seed2) => this.toBuffer(seed2, path6))
+                    account.pda.seeds.map((seed2) => this.toBuffer(seed2, path7))
                   );
                   if (seeds.some((seed2) => !seed2)) {
                     continue;
                   }
-                  const programId = await this.parseProgramId(account, path6);
+                  const programId = await this.parseProgramId(account, path7);
                   const [pubkey] = import_web314.PublicKey.findProgramAddressSync(seeds, programId);
-                  this.set([...path6, name], pubkey);
+                  this.set([...path7, name], pubkey);
                 }
               } catch {}
               try {
                 if (account.relations) {
-                  const accountKey = this.get([...path6, account.relations[0]]);
+                  const accountKey = this.get([...path7, account.relations[0]]);
                   if (accountKey) {
                     const account2 = await this._accountStore.fetchAccount({
                       publicKey: accountKey,
                     });
-                    this.set([...path6, name], account2[name]);
+                    this.set([...path7, name], account2[name]);
                   }
                 }
               } catch {}
@@ -25844,25 +27449,25 @@ var init_accounts_resolver = __esm({
         }
         return found;
       }
-      async parseProgramId(account, path6 = []) {
+      async parseProgramId(account, path7 = []) {
         var _a2;
         if (!((_a2 = account.pda) === null || _a2 === void 0 ? void 0 : _a2.program)) {
           return this._programId;
         }
-        const buf = await this.toBuffer(account.pda.program, path6);
+        const buf = await this.toBuffer(account.pda.program, path7);
         if (!buf) {
           throw new Error(`Program seed not resolved: ${account.name}`);
         }
         return new import_web314.PublicKey(buf);
       }
-      async toBuffer(seed2, path6 = []) {
+      async toBuffer(seed2, path7 = []) {
         switch (seed2.kind) {
           case 'const':
             return this.toBufferConst(seed2);
           case 'arg':
             return await this.toBufferArg(seed2);
           case 'account':
-            return await this.toBufferAccount(seed2, path6);
+            return await this.toBufferAccount(seed2, path7);
           default:
             throw new Error(`Unexpected seed: ${seed2}`);
         }
@@ -25871,24 +27476,24 @@ var init_accounts_resolver = __esm({
         return this.toBufferValue('bytes', seed2.value);
       }
       async toBufferArg(seed2) {
-        const [name, ...path6] = seed2.path.split('.');
+        const [name, ...path7] = seed2.path.split('.');
         const index = this._idlIx.args.findIndex((arg) => arg.name === name);
         if (index === -1) {
           throw new Error(`Unable to find argument for seed: ${name}`);
         }
-        const value = path6.reduce(
-          (acc, path7) => (acc !== null && acc !== void 0 ? acc : {})[path7],
+        const value = path7.reduce(
+          (acc, path8) => (acc !== null && acc !== void 0 ? acc : {})[path8],
           this._args[index]
         );
         if (value === void 0) {
           return;
         }
-        const type2 = this.getType(this._idlIx.args[index].type, path6);
+        const type2 = this.getType(this._idlIx.args[index].type, path7);
         return this.toBufferValue(type2, value);
       }
-      async toBufferAccount(seed2, path6 = []) {
+      async toBufferAccount(seed2, path7 = []) {
         const [name, ...paths] = seed2.path.split('.');
-        const fieldPubkey = this.get([...path6, name]);
+        const fieldPubkey = this.get([...path7, name]);
         if (!fieldPubkey) return;
         if (!paths.length) {
           return this.toBufferValue('pubkey', fieldPubkey);
@@ -25951,7 +27556,7 @@ var init_accounts_resolver = __esm({
        * Recursively get the type at some path of either a primitive or a user
        * defined struct.
        */
-      getType(type2, path6 = []) {
+      getType(type2, path7 = []) {
         var _a2;
         const typeName =
           (_a2 = type2 === null || type2 === void 0 ? void 0 : type2.defined) === null ||
@@ -25960,7 +27565,7 @@ var init_accounts_resolver = __esm({
             : _a2.name;
         if (typeName) {
           if (typeName === 'tokenAccount') {
-            switch (path6.at(0)) {
+            switch (path7.at(0)) {
               case 'mint':
               case 'owner':
                 return 'pubkey';
@@ -25968,14 +27573,14 @@ var init_accounts_resolver = __esm({
               case 'delagatedAmount':
                 return 'u64';
               default:
-                throw new Error(`Unknown token account path: ${path6}`);
+                throw new Error(`Unknown token account path: ${path7}`);
             }
           }
           const definedType = this._idlTypes.find((t) => t.name === typeName);
           if (!definedType) {
             throw new Error(`Type not found: ${typeName}`);
           }
-          const [fieldName, ...subPath] = path6;
+          const [fieldName, ...subPath] = path7;
           const fields = definedType.type.fields;
           const field = fields.find((field2) => field2.name === fieldName);
           if (!field) {
@@ -30793,8 +32398,8 @@ var require_compiler = __commonJS({
           valueAssignments.push(fullPath);
         }
       }
-      function pathAssigned(path6) {
-        return assignedPaths.indexOf(path6) !== -1;
+      function pathAssigned(path7) {
+        return assignedPaths.indexOf(path7) !== -1;
       }
       function reduceValueNode(node) {
         if (node.type === 'Array') {
@@ -30818,20 +32423,20 @@ var require_compiler = __commonJS({
         return obj;
       }
       function setPath(node) {
-        var path6 = node.value;
-        var quotedPath = path6.map(quoteDottedString).join('.');
+        var path7 = node.value;
+        var quotedPath = path7.map(quoteDottedString).join('.');
         var line2 = node.line;
         var column = node.column;
         if (pathAssigned(quotedPath)) {
-          genError("Cannot redefine existing key '" + path6 + "'.", line2, column);
+          genError("Cannot redefine existing key '" + path7 + "'.", line2, column);
         }
         assignedPaths.push(quotedPath);
-        context = deepRef(data, path6, /* @__PURE__ */ Object.create(null), line2, column);
-        currentPath = path6;
+        context = deepRef(data, path7, /* @__PURE__ */ Object.create(null), line2, column);
+        currentPath = path7;
       }
       function addTableArray(node) {
-        var path6 = node.value;
-        var quotedPath = path6.map(quoteDottedString).join('.');
+        var path7 = node.value;
+        var quotedPath = path7.map(quoteDottedString).join('.');
         var line2 = node.line;
         var column = node.column;
         if (!pathAssigned(quotedPath)) {
@@ -30841,20 +32446,20 @@ var require_compiler = __commonJS({
           return p.indexOf(quotedPath) !== 0;
         });
         assignedPaths.push(quotedPath);
-        context = deepRef(data, path6, [], line2, column);
+        context = deepRef(data, path7, [], line2, column);
         currentPath = quotedPath;
         if (context instanceof Array) {
           var newObj = /* @__PURE__ */ Object.create(null);
           context.push(newObj);
           context = newObj;
         } else {
-          genError("Cannot redefine existing key '" + path6 + "'.", line2, column);
+          genError("Cannot redefine existing key '" + path7 + "'.", line2, column);
         }
       }
       function deepRef(start, keys, value, line2, column) {
         var traversed = [];
         var traversedPath = '';
-        var path6 = keys.join('.');
+        var path7 = keys.join('.');
         var ctx = start;
         for (var i = 0; i < keys.length; i++) {
           var key = keys[i];
@@ -31037,9 +32642,9 @@ var init_workspace = __esm({
             programName = programName.replace(/\d+/g, (match) => '_' + match).replace('__', '_');
           }
           if (workspaceCache[programName]) return workspaceCache[programName];
-          const fs6 = require('fs');
-          const path6 = require('path');
-          const anchorToml = toml.parse(fs6.readFileSync('Anchor.toml'));
+          const fs7 = require('fs');
+          const path7 = require('path');
+          const anchorToml = toml.parse(fs7.readFileSync('Anchor.toml'));
           const clusterId = anchorToml.provider.cluster;
           const programEntry =
             (_b =
@@ -31053,12 +32658,12 @@ var init_workspace = __esm({
             idlPath = programEntry.idl;
             programId = programEntry.address;
           } else {
-            idlPath = path6.join('target', 'idl', `${programName}.json`);
+            idlPath = path7.join('target', 'idl', `${programName}.json`);
           }
-          if (!fs6.existsSync(idlPath)) {
+          if (!fs7.existsSync(idlPath)) {
             throw new Error(`${idlPath} doesn't exist. Did you run \`anchor build\`?`);
           }
-          const idl = JSON.parse(fs6.readFileSync(idlPath));
+          const idl = JSON.parse(fs7.readFileSync(idlPath));
           if (programId) {
             idl.address = programId;
           }
@@ -31457,8 +33062,8 @@ var require_utils2 = __commonJS({
 // ../node_modules/@colors/colors/lib/styles.js
 var require_styles = __commonJS({
   '../node_modules/@colors/colors/lib/styles.js'(exports2, module2) {
-    var styles3 = {};
-    module2['exports'] = styles3;
+    var styles = {};
+    module2['exports'] = styles;
     var codes = {
       reset: [0, 0],
       bold: [1, 22],
@@ -31514,7 +33119,7 @@ var require_styles = __commonJS({
     };
     Object.keys(codes).forEach(function (key) {
       var val = codes[key];
-      var style = (styles3[key] = []);
+      var style = (styles[key] = []);
       style.open = '\x1B[' + val[0] + 'm';
       style.close = '\x1B[' + val[1] + 'm';
     });
@@ -31522,7 +33127,7 @@ var require_styles = __commonJS({
 });
 
 // ../node_modules/@colors/colors/lib/system/has-flag.js
-var require_has_flag = __commonJS({
+var require_has_flag2 = __commonJS({
   '../node_modules/@colors/colors/lib/system/has-flag.js'(exports2, module2) {
     'use strict';
     module2.exports = function (flag, argv) {
@@ -31540,23 +33145,23 @@ var require_supports_colors = __commonJS({
   '../node_modules/@colors/colors/lib/system/supports-colors.js'(exports2, module2) {
     'use strict';
     var os3 = require('os');
-    var hasFlag2 = require_has_flag();
-    var env2 = process.env;
+    var hasFlag = require_has_flag2();
+    var env = process.env;
     var forceColor = void 0;
-    if (hasFlag2('no-color') || hasFlag2('no-colors') || hasFlag2('color=false')) {
+    if (hasFlag('no-color') || hasFlag('no-colors') || hasFlag('color=false')) {
       forceColor = false;
     } else if (
-      hasFlag2('color') ||
-      hasFlag2('colors') ||
-      hasFlag2('color=true') ||
-      hasFlag2('color=always')
+      hasFlag('color') ||
+      hasFlag('colors') ||
+      hasFlag('color=true') ||
+      hasFlag('color=always')
     ) {
       forceColor = true;
     }
-    if ('FORCE_COLOR' in env2) {
-      forceColor = env2.FORCE_COLOR.length === 0 || parseInt(env2.FORCE_COLOR, 10) !== 0;
+    if ('FORCE_COLOR' in env) {
+      forceColor = env.FORCE_COLOR.length === 0 || parseInt(env.FORCE_COLOR, 10) !== 0;
     }
-    function translateLevel2(level) {
+    function translateLevel(level) {
       if (level === 0) {
         return false;
       }
@@ -31567,14 +33172,14 @@ var require_supports_colors = __commonJS({
         has16m: level >= 3,
       };
     }
-    function supportsColor2(stream) {
+    function supportsColor(stream) {
       if (forceColor === false) {
         return 0;
       }
-      if (hasFlag2('color=16m') || hasFlag2('color=full') || hasFlag2('color=truecolor')) {
+      if (hasFlag('color=16m') || hasFlag('color=full') || hasFlag('color=truecolor')) {
         return 3;
       }
-      if (hasFlag2('color=256')) {
+      if (hasFlag('color=256')) {
         return 2;
       }
       if (stream && !stream.isTTY && forceColor !== true) {
@@ -31592,48 +33197,48 @@ var require_supports_colors = __commonJS({
         }
         return 1;
       }
-      if ('CI' in env2) {
+      if ('CI' in env) {
         if (
           ['TRAVIS', 'CIRCLECI', 'APPVEYOR', 'GITLAB_CI'].some(function (sign) {
-            return sign in env2;
+            return sign in env;
           }) ||
-          env2.CI_NAME === 'codeship'
+          env.CI_NAME === 'codeship'
         ) {
           return 1;
         }
         return min;
       }
-      if ('TEAMCITY_VERSION' in env2) {
-        return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env2.TEAMCITY_VERSION) ? 1 : 0;
+      if ('TEAMCITY_VERSION' in env) {
+        return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env.TEAMCITY_VERSION) ? 1 : 0;
       }
-      if ('TERM_PROGRAM' in env2) {
-        var version = parseInt((env2.TERM_PROGRAM_VERSION || '').split('.')[0], 10);
-        switch (env2.TERM_PROGRAM) {
+      if ('TERM_PROGRAM' in env) {
+        var version2 = parseInt((env.TERM_PROGRAM_VERSION || '').split('.')[0], 10);
+        switch (env.TERM_PROGRAM) {
           case 'iTerm.app':
-            return version >= 3 ? 3 : 2;
+            return version2 >= 3 ? 3 : 2;
           case 'Hyper':
             return 3;
           case 'Apple_Terminal':
             return 2;
         }
       }
-      if (/-256(color)?$/i.test(env2.TERM)) {
+      if (/-256(color)?$/i.test(env.TERM)) {
         return 2;
       }
-      if (/^screen|^xterm|^vt100|^rxvt|color|ansi|cygwin|linux/i.test(env2.TERM)) {
+      if (/^screen|^xterm|^vt100|^rxvt|color|ansi|cygwin|linux/i.test(env.TERM)) {
         return 1;
       }
-      if ('COLORTERM' in env2) {
+      if ('COLORTERM' in env) {
         return 1;
       }
-      if (env2.TERM === 'dumb') {
+      if (env.TERM === 'dumb') {
         return min;
       }
       return min;
     }
     function getSupportLevel(stream) {
-      var level = supportsColor2(stream);
-      return translateLevel2(level);
+      var level = supportsColor(stream);
+      return translateLevel(level);
     }
     module2.exports = {
       supportsColor: getSupportLevel,
@@ -31965,7 +33570,7 @@ var require_colors = __commonJS({
     module2['exports'] = colors;
     colors.themes = {};
     var util = require('util');
-    var ansiStyles2 = (colors.styles = require_styles());
+    var ansiStyles = (colors.styles = require_styles());
     var defineProps = Object.defineProperties;
     var newLineRegex = new RegExp(/[\r\n]+/g);
     colors.supportsColor = require_supports_colors().supportsColor;
@@ -31985,7 +33590,7 @@ var require_colors = __commonJS({
       if (!colors.enabled) {
         return str2 + '';
       }
-      var styleMap = ansiStyles2[style];
+      var styleMap = ansiStyles[style];
       if (!styleMap && style in colors) {
         return colors[style](str2);
       }
@@ -32000,17 +33605,17 @@ var require_colors = __commonJS({
     };
     function build(_styles) {
       var builder = function builder2() {
-        return applyStyle2.apply(builder2, arguments);
+        return applyStyle.apply(builder2, arguments);
       };
       builder._styles = _styles;
-      builder.__proto__ = proto2;
+      builder.__proto__ = proto;
       return builder;
     }
-    var styles3 = (function () {
+    var styles = (function () {
       var ret = {};
-      ansiStyles2.grey = ansiStyles2.gray;
-      Object.keys(ansiStyles2).forEach(function (key) {
-        ansiStyles2[key].closeRe = new RegExp(escapeStringRegexp(ansiStyles2[key].close), 'g');
+      ansiStyles.grey = ansiStyles.gray;
+      Object.keys(ansiStyles).forEach(function (key) {
+        ansiStyles[key].closeRe = new RegExp(escapeStringRegexp(ansiStyles[key].close), 'g');
         ret[key] = {
           get: function () {
             return build(this._styles.concat(key));
@@ -32019,8 +33624,8 @@ var require_colors = __commonJS({
       });
       return ret;
     })();
-    var proto2 = defineProps(function colors2() {}, styles3);
-    function applyStyle2() {
+    var proto = defineProps(function colors2() {}, styles);
+    function applyStyle() {
       var args = Array.prototype.slice.call(arguments);
       var str2 = args
         .map(function (arg) {
@@ -32038,7 +33643,7 @@ var require_colors = __commonJS({
       var nestedStyles = this._styles;
       var i = nestedStyles.length;
       while (i--) {
-        var code = ansiStyles2[nestedStyles[i]];
+        var code = ansiStyles[nestedStyles[i]];
         str2 = code.open + str2.replace(code.closeRe, code.open) + code.close;
         if (newLinesPresent) {
           str2 = str2.replace(newLineRegex, function (match) {
@@ -32072,7 +33677,7 @@ var require_colors = __commonJS({
     };
     function init() {
       var ret = {};
-      Object.keys(styles3).forEach(function (name) {
+      Object.keys(styles).forEach(function (name) {
         ret[name] = {
           get: function () {
             return build([name]);
@@ -32831,564 +34436,99 @@ var import_commander = require('commander');
 // src/config/loader.ts
 var import_dotenv = __toESM(require('dotenv'));
 var import_path = __toESM(require('path'));
+
+// src/config/credentials.ts
+var import_node_fs = __toESM(require('fs'));
+var import_node_os = __toESM(require('os'));
+var import_node_path = __toESM(require('path'));
+var ENV_VAR_BY_PROVIDER = {
+  groq: 'GROQ_API_KEY',
+  anthropic: 'ANTHROPIC_API_KEY',
+};
+var SUPPORTED_PROVIDERS = ['groq', 'anthropic'];
+var DEFAULT_DIR = import_node_path.default.join(import_node_os.default.homedir(), '.opendev');
+var DEFAULT_FILE = import_node_path.default.join(DEFAULT_DIR, 'credentials.json');
+function credentialsPath() {
+  return process.env.OPENDEV_CREDS_PATH || DEFAULT_FILE;
+}
+function isProvider(value) {
+  return SUPPORTED_PROVIDERS.includes(value);
+}
+function envVarFor(provider) {
+  return ENV_VAR_BY_PROVIDER[provider];
+}
+function readStore() {
+  const file = credentialsPath();
+  try {
+    const raw = import_node_fs.default.readFileSync(file, 'utf8');
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') return parsed;
+    return {};
+  } catch {
+    return {};
+  }
+}
+function writeStore(store) {
+  const file = credentialsPath();
+  const dir = import_node_path.default.dirname(file);
+  if (!import_node_fs.default.existsSync(dir)) {
+    import_node_fs.default.mkdirSync(dir, { recursive: true, mode: 448 });
+  }
+  const tmp = `${file}.${process.pid}.tmp`;
+  import_node_fs.default.writeFileSync(tmp, JSON.stringify(store, null, 2), { mode: 384 });
+  import_node_fs.default.renameSync(tmp, file);
+  try {
+    import_node_fs.default.chmodSync(file, 384);
+  } catch {}
+}
+function getCredential(provider) {
+  const store = readStore();
+  return store[provider];
+}
+function setCredential(provider, key) {
+  const store = readStore();
+  store[provider] = key;
+  writeStore(store);
+}
+function removeCredential(provider) {
+  const store = readStore();
+  if (!(provider in store)) return false;
+  delete store[provider];
+  writeStore(store);
+  return true;
+}
+function applyCredentialsToEnv() {
+  const store = readStore();
+  for (const provider of SUPPORTED_PROVIDERS) {
+    const envName = envVarFor(provider);
+    if (process.env[envName]) continue;
+    const fromStore = store[provider];
+    if (fromStore) process.env[envName] = fromStore;
+  }
+}
+function maskKey(key) {
+  if (!key) return '';
+  if (key.length <= 12) return '*'.repeat(key.length);
+  return `${key.slice(0, 8)}\u2026${key.slice(-4)}`;
+}
+
+// src/config/loader.ts
 var envPath = import_path.default.resolve(__dirname, '../../.env');
 var config = {};
 var loadConfig = () => {
-  const result = import_dotenv.default.config({ path: envPath });
-  if (result.error) {
-  }
+  import_dotenv.default.config({ path: envPath });
+  applyCredentialsToEnv();
   config = {
     rpcUrl: process.env.OPEN_RPC_URL,
-    // Future expansion:
-    // configPath: process.env.OPEN_CONFIG_PATH || path.join(os.homedir(), '.open', 'config.json')
   };
-  console.log('[config] Scaffolding: Loaded configuration from .env stub.');
   return config;
 };
 
 // src/commands/tx.ts
-var fs3 = __toESM(require('fs'));
-var path3 = __toESM(require('path'));
+var fs4 = __toESM(require('fs'));
+var path4 = __toESM(require('path'));
 var import_ora = __toESM(require('ora'));
-
-// ../node_modules/chalk/source/vendor/ansi-styles/index.js
-var ANSI_BACKGROUND_OFFSET = 10;
-var wrapAnsi16 =
-  (offset2 = 0) =>
-  (code) =>
-    `\x1B[${code + offset2}m`;
-var wrapAnsi256 =
-  (offset2 = 0) =>
-  (code) =>
-    `\x1B[${38 + offset2};5;${code}m`;
-var wrapAnsi16m =
-  (offset2 = 0) =>
-  (red, green, blue) =>
-    `\x1B[${38 + offset2};2;${red};${green};${blue}m`;
-var styles = {
-  modifier: {
-    reset: [0, 0],
-    // 21 isn't widely supported and 22 does the same thing
-    bold: [1, 22],
-    dim: [2, 22],
-    italic: [3, 23],
-    underline: [4, 24],
-    overline: [53, 55],
-    inverse: [7, 27],
-    hidden: [8, 28],
-    strikethrough: [9, 29],
-  },
-  color: {
-    black: [30, 39],
-    red: [31, 39],
-    green: [32, 39],
-    yellow: [33, 39],
-    blue: [34, 39],
-    magenta: [35, 39],
-    cyan: [36, 39],
-    white: [37, 39],
-    // Bright color
-    blackBright: [90, 39],
-    gray: [90, 39],
-    // Alias of `blackBright`
-    grey: [90, 39],
-    // Alias of `blackBright`
-    redBright: [91, 39],
-    greenBright: [92, 39],
-    yellowBright: [93, 39],
-    blueBright: [94, 39],
-    magentaBright: [95, 39],
-    cyanBright: [96, 39],
-    whiteBright: [97, 39],
-  },
-  bgColor: {
-    bgBlack: [40, 49],
-    bgRed: [41, 49],
-    bgGreen: [42, 49],
-    bgYellow: [43, 49],
-    bgBlue: [44, 49],
-    bgMagenta: [45, 49],
-    bgCyan: [46, 49],
-    bgWhite: [47, 49],
-    // Bright color
-    bgBlackBright: [100, 49],
-    bgGray: [100, 49],
-    // Alias of `bgBlackBright`
-    bgGrey: [100, 49],
-    // Alias of `bgBlackBright`
-    bgRedBright: [101, 49],
-    bgGreenBright: [102, 49],
-    bgYellowBright: [103, 49],
-    bgBlueBright: [104, 49],
-    bgMagentaBright: [105, 49],
-    bgCyanBright: [106, 49],
-    bgWhiteBright: [107, 49],
-  },
-};
-var modifierNames = Object.keys(styles.modifier);
-var foregroundColorNames = Object.keys(styles.color);
-var backgroundColorNames = Object.keys(styles.bgColor);
-var colorNames = [...foregroundColorNames, ...backgroundColorNames];
-function assembleStyles() {
-  const codes = /* @__PURE__ */ new Map();
-  for (const [groupName, group] of Object.entries(styles)) {
-    for (const [styleName, style] of Object.entries(group)) {
-      styles[styleName] = {
-        open: `\x1B[${style[0]}m`,
-        close: `\x1B[${style[1]}m`,
-      };
-      group[styleName] = styles[styleName];
-      codes.set(style[0], style[1]);
-    }
-    Object.defineProperty(styles, groupName, {
-      value: group,
-      enumerable: false,
-    });
-  }
-  Object.defineProperty(styles, 'codes', {
-    value: codes,
-    enumerable: false,
-  });
-  styles.color.close = '\x1B[39m';
-  styles.bgColor.close = '\x1B[49m';
-  styles.color.ansi = wrapAnsi16();
-  styles.color.ansi256 = wrapAnsi256();
-  styles.color.ansi16m = wrapAnsi16m();
-  styles.bgColor.ansi = wrapAnsi16(ANSI_BACKGROUND_OFFSET);
-  styles.bgColor.ansi256 = wrapAnsi256(ANSI_BACKGROUND_OFFSET);
-  styles.bgColor.ansi16m = wrapAnsi16m(ANSI_BACKGROUND_OFFSET);
-  Object.defineProperties(styles, {
-    rgbToAnsi256: {
-      value(red, green, blue) {
-        if (red === green && green === blue) {
-          if (red < 8) {
-            return 16;
-          }
-          if (red > 248) {
-            return 231;
-          }
-          return Math.round(((red - 8) / 247) * 24) + 232;
-        }
-        return (
-          16 +
-          36 * Math.round((red / 255) * 5) +
-          6 * Math.round((green / 255) * 5) +
-          Math.round((blue / 255) * 5)
-        );
-      },
-      enumerable: false,
-    },
-    hexToRgb: {
-      value(hex) {
-        const matches = /[a-f\d]{6}|[a-f\d]{3}/i.exec(hex.toString(16));
-        if (!matches) {
-          return [0, 0, 0];
-        }
-        let [colorString] = matches;
-        if (colorString.length === 3) {
-          colorString = [...colorString].map((character) => character + character).join('');
-        }
-        const integer = Number.parseInt(colorString, 16);
-        return [
-          /* eslint-disable no-bitwise */
-          (integer >> 16) & 255,
-          (integer >> 8) & 255,
-          integer & 255,
-          /* eslint-enable no-bitwise */
-        ];
-      },
-      enumerable: false,
-    },
-    hexToAnsi256: {
-      value: (hex) => styles.rgbToAnsi256(...styles.hexToRgb(hex)),
-      enumerable: false,
-    },
-    ansi256ToAnsi: {
-      value(code) {
-        if (code < 8) {
-          return 30 + code;
-        }
-        if (code < 16) {
-          return 90 + (code - 8);
-        }
-        let red;
-        let green;
-        let blue;
-        if (code >= 232) {
-          red = ((code - 232) * 10 + 8) / 255;
-          green = red;
-          blue = red;
-        } else {
-          code -= 16;
-          const remainder = code % 36;
-          red = Math.floor(code / 36) / 5;
-          green = Math.floor(remainder / 6) / 5;
-          blue = (remainder % 6) / 5;
-        }
-        const value = Math.max(red, green, blue) * 2;
-        if (value === 0) {
-          return 30;
-        }
-        let result = 30 + ((Math.round(blue) << 2) | (Math.round(green) << 1) | Math.round(red));
-        if (value === 2) {
-          result += 60;
-        }
-        return result;
-      },
-      enumerable: false,
-    },
-    rgbToAnsi: {
-      value: (red, green, blue) => styles.ansi256ToAnsi(styles.rgbToAnsi256(red, green, blue)),
-      enumerable: false,
-    },
-    hexToAnsi: {
-      value: (hex) => styles.ansi256ToAnsi(styles.hexToAnsi256(hex)),
-      enumerable: false,
-    },
-  });
-  return styles;
-}
-var ansiStyles = assembleStyles();
-var ansi_styles_default = ansiStyles;
-
-// ../node_modules/chalk/source/vendor/supports-color/index.js
-var import_node_process = __toESM(require('process'), 1);
-var import_node_os = __toESM(require('os'), 1);
-var import_node_tty = __toESM(require('tty'), 1);
-function hasFlag(
-  flag,
-  argv = globalThis.Deno ? globalThis.Deno.args : import_node_process.default.argv
-) {
-  const prefix = flag.startsWith('-') ? '' : flag.length === 1 ? '-' : '--';
-  const position = argv.indexOf(prefix + flag);
-  const terminatorPosition = argv.indexOf('--');
-  return position !== -1 && (terminatorPosition === -1 || position < terminatorPosition);
-}
-var { env } = import_node_process.default;
-var flagForceColor;
-if (
-  hasFlag('no-color') ||
-  hasFlag('no-colors') ||
-  hasFlag('color=false') ||
-  hasFlag('color=never')
-) {
-  flagForceColor = 0;
-} else if (
-  hasFlag('color') ||
-  hasFlag('colors') ||
-  hasFlag('color=true') ||
-  hasFlag('color=always')
-) {
-  flagForceColor = 1;
-}
-function envForceColor() {
-  if ('FORCE_COLOR' in env) {
-    if (env.FORCE_COLOR === 'true') {
-      return 1;
-    }
-    if (env.FORCE_COLOR === 'false') {
-      return 0;
-    }
-    return env.FORCE_COLOR.length === 0 ? 1 : Math.min(Number.parseInt(env.FORCE_COLOR, 10), 3);
-  }
-}
-function translateLevel(level) {
-  if (level === 0) {
-    return false;
-  }
-  return {
-    level,
-    hasBasic: true,
-    has256: level >= 2,
-    has16m: level >= 3,
-  };
-}
-function _supportsColor(haveStream, { streamIsTTY, sniffFlags = true } = {}) {
-  const noFlagForceColor = envForceColor();
-  if (noFlagForceColor !== void 0) {
-    flagForceColor = noFlagForceColor;
-  }
-  const forceColor = sniffFlags ? flagForceColor : noFlagForceColor;
-  if (forceColor === 0) {
-    return 0;
-  }
-  if (sniffFlags) {
-    if (hasFlag('color=16m') || hasFlag('color=full') || hasFlag('color=truecolor')) {
-      return 3;
-    }
-    if (hasFlag('color=256')) {
-      return 2;
-    }
-  }
-  if ('TF_BUILD' in env && 'AGENT_NAME' in env) {
-    return 1;
-  }
-  if (haveStream && !streamIsTTY && forceColor === void 0) {
-    return 0;
-  }
-  const min = forceColor || 0;
-  if (env.TERM === 'dumb') {
-    return min;
-  }
-  if (import_node_process.default.platform === 'win32') {
-    const osRelease = import_node_os.default.release().split('.');
-    if (Number(osRelease[0]) >= 10 && Number(osRelease[2]) >= 10586) {
-      return Number(osRelease[2]) >= 14931 ? 3 : 2;
-    }
-    return 1;
-  }
-  if ('CI' in env) {
-    if (['GITHUB_ACTIONS', 'GITEA_ACTIONS', 'CIRCLECI'].some((key) => key in env)) {
-      return 3;
-    }
-    if (
-      ['TRAVIS', 'APPVEYOR', 'GITLAB_CI', 'BUILDKITE', 'DRONE'].some((sign) => sign in env) ||
-      env.CI_NAME === 'codeship'
-    ) {
-      return 1;
-    }
-    return min;
-  }
-  if ('TEAMCITY_VERSION' in env) {
-    return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env.TEAMCITY_VERSION) ? 1 : 0;
-  }
-  if (env.COLORTERM === 'truecolor') {
-    return 3;
-  }
-  if (env.TERM === 'xterm-kitty') {
-    return 3;
-  }
-  if (env.TERM === 'xterm-ghostty') {
-    return 3;
-  }
-  if (env.TERM === 'wezterm') {
-    return 3;
-  }
-  if ('TERM_PROGRAM' in env) {
-    const version = Number.parseInt((env.TERM_PROGRAM_VERSION || '').split('.')[0], 10);
-    switch (env.TERM_PROGRAM) {
-      case 'iTerm.app': {
-        return version >= 3 ? 3 : 2;
-      }
-      case 'Apple_Terminal': {
-        return 2;
-      }
-    }
-  }
-  if (/-256(color)?$/i.test(env.TERM)) {
-    return 2;
-  }
-  if (/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(env.TERM)) {
-    return 1;
-  }
-  if ('COLORTERM' in env) {
-    return 1;
-  }
-  return min;
-}
-function createSupportsColor(stream, options = {}) {
-  const level = _supportsColor(stream, {
-    streamIsTTY: stream && stream.isTTY,
-    ...options,
-  });
-  return translateLevel(level);
-}
-var supportsColor = {
-  stdout: createSupportsColor({ isTTY: import_node_tty.default.isatty(1) }),
-  stderr: createSupportsColor({ isTTY: import_node_tty.default.isatty(2) }),
-};
-var supports_color_default = supportsColor;
-
-// ../node_modules/chalk/source/utilities.js
-function stringReplaceAll(string2, substring, replacer) {
-  let index = string2.indexOf(substring);
-  if (index === -1) {
-    return string2;
-  }
-  const substringLength = substring.length;
-  let endIndex = 0;
-  let returnValue = '';
-  do {
-    returnValue += string2.slice(endIndex, index) + substring + replacer;
-    endIndex = index + substringLength;
-    index = string2.indexOf(substring, endIndex);
-  } while (index !== -1);
-  returnValue += string2.slice(endIndex);
-  return returnValue;
-}
-function stringEncaseCRLFWithFirstIndex(string2, prefix, postfix, index) {
-  let endIndex = 0;
-  let returnValue = '';
-  do {
-    const gotCR = string2[index - 1] === '\r';
-    returnValue +=
-      string2.slice(endIndex, gotCR ? index - 1 : index) +
-      prefix +
-      (gotCR ? '\r\n' : '\n') +
-      postfix;
-    endIndex = index + 1;
-    index = string2.indexOf('\n', endIndex);
-  } while (index !== -1);
-  returnValue += string2.slice(endIndex);
-  return returnValue;
-}
-
-// ../node_modules/chalk/source/index.js
-var { stdout: stdoutColor, stderr: stderrColor } = supports_color_default;
-var GENERATOR = /* @__PURE__ */ Symbol('GENERATOR');
-var STYLER = /* @__PURE__ */ Symbol('STYLER');
-var IS_EMPTY = /* @__PURE__ */ Symbol('IS_EMPTY');
-var levelMapping = ['ansi', 'ansi', 'ansi256', 'ansi16m'];
-var styles2 = /* @__PURE__ */ Object.create(null);
-var applyOptions = (object, options = {}) => {
-  if (
-    options.level &&
-    !(Number.isInteger(options.level) && options.level >= 0 && options.level <= 3)
-  ) {
-    throw new Error('The `level` option should be an integer from 0 to 3');
-  }
-  const colorLevel = stdoutColor ? stdoutColor.level : 0;
-  object.level = options.level === void 0 ? colorLevel : options.level;
-};
-var chalkFactory = (options) => {
-  const chalk2 = (...strings2) => strings2.join(' ');
-  applyOptions(chalk2, options);
-  Object.setPrototypeOf(chalk2, createChalk.prototype);
-  return chalk2;
-};
-function createChalk(options) {
-  return chalkFactory(options);
-}
-Object.setPrototypeOf(createChalk.prototype, Function.prototype);
-for (const [styleName, style] of Object.entries(ansi_styles_default)) {
-  styles2[styleName] = {
-    get() {
-      const builder = createBuilder(
-        this,
-        createStyler(style.open, style.close, this[STYLER]),
-        this[IS_EMPTY]
-      );
-      Object.defineProperty(this, styleName, { value: builder });
-      return builder;
-    },
-  };
-}
-styles2.visible = {
-  get() {
-    const builder = createBuilder(this, this[STYLER], true);
-    Object.defineProperty(this, 'visible', { value: builder });
-    return builder;
-  },
-};
-var getModelAnsi = (model, level, type2, ...arguments_) => {
-  if (model === 'rgb') {
-    if (level === 'ansi16m') {
-      return ansi_styles_default[type2].ansi16m(...arguments_);
-    }
-    if (level === 'ansi256') {
-      return ansi_styles_default[type2].ansi256(ansi_styles_default.rgbToAnsi256(...arguments_));
-    }
-    return ansi_styles_default[type2].ansi(ansi_styles_default.rgbToAnsi(...arguments_));
-  }
-  if (model === 'hex') {
-    return getModelAnsi('rgb', level, type2, ...ansi_styles_default.hexToRgb(...arguments_));
-  }
-  return ansi_styles_default[type2][model](...arguments_);
-};
-var usedModels = ['rgb', 'hex', 'ansi256'];
-for (const model of usedModels) {
-  styles2[model] = {
-    get() {
-      const { level } = this;
-      return function (...arguments_) {
-        const styler = createStyler(
-          getModelAnsi(model, levelMapping[level], 'color', ...arguments_),
-          ansi_styles_default.color.close,
-          this[STYLER]
-        );
-        return createBuilder(this, styler, this[IS_EMPTY]);
-      };
-    },
-  };
-  const bgModel = 'bg' + model[0].toUpperCase() + model.slice(1);
-  styles2[bgModel] = {
-    get() {
-      const { level } = this;
-      return function (...arguments_) {
-        const styler = createStyler(
-          getModelAnsi(model, levelMapping[level], 'bgColor', ...arguments_),
-          ansi_styles_default.bgColor.close,
-          this[STYLER]
-        );
-        return createBuilder(this, styler, this[IS_EMPTY]);
-      };
-    },
-  };
-}
-var proto = Object.defineProperties(() => {}, {
-  ...styles2,
-  level: {
-    enumerable: true,
-    get() {
-      return this[GENERATOR].level;
-    },
-    set(level) {
-      this[GENERATOR].level = level;
-    },
-  },
-});
-var createStyler = (open, close, parent) => {
-  let openAll;
-  let closeAll;
-  if (parent === void 0) {
-    openAll = open;
-    closeAll = close;
-  } else {
-    openAll = parent.openAll + open;
-    closeAll = close + parent.closeAll;
-  }
-  return {
-    open,
-    close,
-    openAll,
-    closeAll,
-    parent,
-  };
-};
-var createBuilder = (self, _styler, _isEmpty) => {
-  const builder = (...arguments_) =>
-    applyStyle(builder, arguments_.length === 1 ? '' + arguments_[0] : arguments_.join(' '));
-  Object.setPrototypeOf(builder, proto);
-  builder[GENERATOR] = self;
-  builder[STYLER] = _styler;
-  builder[IS_EMPTY] = _isEmpty;
-  return builder;
-};
-var applyStyle = (self, string2) => {
-  if (self.level <= 0 || !string2) {
-    return self[IS_EMPTY] ? '' : string2;
-  }
-  let styler = self[STYLER];
-  if (styler === void 0) {
-    return string2;
-  }
-  const { openAll, closeAll } = styler;
-  if (string2.includes('\x1B')) {
-    while (styler !== void 0) {
-      string2 = stringReplaceAll(string2, styler.close, styler.open);
-      styler = styler.parent;
-    }
-  }
-  const lfIndex = string2.indexOf('\n');
-  if (lfIndex !== -1) {
-    string2 = stringEncaseCRLFWithFirstIndex(string2, closeAll, openAll, lfIndex);
-  }
-  return openAll + string2 + closeAll;
-};
-Object.defineProperties(createChalk.prototype, styles2);
-var chalk = createChalk();
-var chalkStderr = createChalk({ level: stderrColor ? stderrColor.level : 0 });
-var source_default = chalk;
+var import_chalk2 = __toESM(require_source());
 
 // ../services/src/data/programs.json
 var programs_default = {
@@ -36295,10 +37435,10 @@ function buildCPITree(logMessages) {
 }
 
 // ../services/src/solana/idlcache.ts
-var import_fs = __toESM(require('fs'));
-var import_path2 = __toESM(require('path'));
-var import_os = __toESM(require('os'));
-var import_crypto = __toESM(require('crypto'));
+var import_fs = __toESM(require('fs'), 1);
+var import_path2 = __toESM(require('path'), 1);
+var import_os = __toESM(require('os'), 1);
+var import_crypto = __toESM(require('crypto'), 1);
 var DEFAULT_TTL_MS = 24 * 60 * 60 * 1e3;
 var DEFAULT_CACHE_DIR = import_path2.default.join(
   import_os.default.homedir(),
@@ -36426,14 +37566,14 @@ var IdlCache = class {
    * Persists an IDL to disk. Write failures are swallowed — the freshly-
    * fetched IDL is still usable even if the cache write fails.
    */
-  set(programId, idl, version = 'unknown') {
+  set(programId, idl, version2 = 'unknown') {
     if (this.noCache) return;
     try {
       this.ensureCacheDirSync();
       const entry = {
         idl,
         programId,
-        version,
+        version: version2,
         fetchedAt: Date.now(),
         checksum: sha256short(idl),
       };
@@ -36442,7 +37582,7 @@ var IdlCache = class {
         JSON.stringify(entry, null, 2),
         'utf-8'
       );
-      verboseLog(this.verbose, `stored  ${programId} ver=${version}`);
+      verboseLog(this.verbose, `stored  ${programId} ver=${version2}`);
     } catch (err2) {
       verboseLog(this.verbose, `write-err ${programId}: ${String(err2)}`);
     }
@@ -37661,7 +38801,7 @@ function renderJSON(analyzed, insights = []) {
 
 // ../services/src/solana/connection.ts
 var import_web317 = require('@solana/web3.js');
-var dotenv2 = __toESM(require('dotenv'));
+var dotenv2 = __toESM(require('dotenv'), 1);
 dotenv2.config();
 var HELIUS_RPC_URL = process.env.HELIUS_RPC_URL;
 var DEVNET_RPC_URL = 'https://api.devnet.solana.com';
@@ -37727,8 +38867,8 @@ var fetchTransaction = async (signature, network = 'devnet') => {
 };
 
 // ../services/src/solana/simulationService.ts
-var fs2 = __toESM(require('fs'));
-var crypto3 = __toESM(require('crypto'));
+var fs3 = __toESM(require('fs'), 1);
+var crypto3 = __toESM(require('crypto'), 1);
 var import_web318 = require('@solana/web3.js');
 var BASE58_REGEX = /^[1-9A-HJ-NP-Za-km-z]+$/;
 var BASE64_REGEX = /^[A-Za-z0-9+/=\s]+$/;
@@ -37736,7 +38876,7 @@ function truncate(s, max) {
   return s.length > max ? s.slice(0, max - 1) + '\u2026' : s;
 }
 function detectInputKind(input) {
-  if (fs2.existsSync(input) && fs2.statSync(input).isFile()) {
+  if (fs3.existsSync(input) && fs3.statSync(input).isFile()) {
     return 'path';
   }
   const trimmed = input.trim();
@@ -37753,7 +38893,7 @@ function detectInputKind(input) {
   );
 }
 function readBase64FromPath(filePath) {
-  const content = fs2.readFileSync(filePath, 'utf-8').trim();
+  const content = fs3.readFileSync(filePath, 'utf-8').trim();
   if (BASE64_REGEX.test(content)) {
     return content;
   }
@@ -38210,22 +39350,21 @@ async function callAnthropic(payload, apiKey, model, signal) {
       return {
         suggestions: [],
         degraded: 'auth',
-        message: 'ANTHROPIC_API_KEY inv\xE1lida ou sem permiss\xE3o.',
+        message: 'ANTHROPIC_API_KEY invalid or lacks permission.',
       };
     }
     if (response.status === 429) {
       return {
         suggestions: [],
         degraded: 'rate_limit',
-        message: 'Anthropic rate limit atingido. Aguarde alguns segundos e tente de novo.',
+        message: 'Anthropic rate limit reached. Wait a few seconds and try again.',
       };
     }
     if (response.status === 400 && /credit/i.test(text2)) {
       return {
         suggestions: [],
         degraded: 'no_credit',
-        message:
-          'Cr\xE9ditos da Anthropic esgotados nesta conta. Recarregue em console.anthropic.com.',
+        message: 'Anthropic credits exhausted for this account. Top up at console.anthropic.com.',
       };
     }
     return {
@@ -38286,14 +39425,14 @@ async function callGroq(payload, apiKey, model, signal) {
       return {
         suggestions: [],
         degraded: 'auth',
-        message: 'GROQ_API_KEY inv\xE1lida ou sem permiss\xE3o.',
+        message: 'GROQ_API_KEY invalid or lacks permission.',
       };
     }
     if (response.status === 429) {
       return {
         suggestions: [],
         degraded: 'rate_limit',
-        message: 'Groq rate limit atingido. Aguarde alguns segundos e tente de novo.',
+        message: 'Groq rate limit reached. Wait a few seconds and try again.',
       };
     }
     return {
@@ -38406,27 +39545,29 @@ async function callMcpEndpoint(url, payload) {
 }
 function warnNoKey() {
   console.warn(
-    '[MCP] Nenhuma chave de AI configurada. Rendering rule-based insights only.\n       Op\xE7\xE3o 1 (gratuito):  GROQ_API_KEY        \u2192 https://console.groq.com/keys (Llama 3.3 70B, ~30 req/min)\n       Op\xE7\xE3o 2 (pago):      ANTHROPIC_API_KEY   \u2192 https://console.anthropic.com (Claude Sonnet, ~$0.003/an\xE1lise)'
+    '[MCP] No AI key configured. Rendering rule-based insights only.\n       Option 1 (free):  Groq        ->  https://console.groq.com/keys (Llama 3.3 70B, ~30 req/min)\n       Option 2 (paid):  Anthropic   ->  https://console.anthropic.com (Claude Sonnet, ~$0.003/run)\n       Save it once:     opendev config set-key groq <KEY>      # or anthropic\n       Inspect:          opendev config get-key'
   );
 }
 function warnDegraded(result) {
   switch (result.degraded) {
     case 'no_credit':
       console.warn(
-        `[MCP] ${result.message ?? 'Sem cr\xE9ditos.'} Rendering rule-based insights only.`
+        `[MCP] ${result.message ?? 'No credits left.'} Rendering rule-based insights only.`
       );
       return;
     case 'rate_limit':
-      console.warn(`[MCP] ${result.message ?? 'Rate limit.'} Rendering rule-based insights only.`);
+      console.warn(
+        `[MCP] ${result.message ?? 'Rate limit reached.'} Rendering rule-based insights only.`
+      );
       return;
     case 'auth':
       console.warn(
-        `[MCP] ${result.message ?? 'Auth falhou.'} Verifique sua ANTHROPIC_API_KEY. Rendering rule-based insights only.`
+        `[MCP] ${result.message ?? 'Auth failed.'} Check your ANTHROPIC_API_KEY. Rendering rule-based insights only.`
       );
       return;
     default:
       console.warn(
-        `[MCP] AI insights indispon\xEDveis (${result.message ?? 'erro desconhecido'}). Rendering rule-based insights only.`
+        `[MCP] AI insights unavailable (${result.message ?? 'unknown error'}). Rendering rule-based insights only.`
       );
   }
 }
@@ -38864,6 +40005,7 @@ function toParsedLogs(logMessages, parsed) {
 }
 
 // src/renderers/terminal/renderer.ts
+var import_chalk = __toESM(require_source());
 var import_cli_table3 = __toESM(require_cli_table3());
 var import_string_width = __toESM(require('string-width'));
 var WIDTH = 145;
@@ -38873,9 +40015,15 @@ var GAP = 3;
 var RIGHT_W = INNER - LEFT_W - GAP;
 var BUDGET_LIMIT_DEFAULT = 2e5;
 var applyResponsiveLayout = () => {
-  const cols = process.stdout.columns;
-  if (!cols) return;
-  const target = Math.max(90, Math.min(200, cols - 2));
+  const envOverride = parseInt(process.env.OPEN_TERMINAL_WIDTH ?? '', 10);
+  let target;
+  if (Number.isFinite(envOverride) && envOverride > 0) {
+    target = envOverride;
+  } else if (process.stdout.columns && process.stdout.columns > 0) {
+    target = Math.max(90, Math.min(200, process.stdout.columns - 2));
+  } else {
+    target = 110;
+  }
   WIDTH = target;
   INNER = WIDTH - 4;
   LEFT_W = Math.floor((INNER - GAP) * 0.65);
@@ -38883,13 +40031,39 @@ var applyResponsiveLayout = () => {
   TREE_BAR_W = Math.max(14, Math.min(40, Math.floor(LEFT_W * 0.35)));
   TREE_RIGHT_W = 1 + TREE_BAR_W + 1 + TREE_PCT_W + 2 + TREE_CU_W;
 };
+var truncateVisible = (s, target) => {
+  if ((0, import_string_width.default)(s) <= target) return s;
+  let out = '';
+  let visible = 0;
+  let i = 0;
+  while (i < s.length && visible < target) {
+    if (s.charCodeAt(i) === 27) {
+      const end = s.indexOf('m', i);
+      if (end === -1) break;
+      out += s.slice(i, end + 1);
+      i = end + 1;
+      continue;
+    }
+    const ch = s[i];
+    const w = (0, import_string_width.default)(ch);
+    if (visible + w > target) break;
+    out += ch;
+    visible += w;
+    i += 1;
+  }
+  return out + '\x1B[0m';
+};
 var padVisible = (s, target) => {
   const pad = target - (0, import_string_width.default)(s);
-  return pad > 0 ? s + ' '.repeat(pad) : s;
+  if (pad > 0) return s + ' '.repeat(pad);
+  if (pad === 0) return s;
+  return truncateVisible(s, target);
 };
 var padVisibleStart = (s, target) => {
   const pad = target - (0, import_string_width.default)(s);
-  return pad > 0 ? ' '.repeat(pad) + s : s;
+  if (pad > 0) return ' '.repeat(pad) + s;
+  if (pad === 0) return s;
+  return truncateVisible(s, target);
 };
 var centerPad = (s, width) => {
   const sw = (0, import_string_width.default)(s);
@@ -38912,16 +40086,16 @@ var truncateMid = (s, max) => {
   if ((0, import_string_width.default)(s) <= max) return s;
   return s.slice(0, Math.max(0, max - 1)) + '\u2026';
 };
-var boxTop = (color = source_default.gray) =>
+var boxTop = (color = import_chalk.default.gray) =>
   '  ' + color('\u256D' + lineChar('\u2500', WIDTH - 2) + '\u256E');
-var boxBot = (color = source_default.gray) =>
+var boxBot = (color = import_chalk.default.gray) =>
   '  ' + color('\u2570' + lineChar('\u2500', WIDTH - 2) + '\u256F');
-var boxDivider = (color = source_default.gray) =>
+var boxDivider = (color = import_chalk.default.gray) =>
   '  ' + color('\u251C' + lineChar('\u2500', WIDTH - 2) + '\u2524');
-var boxRow = (content, color = source_default.gray) =>
+var boxRow = (content, color = import_chalk.default.gray) =>
   '  ' + color('\u2502') + ' ' + padVisible(content, INNER) + ' ' + color('\u2502');
-var boxBlank = (color = source_default.gray) => boxRow('', color);
-var boxTwoCol = (left, right, color = source_default.gray) =>
+var boxBlank = (color = import_chalk.default.gray) => boxRow('', color);
+var boxTwoCol = (left, right, color = import_chalk.default.gray) =>
   '  ' +
   color('\u2502') +
   ' ' +
@@ -38931,14 +40105,14 @@ var boxTwoCol = (left, right, color = source_default.gray) =>
   ' ' +
   color('\u2502');
 var cuColor = (pct) => {
-  if (pct >= 0.5) return source_default.redBright;
-  if (pct >= 0.25) return source_default.yellowBright;
-  return source_default.greenBright;
+  if (pct >= 0.5) return import_chalk.default.redBright;
+  if (pct >= 0.25) return import_chalk.default.yellowBright;
+  return import_chalk.default.greenBright;
 };
 var cuColorBold = (pct) => {
-  if (pct >= 0.5) return source_default.redBright.bold;
-  if (pct >= 0.25) return source_default.yellowBright.bold;
-  return source_default.greenBright.bold;
+  if (pct >= 0.5) return import_chalk.default.redBright.bold;
+  if (pct >= 0.25) return import_chalk.default.yellowBright.bold;
+  return import_chalk.default.greenBright.bold;
 };
 var gradientBar = (pct, width) => {
   const clamped = Math.max(0, Math.min(1, pct));
@@ -38947,11 +40121,11 @@ var gradientBar = (pct, width) => {
   let out = '';
   for (let i = 0; i < filled; i++) {
     const p = (i + 1) / Math.max(1, width);
-    if (p < 0.25) out += source_default.greenBright('\u2588');
-    else if (p < 0.5) out += source_default.yellowBright('\u2588');
-    else out += source_default.redBright('\u2588');
+    if (p < 0.25) out += import_chalk.default.greenBright('\u2588');
+    else if (p < 0.5) out += import_chalk.default.yellowBright('\u2588');
+    else out += import_chalk.default.redBright('\u2588');
   }
-  out += source_default.gray('\u2591'.repeat(empty));
+  out += import_chalk.default.gray('\u2591'.repeat(empty));
   return out;
 };
 var rowBar = (lengthPct, colorPct, width) => {
@@ -38961,18 +40135,18 @@ var rowBar = (lengthPct, colorPct, width) => {
   const empty = inner - filled;
   const c = cuColor(colorPct);
   return (
-    source_default.gray('\u2595') +
+    import_chalk.default.gray('\u2595') +
     c('\u2588'.repeat(filled)) +
-    source_default.gray('\u2591'.repeat(empty)) +
-    source_default.gray('\u258F')
+    import_chalk.default.gray('\u2591'.repeat(empty)) +
+    import_chalk.default.gray('\u258F')
   );
 };
 var formatSol = (lamports) => {
   if (!lamports) return '0';
   const sol = lamports / 1e9;
   const value = sol.toFixed(6);
-  if (sol > 0) return source_default.green(`+${value}`);
-  if (sol < 0) return source_default.red(value);
+  if (sol > 0) return import_chalk.default.green(`+${value}`);
+  if (sol < 0) return import_chalk.default.red(value);
   return value;
 };
 var formatToken = (tokenDeltas) => {
@@ -38981,8 +40155,8 @@ var formatToken = (tokenDeltas) => {
     .map((token) => {
       const amount = Number(token.delta || 0);
       const symbol = token.symbol || 'TOKEN';
-      if (amount > 0) return source_default.green(`+${amount} ${symbol}`);
-      if (amount < 0) return source_default.red(`${amount} ${symbol}`);
+      if (amount > 0) return import_chalk.default.green(`+${amount} ${symbol}`);
+      if (amount < 0) return import_chalk.default.red(`${amount} ${symbol}`);
       return `${amount} ${symbol}`;
     })
     .join(', ');
@@ -39050,19 +40224,19 @@ function collectBottleneckTarget(analyzed) {
 }
 function dashboardHeaderRow(signature, success, slot, network, durationMs) {
   const dots =
-    source_default.red('\u25CF') +
+    import_chalk.default.red('\u25CF') +
     ' ' +
-    source_default.yellow('\u25CF') +
+    import_chalk.default.yellow('\u25CF') +
     ' ' +
-    source_default.green('\u25CF');
+    import_chalk.default.green('\u25CF');
   const sigShort = truncate2(signature, 6, 6);
-  const sep = source_default.gray(' \xB7 ');
+  const sep = import_chalk.default.gray(' \xB7 ');
   const slotText = slot ? `slot #${slot.toLocaleString('en-US')}` : 'slot ?';
-  const meta = `${source_default.white(sigShort)}${sep}${source_default.gray(network)}${sep}${source_default.gray(slotText)}`;
+  const meta = `${import_chalk.default.white(sigShort)}${sep}${import_chalk.default.gray(network)}${sep}${import_chalk.default.gray(slotText)}`;
   const status = success
-    ? source_default.bgGreen.black.bold(' SUCCESS ')
-    : source_default.bgRed.white.bold(' FAILED ');
-  const dur = durationMs > 0 ? ' ' + source_default.gray(`${durationMs.toFixed(0)}ms`) : '';
+    ? import_chalk.default.bgGreen.black.bold(' SUCCESS ')
+    : import_chalk.default.bgRed.white.bold(' FAILED ');
+  const dur = durationMs > 0 ? ' ' + import_chalk.default.gray(`${durationMs.toFixed(0)}ms`) : '';
   const left = `${dots}   ${meta}`;
   const right = `${status}${dur}`;
   const fill = Math.max(
@@ -39070,22 +40244,6 @@ function dashboardHeaderRow(signature, success, slot, network, durationMs) {
     INNER - (0, import_string_width.default)(left) - (0, import_string_width.default)(right)
   );
   return left + ' '.repeat(fill) + right;
-}
-function dashboardTabBarLines(active = 'Flame') {
-  const tabs = ['Flame', 'CPI Tree', 'Accounts', 'Graph', 'Learn'];
-  const parts = [];
-  const underlineParts = [];
-  for (const t of tabs) {
-    const isActive = t === active;
-    parts.push(isActive ? source_default.green.bold(t) : source_default.gray(t));
-    underlineParts.push(
-      isActive ? source_default.green('\u2500'.repeat(t.length)) : ' '.repeat(t.length)
-    );
-  }
-  return {
-    tabLine: parts.join('   '),
-    underlineLine: underlineParts.join('   '),
-  };
 }
 var TREE_BAR_W = 32;
 var TREE_PCT_W = 6;
@@ -39133,29 +40291,29 @@ function buildDashboardTreeLines(
     const resolvedName = resolveProgramName(node.programId) ?? node.programName ?? node.programId;
     const shortPub = truncatePubkey(node.programId);
     const nameStyled = matchesBottleneck
-      ? source_default.redBright.bold(resolvedName)
+      ? import_chalk.default.redBright.bold(resolvedName)
       : isFailed
-        ? source_default.yellow(resolvedName)
+        ? import_chalk.default.yellow(resolvedName)
         : isRoot
-          ? source_default.white.bold(resolvedName)
-          : source_default.white(resolvedName);
-    const labelText = `${nameStyled} ${source_default.gray(shortPub)}`;
-    const leftSide = source_default.gray(prefix + connector) + labelText;
+          ? import_chalk.default.white.bold(resolvedName)
+          : import_chalk.default.white(resolvedName);
+    const labelText = `${nameStyled} ${import_chalk.default.gray(shortPub)}`;
+    const leftSide = import_chalk.default.gray(prefix + connector) + labelText;
     const cuStr = cu.toLocaleString('en-US') + ' CU';
     const pctStr = totalCU > 0 ? `${(pct * 100).toFixed(1)}%`.padStart(TREE_PCT_W) : '    \u2014 ';
     const bar = totalCU > 0 ? rowBar(barLengthPct, pct, TREE_BAR_W) : ' '.repeat(TREE_BAR_W);
     const cuColored = isFailed
-      ? source_default.yellow(cuStr)
+      ? import_chalk.default.yellow(cuStr)
       : matchesBottleneck
-        ? source_default.redBright.bold(cuStr)
+        ? import_chalk.default.redBright.bold(cuStr)
         : cuColor(pct)(cuStr);
-    const pctColored = isFailed ? source_default.yellow(pctStr) : cuColorBold(pct)(pctStr);
+    const pctColored = isFailed ? import_chalk.default.yellow(pctStr) : cuColorBold(pct)(pctStr);
     const leftBudget = Math.max(20, width - TREE_RIGHT_W);
     const leftPadded = padVisible(truncateMid(leftSide, leftBudget), leftBudget);
     const cuPadded = padVisibleStart(cuColored, TREE_CU_W);
     out.push(`${leftPadded} ${bar} ${pctColored}  ${cuPadded}`);
     if (node.children?.length) {
-      out.push(source_default.gray(childPrefix + '\u2502'));
+      out.push(import_chalk.default.gray(childPrefix + '\u2502'));
       out.push(
         ...buildDashboardTreeLines(
           node.children,
@@ -39170,22 +40328,22 @@ function buildDashboardTreeLines(
       );
     }
     if (!isLast) {
-      out.push(isRoot ? '' : source_default.gray(prefix + '\u2502'));
+      out.push(isRoot ? '' : import_chalk.default.gray(prefix + '\u2502'));
     }
   });
   return out;
 }
 var FLAME_COOL_PALETTE = [
-  source_default.blueBright,
-  source_default.cyanBright,
-  source_default.magentaBright,
-  source_default.blue,
-  source_default.cyan,
-  source_default.magenta,
+  import_chalk.default.blueBright,
+  import_chalk.default.cyanBright,
+  import_chalk.default.magentaBright,
+  import_chalk.default.blue,
+  import_chalk.default.cyan,
+  import_chalk.default.magenta,
 ];
 var flameColor = (share, idx) => {
-  if (share >= 0.5) return source_default.redBright;
-  if (share >= 0.25) return source_default.yellowBright;
+  if (share >= 0.5) return import_chalk.default.redBright;
+  if (share >= 0.25) return import_chalk.default.yellowBright;
   return FLAME_COOL_PALETTE[idx % FLAME_COOL_PALETTE.length];
 };
 function collectFlameSegments(cuProfile) {
@@ -39205,7 +40363,7 @@ function collectFlameSegments(cuProfile) {
 function buildFlameGraphLines(cuProfile, width) {
   const segments = collectFlameSegments(cuProfile);
   if (!segments.length) {
-    return [source_default.gray('  No flame data available.')];
+    return [import_chalk.default.gray('  No flame data available.')];
   }
   const totalCU = segments.reduce((s, x) => s + x.cu, 0) || 1;
   const widths = segments.map((s) => Math.max(1, Math.floor((s.cu / totalCU) * width)));
@@ -39232,7 +40390,10 @@ function buildFlameGraphLines(cuProfile, width) {
       const start = Math.min(width - lab.length, Math.max(0, idx - Math.floor(lab.length / 2)));
       for (let k = 0; k < lab.length; k++) labelRow[start + k] = lab[k];
     }
-    return [source_default.gray(tickRow.join('')), source_default.gray(labelRow.join(''))];
+    return [
+      import_chalk.default.gray(tickRow.join('')),
+      import_chalk.default.gray(labelRow.join('')),
+    ];
   })();
   const innerLabels = (() => {
     const spans = [];
@@ -39266,18 +40427,19 @@ function buildFlameGraphLines(cuProfile, width) {
     const c = colors[i];
     const chip = c('\u2588\u2588');
     let badge;
-    if (s.share >= 0.5) badge = source_default.bgRedBright.black.bold(' HOT  ');
-    else if (s.share >= 0.25) badge = source_default.bgYellowBright.black.bold(' WARN ');
-    else badge = source_default.gray('      ');
+    if (s.share >= 0.5) badge = import_chalk.default.bgRedBright.black.bold(' HOT  ');
+    else if (s.share >= 0.25) badge = import_chalk.default.bgYellowBright.black.bold(' WARN ');
+    else badge = import_chalk.default.gray('      ');
     const name = padVisible(truncateMid(s.name, LEGEND_NAME_W), LEGEND_NAME_W);
     const filled = Math.max(0, Math.min(LEGEND_BAR_W, Math.round(s.share * LEGEND_BAR_W)));
     const miniBar =
-      c('\u2588'.repeat(filled)) + source_default.gray('\u2591'.repeat(LEGEND_BAR_W - filled));
+      c('\u2588'.repeat(filled)) +
+      import_chalk.default.gray('\u2591'.repeat(LEGEND_BAR_W - filled));
     const pct = padVisibleStart(`${(s.share * 100).toFixed(1)}%`, 6);
     const cu = padVisibleStart(`${s.cu.toLocaleString('en-US')} CU`, 12);
     const pctColored = c.bold(pct);
     const cuColored = c(cu);
-    return `  ${chip}  ${badge}  ${source_default.white(name)}  ${miniBar}  ${pctColored}  ${cuColored}`;
+    return `  ${chip}  ${badge}  ${import_chalk.default.white(name)}  ${miniBar}  ${pctColored}  ${cuColored}`;
   });
   return [
     innerLabels,
@@ -39287,13 +40449,15 @@ function buildFlameGraphLines(cuProfile, width) {
     ruler[0],
     ruler[1],
     '',
-    source_default.gray('  \u2500\u2500 breakdown ' + '\u2500'.repeat(Math.max(0, width - 16))),
+    import_chalk.default.gray(
+      '  \u2500\u2500 breakdown ' + '\u2500'.repeat(Math.max(0, width - 16))
+    ),
     ...legend,
   ];
 }
 function buildCUBarsLines(cuProfile, width) {
   if (!cuProfile?.perInstruction?.length || !cuProfile.totalConsumed) {
-    return [source_default.gray('  No CU breakdown available.')];
+    return [import_chalk.default.gray('  No CU breakdown available.')];
   }
   const total = cuProfile.totalConsumed;
   const map = /* @__PURE__ */ new Map();
@@ -39315,12 +40479,13 @@ function buildCUBarsLines(cuProfile, width) {
     const name = padVisible(truncateMid(e.name, NAME_W), NAME_W);
     const filled = Math.max(0, Math.min(BAR_W, Math.floor(barLengthPct * BAR_W)));
     const empty = BAR_W - filled;
-    const bar = cuColor(pct)('\u2588'.repeat(filled)) + source_default.gray('\u2591'.repeat(empty));
+    const bar =
+      cuColor(pct)('\u2588'.repeat(filled)) + import_chalk.default.gray('\u2591'.repeat(empty));
     const pctStr = padVisibleStart(`${(pct * 100).toFixed(1)}%`, PCT_W);
     const pctColored = cuColorBold(pct)(pctStr);
     const cuStr = `${e.cu.toLocaleString('en-US')} CU`;
     const cuColored = padVisibleStart(cuColor(pct)(cuStr), CU_W);
-    return `${source_default.white(name)}  ${bar}  ${pctColored}  ${cuColored}`;
+    return `${import_chalk.default.white(name)}  ${bar}  ${pctColored}  ${cuColored}`;
   });
 }
 function buildKpiCardsLines(cards, totalWidth) {
@@ -39332,18 +40497,18 @@ function buildKpiCardsLines(cards, totalWidth) {
   const labs = [];
   const bots = [];
   for (const c of cards) {
-    tops.push(source_default.gray('\u250C' + '\u2500'.repeat(inner) + '\u2510'));
+    tops.push(import_chalk.default.gray('\u250C' + '\u2500'.repeat(inner) + '\u2510'));
     vals.push(
-      source_default.gray('\u2502') +
+      import_chalk.default.gray('\u2502') +
         centerPad(c.valueColor(c.value), inner) +
-        source_default.gray('\u2502')
+        import_chalk.default.gray('\u2502')
     );
     labs.push(
-      source_default.gray('\u2502') +
-        centerPad(source_default.gray(c.label), inner) +
-        source_default.gray('\u2502')
+      import_chalk.default.gray('\u2502') +
+        centerPad(import_chalk.default.gray(c.label), inner) +
+        import_chalk.default.gray('\u2502')
     );
-    bots.push(source_default.gray('\u2514' + '\u2500'.repeat(inner) + '\u2518'));
+    bots.push(import_chalk.default.gray('\u2514' + '\u2500'.repeat(inner) + '\u2518'));
   }
   return [tops.join(' '), vals.join(' '), labs.join(' '), bots.join(' ')];
 }
@@ -39360,16 +40525,16 @@ function buildCpiDetailLines(
   if (!bottleneck) {
     const dashesEmpty = Math.max(0, width - 5 - 'CPI DETAIL'.length);
     lines.push(
-      source_default.gray('\u250C\u2500 ') +
-        source_default.cyan.bold('CPI DETAIL') +
-        source_default.gray(' ' + '\u2500'.repeat(dashesEmpty) + '\u2510')
+      import_chalk.default.gray('\u250C\u2500 ') +
+        import_chalk.default.cyan.bold('CPI DETAIL') +
+        import_chalk.default.gray(' ' + '\u2500'.repeat(dashesEmpty) + '\u2510')
     );
     lines.push(
-      source_default.gray('\u2502 ') +
-        padVisible(source_default.gray('No bottleneck detected.'), inner) +
-        source_default.gray(' \u2502')
+      import_chalk.default.gray('\u2502 ') +
+        padVisible(import_chalk.default.gray('No bottleneck detected.'), inner) +
+        import_chalk.default.gray(' \u2502')
     );
-    lines.push(source_default.gray('\u2514' + '\u2500'.repeat(width - 2) + '\u2518'));
+    lines.push(import_chalk.default.gray('\u2514' + '\u2500'.repeat(width - 2) + '\u2518'));
     return lines;
   }
   const idxLabel = instructionIdx >= 0 ? `INSTRUCTION ${instructionIdx + 1}` : 'BOTTLENECK';
@@ -39377,35 +40542,41 @@ function buildCpiDetailLines(
   const titleLen = (0, import_string_width.default)(titleText);
   const dashes = Math.max(0, width - 5 - titleLen);
   const top =
-    source_default.gray('\u250C\u2500 ') +
-    source_default.cyan.bold(titleText) +
-    source_default.gray(' ' + '\u2500'.repeat(dashes) + '\u2510');
+    import_chalk.default.gray('\u250C\u2500 ') +
+    import_chalk.default.cyan.bold(titleText) +
+    import_chalk.default.gray(' ' + '\u2500'.repeat(dashes) + '\u2510');
   lines.push(top);
-  const badge = source_default.bgYellow.black.bold(' \u26A0 Bottleneck detected ');
+  const badge = import_chalk.default.bgYellow.black.bold(' \u26A0 Bottleneck detected ');
   lines.push(
-    source_default.gray('\u2502 ') + padVisible(badge, inner) + source_default.gray(' \u2502')
+    import_chalk.default.gray('\u2502 ') +
+      padVisible(badge, inner) +
+      import_chalk.default.gray(' \u2502')
   );
-  lines.push(source_default.gray('\u2502 ') + ' '.repeat(inner) + source_default.gray(' \u2502'));
+  lines.push(
+    import_chalk.default.gray('\u2502 ') + ' '.repeat(inner) + import_chalk.default.gray(' \u2502')
+  );
   const denom = totalConsumed > 0 ? totalConsumed : totalLimit;
   const pct = denom > 0 ? Math.round((bottleneck.cuConsumed / denom) * 100) : 0;
   const programLabel =
     resolveProgramName(bottleneck.programId) ?? bottleneck.programName ?? bottleneck.programId;
   const KEY_W = 16;
   const rows = [
-    ['Program', source_default.white(truncateMid(programLabel, inner - KEY_W - 1))],
+    ['Program', import_chalk.default.white(truncateMid(programLabel, inner - KEY_W - 1))],
     [
       'Compute units',
-      source_default.red.bold(`${bottleneck.cuConsumed.toLocaleString('en-US')} CU`),
+      import_chalk.default.red.bold(`${bottleneck.cuConsumed.toLocaleString('en-US')} CU`),
     ],
-    ['% of budget', source_default.red.bold(`${pct}%`)],
-    ['Log messages', source_default.white(`${logCount}`)],
+    ['% of budget', import_chalk.default.red.bold(`${pct}%`)],
+    ['Log messages', import_chalk.default.white(`${logCount}`)],
   ];
   for (const [k, v] of rows) {
-    const key = padVisible(source_default.gray(k), KEY_W);
+    const key = padVisible(import_chalk.default.gray(k), KEY_W);
     const val = padVisibleStart(v, inner - KEY_W);
-    lines.push(source_default.gray('\u2502 ') + key + val + source_default.gray(' \u2502'));
+    lines.push(
+      import_chalk.default.gray('\u2502 ') + key + val + import_chalk.default.gray(' \u2502')
+    );
   }
-  lines.push(source_default.gray('\u2514' + '\u2500'.repeat(width - 2) + '\u2518'));
+  lines.push(import_chalk.default.gray('\u2514' + '\u2500'.repeat(width - 2) + '\u2518'));
   return lines;
 }
 function buildBudgetBarLines(consumed, limit, width) {
@@ -39413,9 +40584,9 @@ function buildBudgetBarLines(consumed, limit, width) {
   const out = [];
   const title = 'BUDGET TOTAL  \xB7  used vs ceiling';
   out.push(
-    source_default.cyanBright.bold(title) +
+    import_chalk.default.cyanBright.bold(title) +
       '  ' +
-      source_default.gray(
+      import_chalk.default.gray(
         '\u2500'.repeat(Math.max(0, width - (0, import_string_width.default)(title) - 2))
       )
   );
@@ -39423,10 +40594,10 @@ function buildBudgetBarLines(consumed, limit, width) {
   out.push(gradientBar(pct, width));
   const pctLabel = `${Math.round(pct * 100)}%`;
   const pctColored = cuColorBold(pct)(pctLabel);
-  const labelLeft = source_default.gray('0');
+  const labelLeft = import_chalk.default.gray('0');
   const labelRight =
     pctColored +
-    source_default.gray(
+    import_chalk.default.gray(
       `   ${consumed.toLocaleString('en-US')} / ${limit.toLocaleString('en-US')} CU`
     );
   const fill = Math.max(
@@ -39498,7 +40669,7 @@ function renderDashboard(analyzed, insights, network, durationMs) {
   const logCount = bottleneck ? countLogsForProgram(analyzed, bottleneck.programId) : 0;
   const treeLines = cpiNodes.length
     ? buildDashboardTreeLines(cpiNodes, bottleneckTarget, LEFT_W, totalConsumed)
-    : [source_default.gray('  No CPI data available.')];
+    : [import_chalk.default.gray('  No CPI data available.')];
   const flameLines = buildFlameGraphLines(cuProfile, LEFT_W);
   const barLines = buildCUBarsLines(cuProfile, LEFT_W);
   const kpiCards = [
@@ -39507,21 +40678,21 @@ function renderDashboard(analyzed, insights, network, durationMs) {
       label: 'CU used',
       valueColor: (s) =>
         utilization >= 0.85
-          ? source_default.red.bold(s)
+          ? import_chalk.default.red.bold(s)
           : utilization >= 0.5
-            ? source_default.yellow.bold(s)
-            : source_default.green.bold(s),
+            ? import_chalk.default.yellow.bold(s)
+            : import_chalk.default.green.bold(s),
     },
     {
       value: `${(totalConsumed / 1e3).toFixed(0)}k`,
       label: `of ${(totalLimit / 1e3).toFixed(0)}k`,
-      valueColor: (s) => source_default.cyan.bold(s),
+      valueColor: (s) => import_chalk.default.cyan.bold(s),
     },
     {
       value: `${cpiBottlenecks}`,
       label: cpiBottlenecks === 1 ? 'bottleneck' : 'bottlenecks',
       valueColor: (s) =>
-        cpiBottlenecks > 0 ? source_default.red.bold(s) : source_default.green.bold(s),
+        cpiBottlenecks > 0 ? import_chalk.default.red.bold(s) : import_chalk.default.green.bold(s),
     },
   ];
   const kpiLines = buildKpiCardsLines(kpiCards, RIGHT_W);
@@ -39534,15 +40705,15 @@ function renderDashboard(analyzed, insights, network, durationMs) {
     RIGHT_W
   );
   const budgetLines = buildBudgetBarLines(totalConsumed, totalLimit, LEFT_W);
-  const sectionHead = (label, accent = source_default.cyan.bold) => [
+  const sectionHead = (label, accent = import_chalk.default.cyan.bold) => [
     accent(label) +
       '  ' +
-      source_default.gray(
+      import_chalk.default.gray(
         '\u2500'.repeat(Math.max(0, LEFT_W - (0, import_string_width.default)(label) - 2))
       ),
     '',
   ];
-  const treeColHeader = source_default.gray(
+  const treeColHeader = import_chalk.default.gray(
     padVisible('  program', Math.max(20, LEFT_W - TREE_RIGHT_W)) +
       ' ' +
       padVisible('share', TREE_BAR_W) +
@@ -39552,20 +40723,23 @@ function renderDashboard(analyzed, insights, network, durationMs) {
       padVisibleStart('CU', TREE_CU_W)
   );
   const leftLines = [
-    ...sectionHead('CALL TREE', source_default.cyan.bold),
+    ...sectionHead('CALL TREE', import_chalk.default.cyan.bold),
     treeColHeader,
-    source_default.gray('  ' + '\u2500'.repeat(LEFT_W - 2)),
+    import_chalk.default.gray('  ' + '\u2500'.repeat(LEFT_W - 2)),
     ...treeLines,
     '',
     '',
     ...budgetLines,
     '',
     '',
-    ...sectionHead('FLAME GRAPH  \xB7  CU share by program', source_default.magentaBright.bold),
+    ...sectionHead(
+      'FLAME GRAPH  \xB7  CU share by program',
+      import_chalk.default.magentaBright.bold
+    ),
     ...flameLines,
     '',
     '',
-    ...sectionHead('COMPUTE UNITS PER INSTRUCTION', source_default.cyan.bold),
+    ...sectionHead('COMPUTE UNITS PER INSTRUCTION', import_chalk.default.cyan.bold),
     ...barLines,
   ];
   const rightLines = [...kpiLines, '', ...cpiDetailLines];
@@ -39575,10 +40749,6 @@ function renderDashboard(analyzed, insights, network, durationMs) {
   console.log('');
   console.log(boxTop());
   console.log(boxRow(dashboardHeaderRow(signature, analyzed.success, slot, network, durationMs)));
-  console.log(boxDivider());
-  const { tabLine, underlineLine } = dashboardTabBarLines('Flame');
-  console.log(boxRow(tabLine));
-  console.log(boxRow(underlineLine));
   console.log(boxDivider());
   console.log(boxBlank());
   for (let i = 0; i < maxLen; i++) {
@@ -39601,36 +40771,38 @@ var scaleCols = (ratios, mins, target) => {
 };
 var renderTransferBreakdown = (transfers) => {
   console.log('');
-  console.log('  ' + source_default.cyan.bold('TRANSFER BREAKDOWN'));
+  console.log('  ' + import_chalk.default.cyan.bold('TRANSFER BREAKDOWN'));
   if (!transfers || transfers.length === 0) {
-    console.log('  ' + source_default.gray('[ No transfers detected ]'));
+    console.log('  ' + import_chalk.default.gray('[ No transfers detected ]'));
     return;
   }
   const table = new import_cli_table3.default({
     head: [
-      source_default.white('From'),
-      source_default.white('To'),
-      source_default.white('Amount'),
-      source_default.white('Token'),
-      source_default.white('USD'),
-      source_default.white('Spam?'),
+      import_chalk.default.white('From'),
+      import_chalk.default.white('To'),
+      import_chalk.default.white('Amount'),
+      import_chalk.default.white('Token'),
+      import_chalk.default.white('USD'),
+      import_chalk.default.white('Spam?'),
     ],
     colWidths: scaleCols([14, 14, 20, 46, 14, 10], [9, 9, 10, 14, 7, 6], WIDTH - 2),
     wordWrap: true,
     style: { head: [], border: [] },
   });
   for (const t of transfers) {
-    const from = t.from ? truncatePubkey(t.from) : source_default.gray('(mint/rent)');
-    const to = t.to ? truncatePubkey(t.to) : source_default.gray('(burn/rent)');
+    const from = t.from ? truncatePubkey(t.from) : import_chalk.default.gray('(mint/rent)');
+    const to = t.to ? truncatePubkey(t.to) : import_chalk.default.gray('(burn/rent)');
     const amount = t.uiAmount.toLocaleString('en-US', { maximumFractionDigits: 6 });
-    const token = t.token === 'SOL' ? source_default.yellow('SOL') : truncate2(t.token, 8, 6);
+    const token = t.token === 'SOL' ? import_chalk.default.yellow('SOL') : truncate2(t.token, 8, 6);
     const usd =
       t.usdValue !== null
         ? t.usdValue > 0 && t.usdValue < 0.01
-          ? source_default.green('< $0.01')
-          : source_default.green(`$${t.usdValue.toFixed(2)}`)
-        : source_default.gray('N/A');
-    const spam = t.isSpamSuspect ? source_default.red('\u26A0 YES') : source_default.gray('no');
+          ? import_chalk.default.green('< $0.01')
+          : import_chalk.default.green(`$${t.usdValue.toFixed(2)}`)
+        : import_chalk.default.gray('N/A');
+    const spam = t.isSpamSuspect
+      ? import_chalk.default.red('\u26A0 YES')
+      : import_chalk.default.gray('no');
     table.push([from, to, amount, token, usd, spam]);
   }
   for (const tableLine of table.toString().split('\n')) {
@@ -39639,17 +40811,17 @@ var renderTransferBreakdown = (transfers) => {
 };
 var renderAccountsTable = (accountDiffs) => {
   console.log('');
-  console.log('  ' + source_default.cyan.bold('ACCOUNT CHANGES'));
+  console.log('  ' + import_chalk.default.cyan.bold('ACCOUNT CHANGES'));
   if (!accountDiffs || accountDiffs.length === 0) {
-    console.log('  ' + source_default.gray('[ No account changes detected ]'));
+    console.log('  ' + import_chalk.default.gray('[ No account changes detected ]'));
     return;
   }
   const table = new import_cli_table3.default({
     head: [
-      source_default.white('Account'),
-      source_default.white('Role'),
-      source_default.white('SOL \u0394'),
-      source_default.white('Token \u0394'),
+      import_chalk.default.white('Account'),
+      import_chalk.default.white('Role'),
+      import_chalk.default.white('SOL \u0394'),
+      import_chalk.default.white('Token \u0394'),
     ],
     colWidths: scaleCols([20, 12, 15, 20], [12, 8, 11, 14], WIDTH - 2),
     wordWrap: true,
@@ -39668,15 +40840,15 @@ var renderAccountsTable = (accountDiffs) => {
   }
 };
 var severityAccent = (sev) => {
-  if (sev === 'high') return source_default.redBright;
-  if (sev === 'medium') return source_default.yellowBright;
-  return source_default.cyanBright;
+  if (sev === 'high') return import_chalk.default.redBright;
+  if (sev === 'medium') return import_chalk.default.yellowBright;
+  return import_chalk.default.cyanBright;
 };
 var confidenceColored = (confidence) => {
   const pct = `${(confidence * 100).toFixed(0)}%`;
-  if (confidence >= 0.8) return source_default.redBright.bold(pct);
-  if (confidence >= 0.5) return source_default.yellowBright.bold(pct);
-  return source_default.greenBright.bold(pct);
+  if (confidence >= 0.8) return import_chalk.default.redBright.bold(pct);
+  if (confidence >= 0.5) return import_chalk.default.yellowBright.bold(pct);
+  return import_chalk.default.greenBright.bold(pct);
 };
 var wrapText = (text, width) => {
   if (!text) return [];
@@ -39704,14 +40876,14 @@ var renderAnomalies = (report) => {
   console.log('');
   const subtitle =
     count === 0
-      ? source_default.gray('\xB7 nothing suspicious')
+      ? import_chalk.default.gray('\xB7 nothing suspicious')
       : count === 1
-        ? source_default.gray('\xB7 1 detected')
-        : source_default.gray(`\xB7 ${count} detected`);
-  console.log('  ' + source_default.cyan.bold('ANOMALIES') + '  ' + subtitle);
-  console.log('  ' + source_default.gray('\u2500'.repeat(WIDTH - 2)));
+        ? import_chalk.default.gray('\xB7 1 detected')
+        : import_chalk.default.gray(`\xB7 ${count} detected`);
+  console.log('  ' + import_chalk.default.cyan.bold('ANOMALIES') + '  ' + subtitle);
+  console.log('  ' + import_chalk.default.gray('\u2500'.repeat(WIDTH - 2)));
   if (count === 0) {
-    console.log('  ' + source_default.gray('No spam, MEV, or unusual patterns detected.'));
+    console.log('  ' + import_chalk.default.gray('No spam, MEV, or unusual patterns detected.'));
     return;
   }
   const IDX_W = 4;
@@ -39725,17 +40897,17 @@ var renderAnomalies = (report) => {
     const sev = String(a.severity ?? 'low').toLowerCase();
     const accent = severityAccent(sev);
     const sevTag = padVisible(accent.bold(`[${sev.toUpperCase()}]`), SEV_W);
-    const typeText = padVisible(source_default.white.bold(a.type ?? 'unknown'), TYPE_W);
+    const typeText = padVisible(import_chalk.default.white.bold(a.type ?? 'unknown'), TYPE_W);
     const confidence = Number(a.confidence ?? 0);
     const confLabel = padVisible(
-      source_default.gray('confidence ') + confidenceColored(confidence),
+      import_chalk.default.gray('confidence ') + confidenceColored(confidence),
       CONF_W
     );
-    const idxLabel = padVisible(source_default.gray(`${i + 1}.`), IDX_W - 1) + ' ';
+    const idxLabel = padVisible(import_chalk.default.gray(`${i + 1}.`), IDX_W - 1) + ' ';
     console.log('  ' + idxLabel + sevTag + typeText + confLabel);
     const wrapped = wrapText(String(a.description ?? ''), DESC_W - 2);
     wrapped.forEach((line2) => {
-      console.log('  ' + DESC_INDENT + source_default.white(line2));
+      console.log('  ' + DESC_INDENT + import_chalk.default.white(line2));
     });
     if (i < anomalies.length - 1) console.log('');
   }
@@ -39745,7 +40917,7 @@ function getInsightSource(item) {
   return item?.source ?? item?.insight?.source;
 }
 var renderInsights = (insightsList) => {
-  const yellow = source_default.yellow;
+  const yellow = import_chalk.default.yellow;
   console.log('');
   console.log('  ' + yellow('\u2554' + lineChar('\u2550', WIDTH - 2) + '\u2557'));
   console.log(
@@ -39762,7 +40934,7 @@ var renderInsights = (insightsList) => {
       '  ' +
         yellow('\u2551') +
         ' ' +
-        padVisible(source_default.gray('No optimization issues detected.'), INNER) +
+        padVisible(import_chalk.default.gray('No optimization issues detected.'), INNER) +
         ' ' +
         yellow('\u2551')
     );
@@ -39786,7 +40958,7 @@ var renderInsights = (insightsList) => {
         '  ' +
           yellow('\u2551') +
           ' ' +
-          padVisible(source_default.bold.cyan(label), INNER) +
+          padVisible(import_chalk.default.bold.cyan(label), INNER) +
           ' ' +
           yellow('\u2551')
       );
@@ -39903,25 +41075,25 @@ function printTimings(timings) {
   const pad = (s) => s.padEnd(22, ' ');
   for (const t of timings) {
     console.log(
-      source_default.gray('  \u251C\u2500'),
-      source_default.cyan(pad(t.stage)),
-      source_default.yellow(`${t.durationMs.toFixed(1)} ms`)
+      import_chalk2.default.gray('  \u251C\u2500'),
+      import_chalk2.default.cyan(pad(t.stage)),
+      import_chalk2.default.yellow(`${t.durationMs.toFixed(1)} ms`)
     );
   }
   const total = timings.reduce((acc, t) => acc + t.durationMs, 0);
   console.log(
-    source_default.gray('  \u2514\u2500'),
-    source_default.bold('Total'),
-    source_default.green(`${total.toFixed(1)} ms`)
+    import_chalk2.default.gray('  \u2514\u2500'),
+    import_chalk2.default.bold('Total'),
+    import_chalk2.default.green(`${total.toFixed(1)} ms`)
   );
 }
 var registerTxCommand = (program3) => {
   program3
     .command('tx <signature> [network]')
     .description(
-      'Full analysis of a Solana transaction.\n\n  --verbose: Displays detailed timing for each stage in the terminal and includes timings in the JSON under _metadata.timings.'
+      'Full analysis of a confirmed Solana transaction.\n\n  <network> (positional, optional)  mainnet | devnet  (default: mainnet)\n\n  Equivalent forms:\n    opendev tx <signature>                  # defaults to mainnet\n    opendev tx <signature> mainnet          # positional\n    opendev tx <signature> --network devnet # flag (overrides positional)\n\n  --verbose: print per-stage timings in the terminal and include them in --json output under _metadata.timings.\n\n  Layout: render auto-fits to your terminal width. If the dashboard breaks on a non-standard terminal,\n  override with:  OPEN_TERMINAL_WIDTH=110 opendev tx <signature>'
     )
-    .option('--network <type>', 'Solana network (mainnet/devnet)')
+    .option('--network <name>', 'Solana network: mainnet or devnet (default: mainnet)')
     .option('--json', 'Output results in structured JSON format', false)
     .option('--csv', 'Output a single CSV row (with header) for BI tools', false)
     .option('--output <path>', 'Write JSON/CSV output to file instead of stdout')
@@ -39943,7 +41115,7 @@ var registerTxCommand = (program3) => {
       const timings = [];
       let t0 = nowMs();
       if (![87, 88].includes(signature.length)) {
-        errorLog(source_default.red('\nError: Invalid transaction signature.'));
+        errorLog(import_chalk2.default.red('\nError: Invalid transaction signature.'));
         process.exitCode = 1;
         return;
       }
@@ -39955,7 +41127,7 @@ var registerTxCommand = (program3) => {
       const positionalNetwork = typeof networkArg === 'string' ? networkArg.toLowerCase() : void 0;
       const resolvedNetwork = optionNetwork ?? positionalNetwork ?? 'mainnet';
       if (resolvedNetwork !== 'mainnet' && resolvedNetwork !== 'devnet') {
-        errorLog(source_default.red('\nError: Invalid network.'));
+        errorLog(import_chalk2.default.red('\nError: Invalid network.'));
         process.exitCode = 1;
         return;
       }
@@ -39974,7 +41146,7 @@ var registerTxCommand = (program3) => {
       const spinner = (0, import_ora.default)(`Initializing Open Insight Pipeline...`);
       if (!isMachineOutput) spinner.start();
       try {
-        spinner.text = source_default.cyan('Fetching transaction bundle...');
+        spinner.text = import_chalk2.default.cyan('Fetching transaction bundle...');
         const selectedNetwork = resolvedNetwork;
         const fetchStart = nowMs();
         const rawBundle = await fetchTransaction(signature, selectedNetwork);
@@ -40002,7 +41174,7 @@ var registerTxCommand = (program3) => {
         const anchorEnd = nowMs();
         timings.push({ stage: 'init_anchor_provider', durationMs: anchorEnd - anchorStart });
         t0 = anchorEnd;
-        spinner.text = source_default.cyan('Parsing logs and CU...');
+        spinner.text = import_chalk2.default.cyan('Parsing logs and CU...');
         const parseStart = nowMs();
         const parsedLogSummary = parseLogsFromBundle(rawBundle.logMessages);
         const cuProfile = profileCU(rawBundle.logMessages);
@@ -40012,7 +41184,7 @@ var registerTxCommand = (program3) => {
         const parseEnd = nowMs();
         timings.push({ stage: 'parse_logs_and_cu', durationMs: parseEnd - parseStart });
         t0 = parseEnd;
-        spinner.text = source_default.cyan('Decoding instructions...');
+        spinner.text = import_chalk2.default.cyan('Decoding instructions...');
         const decodeStart = nowMs();
         const analyzed = await mergeAnalysis(
           rawBundle,
@@ -40025,7 +41197,7 @@ var registerTxCommand = (program3) => {
         const decodeEnd = nowMs();
         timings.push({ stage: 'decode_instructions', durationMs: decodeEnd - decodeStart });
         t0 = decodeEnd;
-        spinner.text = source_default.cyan('Generating actionable insights...');
+        spinner.text = import_chalk2.default.cyan('Generating actionable insights...');
         const insightsStart = nowMs();
         const mcpProvider = new McpInsightProvider();
         const insightsReport = await analyzeTransaction(analyzed, [mcpProvider]);
@@ -40033,7 +41205,7 @@ var registerTxCommand = (program3) => {
         timings.push({ stage: 'analyze_transaction', durationMs: insightsEnd - insightsStart });
         t0 = insightsEnd;
         if (!isMachineOutput) {
-          spinner.succeed(source_default.green('Analysis Complete!'));
+          spinner.succeed(import_chalk2.default.green('Analysis Complete!'));
           if (verbose) process.nextTick(() => idlCache.printMetrics());
         }
         const outputStart = nowMs();
@@ -40042,8 +41214,8 @@ var registerTxCommand = (program3) => {
           analyzed._metadata.timings = timings;
           const jsonOut = renderJSON(analyzed, insightsReport);
           if (options.output) {
-            const outPath = path3.resolve(options.output);
-            fs3.writeFileSync(outPath, jsonOut, 'utf-8');
+            const outPath = path4.resolve(options.output);
+            fs4.writeFileSync(outPath, jsonOut, 'utf-8');
             originalLog(`
 Report written to: ${outPath}`);
             return;
@@ -40055,14 +41227,14 @@ Report written to: ${outPath}`);
           const csvOut = renderCSV(analyzed, insightsReport) + '\n';
           const defaultName = `${signature}.csv`;
           if (options.output) {
-            const outPath2 = path3.resolve(options.output);
-            fs3.writeFileSync(outPath2, csvOut, 'utf-8');
+            const outPath2 = path4.resolve(options.output);
+            fs4.writeFileSync(outPath2, csvOut, 'utf-8');
             originalLog(`
 CSV written to: ${outPath2}`);
             return;
           }
-          const outPath = path3.resolve(defaultName);
-          fs3.writeFileSync(outPath, csvOut, 'utf-8');
+          const outPath = path4.resolve(defaultName);
+          fs4.writeFileSync(outPath, csvOut, 'utf-8');
           originalLog(`
 CSV written to: ${outPath}`);
           return;
@@ -40072,7 +41244,7 @@ CSV written to: ${outPath}`);
         const outputEnd = nowMs();
         timings.push({ stage: 'render_terminal', durationMs: outputEnd - outputStart });
         if (verbose) {
-          console.log(source_default.bold.cyan('\n[Pipeline Timings]'));
+          console.log(import_chalk2.default.bold.cyan('\n[Pipeline Timings]'));
           printTimings(timings);
         }
       } catch (error) {
@@ -40082,9 +41254,9 @@ CSV written to: ${outPath}`);
           process.stdout.write(`error,${error.message?.replace(/"/g, '""') ?? ''}
 `);
         } else {
-          spinner.fail(source_default.red('Pipeline Crash'));
+          spinner.fail(import_chalk2.default.red('Pipeline Crash'));
           console.error(
-            source_default.yellow(`
+            import_chalk2.default.yellow(`
 Detail: ${error.message}`)
           );
           if (verbose) {
@@ -40100,17 +41272,18 @@ Detail: ${error.message}`)
 };
 
 // src/commands/batch.ts
-var fs4 = __toESM(require('fs'));
-var path4 = __toESM(require('path'));
+var fs5 = __toESM(require('fs'));
+var path5 = __toESM(require('path'));
+var import_chalk3 = __toESM(require_source());
 var import_ora2 = __toESM(require('ora'));
 function loadBatchFile(filePath) {
-  const resolved = path4.resolve(filePath);
-  if (!fs4.existsSync(resolved)) {
+  const resolved = path5.resolve(filePath);
+  if (!fs5.existsSync(resolved)) {
     throw new Error(`Batch file not found: ${resolved}`);
   }
   let raw;
   try {
-    raw = fs4.readFileSync(resolved, 'utf-8');
+    raw = fs5.readFileSync(resolved, 'utf-8');
   } catch {
     throw new Error(`Failed to read batch file: ${resolved}`);
   }
@@ -40163,46 +41336,47 @@ var WIDTH2 = 100;
 var line = (char = '\u2500') => char.repeat(WIDTH2);
 function renderBatchReport(report, verbose) {
   const { summary, costs, patterns, frameworkTrends, globalRecommendations, transactions } = report;
-  const successColor = summary.failed === 0 ? source_default.green : source_default.yellow;
+  const successColor =
+    summary.failed === 0 ? import_chalk3.default.green : import_chalk3.default.yellow;
   console.log('');
-  console.log(`  ${source_default.cyan.bold('OPEN INSIGHT [BATCH REPORT v0.1.0]')}`);
+  console.log(`  ${import_chalk3.default.cyan.bold('OPEN INSIGHT [BATCH REPORT v0.1.0]')}`);
   console.log(`  \u250C${line('\u2500')}\u2510`);
   console.log(
-    `  \u2502 ${source_default.bold('Network:')} ${source_default.blue(summary.network.toUpperCase())}   ${source_default.bold('Transactions:')} ${successColor(summary.successful + '/' + summary.total)} success` +
-      (summary.failed > 0 ? source_default.red(`  (${summary.failed} failed)`) : '')
+    `  \u2502 ${import_chalk3.default.bold('Network:')} ${import_chalk3.default.blue(summary.network.toUpperCase())}   ${import_chalk3.default.bold('Transactions:')} ${successColor(summary.successful + '/' + summary.total)} success` +
+      (summary.failed > 0 ? import_chalk3.default.red(`  (${summary.failed} failed)`) : '')
   );
-  console.log(`  \u2502 ${source_default.gray('Processed at: ' + summary.processedAt)}`);
+  console.log(`  \u2502 ${import_chalk3.default.gray('Processed at: ' + summary.processedAt)}`);
   console.log(`  \u2514${line('\u2500')}\u2518`);
   console.log('');
   console.log(`  \u250C${line('\u2500')}\u2510`);
-  console.log(`  \u2502 ${source_default.cyan.bold('COST SUMMARY')}`);
+  console.log(`  \u2502 ${import_chalk3.default.cyan.bold('COST SUMMARY')}`);
   console.log(
-    `  \u2502  Total fees:  ${source_default.yellow(costs.totalFeeSOL.toFixed(9))} SOL` +
+    `  \u2502  Total fees:  ${import_chalk3.default.yellow(costs.totalFeeSOL.toFixed(9))} SOL` +
       (costs.totalFeeUSD != null
-        ? source_default.green(`  ($${costs.totalFeeUSD.toFixed(4)})`)
+        ? import_chalk3.default.green(`  ($${costs.totalFeeUSD.toFixed(4)})`)
         : '')
   );
   console.log(
-    `  \u2502  Total CU:    ${source_default.cyan(costs.totalCU.toLocaleString())}  \xB7  Avg: ${source_default.cyan(costs.avgCU.toLocaleString())} CU/tx`
+    `  \u2502  Total CU:    ${import_chalk3.default.cyan(costs.totalCU.toLocaleString())}  \xB7  Avg: ${import_chalk3.default.cyan(costs.avgCU.toLocaleString())} CU/tx`
   );
   console.log(
-    `  \u2502  Avg fee:     ${source_default.yellow(costs.avgFeeLamports.toLocaleString())} lamports/tx`
+    `  \u2502  Avg fee:     ${import_chalk3.default.yellow(costs.avgFeeLamports.toLocaleString())} lamports/tx`
   );
   console.log(`  \u2514${line('\u2500')}\u2518`);
   if (patterns.length > 0) {
     console.log('');
     console.log(`  \u250C${line('\u2500')}\u2510`);
-    console.log(`  \u2502 ${source_default.cyan.bold('RECURRING PATTERNS')}`);
+    console.log(`  \u2502 ${import_chalk3.default.cyan.bold('RECURRING PATTERNS')}`);
     for (const p of patterns.slice(0, 5)) {
       const severityColor =
         p.severity === 'critical'
-          ? source_default.red
+          ? import_chalk3.default.red
           : p.severity === 'warning'
-            ? source_default.yellow
-            : source_default.gray;
+            ? import_chalk3.default.yellow
+            : import_chalk3.default.gray;
       const bar = '\u2588'.repeat(Math.round(p.percentage / 5));
       console.log(
-        `  \u2502  ${severityColor(p.type.padEnd(35))} ${source_default.white(p.frequency + 'x')}  ${source_default.gray(bar)} ${p.percentage}%`
+        `  \u2502  ${severityColor(p.type.padEnd(35))} ${import_chalk3.default.white(p.frequency + 'x')}  ${import_chalk3.default.gray(bar)} ${p.percentage}%`
       );
     }
     console.log(`  \u2514${line('\u2500')}\u2518`);
@@ -40210,32 +41384,34 @@ function renderBatchReport(report, verbose) {
   if (frameworkTrends.length > 0) {
     console.log('');
     console.log(`  \u250C${line('\u2500')}\u2510`);
-    console.log(`  \u2502 ${source_default.cyan.bold('FRAMEWORK TRENDS')}`);
+    console.log(`  \u2502 ${import_chalk3.default.cyan.bold('FRAMEWORK TRENDS')}`);
     for (const f of frameworkTrends) {
       console.log(
-        `  \u2502  ${source_default.white(f.framework.padEnd(12))} ${f.count}tx  ${f.percentage}%  \xB7 avg ${source_default.cyan(f.avgCU.toLocaleString())} CU`
+        `  \u2502  ${import_chalk3.default.white(f.framework.padEnd(12))} ${f.count}tx  ${f.percentage}%  \xB7 avg ${import_chalk3.default.cyan(f.avgCU.toLocaleString())} CU`
       );
     }
     console.log(`  \u2514${line('\u2500')}\u2518`);
   }
   console.log('');
   console.log(`  \u2554${line('\u2550')}\u2557`);
-  console.log(`  \u2551 ${source_default.yellow.bold('GLOBAL RECOMMENDATIONS')}`);
+  console.log(`  \u2551 ${import_chalk3.default.yellow.bold('GLOBAL RECOMMENDATIONS')}`);
   for (const rec of globalRecommendations) {
-    console.log(`  \u2551  ${source_default.yellow('\u2192')} ${rec}`);
+    console.log(`  \u2551  ${import_chalk3.default.yellow('\u2192')} ${rec}`);
   }
   console.log(`  \u255A${line('\u2550')}\u255D`);
   if (verbose) {
     console.log('');
-    console.log(`  ${source_default.bold('TRANSACTIONS')}`);
+    console.log(`  ${import_chalk3.default.bold('TRANSACTIONS')}`);
     for (const tx of transactions) {
-      const icon = tx.success ? source_default.green('\u2713') : source_default.red('\u2717');
+      const icon = tx.success
+        ? import_chalk3.default.green('\u2713')
+        : import_chalk3.default.red('\u2717');
       const sig = tx.signature.slice(0, 8) + '...' + tx.signature.slice(-6);
       const insight = tx.topInsight
-        ? source_default.gray(` \u2192 ${tx.topInsight.slice(0, 50)}`)
+        ? import_chalk3.default.gray(` \u2192 ${tx.topInsight.slice(0, 50)}`)
         : '';
       console.log(
-        `  ${icon}  ${source_default.white(sig)}  ${source_default.cyan(tx.cuConsumed.toLocaleString())} CU  ${tx.feeLamports.toLocaleString()} lam  ${tx.insightCount} insight(s)${insight}`
+        `  ${icon}  ${import_chalk3.default.white(sig)}  ${import_chalk3.default.cyan(tx.cuConsumed.toLocaleString())} CU  ${tx.feeLamports.toLocaleString()} lam  ${tx.insightCount} insight(s)${insight}`
       );
     }
   }
@@ -40257,7 +41433,7 @@ var registerBatchCommand = (program3) => {
         batchFile = loadBatchFile(file);
       } catch (err2) {
         console.error(
-          source_default.red(`
+          import_chalk3.default.red(`
 Error: ${err2.message}`)
         );
         process.exitCode = 1;
@@ -40266,7 +41442,7 @@ Error: ${err2.message}`)
       const { signatures, network = 'mainnet' } = batchFile;
       const concurrency = Math.max(1, Math.min(10, parseInt(options.concurrency, 10) || 3));
       console.log(
-        source_default.cyan(
+        import_chalk3.default.cyan(
           `
 Processing ${signatures.length} transaction(s) on ${network} (concurrency: ${concurrency})...`
         )
@@ -40288,15 +41464,16 @@ Processing ${signatures.length} transaction(s) on ${network} (concurrency: ${con
         }
       }
       spinner.succeed(
-        source_default.green(`Processed ${entries.length}/${signatures.length} transactions.`) +
-          (failed.length > 0 ? source_default.red(` (${failed.length} failed)`) : '')
+        import_chalk3.default.green(
+          `Processed ${entries.length}/${signatures.length} transactions.`
+        ) + (failed.length > 0 ? import_chalk3.default.red(` (${failed.length} failed)`) : '')
       );
       if (failed.length > 0 && verbose) {
-        console.log(source_default.yellow('\nFailed signatures:'));
+        console.log(import_chalk3.default.yellow('\nFailed signatures:'));
         for (const sig of failed) console.log(`  - ${sig}`);
       }
       if (entries.length === 0) {
-        console.error(source_default.red('\nNo transactions could be analyzed.'));
+        console.error(import_chalk3.default.red('\nNo transactions could be analyzed.'));
         process.exitCode = 1;
         return;
       }
@@ -40305,10 +41482,10 @@ Processing ${signatures.length} transaction(s) on ${network} (concurrency: ${con
         const rows = [csvHeader(), ...entries.map((e) => csvRow(e.analyzed, e.insights))];
         const csv = rows.join('\n') + '\n';
         if (options.output) {
-          const outPath = path4.resolve(options.output);
-          fs4.writeFileSync(outPath, csv, 'utf-8');
+          const outPath = path5.resolve(options.output);
+          fs5.writeFileSync(outPath, csv, 'utf-8');
           console.log(
-            source_default.green(`
+            import_chalk3.default.green(`
 CSV written to: ${outPath}`)
           );
         } else {
@@ -40319,10 +41496,10 @@ CSV written to: ${outPath}`)
       if (options.json || options.output) {
         const json = JSON.stringify(report, null, 2);
         if (options.output) {
-          const outPath = path4.resolve(options.output);
-          fs4.writeFileSync(outPath, json, 'utf-8');
+          const outPath = path5.resolve(options.output);
+          fs5.writeFileSync(outPath, json, 'utf-8');
           console.log(
-            source_default.green(`
+            import_chalk3.default.green(`
 Report written to: ${outPath}`)
           );
         } else {
@@ -40335,21 +41512,120 @@ Report written to: ${outPath}`)
 };
 
 // src/commands/config.ts
+var import_chalk4 = __toESM(require_source());
 var registerConfigCommand = (program3) => {
-  const configCommand = program3.command('config').description('Manage OPEN CLI configuration');
+  const configCommand = program3.command('config').description('Manage opendev CLI configuration');
   configCommand
-    .command('set')
-    .description('Update a configuration value')
-    .command('rpc')
-    .argument('<url>', 'The Solana RPC URL to use')
-    .description('Set the default Solana RPC URL')
+    .command('set-key')
+    .description(
+      'Save an AI provider API key to ~/.opendev/credentials.json (chmod 600).\n\n  Supported providers: ' +
+        SUPPORTED_PROVIDERS.join(', ') +
+        '\n\n  Examples:\n    opendev config set-key groq gsk_xxxxxxxxxxxxxxxx\n    opendev config set-key anthropic sk-ant-xxxxxxxxxxxx\n\n  Get a key:\n    Groq (free):     https://console.groq.com/keys\n    Anthropic (paid): https://console.anthropic.com'
+    )
+    .argument('<provider>', `which AI provider (${SUPPORTED_PROVIDERS.join(' | ')})`)
+    .argument('<key>', 'the API key')
+    .action((provider, key) => {
+      if (!isProvider(provider)) {
+        console.error(
+          import_chalk4.default.red(
+            `Unknown provider "${provider}". Supported: ${SUPPORTED_PROVIDERS.join(', ')}.`
+          )
+        );
+        process.exit(1);
+      }
+      if (!key || key.length < 8) {
+        console.error(
+          import_chalk4.default.red('Key looks too short. Did you paste the full value?')
+        );
+        process.exit(1);
+      }
+      setCredential(provider, key);
+      console.log(
+        `${import_chalk4.default.green('\u2713')} Saved ${import_chalk4.default.bold(provider)} key (${maskKey(key)}) to ${credentialsPath()}`
+      );
+      console.log(import_chalk4.default.gray(`  This will be used as ${envVarFor(provider)}.`));
+    });
+  configCommand
+    .command('get-key')
+    .description('Show which AI keys are configured (values are masked).')
+    .argument('[provider]', 'limit to a single provider (optional)')
+    .action((provider) => {
+      const targets = provider
+        ? isProvider(provider)
+          ? [provider]
+          : []
+        : [...SUPPORTED_PROVIDERS];
+      if (provider && !isProvider(provider)) {
+        console.error(
+          import_chalk4.default.red(
+            `Unknown provider "${provider}". Supported: ${SUPPORTED_PROVIDERS.join(', ')}.`
+          )
+        );
+        process.exit(1);
+      }
+      console.log(`Credentials store: ${credentialsPath()}
+`);
+      for (const p of targets) {
+        const fromStore = getCredential(p);
+        const fromEnv = process.env[envVarFor(p)];
+        let source;
+        let value;
+        if (fromEnv && fromEnv !== fromStore) {
+          source = import_chalk4.default.yellow('env');
+          value = maskKey(fromEnv);
+        } else if (fromStore) {
+          source = import_chalk4.default.green('store');
+          value = maskKey(fromStore);
+        } else {
+          source = import_chalk4.default.gray('\u2014');
+          value = import_chalk4.default.gray('not set');
+        }
+        console.log(`  ${import_chalk4.default.bold(p.padEnd(10))} ${source.padEnd(20)} ${value}`);
+      }
+    });
+  configCommand
+    .command('remove-key')
+    .description('Delete an AI provider key from the credentials store.')
+    .argument('<provider>', `which provider (${SUPPORTED_PROVIDERS.join(' | ')})`)
+    .action((provider) => {
+      if (!isProvider(provider)) {
+        console.error(
+          import_chalk4.default.red(
+            `Unknown provider "${provider}". Supported: ${SUPPORTED_PROVIDERS.join(', ')}.`
+          )
+        );
+        process.exit(1);
+      }
+      const removed = removeCredential(provider);
+      if (removed) {
+        console.log(
+          `${import_chalk4.default.green('\u2713')} Removed ${import_chalk4.default.bold(provider)} from ${credentialsPath()}`
+        );
+      } else {
+        console.log(
+          `${import_chalk4.default.gray('\u2014')} ${import_chalk4.default.bold(provider)} was not in the store.`
+        );
+      }
+    });
+  configCommand
+    .command('set-rpc')
+    .description('Set the default Solana RPC URL (currently shown only \u2014 persistence WIP)')
+    .argument('<url>', 'the Solana RPC URL to use')
     .action((url) => {
-      console.log(`--- Config Set RPC (Stub) ---`);
-      console.log(`URL Received: ${url}`);
-      console.log(`Current loaded RPC (from .env): ${config.rpcUrl}`);
-      console.log('\nStatus: Saving to ~/.open/config.json is NOT IMPLEMENTED YET.');
+      console.log(
+        import_chalk4.default.yellow('\u26A0 RPC URL persistence is not yet implemented.')
+      );
+      console.log(`Received: ${url}`);
+      console.log(`Currently loaded RPC (from .env): ${config.rpcUrl ?? '(none)'}`);
+      console.log('');
+      console.log(
+        import_chalk4.default.gray('For now, set OPEN_RPC_URL in your shell or in a .env file.')
+      );
     });
 };
+
+// src/commands/info.ts
+var import_chalk5 = __toESM(require_source());
 
 // ../services/src/data/program-registry.json
 var program_registry_default = [
@@ -40507,23 +41783,23 @@ function loadRegistry() {
 function colorStatus(status) {
   switch (status) {
     case 'complete':
-      return source_default.green(status);
+      return import_chalk5.default.green(status);
     case 'partial':
-      return source_default.yellow(status);
+      return import_chalk5.default.yellow(status);
     case 'planned':
-      return source_default.blue(status);
+      return import_chalk5.default.blue(status);
     case 'none':
-      return source_default.gray(status);
+      return import_chalk5.default.gray(status);
     default:
-      return source_default.gray(String(status));
+      return import_chalk5.default.gray(String(status));
   }
 }
 function colorCoverage(coverage) {
   const text = `${coverage}%`.padStart(4);
-  if (coverage >= 100) return source_default.green(text);
-  if (coverage >= 66) return source_default.yellow(text);
-  if (coverage >= 33) return source_default.cyan(text);
-  return source_default.gray(text);
+  if (coverage >= 100) return import_chalk5.default.green(text);
+  if (coverage >= 66) return import_chalk5.default.yellow(text);
+  if (coverage >= 33) return import_chalk5.default.cyan(text);
+  return import_chalk5.default.gray(text);
 }
 function truncate3(s, max) {
   return s.length > max ? s.slice(0, max - 1) + '\u2026' : s;
@@ -40537,17 +41813,17 @@ function renderTable(entries) {
     benchmark: 8,
   };
   const header =
-    source_default.bold('Name'.padEnd(cols.name)) +
-    source_default.bold('Framework'.padEnd(cols.framework)) +
-    source_default.bold('Coverage'.padStart(cols.coverage)) +
+    import_chalk5.default.bold('Name'.padEnd(cols.name)) +
+    import_chalk5.default.bold('Framework'.padEnd(cols.framework)) +
+    import_chalk5.default.bold('Coverage'.padStart(cols.coverage)) +
     '  ' +
-    source_default.bold('Decoder'.padEnd(cols.decoder)) +
-    source_default.bold('Benchmark'.padEnd(cols.benchmark));
-  const sep = source_default.gray(
+    import_chalk5.default.bold('Decoder'.padEnd(cols.decoder)) +
+    import_chalk5.default.bold('Benchmark'.padEnd(cols.benchmark));
+  const sep = import_chalk5.default.gray(
     '\u2500'.repeat(cols.name + cols.framework + cols.coverage + cols.decoder + cols.benchmark + 2)
   );
   console.log('');
-  console.log(source_default.bold('OPEN \u2014 Program Registry'));
+  console.log(import_chalk5.default.bold('OPEN \u2014 Program Registry'));
   console.log(sep);
   console.log(header);
   console.log(sep);
@@ -40558,14 +41834,16 @@ function renderTable(entries) {
       colorCoverage(entry.coverage).padStart(cols.coverage) +
       '  ' +
       colorStatus(entry.decoderStatus).padEnd(cols.decoder + 10) +
-      (entry.benchmark ? source_default.green('  \u2713') : source_default.gray('  \u2014'));
+      (entry.benchmark
+        ? import_chalk5.default.green('  \u2713')
+        : import_chalk5.default.gray('  \u2014'));
     console.log(row);
   }
   console.log(sep);
   const total = entries.length;
   const ready = entries.filter((e) => e.coverage === 100).length;
   console.log(
-    source_default.dim(
+    import_chalk5.default.dim(
       `${ready}/${total} programs at full coverage  \u2022  ${total} total entries`
     )
   );
@@ -40573,23 +41851,27 @@ function renderTable(entries) {
 }
 function renderDetail(entry) {
   console.log('');
-  console.log(source_default.bold(entry.name));
-  console.log(source_default.gray('\u2500'.repeat(entry.name.length)));
-  console.log(`${source_default.dim('Program ID:    ')}${entry.programId}`);
-  console.log(`${source_default.dim('Framework:     ')}${entry.framework}`);
-  console.log(`${source_default.dim('Coverage:      ')}${colorCoverage(entry.coverage).trim()}`);
-  console.log(`${source_default.dim('Decoder:       ')}${colorStatus(entry.decoderStatus)}`);
+  console.log(import_chalk5.default.bold(entry.name));
+  console.log(import_chalk5.default.gray('\u2500'.repeat(entry.name.length)));
+  console.log(`${import_chalk5.default.dim('Program ID:    ')}${entry.programId}`);
+  console.log(`${import_chalk5.default.dim('Framework:     ')}${entry.framework}`);
   console.log(
-    `${source_default.dim('IDL:           ')}${entry.idl ?? source_default.gray('(none)')}`
+    `${import_chalk5.default.dim('Coverage:      ')}${colorCoverage(entry.coverage).trim()}`
+  );
+  console.log(`${import_chalk5.default.dim('Decoder:       ')}${colorStatus(entry.decoderStatus)}`);
+  console.log(
+    `${import_chalk5.default.dim('IDL:           ')}${entry.idl ?? import_chalk5.default.gray('(none)')}`
   );
   if (entry.benchmark) {
     console.log(
-      `${source_default.dim('Benchmark:     ')}${entry.benchmark.framework} \u2192 ${entry.benchmark.operations.join(', ')}`
+      `${import_chalk5.default.dim('Benchmark:     ')}${entry.benchmark.framework} \u2192 ${entry.benchmark.operations.join(', ')}`
     );
   } else {
-    console.log(`${source_default.dim('Benchmark:     ')}${source_default.gray('(none)')}`);
+    console.log(
+      `${import_chalk5.default.dim('Benchmark:     ')}${import_chalk5.default.gray('(none)')}`
+    );
   }
-  console.log(`${source_default.dim('Last updated:  ')}${entry.lastUpdated}`);
+  console.log(`${import_chalk5.default.dim('Last updated:  ')}${entry.lastUpdated}`);
   console.log('');
 }
 function findEntry(entries, query) {
@@ -40608,8 +41890,8 @@ var registerInfoCommand = (program3) => {
       if (query) {
         const entry = findEntry(registry, query);
         if (!entry) {
-          console.error(source_default.red(`No program matches "${query}"`));
-          console.log(source_default.dim(`Run "open info" to list all available programs.`));
+          console.error(import_chalk5.default.red(`No program matches "${query}"`));
+          console.log(import_chalk5.default.dim(`Run "open info" to list all available programs.`));
           process.exit(1);
         }
         renderDetail(entry);
@@ -40620,9 +41902,10 @@ var registerInfoCommand = (program3) => {
 };
 
 // src/commands/simulate.ts
-var fs5 = __toESM(require('fs'));
-var path5 = __toESM(require('path'));
+var fs6 = __toESM(require('fs'));
+var path6 = __toESM(require('path'));
 var import_ora3 = __toESM(require('ora'));
+var import_chalk6 = __toESM(require_source());
 function nowMs2() {
   return typeof process !== 'undefined' && process.hrtime
     ? Number(process.hrtime.bigint() / 1000000n)
@@ -40630,20 +41913,22 @@ function nowMs2() {
 }
 function printSimulationBanner(meta) {
   const status = meta.success
-    ? source_default.green.bold('WOULD SUCCEED')
-    : source_default.red.bold('WOULD FAIL');
-  const sep = source_default.gray('\u2500'.repeat(64));
+    ? import_chalk6.default.green.bold('WOULD SUCCEED')
+    : import_chalk6.default.red.bold('WOULD FAIL');
+  const sep = import_chalk6.default.gray('\u2500'.repeat(64));
   console.log('');
-  console.log(source_default.cyan.bold('SIMULATED \xB7 NOT BROADCAST'));
+  console.log(import_chalk6.default.cyan.bold('SIMULATED \xB7 NOT BROADCAST'));
   console.log(sep);
-  console.log(`${source_default.dim('Verdict:       ')}${status}`);
-  console.log(`${source_default.dim('Input kind:    ')}${meta.inputKind}`);
+  console.log(`${import_chalk6.default.dim('Verdict:       ')}${status}`);
+  console.log(`${import_chalk6.default.dim('Input kind:    ')}${meta.inputKind}`);
   if (meta.errorJson) {
-    console.log(`${source_default.dim('Error:         ')}${source_default.red(meta.errorJson)}`);
+    console.log(
+      `${import_chalk6.default.dim('Error:         ')}${import_chalk6.default.red(meta.errorJson)}`
+    );
   }
   if (meta.returnData) {
     console.log(
-      `${source_default.dim('Return data:   ')}${meta.returnData.programId} \u2192 ${meta.returnData.data}`
+      `${import_chalk6.default.dim('Return data:   ')}${meta.returnData.programId} \u2192 ${meta.returnData.data}`
     );
   }
   console.log(sep);
@@ -40652,25 +41937,25 @@ function printTimings2(timings) {
   const pad = (s) => s.padEnd(22, ' ');
   for (const t of timings) {
     console.log(
-      source_default.gray('  \u251C\u2500'),
-      source_default.cyan(pad(t.stage)),
-      source_default.yellow(`${t.durationMs.toFixed(1)} ms`)
+      import_chalk6.default.gray('  \u251C\u2500'),
+      import_chalk6.default.cyan(pad(t.stage)),
+      import_chalk6.default.yellow(`${t.durationMs.toFixed(1)} ms`)
     );
   }
   const total = timings.reduce((acc, t) => acc + t.durationMs, 0);
   console.log(
-    source_default.gray('  \u2514\u2500'),
-    source_default.bold('Total'),
-    source_default.green(`${total.toFixed(1)} ms`)
+    import_chalk6.default.gray('  \u2514\u2500'),
+    import_chalk6.default.bold('Total'),
+    import_chalk6.default.green(`${total.toFixed(1)} ms`)
   );
 }
 var registerSimulateCommand = (program3) => {
   program3
     .command('simulate <input>')
     .description(
-      'Simulate a Solana transaction that has not been broadcast yet, and produce the same insight panel as `open tx`.\n\n  <input> auto-detects: base64 transaction blob, or file path containing one.\n  For confirmed on-chain transactions use `open tx <signature>` instead.'
+      'Simulate an unsigned Solana transaction and produce the same insight panel as `opendev tx`.\n\n  <input> auto-detects: base64 transaction blob, or file path containing one.\n  For confirmed on-chain transactions use `opendev tx <signature>` instead.'
     )
-    .option('--network <type>', 'Solana network (mainnet/devnet)', 'mainnet')
+    .option('--network <name>', 'Solana network: mainnet or devnet (default: mainnet)', 'mainnet')
     .option('--rpc <url>', 'Custom RPC URL (e.g. http://localhost:8899 for surfpool local)')
     .option('--json', 'Output results in structured JSON format', false)
     .option('--csv', 'Output a single CSV row (with header) for BI tools', false)
@@ -40694,7 +41979,7 @@ var registerSimulateCommand = (program3) => {
       };
       const network = (options.network ?? 'mainnet').toLowerCase();
       if (network !== 'mainnet' && network !== 'devnet') {
-        errorLog(source_default.red('\nError: Invalid network.'));
+        errorLog(import_chalk6.default.red('\nError: Invalid network.'));
         process.exitCode = 1;
         return;
       }
@@ -40708,7 +41993,7 @@ var registerSimulateCommand = (program3) => {
 `);
         } else {
           errorLog(
-            source_default.red(`
+            import_chalk6.default.red(`
 Error: ${err2.message}`)
           );
         }
@@ -40724,7 +42009,9 @@ Error: ${err2.message}`)
         verbose: !isMachineOutput && verbose,
       });
       const timings = [];
-      const spinner = (0, import_ora3.default)(source_default.cyan('Simulating transaction...'));
+      const spinner = (0, import_ora3.default)(
+        import_chalk6.default.cyan('Simulating transaction...')
+      );
       if (!isMachineOutput) spinner.start();
       try {
         const simStart = nowMs2();
@@ -40756,7 +42043,7 @@ Error: ${err2.message}`)
         );
         timings.push({ stage: 'init_anchor_provider', durationMs: nowMs2() - anchorStart });
         if (!isMachineOutput)
-          spinner.text = source_default.cyan('Parsing simulated logs and CU...');
+          spinner.text = import_chalk6.default.cyan('Parsing simulated logs and CU...');
         const parseStart = nowMs2();
         const parsedLogSummary = parseLogsFromBundle(bundle.logMessages);
         const cuProfile = profileCU(bundle.logMessages);
@@ -40764,7 +42051,7 @@ Error: ${err2.message}`)
         const cpiTree = toCPITree(cpiTrace);
         const accountDiffs = computeAccountDiffs(bundle);
         timings.push({ stage: 'parse_logs_and_cu', durationMs: nowMs2() - parseStart });
-        if (!isMachineOutput) spinner.text = source_default.cyan('Decoding instructions...');
+        if (!isMachineOutput) spinner.text = import_chalk6.default.cyan('Decoding instructions...');
         const decodeStart = nowMs2();
         const analyzed = await mergeAnalysis(
           bundle,
@@ -40775,13 +42062,13 @@ Error: ${err2.message}`)
           { idlCache, anchorProvider }
         );
         timings.push({ stage: 'decode_instructions', durationMs: nowMs2() - decodeStart });
-        if (!isMachineOutput) spinner.text = source_default.cyan('Generating insights...');
+        if (!isMachineOutput) spinner.text = import_chalk6.default.cyan('Generating insights...');
         const insightsStart = nowMs2();
         const mcpProvider = new McpInsightProvider();
         const insightsReport = await analyzeTransaction(analyzed, [mcpProvider]);
         timings.push({ stage: 'analyze_transaction', durationMs: nowMs2() - insightsStart });
         if (!isMachineOutput) {
-          spinner.succeed(source_default.green('Simulation analysis complete'));
+          spinner.succeed(import_chalk6.default.green('Simulation analysis complete'));
         }
         if (isJson) {
           if (!analyzed._metadata) analyzed._metadata = {};
@@ -40796,8 +42083,8 @@ Error: ${err2.message}`)
           };
           const jsonOut = renderJSON(analyzed, insightsReport);
           if (options.output) {
-            const outPath = path5.resolve(options.output);
-            fs5.writeFileSync(outPath, jsonOut, 'utf-8');
+            const outPath = path6.resolve(options.output);
+            fs6.writeFileSync(outPath, jsonOut, 'utf-8');
             originalLog(`
 Report written to: ${outPath}`);
           } else {
@@ -40809,13 +42096,13 @@ Report written to: ${outPath}`);
         if (isCsv) {
           const csvOut = renderCSV(analyzed, insightsReport) + '\n';
           if (options.output) {
-            const outPath = path5.resolve(options.output);
-            fs5.writeFileSync(outPath, csvOut, 'utf-8');
+            const outPath = path6.resolve(options.output);
+            fs6.writeFileSync(outPath, csvOut, 'utf-8');
             originalLog(`
 CSV written to: ${outPath}`);
           } else {
-            const outPath = path5.resolve(`${bundle.signature}.csv`);
-            fs5.writeFileSync(outPath, csvOut, 'utf-8');
+            const outPath = path6.resolve(`${bundle.signature}.csv`);
+            fs6.writeFileSync(outPath, csvOut, 'utf-8');
             originalLog(`
 CSV written to: ${outPath}`);
           }
@@ -40826,7 +42113,7 @@ CSV written to: ${outPath}`);
         const totalMsForHeader = timings.reduce((acc, t) => acc + t.durationMs, 0);
         renderTerminal(analyzed, insightsReport, network, totalMsForHeader);
         if (verbose) {
-          console.log(source_default.bold.cyan('\n[Pipeline Timings]'));
+          console.log(import_chalk6.default.bold.cyan('\n[Pipeline Timings]'));
           printTimings2(timings);
         }
         if (!meta.success) process.exitCode = 1;
@@ -40837,9 +42124,9 @@ CSV written to: ${outPath}`);
           process.stdout.write(`error,${err2.message?.replace(/"/g, '""') ?? ''}
 `);
         } else {
-          spinner.fail(source_default.red('Simulation failed'));
+          spinner.fail(import_chalk6.default.red('Simulation failed'));
           console.error(
-            source_default.yellow(`
+            import_chalk6.default.yellow(`
 Detail: ${err2.message}`)
           );
         }
@@ -40850,6 +42137,9 @@ Detail: ${err2.message}`)
       }
     });
 };
+
+// package.json
+var version = '0.4.0';
 
 // bin/open.ts
 var minNodeMajor = 18;
@@ -40873,7 +42163,7 @@ var program2 = new import_commander.Command();
 program2
   .name('opendev')
   .description('opendev \u2014 Visual transaction debugger and CU profiler for Solana')
-  .version('0.3.0')
+  .version(version)
   .option('--verbose', 'Enable debug logging', false);
 registerTxCommand(program2);
 registerBatchCommand(program2);

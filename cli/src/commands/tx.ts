@@ -45,9 +45,21 @@ export const registerTxCommand = (program: Command) => {
   program
     .command('tx <signature> [network]')
     .description(
-      'Full analysis of a Solana transaction.\n\n  --verbose: Displays detailed timing for each stage in the terminal and includes timings in the JSON under _metadata.timings.'
+      'Full analysis of a confirmed Solana transaction.\n' +
+        '\n' +
+        '  <network> (positional, optional)  mainnet | devnet  (default: mainnet)\n' +
+        '\n' +
+        '  Equivalent forms:\n' +
+        '    opendev tx <signature>                  # defaults to mainnet\n' +
+        '    opendev tx <signature> mainnet          # positional\n' +
+        '    opendev tx <signature> --network devnet # flag (overrides positional)\n' +
+        '\n' +
+        '  --verbose: print per-stage timings in the terminal and include them in --json output under _metadata.timings.\n' +
+        '\n' +
+        '  Layout: render auto-fits to your terminal width. If the dashboard breaks on a non-standard terminal,\n' +
+        '  override with:  OPEN_TERMINAL_WIDTH=110 opendev tx <signature>'
     )
-    .option('--network <type>', 'Solana network (mainnet/devnet)')
+    .option('--network <name>', 'Solana network: mainnet or devnet (default: mainnet)')
     .option('--json', 'Output results in structured JSON format', false)
     .option('--csv', 'Output a single CSV row (with header) for BI tools', false)
     .option('--output <path>', 'Write JSON/CSV output to file instead of stdout')

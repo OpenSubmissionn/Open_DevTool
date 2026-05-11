@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
+import { applyCredentialsToEnv } from './credentials';
 
 // Resolve path to .env file relative to this source file, ensuring robustness for global installation.
 const envPath = path.resolve(__dirname, '../../.env');
@@ -12,26 +13,25 @@ export interface AppConfig {
 // Global configuration instance.
 export let config: AppConfig = {};
 
-// Initialize configuration. Should be called early in the CLI lifecycle.
+/**
+ * Initialize configuration. Called once at the top of bin/open.ts.
+ *
+ * Resolution order for AI keys (GROQ_API_KEY, ANTHROPIC_API_KEY):
+ *   1. Already-set process.env (shell exports, CI secrets) — wins.
+ *   2. .env file shipped with the install — legacy/dev path.
+ *   3. ~/.opendev/credentials.json — what `opendev config set-key` writes.
+ *
+ * (1) and (2) merge here via dotenv (which doesn't overwrite existing env
+ * vars). (3) fills in any gaps via applyCredentialsToEnv, which only sets
+ * vars that are still missing.
+ */
 export const loadConfig = (): AppConfig => {
-  // Load variables from .env file into process.env.
-  const result = dotenv.config({ path: envPath });
+  dotenv.config({ path: envPath });
+  applyCredentialsToEnv();
 
-  // Handle errors, such as missing .env file.
-  if (result.error) {
-    // Production tooling would use verbose/debug flags for logging.
-    // console.error(`[config] Warning: Could not load .env file from ${envPath}`);
-  }
-
-  // Map process.env values to the typed AppConfig interface.
   config = {
     rpcUrl: process.env.OPEN_RPC_URL,
-    // Future expansion:
-    // configPath: process.env.OPEN_CONFIG_PATH || path.join(os.homedir(), '.open', 'config.json')
   };
-
-  // Temporary log for task validation.
-  console.log('[config] Scaffolding: Loaded configuration from .env stub.');
 
   return config;
 };

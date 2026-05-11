@@ -1,6 +1,6 @@
 {
   "name": "opendev",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Visual transaction debugger and CU profiler for Solana — turn any signature into a fully decoded execution profile",
   "main": "index.js",
   "bin": {
@@ -25,7 +25,7 @@
     "bench:latency": "tsx scripts/latency-benchmark.ts"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "keywords": [],
   "author": "Nicole",
@@ -53,6 +53,13 @@
     "chalk": "^5.6.2",
     "cli-table3": "^0.6.5",
     "ink": "^3.2.0",
-    "react": "^17.0.2"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "yoga-layout": "^2.0.0"
+  },
+  "overrides": {
+    "rpc-websockets": {
+      "uuid": "^10.0.0"
+    }
   }
 }

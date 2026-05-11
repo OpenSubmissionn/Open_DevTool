@@ -5,8 +5,7 @@ import * as server from '../web/server.js';
 // field, so it's transpiled as CJS. ESM-to-CJS named imports are checked
 // statically by Node and fail on esbuild's barrel output, so we go through
 // the namespace + `default` fallback instead.
-const getLatestTx =
-  (server as any).getLatestTx ?? (server as any).default?.getLatestTx;
+const getLatestTx = (server as any).getLatestTx ?? (server as any).default?.getLatestTx;
 
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
   try {

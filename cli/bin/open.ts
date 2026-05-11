@@ -26,6 +26,9 @@ import { registerBatchCommand } from '../src/commands/batch';
 import { registerConfigCommand } from '../src/commands/config';
 import { registerInfoCommand } from '../src/commands/info';
 import { registerSimulateCommand } from '../src/commands/simulate';
+// Single source of truth for the version. tsup inlines the JSON so the bundle
+// stays self-contained.
+import { version as PKG_VERSION } from '../package.json';
 
 // tsx on Windows/CommonJS runs the file twice — this blocks the second execution
 const guardKey = '__OPEN_CLI_STARTED__';
@@ -42,7 +45,7 @@ const program = new Command();
 program
   .name('opendev')
   .description('opendev — Visual transaction debugger and CU profiler for Solana')
-  .version('0.3.0')
+  .version(PKG_VERSION)
   .option('--verbose', 'Enable debug logging', false);
 
 // 4. Register commands

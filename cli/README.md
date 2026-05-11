@@ -8,25 +8,30 @@ Visual transaction debugger and CU profiler for Solana.
 
 One-liner (Linux / macOS / WSL):
 ```bash
-curl -fsSL https://raw.githubusercontent.com/OpenSubmissionn/Submission_Open/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/OpenSubmissionn/Open_DevTool/main/install.sh | sh
 ```
 
-Or via npm directly:
+Or, manually (the curl one-liner does this for you):
 ```bash
-npm install -g github:OpenSubmissionn/Submission_Open
+git clone https://github.com/OpenSubmissionn/Open_DevTool.git
+cd Open_DevTool
+npm install
+npm run build --workspace cli
+cd cli && npm install -g . --ignore-scripts
 ```
 
-This installs the `opendev` command globally. Requires Node.js 18+.
+This installs the `opendev` command globally. Requires Node.js 20+.
 
-If building from source:
-
+For local development with hot-reload:
 ```bash
+git clone https://github.com/OpenSubmissionn/Open_DevTool.git
+cd Open_DevTool
 npm install
 npm run build
 npm link
 ```
 
-That ensures `cli/dist/open.js` is generated before the CLI is used.
+That makes `opendev` point at your working tree.
 
 ## Quickstart
 

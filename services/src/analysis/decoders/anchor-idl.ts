@@ -7,7 +7,10 @@ import {
 } from './orca/anchor-idl-orca.js';
 import { JUPITER_V6_IDL, JUPITER_V6_PROGRAM_ID } from './jupiter/anchor-idl-jupiter.js';
 import { RAYDIUM_AMM_IDL, RAYDIUM_AMM_PROGRAM_ID } from './raydium/anchor-idl-raydium.js';
-import { MAGIC_EDEN_MMM_IDL, MAGIC_EDEN_MMM_PROGRAM_ID } from './anchor-defs/anchor-idl-magic-eden.js';
+import {
+  MAGIC_EDEN_MMM_IDL,
+  MAGIC_EDEN_MMM_PROGRAM_ID,
+} from './anchor-defs/anchor-idl-magic-eden.js';
 import { SQUADS_V4_IDL, SQUADS_V4_PROGRAM_ID } from './anchor-defs/anchor-idl-squads.js';
 import { MARINADE_IDL, MARINADE_PROGRAM_ID } from './marinade/idl.js';
 import { MAGIC_EDEN_IDL, MAGIC_EDEN_PROGRAM_ID } from './magic-eden/idl.js';

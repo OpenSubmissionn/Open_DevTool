@@ -5,8 +5,7 @@ import * as server from '../web/server.js';
 // field, so it's transpiled as CJS. ESM-to-CJS named imports are checked
 // statically by Node and fail on esbuild's barrel output, so we go through
 // the namespace + `default` fallback instead.
-const analyze =
-  (server as any).analyze ?? (server as any).default?.analyze;
+const analyze = (server as any).analyze ?? (server as any).default?.analyze;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Accept both GET ?signature=... and POST { signature, network } so the

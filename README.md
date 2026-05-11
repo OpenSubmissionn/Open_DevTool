@@ -5,8 +5,8 @@
 **Visual transaction profiler and debugger for Solana.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
-[![CI](https://github.com/OpenSubmissionn/Submission_Open/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/OpenSubmissionn/Submission_Open/actions)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
+[![CI](https://github.com/OpenSubmissionn/Open_DevTool/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/OpenSubmissionn/Open_DevTool/actions)
 
 Turn any Solana transaction signature into a fully decoded execution profile —
 compute units, CPI call tree, account state diffs, and AI-generated optimization
@@ -16,12 +16,21 @@ suggestions on top of deterministic rule-based insights.
 
 ---
 
+## Two ways to use opendev
+
+- **Web** — [opendev-tx.vercel.app](https://opendev-tx.vercel.app/landing.html). No install, paste a signature and go.
+- **CLI** — `opendev tx <sig>` for daily debugging, scripting, JSON/CSV output. [Install ↓](#quick-install-recommended)
+
+Same analysis engine under the hood.
+
+---
+
 ## Quick install (recommended)
 
-One-liner that detects your OS, ensures Node.js 18+ is installed, and installs `opendev` globally:
+One-liner that detects your OS, ensures Node.js 20+ is installed, and installs `opendev` globally:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/OpenSubmissionn/Submission_Open/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/OpenSubmissionn/Open_DevTool/main/install.sh | sh
 ```
 
 Verify:
@@ -38,9 +47,14 @@ opendev --version
 
 ### Requirements
 
-- **Node.js 18+** (20 LTS recommended)
+- **Node.js 20+** (20 LTS recommended; some deps require Node 20+)
 - **git**
 - A terminal
+
+> **Why not `npm install -g github:...` directly?** opendev is a monorepo with
+> npm workspaces (cli, services, scripts). npm refuses to install workspace
+> roots globally. The steps below clone + build + install only the `cli/`
+> package globally — same flow the curl one-liner runs internally.
 
 ### Linux (Ubuntu / Debian / Fedora / Arch)
 
@@ -50,8 +64,12 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 source ~/.bashrc
 nvm install 20
 
-# 2. Install opendev globally from the GitHub repo
-npm install -g github:OpenSubmissionn/Submission_Open
+# 2. Clone, build, install
+git clone https://github.com/OpenSubmissionn/Open_DevTool.git
+cd Open_DevTool
+npm install
+npm run build --workspace cli
+cd cli && npm install -g . --ignore-scripts
 
 # 3. Verify
 opendev --help
@@ -65,8 +83,12 @@ brew install node@20
 echo 'export PATH="/opt/homebrew/opt/node@20/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 
-# 2. Install opendev globally
-npm install -g github:OpenSubmissionn/Submission_Open
+# 2. Clone, build, install (same as Linux)
+git clone https://github.com/OpenSubmissionn/Open_DevTool.git
+cd Open_DevTool
+npm install
+npm run build --workspace cli
+cd cli && npm install -g . --ignore-scripts
 
 # 3. Verify
 opendev --help
@@ -79,21 +101,28 @@ opendev --help
 winget install OpenJS.NodeJS.LTS
 # Restart PowerShell so PATH picks up node
 
-# 2. Install opendev globally
-npm install -g github:OpenSubmissionn/Submission_Open
+# 2. Clone, build, install
+git clone https://github.com/OpenSubmissionn/Open_DevTool.git
+cd Open_DevTool
+npm install
+npm run build --workspace cli
+cd cli
+npm install -g . --ignore-scripts
 
 # 3. Verify
 opendev --help
 ```
 
-### Build from source (contributors)
+### Build from source (contributors, hot-reload)
+
+For local development where you want code changes to reflect on every run:
 
 ```bash
-git clone https://github.com/OpenSubmissionn/Submission_Open.git
-cd Submission_Open
+git clone https://github.com/OpenSubmissionn/Open_DevTool.git
+cd Open_DevTool
 npm install
 npm run build
-npm link
+npm link    # makes `opendev` point at your working tree
 ```
 
 ---
@@ -116,9 +145,18 @@ Save a CSV report:
 opendev tx <signature> --csv --output report.csv
 ```
 
+> **Before running the next two commands:** they expect local files (`sample-tx.b64` and `signatures.json`) in the current directory. We ship both at the root of the repo, so they work out-of-the-box after `git clone`. **If you installed only the CLI via the curl one-liner**, grab them first, otherwise the commands will fail with "file not found" (that's expected, not a bug in opendev):
+>
+> ```bash
+> curl -O https://raw.githubusercontent.com/OpenSubmissionn/Open_DevTool/main/sample-tx.b64
+> curl -O https://raw.githubusercontent.com/OpenSubmissionn/Open_DevTool/main/signatures.json
+> ```
+>
+> `sample-tx.b64` is a base64-encoded serialized transaction; `signatures.json` follows the schema `{ "network": "mainnet", "signatures": ["..."] }`. Use them as templates for your own inputs.
+
 Simulate an unsigned transaction:
 ```bash
-opendev simulate ./my-tx.b64
+opendev simulate ./sample-tx.b64
 ```
 
 CSV to a specific path:
@@ -242,7 +280,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Run `npm run test:all` and `npm run vali
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=OpenSubmissionn/Submission_Open)](https://github.com/OpenSubmissionn/Submission_Open/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=OpenSubmissionn/Open_DevTool)](https://github.com/OpenSubmissionn/Open_DevTool/graphs/contributors)
 
 ## License
 

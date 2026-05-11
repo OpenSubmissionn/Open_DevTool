@@ -13,7 +13,8 @@ npm run build
 npm run test:all
 ```
 
-You need Node.js 18+. The project uses npm workspaces — `cli`, `services`,
+You need Node.js 20+ (some deps require Node 20: `commander@14`, `ora`,
+`vitest@4`, etc.). The project uses npm workspaces — `cli`, `services`,
 and `scripts` live under one root.
 
 ## Project layout

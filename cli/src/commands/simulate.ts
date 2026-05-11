@@ -66,9 +66,12 @@ export const registerSimulateCommand = (program: Command) => {
   program
     .command('simulate <input>')
     .description(
-      'Simulate a Solana transaction that has not been broadcast yet, and produce the same insight panel as `open tx`.\n\n  <input> auto-detects: base64 transaction blob, or file path containing one.\n  For confirmed on-chain transactions use `open tx <signature>` instead.'
+      'Simulate an unsigned Solana transaction and produce the same insight panel as `opendev tx`.\n' +
+        '\n' +
+        '  <input> auto-detects: base64 transaction blob, or file path containing one.\n' +
+        '  For confirmed on-chain transactions use `opendev tx <signature>` instead.'
     )
-    .option('--network <type>', 'Solana network (mainnet/devnet)', 'mainnet')
+    .option('--network <name>', 'Solana network: mainnet or devnet (default: mainnet)', 'mainnet')
     .option('--rpc <url>', 'Custom RPC URL (e.g. http://localhost:8899 for surfpool local)')
     .option('--json', 'Output results in structured JSON format', false)
     .option('--csv', 'Output a single CSV row (with header) for BI tools', false)
