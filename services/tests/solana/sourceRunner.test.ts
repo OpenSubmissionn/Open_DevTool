@@ -166,6 +166,24 @@ describe('runSourceFile - js runner', () => {
     await expect(runSourceFile(f, { timeoutMs: 1_000 })).rejects.toThrow(/not a recognized/i);
   });
 
+  // Skipped on Windows: spawn uses shell:true so cmd.exe converts a missing
+  // binary into a non-zero exit instead of emitting ENOENT to the parent.
+  it.skipIf(process.platform === 'win32')(
+    'rejects with install hint when the runner binary is not on PATH',
+    async () => {
+      const root = fs.mkdtempSync(path.join(tmpDir, 'cargo-enoent-'));
+      fs.writeFileSync(
+        path.join(root, 'Cargo.toml'),
+        '[package]\nname="x"\nversion="0.1.0"\nedition="2021"'
+      );
+      fs.mkdirSync(path.join(root, 'src'));
+      fs.writeFileSync(path.join(root, 'src', 'main.rs'), 'fn main() {}');
+      await expect(
+        runSourceFile(root, { timeoutMs: 5_000, env: { PATH: '' } })
+      ).rejects.toThrow(/Command not found.*cargo|rustup\.rs/i);
+    }
+  );
+
   it('finds Cargo.toml by walking up from a nested .rs path', () => {
     const root = fs.mkdtempSync(path.join(tmpDir, 'cargo-walk-'));
     fs.writeFileSync(path.join(root, 'Cargo.toml'), '[package]\nname="x"');

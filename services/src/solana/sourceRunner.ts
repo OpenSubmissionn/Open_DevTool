@@ -76,14 +76,17 @@ function buildCommand(kind: SourceKind, absInput: string): { cmd: string; args: 
   return { cmd: 'node', args: [absInput], cwd: path.dirname(absInput) };
 }
 
+/* v8 ignore start -- Windows-only, unreachable on Linux CI */
 function quoteArgForWindowsShell(arg: string): string {
   // cmd.exe interprets these chars; quote anything with whitespace or shell metacharacters.
   if (!/[\s"&|<>^()%!]/.test(arg)) return arg;
   return `"${arg.replace(/"/g, '\\"')}"`;
 }
+/* v8 ignore stop */
 
 function killProcessTree(pid: number | undefined): void {
   if (pid === undefined) return;
+  /* v8 ignore start -- Windows-only branch, unreachable on Linux CI */
   if (process.platform === 'win32') {
     try {
       spawn('taskkill', ['/pid', String(pid), '/T', '/F'], {
@@ -95,6 +98,7 @@ function killProcessTree(pid: number | undefined): void {
     }
     return;
   }
+  /* v8 ignore stop */
   try {
     process.kill(pid, 'SIGKILL');
   } catch {
@@ -140,6 +144,7 @@ export async function runSourceFile(
   // On Windows, .cmd shims (e.g. npx.cmd) cannot be spawned without a shell.
   // We pass the full pre-quoted command as a single string and use shell: true,
   // which avoids DEP0190 (passing args separately under shell mode is deprecated).
+  /* v8 ignore next 4 -- Windows branch unreachable on Linux CI */
   const spawnTarget = isWindows
     ? [cmd, ...args.map(quoteArgForWindowsShell)].join(' ')
     : cmd;
