@@ -80,21 +80,56 @@ NODE_MAJOR="$(node_version 2>/dev/null || echo 0)"
 
 if [ "$NODE_MAJOR" -lt "$MIN_NODE" ]; then
   warn "Node.js $MIN_NODE+ required (found ${NODE_MAJOR:-none})."
-  if prompt_yes "Install Node.js 20 via nvm?"; then
+  if prompt_yes "Install Node.js $MIN_NODE via nvm?"; then
     say "Installing nvm..."
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
     export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
     # shellcheck disable=SC1091
     [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-    nvm install 20
-    nvm use 20
-    ok "Node.js $(node --version) installed."
+    nvm install "$MIN_NODE"
+    nvm use "$MIN_NODE"
+    # CRITICAL: alias the freshly-installed version as the user's default so
+    # the next shell session keeps it. Without this, nvm reverts to whatever
+    # was default before (often the older Node that triggered this branch
+    # in the first place), and `npm install -g` below lands in the old
+    # prefix while the user's interactive shell points at... wherever.
+    # User @anajuliarrod hit this on WSL: install.sh succeeded into v20's
+    # prefix, but her next prompt was back on v18 and 'opendev' was nowhere.
+    nvm alias default "$MIN_NODE" >/dev/null 2>&1 || true
+    ok "Node.js $(node --version) installed (set as nvm default)."
   else
-    err "Aborting. Install Node.js 18+ manually and re-run this installer."
+    err "Aborting. Install Node.js $MIN_NODE+ manually and re-run this installer."
     exit 1
   fi
 else
   ok "Node.js $(node --version) detected."
+fi
+
+# ── nvm pre-flight: ensure we're not about to install into a nvm version
+# that won't survive the next shell session. If nvm exists AND a default is
+# set AND that default points at a Node older than $MIN_NODE, the user is
+# in the exact trap @anajuliarrod hit. Switch to a compatible version and
+# alias it as default before continuing.
+if command -v nvm >/dev/null 2>&1 || [ -s "${NVM_DIR:-$HOME/.nvm}/nvm.sh" ]; then
+  # Source nvm in case we got here via the `else` branch above (Node was
+  # already $MIN_NODE+) but the user has nvm installed.
+  export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+  # shellcheck disable=SC1091
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" >/dev/null 2>&1 || true
+
+  # nvm version-currently-active vs version-aliased-as-default
+  NVM_CURRENT="$(nvm current 2>/dev/null | sed 's/^v//')"
+  NVM_DEFAULT="$(nvm alias default 2>/dev/null | sed -E 's/.*-> *v?([0-9.]+).*/\1/' | head -1)"
+  CURRENT_MAJOR="${NVM_CURRENT%%.*}"
+  DEFAULT_MAJOR="${NVM_DEFAULT%%.*}"
+
+  if [ -n "$DEFAULT_MAJOR" ] && [ "$DEFAULT_MAJOR" -lt "$MIN_NODE" ] 2>/dev/null; then
+    warn "Your nvm default is Node $NVM_DEFAULT, but we need $MIN_NODE+."
+    warn "Switching to Node $CURRENT_MAJOR and aliasing it as default so the"
+    warn "global install survives your next shell session."
+    nvm alias default "$CURRENT_MAJOR" >/dev/null 2>&1 || true
+    ok "nvm default is now Node $CURRENT_MAJOR."
+  fi
 fi
 
 # ── Tools required for the install workflow ────────────────────────────────────
