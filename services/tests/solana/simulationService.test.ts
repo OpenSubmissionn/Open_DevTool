@@ -231,6 +231,30 @@ describe('simulationService - simulateTransactionInput', () => {
     );
   });
 
+  it('routes a .cjs source file through the runner end-to-end', async () => {
+    const fakeConn = makeFakeConnection(fakeSimResponse());
+    vi.spyOn(connectionModule, 'getConnection').mockReturnValue(fakeConn);
+    vi.spyOn(connectionModule, 'withRetry').mockImplementation(((fn: any) => fn()) as any);
+
+    const sourceFile = path.join(tmpDir, 'build.cjs');
+    fs.writeFileSync(sourceFile, `console.log("warming");\nconsole.log(${JSON.stringify(versionedB64)});`);
+
+    const out = await simulateTransactionInput(sourceFile, { network: 'devnet' });
+    expect(out.meta.inputKind).toBe('js-source');
+    expect(out.meta.runnerMeta?.kind).toBe('js-source');
+    expect(out.meta.runnerMeta?.exitCode).toBe(0);
+    expect(out.bundle.computeUnitsConsumed).toBe(150);
+  });
+
+  it('refuses to run a source file when allowExec=false', async () => {
+    const sourceFile = path.join(tmpDir, 'build-blocked.cjs');
+    fs.writeFileSync(sourceFile, `console.log("never reached");`);
+
+    await expect(
+      simulateTransactionInput(sourceFile, { allowExec: false })
+    ).rejects.toThrow(/--no-exec/);
+  });
+
   it('throws when base64 deserialization fails', async () => {
     vi.spyOn(connectionModule, 'getConnection').mockReturnValue(makeFakeConnection());
     vi.spyOn(connectionModule, 'withRetry').mockImplementation(((fn: any) => fn()) as any);
