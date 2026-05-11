@@ -25,6 +25,7 @@ import { registerTxCommand } from '../src/commands/tx';
 import { registerBatchCommand } from '../src/commands/batch';
 import { registerConfigCommand } from '../src/commands/config';
 import { registerInfoCommand } from '../src/commands/info';
+import { registerLoginCommand } from '../src/commands/login';
 import { registerSimulateCommand } from '../src/commands/simulate';
 // Single source of truth for the version. tsup inlines the JSON so the bundle
 // stays self-contained.
@@ -53,6 +54,7 @@ registerTxCommand(program);
 registerBatchCommand(program);
 registerConfigCommand(program);
 registerInfoCommand(program);
+registerLoginCommand(program);
 registerSimulateCommand(program);
 
 // 5. Parse arguments

@@ -1411,14 +1411,14 @@ var require_templates = __commonJS({
       }
       return results;
     }
-    function buildStyle(chalk7, styles) {
+    function buildStyle(chalk8, styles) {
       const enabled = {};
       for (const layer of styles) {
         for (const style of layer.styles) {
           enabled[style[0]] = layer.inverse ? null : style.slice(1);
         }
       }
-      let current = chalk7;
+      let current = chalk8;
       for (const [styleName, styles2] of Object.entries(enabled)) {
         if (!Array.isArray(styles2)) {
           continue;
@@ -1430,7 +1430,7 @@ var require_templates = __commonJS({
       }
       return current;
     }
-    module2.exports = (chalk7, temporary) => {
+    module2.exports = (chalk8, temporary) => {
       const styles = [];
       const chunks2 = [];
       let chunk = [];
@@ -1440,13 +1440,13 @@ var require_templates = __commonJS({
         } else if (style) {
           const string2 = chunk.join('');
           chunk = [];
-          chunks2.push(styles.length === 0 ? string2 : buildStyle(chalk7, styles)(string2));
+          chunks2.push(styles.length === 0 ? string2 : buildStyle(chalk8, styles)(string2));
           styles.push({ inverse, styles: parseStyle(style) });
         } else if (close) {
           if (styles.length === 0) {
             throw new Error('Found extraneous } in Chalk template literal');
           }
-          chunks2.push(buildStyle(chalk7, styles)(chunk.join('')));
+          chunks2.push(buildStyle(chalk8, styles)(chunk.join('')));
           chunk = [];
           styles.pop();
         } else {
@@ -1489,16 +1489,16 @@ var require_source = __commonJS({
       }
     };
     var chalkFactory = (options) => {
-      const chalk8 = {};
-      applyOptions(chalk8, options);
-      chalk8.template = (...arguments_) => chalkTag(chalk8.template, ...arguments_);
-      Object.setPrototypeOf(chalk8, Chalk.prototype);
-      Object.setPrototypeOf(chalk8.template, chalk8);
-      chalk8.template.constructor = () => {
+      const chalk9 = {};
+      applyOptions(chalk9, options);
+      chalk9.template = (...arguments_) => chalkTag(chalk9.template, ...arguments_);
+      Object.setPrototypeOf(chalk9, Chalk.prototype);
+      Object.setPrototypeOf(chalk9.template, chalk9);
+      chalk9.template.constructor = () => {
         throw new Error('`chalk.constructor()` is deprecated. Use `new chalk.Instance()` instead.');
       };
-      chalk8.template.Instance = ChalkClass;
-      return chalk8.template;
+      chalk9.template.Instance = ChalkClass;
+      return chalk9.template;
     };
     function Chalk(options) {
       return chalkFactory(options);
@@ -1623,7 +1623,7 @@ var require_source = __commonJS({
       return openAll + string2 + closeAll;
     };
     var template;
-    var chalkTag = (chalk8, ...strings2) => {
+    var chalkTag = (chalk9, ...strings2) => {
       const [firstString] = strings2;
       if (!isArray(firstString) || !isArray(firstString.raw)) {
         return strings2.join(' ');
@@ -1639,14 +1639,14 @@ var require_source = __commonJS({
       if (template === void 0) {
         template = require_templates();
       }
-      return template(chalk8, parts.join(''));
+      return template(chalk9, parts.join(''));
     };
     Object.defineProperties(Chalk.prototype, styles);
-    var chalk7 = Chalk();
-    chalk7.supportsColor = stdoutColor;
-    chalk7.stderr = Chalk({ level: stderrColor ? stderrColor.level : 0 });
-    chalk7.stderr.supportsColor = stderrColor;
-    module2.exports = chalk7;
+    var chalk8 = Chalk();
+    chalk8.supportsColor = stdoutColor;
+    chalk8.stderr = Chalk({ level: stderrColor ? stderrColor.level : 0 });
+    chalk8.stderr.supportsColor = stderrColor;
+    module2.exports = chalk8;
   },
 });
 
@@ -39545,7 +39545,7 @@ async function callMcpEndpoint(url, payload) {
 }
 function warnNoKey() {
   console.warn(
-    '[MCP] No AI key configured. Rendering rule-based insights only.\n       Option 1 (free):  Groq        ->  https://console.groq.com/keys (Llama 3.3 70B, ~30 req/min)\n       Option 2 (paid):  Anthropic   ->  https://console.anthropic.com (Claude Sonnet, ~$0.003/run)\n       Save it once:     opendev config set-key groq <KEY>      # or anthropic\n       Inspect:          opendev config get-key'
+    '[MCP] No AI key configured. Rendering rule-based insights only.\n       Quickest:         opendev login              # browser-assisted, ~30s\n       Or pass directly: opendev config set-key groq <KEY>      # or anthropic\n       Inspect:          opendev config get-key\n\n       Providers:\n         Groq (free)        Llama 3.3 70B, ~30 req/min   console.groq.com/keys\n         Anthropic (paid)   Claude Sonnet, ~$0.003/run   console.anthropic.com'
   );
 }
 function warnDegraded(result) {
@@ -41901,11 +41901,214 @@ var registerInfoCommand = (program3) => {
     });
 };
 
+// src/commands/login.ts
+var import_chalk6 = __toESM(require_source());
+var import_node_child_process = require('child_process');
+var import_node_readline = require('readline');
+var PROVIDER_TARGETS = {
+  groq: {
+    name: 'Groq',
+    keysUrl: 'https://console.groq.com/keys',
+    validateUrl: 'https://api.groq.com/openai/v1/models',
+    buildAuthHeaders: (key) => ({ Authorization: `Bearer ${key}` }),
+  },
+  anthropic: {
+    name: 'Anthropic',
+    keysUrl: 'https://console.anthropic.com/settings/keys',
+    // /v1/models is GET-only, free, and only requires a valid key.
+    validateUrl: 'https://api.anthropic.com/v1/models',
+    buildAuthHeaders: (key) => ({
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+    }),
+  },
+};
+function openInBrowser(url) {
+  try {
+    const platform = process.platform;
+    if (platform === 'darwin') {
+      (0, import_node_child_process.spawn)('open', [url], {
+        detached: true,
+        stdio: 'ignore',
+      }).unref();
+    } else if (platform === 'win32') {
+      (0, import_node_child_process.spawn)('cmd', ['/c', 'start', '""', url], {
+        detached: true,
+        stdio: 'ignore',
+      }).unref();
+    } else {
+      const cmd = process.env.WSL_DISTRO_NAME ? 'wslview' : 'xdg-open';
+      (0, import_node_child_process.spawn)(cmd, [url], { detached: true, stdio: 'ignore' }).unref();
+    }
+  } catch {}
+}
+function readSecret(promptText) {
+  return new Promise((resolve4, reject) => {
+    const stdin = process.stdin;
+    const stdout = process.stdout;
+    stdout.write(promptText);
+    if (!stdin.isTTY) {
+      const rl = (0, import_node_readline.createInterface)({ input: stdin, terminal: false });
+      let received = false;
+      rl.once('line', (line2) => {
+        received = true;
+        rl.close();
+        resolve4(line2.trim());
+      });
+      rl.once('close', () => {
+        if (!received) resolve4('');
+      });
+      return;
+    }
+    stdin.setRawMode(true);
+    stdin.resume();
+    stdin.setEncoding('utf8');
+    let buffer = '';
+    const cleanup = () => {
+      stdin.setRawMode(false);
+      stdin.pause();
+      stdin.removeListener('data', onData);
+    };
+    const onData = (chunk) => {
+      for (const ch of chunk) {
+        if (ch === '\r' || ch === '\n') {
+          cleanup();
+          stdout.write('\n');
+          resolve4(buffer);
+          return;
+        }
+        if (ch === '') {
+          cleanup();
+          stdout.write('\n');
+          reject(new Error('Cancelled by user.'));
+          return;
+        }
+        if (ch === '\x7F' || ch === '\b') {
+          if (buffer.length > 0) {
+            buffer = buffer.slice(0, -1);
+            stdout.write('\b \b');
+          }
+          continue;
+        }
+        if (ch < ' ') continue;
+        buffer += ch;
+        stdout.write('*');
+      }
+    };
+    stdin.on('data', onData);
+  });
+}
+async function validateKey(provider, key) {
+  const target = PROVIDER_TARGETS[provider];
+  try {
+    const res = await fetch(target.validateUrl, {
+      method: 'GET',
+      headers: target.buildAuthHeaders(key),
+    });
+    if (res.ok) return { ok: true };
+    if (res.status === 401 || res.status === 403) {
+      return {
+        ok: false,
+        error: `Key rejected (HTTP ${res.status}). Did you paste the full value?`,
+      };
+    }
+    if (res.status === 429) {
+      return { ok: true };
+    }
+    return { ok: false, error: `${target.name} returned HTTP ${res.status}.` };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return { ok: false, error: `Network error contacting ${target.name}: ${msg}` };
+  }
+}
+var registerLoginCommand = (program3) => {
+  program3
+    .command('login')
+    .description(
+      'Browser-assisted login for an AI provider. Opens the keys page,\n  prompts for the key (masked), validates it, and saves it to\n  ~/.opendev/credentials.json so future `opendev tx` runs have AI insights.\n\n  Examples:\n    opendev login              # defaults to groq (free tier)\n    opendev login anthropic    # if you have a paid key\n    opendev login groq --no-browser   # CI / SSH session\n\n  Compare with `opendev config set-key`, which takes the key as a CLI\n  argument and is suited for scripts. `login` is the interactive path.'
+    )
+    .argument(
+      '[provider]',
+      `which provider (${SUPPORTED_PROVIDERS.join(' | ')}). Defaults to groq.`,
+      'groq'
+    )
+    .option('--no-browser', 'Skip opening the browser; print the URL instead')
+    .option('--no-validate', 'Skip the API test call after pasting (saves anyway)')
+    .action(async (provider, options) => {
+      if (!isProvider(provider)) {
+        console.error(
+          import_chalk6.default.red(
+            `Unknown provider "${provider}". Supported: ${SUPPORTED_PROVIDERS.join(', ')}`
+          )
+        );
+        process.exit(1);
+      }
+      const target = PROVIDER_TARGETS[provider];
+      console.log();
+      console.log(import_chalk6.default.bold(`Logging in to ${target.name}.`));
+      console.log();
+      if (options.browser) {
+        console.log(`Opening ${import_chalk6.default.cyan(target.keysUrl)} in your browser...`);
+        openInBrowser(target.keysUrl);
+        console.log(import_chalk6.default.gray(`(If it didn't open, copy that URL manually.)`));
+      } else {
+        console.log(`Open this URL in any browser:`);
+        console.log(`  ${import_chalk6.default.cyan(target.keysUrl)}`);
+      }
+      console.log();
+      console.log(
+        import_chalk6.default.gray('Sign in, create a new API key, then paste it below.')
+      );
+      console.log(
+        import_chalk6.default.gray('Input is hidden \u2014 you will see asterisks as you type.')
+      );
+      console.log();
+      let key;
+      try {
+        key = await readSecret(import_chalk6.default.bold(`${target.name} API key: `));
+      } catch (e) {
+        console.error(import_chalk6.default.red(e.message));
+        process.exit(1);
+      }
+      if (!key || key.length < 8) {
+        console.error(import_chalk6.default.red('Key looks too short or empty. Nothing saved.'));
+        process.exit(1);
+      }
+      if (options.validate) {
+        process.stdout.write(import_chalk6.default.gray(`Verifying with ${target.name}... `));
+        const result = await validateKey(provider, key);
+        if (!result.ok) {
+          console.log(import_chalk6.default.red('failed.'));
+          console.error(import_chalk6.default.red(`  ${result.error}`));
+          console.error(
+            import_chalk6.default.gray(
+              '  Pass --no-validate to save the key anyway (not recommended).'
+            )
+          );
+          process.exit(1);
+        }
+        console.log(import_chalk6.default.green('ok.'));
+      }
+      setCredential(provider, key);
+      console.log();
+      console.log(
+        `${import_chalk6.default.green('\u2713')} Saved ${import_chalk6.default.bold(target.name)} key (${maskKey(key)}).`
+      );
+      console.log(
+        import_chalk6.default.gray(
+          `  Stored as ${envVarFor(provider)} in ~/.opendev/credentials.json.`
+        )
+      );
+      console.log();
+      console.log(`Try it:  ${import_chalk6.default.bold('opendev tx <signature>')}`);
+    });
+};
+
 // src/commands/simulate.ts
 var fs6 = __toESM(require('fs'));
 var path6 = __toESM(require('path'));
 var import_ora3 = __toESM(require('ora'));
-var import_chalk6 = __toESM(require_source());
+var import_chalk7 = __toESM(require_source());
 function nowMs2() {
   return typeof process !== 'undefined' && process.hrtime
     ? Number(process.hrtime.bigint() / 1000000n)
@@ -41913,22 +42116,22 @@ function nowMs2() {
 }
 function printSimulationBanner(meta) {
   const status = meta.success
-    ? import_chalk6.default.green.bold('WOULD SUCCEED')
-    : import_chalk6.default.red.bold('WOULD FAIL');
-  const sep = import_chalk6.default.gray('\u2500'.repeat(64));
+    ? import_chalk7.default.green.bold('WOULD SUCCEED')
+    : import_chalk7.default.red.bold('WOULD FAIL');
+  const sep = import_chalk7.default.gray('\u2500'.repeat(64));
   console.log('');
-  console.log(import_chalk6.default.cyan.bold('SIMULATED \xB7 NOT BROADCAST'));
+  console.log(import_chalk7.default.cyan.bold('SIMULATED \xB7 NOT BROADCAST'));
   console.log(sep);
-  console.log(`${import_chalk6.default.dim('Verdict:       ')}${status}`);
-  console.log(`${import_chalk6.default.dim('Input kind:    ')}${meta.inputKind}`);
+  console.log(`${import_chalk7.default.dim('Verdict:       ')}${status}`);
+  console.log(`${import_chalk7.default.dim('Input kind:    ')}${meta.inputKind}`);
   if (meta.errorJson) {
     console.log(
-      `${import_chalk6.default.dim('Error:         ')}${import_chalk6.default.red(meta.errorJson)}`
+      `${import_chalk7.default.dim('Error:         ')}${import_chalk7.default.red(meta.errorJson)}`
     );
   }
   if (meta.returnData) {
     console.log(
-      `${import_chalk6.default.dim('Return data:   ')}${meta.returnData.programId} \u2192 ${meta.returnData.data}`
+      `${import_chalk7.default.dim('Return data:   ')}${meta.returnData.programId} \u2192 ${meta.returnData.data}`
     );
   }
   console.log(sep);
@@ -41937,16 +42140,16 @@ function printTimings2(timings) {
   const pad = (s) => s.padEnd(22, ' ');
   for (const t of timings) {
     console.log(
-      import_chalk6.default.gray('  \u251C\u2500'),
-      import_chalk6.default.cyan(pad(t.stage)),
-      import_chalk6.default.yellow(`${t.durationMs.toFixed(1)} ms`)
+      import_chalk7.default.gray('  \u251C\u2500'),
+      import_chalk7.default.cyan(pad(t.stage)),
+      import_chalk7.default.yellow(`${t.durationMs.toFixed(1)} ms`)
     );
   }
   const total = timings.reduce((acc, t) => acc + t.durationMs, 0);
   console.log(
-    import_chalk6.default.gray('  \u2514\u2500'),
-    import_chalk6.default.bold('Total'),
-    import_chalk6.default.green(`${total.toFixed(1)} ms`)
+    import_chalk7.default.gray('  \u2514\u2500'),
+    import_chalk7.default.bold('Total'),
+    import_chalk7.default.green(`${total.toFixed(1)} ms`)
   );
 }
 var registerSimulateCommand = (program3) => {
@@ -41979,7 +42182,7 @@ var registerSimulateCommand = (program3) => {
       };
       const network = (options.network ?? 'mainnet').toLowerCase();
       if (network !== 'mainnet' && network !== 'devnet') {
-        errorLog(import_chalk6.default.red('\nError: Invalid network.'));
+        errorLog(import_chalk7.default.red('\nError: Invalid network.'));
         process.exitCode = 1;
         return;
       }
@@ -41993,7 +42196,7 @@ var registerSimulateCommand = (program3) => {
 `);
         } else {
           errorLog(
-            import_chalk6.default.red(`
+            import_chalk7.default.red(`
 Error: ${err2.message}`)
           );
         }
@@ -42010,7 +42213,7 @@ Error: ${err2.message}`)
       });
       const timings = [];
       const spinner = (0, import_ora3.default)(
-        import_chalk6.default.cyan('Simulating transaction...')
+        import_chalk7.default.cyan('Simulating transaction...')
       );
       if (!isMachineOutput) spinner.start();
       try {
@@ -42043,7 +42246,7 @@ Error: ${err2.message}`)
         );
         timings.push({ stage: 'init_anchor_provider', durationMs: nowMs2() - anchorStart });
         if (!isMachineOutput)
-          spinner.text = import_chalk6.default.cyan('Parsing simulated logs and CU...');
+          spinner.text = import_chalk7.default.cyan('Parsing simulated logs and CU...');
         const parseStart = nowMs2();
         const parsedLogSummary = parseLogsFromBundle(bundle.logMessages);
         const cuProfile = profileCU(bundle.logMessages);
@@ -42051,7 +42254,7 @@ Error: ${err2.message}`)
         const cpiTree = toCPITree(cpiTrace);
         const accountDiffs = computeAccountDiffs(bundle);
         timings.push({ stage: 'parse_logs_and_cu', durationMs: nowMs2() - parseStart });
-        if (!isMachineOutput) spinner.text = import_chalk6.default.cyan('Decoding instructions...');
+        if (!isMachineOutput) spinner.text = import_chalk7.default.cyan('Decoding instructions...');
         const decodeStart = nowMs2();
         const analyzed = await mergeAnalysis(
           bundle,
@@ -42062,13 +42265,13 @@ Error: ${err2.message}`)
           { idlCache, anchorProvider }
         );
         timings.push({ stage: 'decode_instructions', durationMs: nowMs2() - decodeStart });
-        if (!isMachineOutput) spinner.text = import_chalk6.default.cyan('Generating insights...');
+        if (!isMachineOutput) spinner.text = import_chalk7.default.cyan('Generating insights...');
         const insightsStart = nowMs2();
         const mcpProvider = new McpInsightProvider();
         const insightsReport = await analyzeTransaction(analyzed, [mcpProvider]);
         timings.push({ stage: 'analyze_transaction', durationMs: nowMs2() - insightsStart });
         if (!isMachineOutput) {
-          spinner.succeed(import_chalk6.default.green('Simulation analysis complete'));
+          spinner.succeed(import_chalk7.default.green('Simulation analysis complete'));
         }
         if (isJson) {
           if (!analyzed._metadata) analyzed._metadata = {};
@@ -42113,7 +42316,7 @@ CSV written to: ${outPath}`);
         const totalMsForHeader = timings.reduce((acc, t) => acc + t.durationMs, 0);
         renderTerminal(analyzed, insightsReport, network, totalMsForHeader);
         if (verbose) {
-          console.log(import_chalk6.default.bold.cyan('\n[Pipeline Timings]'));
+          console.log(import_chalk7.default.bold.cyan('\n[Pipeline Timings]'));
           printTimings2(timings);
         }
         if (!meta.success) process.exitCode = 1;
@@ -42124,9 +42327,9 @@ CSV written to: ${outPath}`);
           process.stdout.write(`error,${err2.message?.replace(/"/g, '""') ?? ''}
 `);
         } else {
-          spinner.fail(import_chalk6.default.red('Simulation failed'));
+          spinner.fail(import_chalk7.default.red('Simulation failed'));
           console.error(
-            import_chalk6.default.yellow(`
+            import_chalk7.default.yellow(`
 Detail: ${err2.message}`)
           );
         }
@@ -42169,6 +42372,7 @@ registerTxCommand(program2);
 registerBatchCommand(program2);
 registerConfigCommand(program2);
 registerInfoCommand(program2);
+registerLoginCommand(program2);
 registerSimulateCommand(program2);
 program2.parse(process.argv);
 /*! Bundled license information:
