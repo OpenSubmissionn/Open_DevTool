@@ -145,9 +145,18 @@ Save a CSV report:
 opendev tx <signature> --csv --output report.csv
 ```
 
+> **Before running the next two commands:** they expect local files (`sample-tx.b64` and `signatures.json`) in the current directory. We ship both at the root of the repo, so they work out-of-the-box after `git clone`. **If you installed only the CLI via the curl one-liner**, grab them first, otherwise the commands will fail with "file not found" (that's expected, not a bug in opendev):
+>
+> ```bash
+> curl -O https://raw.githubusercontent.com/OpenSubmissionn/Open_DevTool/main/sample-tx.b64
+> curl -O https://raw.githubusercontent.com/OpenSubmissionn/Open_DevTool/main/signatures.json
+> ```
+>
+> `sample-tx.b64` is a base64-encoded serialized transaction; `signatures.json` follows the schema `{ "network": "mainnet", "signatures": ["..."] }`. Use them as templates for your own inputs.
+
 Simulate an unsigned transaction:
 ```bash
-opendev simulate ./my-tx.b64
+opendev simulate ./sample-tx.b64
 ```
 
 CSV to a specific path:
