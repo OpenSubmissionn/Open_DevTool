@@ -59,24 +59,60 @@ const PROVIDER_TARGETS: Record<Provider, ProviderTarget> = {
   },
 };
 
-/** Open a URL in the user's default browser. Best-effort, never throws. */
+/**
+ * Open a URL in the user's default browser. Best-effort, never throws.
+ *
+ * spawn() can fail asynchronously (ENOENT) which a try/catch around the
+ * call does NOT catch — the error is emitted on the ChildProcess via the
+ * 'error' event. Without an attached handler, Node treats it as an
+ * unhandled 'error' event and crashes the process with a stack trace.
+ * User @anajuliarrod hit exactly this on a WSL distro that didn't ship
+ * wslview. Every spawn here attaches a noop 'error' handler, and we walk
+ * a fallback chain so a missing tool just moves on to the next option.
+ */
 function openInBrowser(url: string): void {
-  try {
-    const platform = process.platform;
-    if (platform === 'darwin') {
-      spawn('open', [url], { detached: true, stdio: 'ignore' }).unref();
-    } else if (platform === 'win32') {
-      // `start` is a cmd.exe builtin, not a real program — needs shell:true
-      // and an empty title argument so the URL isn't interpreted as one.
-      spawn('cmd', ['/c', 'start', '""', url], { detached: true, stdio: 'ignore' }).unref();
-    } else {
-      // Linux, WSL, *BSD. WSL ships wslview; fall back to xdg-open elsewhere.
-      const cmd = process.env.WSL_DISTRO_NAME ? 'wslview' : 'xdg-open';
-      spawn(cmd, [url], { detached: true, stdio: 'ignore' }).unref();
+  const trySpawn = (cmd: string, args: string[]): boolean => {
+    try {
+      const child = spawn(cmd, args, { detached: true, stdio: 'ignore' });
+      // Critical: a 'error' event on a child with no listener crashes Node.
+      child.on('error', () => {
+        /* Swallow ENOENT etc; fallback chain will move on. */
+      });
+      child.unref();
+      return true;
+    } catch {
+      return false;
     }
-  } catch {
-    // Browser-launch is a convenience. If it fails, the URL is already
-    // printed to the terminal and the user can copy/paste.
+  };
+
+  const platform = process.platform;
+  if (platform === 'darwin') {
+    trySpawn('open', [url]);
+    return;
+  }
+  if (platform === 'win32') {
+    // `start` is a cmd.exe builtin; the empty "" is required as the window
+    // title so cmd doesn't interpret the URL as one.
+    trySpawn('cmd', ['/c', 'start', '""', url]);
+    return;
+  }
+  // Linux family — including WSL. We can't rely on which tool is installed,
+  // so try each in turn. On WSL without wslview, falling back to cmd.exe
+  // works because /mnt/c/Windows/System32 is on PATH; that opens the user's
+  // Windows-side default browser. The ChildProcess 'error' handler above
+  // means a missing binary fails silently instead of crashing.
+  const isWsl = !!process.env.WSL_DISTRO_NAME;
+  // On WSL, prefer cmd.exe — always present, opens the user's Windows-side
+  // default browser, no extra packages needed. wslview is nicer when
+  // installed (it picks an X11 browser if WSLg is running) but isn't shipped
+  // by default in every distro, as @anajuliarrod's machine showed.
+  const candidates = isWsl
+    ? ['cmd.exe', 'wslview', 'xdg-open']
+    : ['xdg-open', 'gnome-open', 'kde-open'];
+  for (const cmd of candidates) {
+    // For cmd.exe under WSL, use the `start` builtin form. Otherwise raw URL.
+    const args = cmd === 'cmd.exe' ? ['/c', 'start', '""', url] : [url];
+    if (trySpawn(cmd, args)) return;
   }
 }
 

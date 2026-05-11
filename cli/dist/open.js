@@ -41924,23 +41924,36 @@ var PROVIDER_TARGETS = {
   },
 };
 function openInBrowser(url) {
-  try {
-    const platform = process.platform;
-    if (platform === 'darwin') {
-      (0, import_node_child_process.spawn)('open', [url], {
+  const trySpawn = (cmd, args) => {
+    try {
+      const child = (0, import_node_child_process.spawn)(cmd, args, {
         detached: true,
         stdio: 'ignore',
-      }).unref();
-    } else if (platform === 'win32') {
-      (0, import_node_child_process.spawn)('cmd', ['/c', 'start', '""', url], {
-        detached: true,
-        stdio: 'ignore',
-      }).unref();
-    } else {
-      const cmd = process.env.WSL_DISTRO_NAME ? 'wslview' : 'xdg-open';
-      (0, import_node_child_process.spawn)(cmd, [url], { detached: true, stdio: 'ignore' }).unref();
+      });
+      child.on('error', () => {});
+      child.unref();
+      return true;
+    } catch {
+      return false;
     }
-  } catch {}
+  };
+  const platform = process.platform;
+  if (platform === 'darwin') {
+    trySpawn('open', [url]);
+    return;
+  }
+  if (platform === 'win32') {
+    trySpawn('cmd', ['/c', 'start', '""', url]);
+    return;
+  }
+  const isWsl = !!process.env.WSL_DISTRO_NAME;
+  const candidates = isWsl
+    ? ['cmd.exe', 'wslview', 'xdg-open']
+    : ['xdg-open', 'gnome-open', 'kde-open'];
+  for (const cmd of candidates) {
+    const args = cmd === 'cmd.exe' ? ['/c', 'start', '""', url] : [url];
+    if (trySpawn(cmd, args)) return;
+  }
 }
 function readSecret(promptText) {
   return new Promise((resolve4, reject) => {
