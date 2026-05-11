@@ -112,7 +112,7 @@ describe('MCP Client', () => {
     expect(mockFetch).not.toHaveBeenCalled();
   });
 
-  it('without ANTHROPIC_API_KEY and without MCP_ENDPOINT_URL, returns empty without network call', async () => {
+  it('without any AI key and without MCP_ENDPOINT_URL, returns empty without network call', async () => {
     const mockFetch = vi.fn();
     vi.stubGlobal('fetch', mockFetch);
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
@@ -131,7 +131,7 @@ describe('MCP Client', () => {
 
     expect(result.suggestions).toEqual([]);
     expect(mockFetch).not.toHaveBeenCalled();
-    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('ANTHROPIC_API_KEY'));
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('No AI key configured'));
     warnSpy.mockRestore();
   });
 
