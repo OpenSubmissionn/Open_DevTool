@@ -18,7 +18,7 @@ suggestions on top of deterministic rule-based insights.
 
 ## Two ways to use opendev
 
-- **Web** — [opendev-tx.vercel.app](https://opendev-tx.vercel.app/landing.html). No install, paste a signature and go.
+- **Web** — [opendev-tx-solana](opendev-tx-solana.vercel.app). No install, paste a signature and go.
 - **CLI** — `opendev tx <sig>` for daily debugging, scripting, JSON/CSV output. [Install ↓](#quick-install-recommended)
 
 Same analysis engine under the hood.
