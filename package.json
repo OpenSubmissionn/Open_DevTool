@@ -1,6 +1,6 @@
 {
-  "name": "opendev",
-  "version": "0.4.0",
+  "name": "opendevtool-monorepo",
+  "version": "0.5.0",
   "description": "Visual transaction debugger and CU profiler for Solana — turn any signature into a fully decoded execution profile",
   "main": "index.js",
   "bin": {

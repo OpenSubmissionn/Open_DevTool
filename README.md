@@ -27,19 +27,25 @@ Same analysis engine under the hood.
 
 ## Quick install (recommended)
 
-One-liner that detects your OS, ensures Node.js 20+ is installed, and installs `opendev` globally:
+### Via npm (any OS with Node 20+)
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/OpenSubmissionn/Open_DevTool/main/install.sh | sh
-```
-
-Verify:
-
-```sh
+npm install -g opendevtool
 opendev --version
 ```
 
-> **Windows users:** the curl installer requires WSL, Git Bash, or PowerShell with curl. Most Solana devs already have one of these. If you don't, follow the [Windows manual install](#windows-powershell) below.
+The package is named `opendevtool` on npm; the binary it installs is called `opendev`. (The unqualified `opendev` name was taken, the tool's name stays the same.)
+
+### Via curl one-liner (Linux / macOS / WSL)
+
+Auto-detects your OS, installs Node 20 via nvm if missing, and sets up `opendev`:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/OpenSubmissionn/Open_DevTool/main/install.sh | sh
+opendev --version
+```
+
+> **Windows users:** the curl installer needs WSL, Git Bash, or PowerShell with curl. If you don't have any of those, use the npm path above or follow the [Windows manual install](#windows-powershell) below.
 
 ---
 
