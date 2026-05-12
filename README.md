@@ -460,12 +460,13 @@ opendev/
 
 | File | Topic |
 |---|---|
-| [Architecture](docs/Architecture_OPEN.md) | System architecture |
+| [Architecture](docs/Architecture_OPEN.md) | System architecture and data flow |
 | [Use Cases](docs/Use_Cases.md) | Real-world usage scenarios |
 | [Troubleshooting](docs/Troubleshooting.md) | Common errors and fixes |
-| [MCP Schema](docs/MCP_Request_Schema.md) | AI insight payload schema |
-| [Decoder Extension](docs/Extensibility_Decoder.md) | How to add a new protocol decoder |
-| [AI Prompt Sources](docs/AI_Prompt_Sources.md) | CU-optimization claims with citations |
+| [AI Insights](docs/AI_Insights.md) | Prompt sources, insight ranking, and MCP wire format |
+| [Decoders](docs/Decoders.md) | Program registry schema and how to add a new decoder |
+| [Anomaly Detection](docs/Anomaly_Detection.md) | Spam / MEV-like / nondeterministic-failure detection |
+| [Performance & Quality](docs/Performance_and_Quality.md) | Latency benchmarks and test coverage |
 
 ## Contributing
 
