@@ -767,31 +767,90 @@
        FOOTER
        ============================================ */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 50px 0 40px;
+      border-top: 1px solid rgba(96, 165, 250, 0.35);
+      padding: 60px 0 24px;
       margin-top: 60px;
       position: relative;
       z-index: 1;
-      background: rgba(7, 7, 13, 0.72);
+      background:
+        linear-gradient(180deg, rgba(37, 99, 235, 0.18) 0%, rgba(37, 99, 235, 0.08) 100%),
+        rgba(7, 7, 13, 0.72);
+      box-shadow: inset 0 1px 0 rgba(96, 165, 250, 0.12);
       backdrop-filter: blur(20px) saturate(140%);
       -webkit-backdrop-filter: blur(20px) saturate(140%);
+      color: var(--fg);
     }
 
-    .footer-inner {
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.6fr repeat(4, 1fr);
+      gap: 40px;
+      padding-bottom: 36px;
+    }
+
+    .footer-brand .logo-mark { width: 110px; height: auto; margin-bottom: 16px; }
+
+    .footer-tagline {
+      color: var(--fg-dim);
+      font-size: 14px;
+      line-height: 1.55;
+      max-width: 280px;
+      margin: 0;
+    }
+
+    .footer-col-title {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: lowercase;
+      color: var(--blue-soft);
+      margin: 0 0 18px;
+    }
+
+    .footer-col-title::before {
+      content: '// ';
+      color: var(--fg-mute);
+      font-weight: 400;
+    }
+
+    .footer-col-links {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-col-links a {
+      color: var(--fg);
+      font-size: 14px;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .footer-col-links a:hover { color: var(--blue-soft); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(96, 165, 250, 0.18);
+      padding-top: 22px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 20px;
-    }
-
-    .footer-meta {
-      color: var(--fg-mute);
+      gap: 12px;
       font-size: 13px;
+      color: var(--fg-mute);
     }
 
-    .footer-meta .accent {
-      color: var(--fg-dim);
+    .footer-bottom .accent { color: var(--fg-dim); }
+
+    @media (max-width: 900px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+    @media (max-width: 540px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
     }
 
     /* ============================================
@@ -1126,19 +1185,55 @@
   </section>
 
   <footer>
-    <div class="container footer-inner">
-      <div class="logo">
-        <img class="logo-mark" src="open-symbol.svg" alt="OPEN" />
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img class="logo-mark" src="open-wordmark.svg" alt="OPEN" />
+          <p class="footer-tagline">
+            Solana transaction analyzer for developers. See what your transaction actually did.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Product</h4>
+          <ul class="footer-col-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#modes">Modes</a></li>
+            <li><a href="#versions">Versions</a></li>
+            <li><a href="web.html">Try web demo</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Resources</h4>
+          <ul class="footer-col-links">
+            <li><a href="https://github.com/OpenSubmissionn/Open_DevTool" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="https://github.com/OpenSubmissionn/Open_DevTool/tree/main/docs" target="_blank" rel="noopener">Documentation</a></li>
+            <li><a href="https://github.com/OpenSubmissionn/Open_DevTool/tree/main/cli" target="_blank" rel="noopener">CLI</a></li>
+            <li><a href="https://github.com/OpenSubmissionn/Open_DevTool/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Community</h4>
+          <ul class="footer-col-links">
+            <li><a href="https://x.com/OpenDevT" target="_blank" rel="noopener" aria-label="OPEN on X (Twitter)">@OpenDevT</a></li>
+            <li><a href="https://github.com/OpenSubmissionn/Open_DevTool/issues" target="_blank" rel="noopener">Issues</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Legal</h4>
+          <ul class="footer-col-links">
+            <li><a href="https://github.com/OpenSubmissionn/Open_DevTool/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a></li>
+          </ul>
+        </div>
       </div>
-      <div class="footer-meta">
-        <span class="accent">MIT licensed</span> · built for the Solana community
+
+      <div class="footer-bottom">
+        <span>© 2026 OPEN. <span class="accent">MIT licensed.</span></span>
+        <span class="accent">Built for the Solana community.</span>
       </div>
-      <a
-        href="https://github.com/OpenSubmissionn/Open_DevTool"
-        target="_blank"
-        rel="noopener"
-        class="nav-cta"
-      >github.com/OpenSubmissionn/Open_DevTool</a>
     </div>
   </footer>
 
