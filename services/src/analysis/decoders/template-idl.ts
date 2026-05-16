@@ -9,7 +9,7 @@
  *   4. Register in anchor-idl.ts and decoders/index.ts.
  *   5. Run: npm run validate:decoders
  *
- * See docs/Extensibility_Decoder.md for the full guide.
+ * See docs/Decoders.md (Part B — Adding a new decoder) for the full guide.
  */
 
 import { instructionDiscriminator } from './orca/anchor-idl-orca.js';

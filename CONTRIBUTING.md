@@ -60,7 +60,7 @@ Before opening a PR, make sure:
 
 ## Adding a new protocol decoder
 
-See `docs/Extensibility_Decoder.md` for the full step-by-step. Briefly:
+See `docs/Decoders.md` (Part B — Adding a new decoder) for the full step-by-step. Briefly:
 
 1. Add the IDL under `services/src/analysis/decoders/<protocol>/` (or
    `anchor-defs/` for Anchor-only IDLs).

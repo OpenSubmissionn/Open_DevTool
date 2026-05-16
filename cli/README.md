@@ -6,12 +6,20 @@ Visual transaction debugger and CU profiler for Solana.
 
 ## Install
 
-One-liner (Linux / macOS / WSL):
+Easiest — via npm (any OS with Node.js 20+):
+```bash
+npm install -g opendevtool
+opendev --version
+```
+
+Note: package is named `opendevtool` on npm (unqualified `opendev` was taken). The binary it installs is still `opendev`.
+
+Or, one-liner for Linux / macOS / WSL (sets up Node 20 via nvm if missing):
 ```bash
 curl -fsSL https://raw.githubusercontent.com/OpenSubmissionn/Open_DevTool/main/install.sh | sh
 ```
 
-Or, manually (the curl one-liner does this for you):
+Or, from source:
 ```bash
 git clone https://github.com/OpenSubmissionn/Open_DevTool.git
 cd Open_DevTool
@@ -19,8 +27,6 @@ npm install
 npm run build --workspace cli
 cd cli && npm install -g . --ignore-scripts
 ```
-
-This installs the `opendev` command globally. Requires Node.js 20+.
 
 For local development with hot-reload:
 ```bash
@@ -73,10 +79,14 @@ opendev simulate ./my-tx.b64
 | `opendev tx <signature>` | Full analysis of a confirmed transaction |
 | `opendev simulate <input>` | Simulate an unsigned transaction (base64 blob or file path) |
 | `opendev batch <file>` | Run analysis over a list of signatures |
-| `opendev info` | Show CLI environment info |
-| `opendev config` | Show resolved configuration |
+| `opendev info` | Show registered programs and decoder coverage |
+| `opendev login [provider]` | Browser-assisted setup for AI insights (default: groq) |
+| `opendev config set-key <provider> <key>` | Save an AI provider key from a script |
+| `opendev config get-key [provider]` | List configured keys (masked) and their source |
+| `opendev config remove-key <provider>` | Delete a key from the credential store |
+| `opendev config set-rpc <url>` | Set the default Solana RPC URL |
 
-Run `open <command> --help` for the full flag list.
+Run `opendev <command> --help` for the full flag list.
 
 ## Common flags
 
@@ -88,6 +98,23 @@ Run `open <command> --help` for the full flag list.
 | `--csv` | `false` | Save a CSV report |
 | `--output <path>` | — | Output file path |
 | `--verbose` | `false` | Enable debug logging |
+
+## AI insights (optional)
+
+opendev ships rule-based insights by default. To add AI-generated optimization suggestions, get a free key from [console.groq.com/keys](https://console.groq.com/keys) (no credit card) or a paid one from [console.anthropic.com](https://console.anthropic.com), then:
+
+```bash
+opendev login              # browser opens, paste key, gets validated, saved
+```
+
+Keys live in `~/.opendev/credentials.json` (chmod 600). For scripted setup:
+
+```bash
+opendev config set-key groq gsk_xxxxxxxxxxxxxxxx
+opendev config get-key                       # confirm
+```
+
+Shell `GROQ_API_KEY` / `ANTHROPIC_API_KEY` exports still work and take precedence.
 
 ## Configuration
 

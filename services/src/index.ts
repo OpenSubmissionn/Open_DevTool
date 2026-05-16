@@ -27,6 +27,7 @@ export * from './analysis/renderer.js';
 export * from './solana/rpc.js';
 export * from './solana/connection.js';
 export * from './solana/simulationService.js';
+export * from './solana/sourceRunner.js';
 
 // Batch analysis
 export * from './analysis/batchAggregator.js';
