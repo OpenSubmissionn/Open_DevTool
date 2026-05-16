@@ -314,6 +314,25 @@
       box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
     }
 
+    .demo-input.invalid,
+    .demo-input.invalid:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.18);
+    }
+
+    .demo-input-error {
+      max-width: 760px;
+      margin: -8px auto 16px;
+      padding: 0 4px;
+      color: var(--red);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.4;
+      display: none;
+    }
+
+    .demo-input-error.visible { display: block; }
+
     .demo-analyze {
       padding: 0 28px;
       background: linear-gradient(135deg, var(--blue) 0%, #1d4ed8 100%);
@@ -1579,9 +1598,20 @@
         id="demoInput"
         placeholder="paste a real Solana transaction signature (87–88 chars) for live analysis..."
         spellcheck="false"
+        autocomplete="off"
+        autocapitalize="off"
+        aria-invalid="false"
+        aria-describedby="demoInputError"
       />
       <button class="demo-analyze" id="demoAnalyze">Analyze</button>
     </div>
+
+    <div
+      class="demo-input-error"
+      id="demoInputError"
+      role="alert"
+      aria-live="polite"
+    >Invalid transaction signature. Please check the value and try again.</div>
 
     <div class="demo-samples">
       <button class="sample-chip" id="liveSampleBtn" style="border-color: rgba(20, 241, 149, 0.4); color: var(--green);">⚡ live mainnet sample</button>
@@ -1921,10 +1951,40 @@
     // demo interactions — tabs, samples, /api/analyze wiring, account model
     (function () {
       const card = document.getElementById('demoCard');
-      const input = document.getElementById('demoInput');
-      const analyzeBtn = document.getElementById('demoAnalyze');
+      const input = /** @type {HTMLInputElement | null} */ (document.getElementById('demoInput'));
+      const analyzeBtn = /** @type {HTMLButtonElement | null} */ (document.getElementById('demoAnalyze'));
+      const inputError = /** @type {HTMLElement | null} */ (document.getElementById('demoInputError'));
       const banner = document.querySelector('.preview-banner');
       if (!card || !input || !analyzeBtn) return;
+
+      // ───────── signature validation ─────────
+      // Solana transaction signatures are 64-byte ed25519 signatures encoded
+      // as base58 — always 87 or 88 characters, drawn from the base58 alphabet
+      // (no 0, O, I, l). We validate client-side so users get instant feedback
+      // instead of an opaque 400 from /api/analyze.
+      const BASE58_RE = /^[1-9A-HJ-NP-Za-km-z]+$/;
+
+      /**
+       * @param {string} value
+       * @returns {boolean}
+       */
+      function isValidSolanaSignature(value) {
+        if (typeof value !== 'string') return false;
+        const trimmed = value.trim();
+        if (trimmed.length < 87 || trimmed.length > 88) return false;
+        return BASE58_RE.test(trimmed);
+      }
+
+      /** @param {boolean} invalid */
+      function setSignatureError(invalid) {
+        if (!input || !inputError) return;
+        input.classList.toggle('invalid', invalid);
+        input.setAttribute('aria-invalid', invalid ? 'true' : 'false');
+        inputError.classList.toggle('visible', invalid);
+      }
+
+      // Any edit clears the error so the user isn't yelled at while fixing it.
+      input.addEventListener('input', () => setSignatureError(false));
 
       const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -2049,13 +2109,22 @@
       //                  fall back to the mock animation otherwise ─────────
       analyzeBtn.addEventListener('click', async () => {
         const sig = input.value.trim();
-        const looksReal = (sig.length === 87 || sig.length === 88) && !sig.includes('...');
+
+        // Empty input keeps the demo's mock-replay behavior so visitors can
+        // poke around the visualization without supplying a real signature.
+        // Anything non-empty is treated as a real attempt and must validate.
+        if (sig.length > 0 && !isValidSolanaSignature(sig)) {
+          setSignatureError(true);
+          input.focus();
+          return;
+        }
+        setSignatureError(false);
 
         const original = analyzeBtn.textContent;
         analyzeBtn.textContent = 'Analyzing…';
         analyzeBtn.disabled = true;
 
-        if (!looksReal) {
+        if (sig.length === 0) {
           // mock mode — just replay the precomputed visualization
           replay();
           setTimeout(() => {
@@ -2083,8 +2152,17 @@
           renderResult(data);
           replay();
         } catch (e) {
-          console.warn('[analyze] backend error, showing mock:', e.message);
-          setBanner(`error · ${String(e.message).slice(0, 50)} (showing mock)`, 'error');
+          // Keep the raw exception in the console for debugging, but show a
+          // clean, user-friendly banner. TypeError from fetch ≈ network /
+          // backend offline; anything else is a backend or parse failure.
+          console.warn('[analyze] backend error, showing mock:', e?.message ?? e);
+          const offline = e instanceof TypeError;
+          setBanner(
+            offline
+              ? "Couldn't reach the analyzer. Please try again in a moment."
+              : "Couldn't analyze this signature. Please try again.",
+            'error'
+          );
           replay();
         } finally {
           analyzeBtn.textContent = original;
