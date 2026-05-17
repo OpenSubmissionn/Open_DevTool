@@ -247,8 +247,11 @@
       z-index: 50;
       backdrop-filter: blur(20px) saturate(140%);
       -webkit-backdrop-filter: blur(20px) saturate(140%);
-      background: rgba(7, 7, 13, 0.78);
-      border-bottom: 1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(30, 127, 255, 0.18) 0%, rgba(30, 127, 255, 0.06) 100%),
+        rgba(7, 7, 13, 0.78);
+      border-bottom: 1px solid rgba(96, 165, 250, 0.35);
+      box-shadow: inset 0 -1px 0 rgba(96, 165, 250, 0.12);
     }
 
     .nav-inner {
@@ -758,7 +761,8 @@
     }
 
     .version-card li .check {
-      color: var(--green);
+      color: #6db2ff;
+      text-shadow: 0 0 10px rgba(59, 158, 255, 0.55);
       flex-shrink: 0;
     }
 
@@ -830,10 +834,13 @@
     }
 
     .mode-icon.simulate {
-      background: rgba(30, 127, 255, 0.14);
-      color: var(--blue-bright);
-      border: 1px solid rgba(30, 127, 255, 0.30);
-      box-shadow: 0 0 14px rgba(30, 127, 255, 0.18);
+      background: linear-gradient(135deg, rgba(59, 158, 255, 0.30), rgba(30, 127, 255, 0.14));
+      color: #6db2ff;
+      border: 1px solid rgba(59, 158, 255, 0.55);
+      text-shadow: 0 0 14px rgba(59, 158, 255, 0.6);
+      box-shadow:
+        0 0 22px rgba(30, 127, 255, 0.4),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.06);
     }
 
     .mode-card h3 {
@@ -929,16 +936,27 @@
       width: 32px;
       height: 32px;
       border-radius: 8px;
-      background: linear-gradient(135deg, rgba(30, 127, 255, 0.22), rgba(96, 165, 250, 0.10));
-      border: 1px solid rgba(96, 165, 250, 0.35);
+      background: linear-gradient(135deg, rgba(59, 158, 255, 0.32), rgba(30, 127, 255, 0.14));
+      border: 1px solid rgba(59, 158, 255, 0.55);
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 16px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 14px;
-      color: var(--blue-bright);
-      box-shadow: 0 0 12px rgba(30, 127, 255, 0.18);
+      color: #6db2ff;
+      text-shadow: 0 0 12px rgba(59, 158, 255, 0.55);
+      box-shadow:
+        0 0 18px rgba(30, 127, 255, 0.35),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
+
+    .feature:hover .feature-icon {
+      background: linear-gradient(135deg, rgba(59, 158, 255, 0.45), rgba(30, 127, 255, 0.22));
+      border-color: rgba(109, 178, 255, 0.7);
+      box-shadow:
+        0 0 24px rgba(30, 127, 255, 0.5),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.10);
     }
 
     .feature h4 {
