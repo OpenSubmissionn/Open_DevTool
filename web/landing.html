@@ -468,11 +468,24 @@
     }
 
     .tagline .accent {
-      background: linear-gradient(90deg, var(--purple-soft), var(--green-soft));
+      background: linear-gradient(
+        90deg,
+        var(--purple-soft) 0%,
+        var(--green-soft) 35%,
+        var(--blue-soft) 65%,
+        var(--purple-soft) 100%
+      );
+      background-size: 220% 100%;
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
       font-weight: 900;
+      animation: accentShimmer 7s ease-in-out infinite;
+    }
+
+    @keyframes accentShimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
     }
 
     .subtitle {
@@ -604,6 +617,49 @@
       letter-spacing: -0.03em;
       line-height: 1.1;
       margin: 0 0 16px;
+    }
+
+    /* Section heads start hidden + blurred; JS adds .in-view once they
+       scroll into the viewport, which triggers the staggered reveal. */
+    .section-head .section-eyebrow,
+    .section-head h2 .word,
+    .section-head p {
+      opacity: 0;
+      filter: blur(10px);
+      transform: translateY(14px);
+      transition:
+        opacity 0.85s cubic-bezier(0.2, 0.7, 0.2, 1),
+        filter 0.85s cubic-bezier(0.2, 0.7, 0.2, 1),
+        transform 0.85s cubic-bezier(0.2, 0.7, 0.2, 1);
+      will-change: opacity, filter, transform;
+    }
+
+    .section-head h2 .word {
+      display: inline-block;
+      transition-delay: calc(var(--i, 0) * 90ms + 100ms);
+    }
+
+    .section-head p {
+      transition-delay: 600ms;
+    }
+
+    .section-head.in-view .section-eyebrow,
+    .section-head.in-view h2 .word,
+    .section-head.in-view p {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .section-head .section-eyebrow,
+      .section-head h2 .word,
+      .section-head p {
+        opacity: 1;
+        filter: none;
+        transform: none;
+        transition: none;
+      }
     }
 
     .section-head p {
@@ -1624,6 +1680,54 @@
   </footer>
 
   <script>
+    // ============================================
+    // Section-head reveal — wrap each word in h2 in a span, then fade
+    // the eyebrow / words / sub-copy in with a staggered cascade once
+    // the section scrolls into the viewport. Honors reduced-motion via
+    // the CSS @media rule (this script doesn't gate on it because the
+    // CSS handles the no-animation fallback).
+    // ============================================
+    (function () {
+      /** @type {NodeListOf<HTMLElement>} */
+      const heads = document.querySelectorAll('.section-head');
+      heads.forEach((head) => {
+        const h2 = head.querySelector('h2');
+        if (h2 && !h2.dataset.split) {
+          const text = h2.textContent || '';
+          const words = text.trim().split(/\s+/);
+          h2.textContent = '';
+          words.forEach((w, i) => {
+            const span = document.createElement('span');
+            span.className = 'word';
+            span.style.setProperty('--i', String(i));
+            span.textContent = w;
+            h2.appendChild(span);
+            if (i < words.length - 1) h2.appendChild(document.createTextNode(' '));
+          });
+          h2.dataset.split = '1';
+        }
+      });
+
+      if (!('IntersectionObserver' in window)) {
+        // Old browsers — just show everything; matches reduced-motion fallback.
+        heads.forEach((h) => h.classList.add('in-view'));
+        return;
+      }
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add('in-view');
+              io.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.18, rootMargin: '0px 0px -8% 0px' }
+      );
+      heads.forEach((h) => io.observe(h));
+    })();
+
     // ============================================
     // CU bar background — bars grow as you scroll
     // ============================================
