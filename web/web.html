@@ -643,10 +643,33 @@
       cursor: pointer;
       position: relative;
       white-space: nowrap;
-      transition: color 0.15s;
+      transition: color 0.15s, background 0.18s ease;
     }
 
-    .demo-tab:hover { color: var(--fg); }
+    /* Soft hover underline — appears underneath the tab on hover so
+       users see exactly which tab they're targeting. Doesn't show on
+       the active tab (which already has its own brighter underline). */
+    .demo-tab::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(109, 178, 255, 0.7), transparent);
+      border-radius: 2px;
+      transition: width 0.22s ease, left 0.22s ease;
+    }
+
+    .demo-tab:hover {
+      color: var(--fg);
+      background: rgba(30, 127, 255, 0.06);
+    }
+
+    .demo-tab:hover::after {
+      width: 70%;
+      left: 15%;
+    }
 
     .demo-tab.active {
       color: var(--fg);
@@ -659,6 +682,7 @@
       bottom: -1px;
       left: 16px;
       right: 16px;
+      width: auto;
       height: 2px;
       background: linear-gradient(90deg, var(--blue), var(--blue-soft));
       border-radius: 2px;
@@ -725,8 +749,19 @@
       grid-template-columns: 240px 1fr 90px;
       align-items: center;
       gap: 14px;
+      padding: 4px 8px;
+      margin: 0 -8px;
+      border-radius: 8px;
       font-size: 13px;
+      transition: background 0.18s ease, box-shadow 0.2s ease;
     }
+
+    .prog-row:hover {
+      background: rgba(30, 127, 255, 0.06);
+      box-shadow: inset 2px 0 0 var(--blue-bright);
+    }
+
+    .prog-row:hover .prog-name { color: var(--fg); }
 
     .prog-name {
       font-family: 'JetBrains Mono', monospace;
@@ -748,8 +783,11 @@
     .prog-bar-track {
       position: relative;
       height: 26px;
-      background: rgba(255, 255, 255, 0.025);
-      border-radius: 4px;
+      background:
+        linear-gradient(180deg, rgba(30, 127, 255, 0.04), rgba(30, 127, 255, 0.01)),
+        rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(96, 165, 250, 0.10);
+      border-radius: 5px;
       overflow: hidden;
     }
 
@@ -763,7 +801,12 @@
 
     .demo-card.animating .prog-bar { width: var(--w, 0); }
 
-    .prog-bar.blue   { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+    .prog-bar.blue {
+      background: linear-gradient(90deg, #6db2ff 0%, #3b9eff 55%, #1e7fff 100%);
+      box-shadow:
+        0 0 14px rgba(30, 127, 255, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    }
     .prog-bar.orange { background: linear-gradient(90deg, #fb923c, #f59e0b); box-shadow: 0 0 14px rgba(245, 158, 11, 0.35); }
     .prog-bar.purple { background: linear-gradient(90deg, #c084fc, #a855f7); }
     .prog-bar.green  { background: linear-gradient(90deg, #34d399, #10b981); }
@@ -820,23 +863,54 @@
     }
 
     .cpi-ctrl {
+      position: relative;
+      overflow: hidden;
       font-size: 12px;
       padding: 6px 12px;
       border-radius: 6px;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(96, 165, 250, 0.22);
+      background: rgba(30, 127, 255, 0.04);
       color: var(--fg-dim);
       cursor: pointer;
-      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      transition:
+        border-color 0.2s ease,
+        color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.25s ease;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
 
+    .cpi-ctrl::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -75%;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(
+        115deg,
+        transparent 0%,
+        rgba(155, 200, 255, 0.32) 50%,
+        transparent 100%
+      );
+      pointer-events: none;
+      transform: skewX(-14deg);
+      opacity: 0;
+    }
+
     .cpi-ctrl:hover {
-      border-color: var(--purple);
-      color: var(--fg);
-      background: rgba(153, 69, 255, 0.06);
+      border-color: rgba(109, 178, 255, 0.65);
+      color: #e6f0ff;
+      background: rgba(30, 127, 255, 0.12);
+      box-shadow:
+        0 0 0 1px rgba(96, 165, 250, 0.25),
+        0 6px 18px -10px rgba(30, 127, 255, 0.5);
+    }
+
+    .cpi-ctrl:hover::before {
+      animation: navShine 0.85s cubic-bezier(0.2, 0.7, 0.2, 1);
     }
 
     .cpi-tree {
@@ -848,17 +922,21 @@
     .cpi-node { position: relative; }
 
     .cpi-row {
+      position: relative;
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 6px 8px;
+      padding: 6px 10px;
       border-radius: 6px;
-      transition: background 0.15s;
+      transition: background 0.18s ease, box-shadow 0.2s ease;
       min-width: 0;
     }
 
     .cpi-node.has-children > .cpi-row { cursor: pointer; }
-    .cpi-node.has-children > .cpi-row:hover { background: rgba(255, 255, 255, 0.035); }
+    .cpi-node.has-children > .cpi-row:hover {
+      background: rgba(30, 127, 255, 0.08);
+      box-shadow: inset 2px 0 0 var(--blue-bright);
+    }
 
     .cpi-chevron {
       display: inline-flex;
@@ -875,7 +953,8 @@
 
     .cpi-node.has-children.expanded > .cpi-row > .cpi-chevron {
       transform: rotate(90deg);
-      color: var(--purple-soft);
+      color: var(--blue-bright);
+      text-shadow: 0 0 8px rgba(59, 158, 255, 0.55);
     }
 
     .cpi-node.leaf > .cpi-row > .cpi-chevron { visibility: hidden; }
@@ -913,7 +992,7 @@
     .cpi-children {
       margin-left: 14px;
       padding-left: 16px;
-      border-left: 1px dashed rgba(255, 255, 255, 0.08);
+      border-left: 1px dashed rgba(96, 165, 250, 0.28);
       margin-top: 2px;
     }
 
@@ -2043,7 +2122,7 @@
     <div class="eyebrow">// Web Version</div>
     <h1>
       <span class="word" style="--i:0">Try</span>
-      <span class="word" style="--i:1">open</span>
+      <span class="word" style="--i:1">Open</span>
       <span class="word accent" style="--i:2">right now</span>
     </h1>
     <p>
