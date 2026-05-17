@@ -1378,14 +1378,42 @@
       padding-bottom: 36px;
     }
 
-    .footer-brand .logo-mark { width: 110px; height: auto; margin-bottom: 16px; }
+    .footer-brand .logo-mark {
+      width: 110px;
+      height: auto;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 0 18px rgba(96, 165, 250, 0.28));
+    }
 
     .footer-tagline {
       color: var(--fg-dim);
       font-size: 14px;
       line-height: 1.55;
       max-width: 280px;
-      margin: 0;
+      margin: 0 0 16px;
+    }
+
+    .footer-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(20, 241, 149, 0.3);
+      background: rgba(20, 241, 149, 0.08);
+      color: var(--green);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+    }
+
+    .footer-status .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 8px currentColor;
+      animation: pulse 1.8s ease-out infinite;
     }
 
     .footer-col-title {
@@ -1414,14 +1442,33 @@
     }
 
     .footer-col-links a {
+      position: relative;
+      display: inline-flex;
+      align-items: baseline;
       color: var(--fg);
       font-size: 14px;
       text-decoration: none;
-      transition: color 0.15s;
+      transition: color 0.15s, transform 0.15s;
       cursor: pointer;
     }
 
+    .footer-col-links a::before {
+      content: '>';
+      display: inline-block;
+      width: 0;
+      overflow: hidden;
+      color: var(--blue-soft);
+      opacity: 0;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      transition: width 0.18s ease, opacity 0.18s ease, margin-right 0.18s ease;
+    }
+
     .footer-col-links a:hover { color: var(--blue-soft); }
+    .footer-col-links a:hover::before {
+      width: 10px;
+      opacity: 1;
+      margin-right: 4px;
+    }
 
     .footer-bottom {
       border-top: 1px solid rgba(96, 165, 250, 0.18);
@@ -1430,12 +1477,62 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 16px;
       font-size: 13px;
       color: var(--fg-mute);
     }
 
     .footer-bottom .accent { color: var(--fg-dim); }
+
+    .footer-prompt {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      color: var(--fg-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .footer-prompt .p-path  { color: var(--blue-soft); }
+    .footer-prompt .p-sigil { color: var(--green); margin: 0 8px 0 4px; }
+    .footer-prompt .p-cmd   { color: var(--fg); }
+    .footer-prompt .p-arg   { color: var(--fg-mute); margin-left: 6px; }
+
+    .footer-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 13px;
+      vertical-align: -2px;
+      background: var(--blue-soft);
+      margin-left: 4px;
+      animation: blink 1.1s steps(2, start) infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .footer-meta-right {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .footer-version {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(96, 165, 250, 0.28);
+      background: rgba(37, 99, 235, 0.10);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: var(--blue-soft);
+    }
 
     @media (max-width: 900px) {
       .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
@@ -1944,6 +2041,10 @@
           <p class="footer-tagline">
             Solana transaction analyzer for developers. See what your transaction actually did.
           </p>
+          <span class="footer-status" title="backend status">
+            <span class="dot"></span>
+            <span>online · mainnet</span>
+          </span>
         </div>
 
         <div>
@@ -1984,8 +2085,12 @@
       </div>
 
       <div class="footer-bottom">
-        <span>© 2026 OPEN. <span class="accent">MIT licensed.</span></span>
-        <span class="accent">Built for the Solana community.</span>
+        <code class="footer-prompt" aria-hidden="true"
+          ><span class="p-path">~/open</span><span class="p-sigil">$</span><span class="p-cmd">npm install -g opendevtool</span><span class="footer-cursor"></span></code>
+        <span class="footer-meta-right">
+          <span class="footer-version">v0.4.0 · mainnet-beta</span>
+          <span class="accent">© 2026 OPEN · MIT</span>
+        </span>
       </div>
     </div>
   </footer>
