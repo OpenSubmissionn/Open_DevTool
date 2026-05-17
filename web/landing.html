@@ -245,78 +245,132 @@
       position: sticky;
       top: 0;
       z-index: 50;
-      backdrop-filter: blur(20px) saturate(140%);
-      -webkit-backdrop-filter: blur(20px) saturate(140%);
-      background:
-        linear-gradient(180deg, rgba(30, 127, 255, 0.18) 0%, rgba(30, 127, 255, 0.06) 100%),
-        rgba(7, 7, 13, 0.78);
-      border-bottom: 1px solid rgba(96, 165, 250, 0.35);
-      box-shadow: inset 0 -1px 0 rgba(96, 165, 250, 0.12);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      background: rgba(7, 7, 13, 0.72);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* Centered blue glow line that fades to nothing at both edges —
+       the only piece of color the header carries, keeps the bar feeling
+       light instead of muddy. */
+    nav::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent 4%,
+        rgba(96, 165, 250, 0.55) 50%,
+        transparent 96%
+      );
+      pointer-events: none;
     }
 
     .nav-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 28px;
+      padding: 14px 28px;
       max-width: 1200px;
       margin: 0 auto;
+      gap: 20px;
     }
 
     .logo {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      font-size: 18px;
-      letter-spacing: -0.02em;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+      transition: opacity 0.18s ease;
     }
 
+    .logo:hover { opacity: 0.9; }
+
     .logo-mark {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       display: block;
       box-sizing: border-box;
       padding: 4px;
-      border-radius: 6px;
-      background: #000;     /* black plate; the SVG paths are hardcoded #4b6cb3 (blue letters on black) */
-      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+      border-radius: 7px;
+      background: #000;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 0 14px rgba(30, 127, 255, 0.16);
       flex-shrink: 0;
+      transition: box-shadow 0.25s ease, transform 0.25s ease;
+    }
+
+    .logo:hover .logo-mark {
+      box-shadow:
+        0 0 0 1px rgba(96, 165, 250, 0.4),
+        0 0 22px rgba(30, 127, 255, 0.4);
     }
 
     .nav-links {
       display: flex;
-      gap: 28px;
+      gap: 4px;
       align-items: center;
-      font-size: 14px;
-      /* pure white over the animated bars — full vibrancy */
-      color: #ffffff;
-      font-weight: 600;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--fg-dim);
     }
 
-    .nav-links a {
-      transition: color 0.18s ease, text-shadow 0.18s ease;
+    /* Plain text links — Versions, How it works, Features. Pill-style
+       hover with an underline that grows from the center. */
+    .nav-links > a:not(.nav-cta):not(.nav-web) {
+      position: relative;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: color 0.18s ease, background 0.18s ease;
     }
 
-    .nav-links a:hover {
-      color: var(--blue-soft);
-      text-shadow: 0 0 14px rgba(59, 158, 255, 0.55);
+    .nav-links > a:not(.nav-cta):not(.nav-web)::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 4px;
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue-bright), transparent);
+      transition: width 0.22s ease, left 0.22s ease;
     }
 
+    .nav-links > a:not(.nav-cta):not(.nav-web):hover {
+      color: var(--fg);
+      background: rgba(30, 127, 255, 0.07);
+    }
+
+    .nav-links > a:not(.nav-cta):not(.nav-web):hover::after {
+      width: 60%;
+      left: 20%;
+    }
+
+    /* ============================================
+       GitHub button — secondary nav action.
+       Subtle blue border + halo, diagonal shine on hover.
+       ============================================ */
     .nav-cta {
       position: relative;
       overflow: hidden;
       padding: 8px 14px;
       border-radius: 8px;
-      border: 1px solid var(--border-bright);
-      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(96, 165, 250, 0.22);
+      background: rgba(30, 127, 255, 0.05);
       color: var(--fg);
       font-size: 13px;
       font-weight: 500;
       transition:
-        background 0.18s ease,
-        border-color 0.18s ease,
-        color 0.18s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
         box-shadow 0.25s ease,
         transform 0.18s ease;
     }
@@ -331,9 +385,7 @@
       background: linear-gradient(
         115deg,
         transparent 0%,
-        rgba(109, 178, 255, 0.18) 40%,
-        rgba(155, 200, 255, 0.55) 50%,
-        rgba(109, 178, 255, 0.18) 60%,
+        rgba(155, 200, 255, 0.35) 50%,
         transparent 100%
       );
       pointer-events: none;
@@ -342,16 +394,13 @@
     }
 
     .nav-cta:hover {
-      background: rgba(30, 127, 255, 0.14);
-      border-color: #6db2ff;
-      color: #cfe3ff;
+      background: rgba(30, 127, 255, 0.12);
+      border-color: rgba(109, 178, 255, 0.65);
+      color: #e6f0ff;
       transform: translateY(-1px);
       box-shadow:
-        0 0 0 1px rgba(109, 178, 255, 0.45),
-        0 0 18px rgba(30, 127, 255, 0.45),
-        0 8px 22px -10px rgba(30, 127, 255, 0.6),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-      text-shadow: 0 0 12px rgba(59, 158, 255, 0.55);
+        0 0 0 1px rgba(96, 165, 250, 0.25),
+        0 6px 20px -8px rgba(30, 127, 255, 0.55);
     }
 
     .nav-cta:hover::before {
@@ -366,11 +415,14 @@
     }
 
     /* ============================================
-       WEB VERSION CTA — primary nav action.
-       Styled as a vivid pill button with a green glow + live dot
-       so it visually outranks every other link in the nav.
+       Web Version CTA — primary nav action.
+       Bright green pill with live-dot status. Calm at rest (no
+       constant pulse) so the nav reads as polished, not noisy —
+       all the energy lives in the hover state.
        ============================================ */
     .nav-web {
+      position: relative;
+      overflow: hidden;
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -381,20 +433,14 @@
       letter-spacing: 0.01em;
       color: #07120c;
       background: linear-gradient(135deg, var(--green-soft) 0%, var(--green) 60%, #0fcb7d 100%);
-      border: 1px solid rgba(20, 241, 149, 0.45);
+      border: 1px solid rgba(20, 241, 149, 0.5);
       box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.12) inset,
-        0 6px 22px -6px rgba(20, 241, 149, 0.55),
-        0 0 0 0 rgba(20, 241, 149, 0.6);
-      transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1),
-                  box-shadow 0.25s ease;
-      animation: navWebPulse 2.4s ease-in-out infinite;
-      position: relative;
+        inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+        0 6px 18px -8px rgba(20, 241, 149, 0.55);
+      transition:
+        transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1),
+        box-shadow 0.25s ease;
       white-space: nowrap;
-    }
-
-    .nav-web {
-      overflow: hidden;
     }
 
     .nav-web::after {
@@ -407,9 +453,7 @@
       background: linear-gradient(
         115deg,
         transparent 0%,
-        rgba(255, 255, 255, 0.16) 40%,
         rgba(255, 255, 255, 0.55) 50%,
-        rgba(255, 255, 255, 0.16) 60%,
         transparent 100%
       );
       pointer-events: none;
@@ -420,10 +464,9 @@
     .nav-web:hover {
       transform: translateY(-1px);
       box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.2) inset,
-        0 12px 32px -6px rgba(20, 241, 149, 0.85),
-        0 0 0 4px rgba(20, 241, 149, 0.22),
-        0 0 26px rgba(20, 241, 149, 0.55);
+        inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+        0 10px 28px -8px rgba(20, 241, 149, 0.8),
+        0 0 0 3px rgba(20, 241, 149, 0.22);
     }
 
     .nav-web:hover::after {
@@ -447,23 +490,8 @@
       transform: translateX(2px);
     }
 
-    @keyframes navWebPulse {
-      0%, 100% {
-        box-shadow:
-          0 0 0 1px rgba(255, 255, 255, 0.12) inset,
-          0 6px 22px -6px rgba(20, 241, 149, 0.55),
-          0 0 0 0 rgba(20, 241, 149, 0.55);
-      }
-      50% {
-        box-shadow:
-          0 0 0 1px rgba(255, 255, 255, 0.12) inset,
-          0 6px 22px -6px rgba(20, 241, 149, 0.55),
-          0 0 0 8px rgba(20, 241, 149, 0);
-      }
-    }
-
     @keyframes navWebDot {
-      0%, 100% { opacity: 0.6; }
+      0%, 100% { opacity: 0.55; }
       50%      { opacity: 1; }
     }
 
