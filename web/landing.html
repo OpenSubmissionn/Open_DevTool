@@ -465,12 +465,11 @@
     }
 
     .tagline .accent {
-      background: linear-gradient(90deg, var(--blue-bright) 0%, var(--blue-soft) 55%, #93c5fd 100%);
+      background: linear-gradient(90deg, var(--purple-soft), var(--green-soft));
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
       font-weight: 900;
-      text-shadow: 0 0 38px rgba(30, 127, 255, 0.25);
     }
 
     .subtitle {
@@ -629,9 +628,10 @@
       /* solid base so the animated CU bars can't bleed through and clash
          with the text — top sheen kept for the "lit from above" feel */
       background:
+        linear-gradient(180deg, rgba(30, 127, 255, 0.06) 0%, rgba(30, 127, 255, 0) 55%),
         linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0) 60%),
         var(--bg-soft);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(96, 165, 250, 0.18);
       border-radius: var(--radius);
       padding: 32px;
       position: relative;
@@ -639,17 +639,32 @@
       transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
       color: inherit;
       text-decoration: none;
-      box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.6);
+      box-shadow:
+        0 8px 24px -16px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(96, 165, 250, 0.12);
+    }
+
+    .version-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue-bright), transparent);
+      opacity: 0.55;
     }
 
     .version-card:hover {
-      border-color: var(--border-bright);
+      border-color: var(--blue-bright);
       transform: translateY(-3px);
-      box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.5);
+      box-shadow:
+        0 18px 44px -18px var(--blue-glow),
+        inset 0 1px 0 rgba(96, 165, 250, 0.22);
     }
 
     a.version-card:hover {
-      border-color: var(--blue-soft);
+      border-color: var(--blue-bright);
     }
 
     a.version-card.available:hover {
@@ -761,11 +776,36 @@
     }
 
     .mode-card {
-      background: var(--bg-soft);
-      border: 1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(30, 127, 255, 0.06) 0%, rgba(30, 127, 255, 0) 55%),
+        var(--bg-soft);
+      border: 1px solid rgba(96, 165, 250, 0.18);
       border-radius: var(--radius);
       overflow: hidden;
-      box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.6);
+      position: relative;
+      box-shadow:
+        0 8px 24px -16px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(96, 165, 250, 0.12);
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+
+    .mode-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue-bright), transparent);
+      opacity: 0.55;
+    }
+
+    .mode-card:hover {
+      border-color: var(--blue-bright);
+      transform: translateY(-2px);
+      box-shadow:
+        0 14px 38px -18px var(--blue-glow),
+        inset 0 1px 0 rgba(96, 165, 250, 0.22);
     }
 
     .mode-card-head {
@@ -790,9 +830,10 @@
     }
 
     .mode-icon.simulate {
-      background: rgba(153, 69, 255, 0.12);
-      color: var(--purple-soft);
-      border: 1px solid rgba(153, 69, 255, 0.25);
+      background: rgba(30, 127, 255, 0.14);
+      color: var(--blue-bright);
+      border: 1px solid rgba(30, 127, 255, 0.30);
+      box-shadow: 0 0 14px rgba(30, 127, 255, 0.18);
     }
 
     .mode-card h3 {
@@ -859,38 +900,45 @@
     }
 
     .feature {
-      background: var(--bg-soft);
-      border: 1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(30, 127, 255, 0.05) 0%, rgba(30, 127, 255, 0) 60%),
+        var(--bg-soft);
+      border: 1px solid rgba(96, 165, 250, 0.18);
       border-radius: 12px;
       padding: 24px;
       transition: all 0.2s;
-      box-shadow: 0 6px 18px -14px rgba(0, 0, 0, 0.6);
+      box-shadow:
+        0 6px 18px -14px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(96, 165, 250, 0.10);
     }
 
     .feature:hover {
-      border-color: var(--purple);
+      border-color: var(--blue-bright);
       /* keep the solid bg-soft base so the animated bars can't bleed through
-         on hover — purple tint sits as an overlay above it */
+         on hover — blue tint sits as an overlay above it */
       background:
-        linear-gradient(180deg, rgba(153, 69, 255, 0.10) 0%, rgba(153, 69, 255, 0.03) 100%),
+        linear-gradient(180deg, rgba(30, 127, 255, 0.14) 0%, rgba(30, 127, 255, 0.04) 100%),
         var(--bg-soft);
       transform: translateY(-2px);
-      box-shadow: 0 10px 28px -16px rgba(153, 69, 255, 0.5);
+      box-shadow:
+        0 14px 32px -16px var(--blue-glow),
+        inset 0 1px 0 rgba(96, 165, 250, 0.25);
     }
 
     .feature-icon {
       width: 32px;
       height: 32px;
       border-radius: 8px;
-      background: linear-gradient(135deg, rgba(153, 69, 255, 0.15), rgba(20, 241, 149, 0.10));
-      border: 1px solid var(--border-bright);
+      background: linear-gradient(135deg, rgba(30, 127, 255, 0.22), rgba(96, 165, 250, 0.10));
+      border: 1px solid rgba(96, 165, 250, 0.35);
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 16px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 14px;
-      color: var(--purple-soft);
+      color: var(--blue-bright);
+      box-shadow: 0 0 12px rgba(30, 127, 255, 0.18);
     }
 
     .feature h4 {
