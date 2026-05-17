@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OPEN — Chrome dev tools for solana</title>
+  <link rel="icon" type="image/svg+xml" href="open-symbol.svg" />
+  <link rel="alternate icon" href="open-symbol.svg" />
+  <link rel="apple-touch-icon" href="open-symbol.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -90,30 +93,59 @@
       min-width: 4px;
       background: linear-gradient(
         to top,
-        rgba(153, 69, 255, 0.55) 0%,
-        rgba(153, 69, 255, 0.35) 40%,
-        rgba(20, 241, 149, 0.30) 75%,
+        rgba(153, 69, 255, 0.60) 0%,
+        rgba(153, 69, 255, 0.38) 40%,
+        rgba(20, 241, 149, 0.32) 75%,
         rgba(20, 241, 149, 0.10) 100%
       );
       border-radius: 3px 3px 0 0;
       height: 100%;
       transform: scaleY(0.06);
       transform-origin: bottom;
-      will-change: transform;
+      will-change: transform, filter, opacity;
       backface-visibility: hidden;
       box-shadow:
-        0 0 8px rgba(153, 69, 255, 0.18),
-        inset 0 0 1px rgba(255, 255, 255, 0.05);
+        0 0 10px rgba(153, 69, 255, 0.22),
+        inset 0 0 1px rgba(255, 255, 255, 0.06);
+      position: relative;
+    }
+
+    /* glowing cap that rides the top of each bar */
+    .cu-bar::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 3px;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.55), transparent);
+      border-radius: 3px 3px 0 0;
+      opacity: 0.7;
+      pointer-events: none;
     }
 
     .cu-bar.high {
       background: linear-gradient(
         to top,
-        rgba(255, 77, 109, 0.55) 0%,
-        rgba(255, 200, 87, 0.40) 60%,
-        rgba(20, 241, 149, 0.20) 100%
+        rgba(255, 77, 109, 0.60) 0%,
+        rgba(255, 200, 87, 0.45) 60%,
+        rgba(20, 241, 149, 0.22) 100%
       );
-      box-shadow: 0 0 12px rgba(255, 77, 109, 0.25);
+      box-shadow: 0 0 16px rgba(255, 77, 109, 0.32);
+    }
+
+    /* bar entrance — only fade opacity, never touch transform.
+       The JS rAF loop owns transform: scaleY(...), so any CSS-animated
+       transform here would override the JS value during the entrance and
+       make the field look stuck for ~2s after load. */
+    @keyframes barIntro {
+      0%   { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .cu-bar {
+      animation: barIntro 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+      animation-delay: calc(var(--bar-i, 0) * 14ms);
     }
 
     .cu-bg::before {
@@ -168,6 +200,7 @@
 
     .hero .subtitle,
     .hero .cta-row,
+    .hero .install-hint,
     .hero .install-line {
       opacity: 0;
       animation: heroFadeUp 0.95s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
@@ -176,7 +209,8 @@
 
     .hero .subtitle  { animation-delay: 1.15s; }
     .hero .cta-row   { animation-delay: 1.35s; }
-    .hero .install-line { animation-delay: 1.55s; }
+    .hero .install-hint { animation-delay: 1.50s; }
+    .hero .install-line { animation-delay: 1.60s; }
 
     @keyframes heroFadeUp {
       from {
@@ -250,7 +284,9 @@
       gap: 28px;
       align-items: center;
       font-size: 14px;
-      color: var(--fg-dim);
+      /* pure white over the animated bars — full vibrancy */
+      color: #ffffff;
+      font-weight: 600;
     }
 
     .nav-links a:hover {
@@ -271,6 +307,79 @@
     .nav-cta:hover {
       background: rgba(255, 255, 255, 0.06);
       border-color: var(--purple);
+    }
+
+    /* ============================================
+       WEB VERSION CTA — primary nav action.
+       Styled as a vivid pill button with a green glow + live dot
+       so it visually outranks every other link in the nav.
+       ============================================ */
+    .nav-web {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: #07120c;
+      background: linear-gradient(135deg, var(--green-soft) 0%, var(--green) 60%, #0fcb7d 100%);
+      border: 1px solid rgba(20, 241, 149, 0.45);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+        0 6px 22px -6px rgba(20, 241, 149, 0.55),
+        0 0 0 0 rgba(20, 241, 149, 0.6);
+      transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1),
+                  box-shadow 0.25s ease;
+      animation: navWebPulse 2.4s ease-in-out infinite;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .nav-web:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+        0 10px 28px -6px rgba(20, 241, 149, 0.75),
+        0 0 0 4px rgba(20, 241, 149, 0.18);
+    }
+
+    .nav-web .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #07120c;
+      box-shadow: 0 0 0 2px rgba(7, 18, 12, 0.35);
+      animation: navWebDot 1.4s ease-in-out infinite;
+    }
+
+    .nav-web .arrow {
+      transition: transform 0.18s ease;
+    }
+
+    .nav-web:hover .arrow {
+      transform: translateX(2px);
+    }
+
+    @keyframes navWebPulse {
+      0%, 100% {
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+          0 6px 22px -6px rgba(20, 241, 149, 0.55),
+          0 0 0 0 rgba(20, 241, 149, 0.55);
+      }
+      50% {
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+          0 6px 22px -6px rgba(20, 241, 149, 0.55),
+          0 0 0 8px rgba(20, 241, 149, 0);
+      }
+    }
+
+    @keyframes navWebDot {
+      0%, 100% { opacity: 0.6; }
+      50%      { opacity: 1; }
     }
 
     /* ============================================
@@ -363,9 +472,11 @@
     .subtitle {
       max-width: 640px;
       margin: 0 auto 40px;
-      color: var(--fg-dim);
+      color: #ffffff;
       font-size: 17px;
       line-height: 1.6;
+      font-weight: 500;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
     }
 
     .cta-row {
@@ -413,6 +524,15 @@
     .btn-ghost:hover {
       background: rgba(255, 255, 255, 0.07);
       border-color: var(--purple);
+    }
+
+    .install-hint {
+      margin: 0 0 12px;
+      font-size: 16px;
+      color: #ffffff;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
     }
 
     .install-line {
@@ -477,10 +597,14 @@
     }
 
     .section-head p {
-      color: var(--fg-dim);
+      /* pure white + a deeper shadow so the sub-copy stays crisp even when
+         a bright CU bar passes directly behind it */
+      color: #ffffff;
       font-size: 17px;
       line-height: 1.6;
       margin: 0;
+      font-weight: 500;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
     }
 
     /* ============================================
@@ -494,7 +618,11 @@
 
     .version-card {
       display: block;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+      /* solid base so the animated CU bars can't bleed through and clash
+         with the text — top sheen kept for the "lit from above" feel */
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0) 60%),
+        var(--bg-soft);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 32px;
@@ -503,6 +631,7 @@
       transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
       color: inherit;
       text-decoration: none;
+      box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.6);
     }
 
     .version-card:hover {
@@ -624,10 +753,11 @@
     }
 
     .mode-card {
-      background: rgba(13, 13, 24, 0.6);
+      background: var(--bg-soft);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
+      box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.6);
     }
 
     .mode-card-head {
@@ -721,17 +851,23 @@
     }
 
     .feature {
-      background: rgba(13, 13, 24, 0.5);
+      background: var(--bg-soft);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 24px;
       transition: all 0.2s;
+      box-shadow: 0 6px 18px -14px rgba(0, 0, 0, 0.6);
     }
 
     .feature:hover {
       border-color: var(--purple);
-      background: rgba(153, 69, 255, 0.04);
+      /* keep the solid bg-soft base so the animated bars can't bleed through
+         on hover — purple tint sits as an overlay above it */
+      background:
+        linear-gradient(180deg, rgba(153, 69, 255, 0.10) 0%, rgba(153, 69, 255, 0.03) 100%),
+        var(--bg-soft);
       transform: translateY(-2px);
+      box-shadow: 0 10px 28px -16px rgba(153, 69, 255, 0.5);
     }
 
     .feature-icon {
@@ -975,8 +1111,10 @@
     }
 
     .final-cta p {
-      color: var(--fg-dim);
+      color: #ffffff;
+      font-weight: 500;
       margin: 0 0 28px;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
     }
 
     /* ============================================
@@ -990,8 +1128,13 @@
       .features-grid {
         grid-template-columns: repeat(2, 1fr);
       }
-      .nav-links a:not(.nav-cta) {
+      /* hide the in-page anchor links on mobile, but keep the
+         primary "Web Version" CTA and the GitHub button visible */
+      .nav-links a:not(.nav-cta):not(.nav-web) {
         display: none;
+      }
+      .nav-links {
+        gap: 10px;
       }
       .install-line .copy {
         display: none;
@@ -999,6 +1142,15 @@
     }
 
     @media (max-width: 480px) {
+      .nav-web {
+        padding: 7px 12px;
+        font-size: 12.5px;
+      }
+      .nav-web .arrow { display: none; }
+      .nav-cta {
+        padding: 7px 10px;
+        font-size: 12.5px;
+      }
       .features-grid {
         grid-template-columns: 1fr;
       }
@@ -1019,6 +1171,7 @@
       .word,
       .hero .subtitle,
       .hero .cta-row,
+      .hero .install-hint,
       .hero .install-line {
         animation: none !important;
         opacity: 1;
@@ -1048,7 +1201,11 @@
         <a href="#versions">Versions</a>
         <a href="#modes">How it works</a>
         <a href="#features">Features</a>
-        <a href="web.html">Web Version</a>
+        <a href="web.html" class="nav-web" aria-label="Open the web version">
+          <span class="live-dot" aria-hidden="true"></span>
+          Web Version
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
         <a
           href="https://github.com/OpenSubmissionn/Open_DevTool"
           target="_blank"
@@ -1090,9 +1247,10 @@
       </a>
     </div>
 
+    <p class="install-hint">Install the CLI using the command below:</p>
     <div class="install-line" id="installLine" title="Click to copy">
       <span class="prompt">$</span>
-      <span class="mono" id="installCmd">npm install -g github:OpenSubmissionn/Open_DevTool</span>
+      <span class="mono" id="installCmd">npm install -g opendevtool</span>
       <span class="copy" id="copyHint">copy</span>
     </div>
   </header>
@@ -1176,13 +1334,13 @@
         <div class="mode-terminal">
           <div class="line">
             <span class="prompt">$</span>
-            <span class="cmd">open tx <span class="arg">&lt;SIGNATURE&gt;</span></span>
+            <span class="cmd">opendev tx <span class="arg">&lt;SIGNATURE&gt;</span></span>
           </div>
           <div class="out">→ fetched from mainnet · <span class="ok">✓ decoded</span></div>
           <div class="out">→ 8 instructions · 4 CPIs · <span class="warn">312k CU</span></div>
           <div class="line" style="margin-top: 10px;">
             <span class="prompt">$</span>
-            <span class="cmd">open tx <span class="arg">&lt;SIG&gt;</span> --network devnet --json</span>
+            <span class="cmd">opendev tx <span class="arg">&lt;SIGNATURE&gt;</span> --network devnet --json</span>
           </div>
         </div>
       </div>
@@ -1193,19 +1351,19 @@
           <h3>Simulate from file</h3>
           <p>
             Have a base64 transaction blob you haven't broadcast yet? Pass the path
-            (or the blob itself) and open will simulate it against current state.
+            (or the blob itself) and opendev will simulate it against current state.
           </p>
         </div>
         <div class="mode-terminal">
           <div class="line">
             <span class="prompt">$</span>
-            <span class="cmd">open simulate <span class="arg">./my-tx.b64</span></span>
+            <span class="cmd">opendev simulate <span class="arg">./my-tx.b64</span></span>
           </div>
           <div class="out">→ simulating against mainnet state...</div>
           <div class="out">→ <span class="ok">✓ would succeed</span> · 184k CU</div>
           <div class="line" style="margin-top: 10px;">
             <span class="prompt">$</span>
-            <span class="cmd">open simulate <span class="arg">&lt;BASE64_BLOB&gt;</span></span>
+            <span class="cmd">opendev simulate <span class="arg">&lt;BASE64_BLOB&gt;</span></span>
           </div>
         </div>
       </div>
@@ -1367,6 +1525,7 @@
       for (let i = 0; i < BAR_COUNT; i++) {
         const bar = document.createElement('div');
         bar.className = 'cu-bar';
+        bar.style.setProperty('--bar-i', i);
         // some bars are "high CU" (red/yellow tint) — about 1 in 5
         if (seeded(i + 100) > 0.78) bar.classList.add('high');
         container.appendChild(bar);
@@ -1375,54 +1534,64 @@
           peak: 28 + seeded(i) * 64,    // % of viewport height — max bar height
           phase: seeded(i + 50) * 1.2,  // 0..1.2 — when this bar starts growing
           jitter: 0.85 + seeded(i + 7) * 0.3,
+          // per-bar breathing frequency + offset so the field never looks synced
+          breatheFreq: 0.6 + seeded(i + 200) * 0.9,
+          breatheOff:  seeded(i + 300) * Math.PI * 2,
+          // current rendered scale — lerped toward `target` every frame for
+          // a low-pass-smoothed motion (kills any per-frame jitter)
+          current: 0.03,
         });
       }
 
       const docEl = document.documentElement;
-      let ticking = false;
+      // smoothing factor — ~0.22 means a bar reaches ~95% of its target in
+      // ~12 frames (~200ms). Higher → snappier, lower → more buttery.
+      const SMOOTH = 0.22;
 
-      function update() {
+      function frame() {
         const scrollTop = window.scrollY || docEl.scrollTop;
         const scrollMax = docEl.scrollHeight - window.innerHeight;
         const progress = scrollMax > 0 ? Math.min(1, scrollTop / scrollMax) : 0;
 
-        // wave shimmer based on time, very subtle so the bars feel alive
-        const t = performance.now() * 0.0006;
+        // baseline "idle activity" so bars breathe even before the user scrolls
+        const idleFloor = 0.22;
+
+        const now = performance.now();
+        const t   = now * 0.001;
+        // a wave that travels left-to-right across the bars — like a sweep
+        // across a profiler timeline. ~4s period.
+        const sweepPos = ((now * 0.00025) % 1) * bars.length;
 
         for (let i = 0; i < bars.length; i++) {
           const b = bars[i];
           // each bar starts growing a bit later than the previous (phase)
           const localProgress = Math.max(0, Math.min(1, (progress * 1.6) - b.phase * 0.5));
-          // ease-out-cubic so growth decelerates near the top
-          const eased = 1 - Math.pow(1 - localProgress, 3);
-          // small live shimmer (±6% of current height)
-          const shimmer = 1 + Math.sin(t + i * 0.4) * 0.05 * eased;
-          const heightPct = Math.max(2, eased * b.peak * b.jitter * shimmer);
-          b.el.style.transform = 'scaleY(' + (heightPct / 100) + ')';
+          const scrollEased = 1 - Math.pow(1 - localProgress, 3);
+          // mix: idle activity that's always on, plus scroll-driven growth
+          const activity = idleFloor + (1 - idleFloor) * scrollEased;
+          // per-bar breathing (±14%)
+          const breathe = 1 + Math.sin(t * b.breatheFreq + b.breatheOff) * 0.14;
+          // sweep ripple: a soft bump as the sweep crosses this bar.
+          // Wider sigma (5.5) gives a smoother, more diffuse wave.
+          const dist = Math.abs(i - sweepPos);
+          const wrap = Math.min(dist, bars.length - dist);
+          const sweepBoost = Math.exp(-Math.pow(wrap / 5.5, 2)) * 0.32;
+
+          const target = Math.max(
+            0.03,
+            (activity * b.peak * b.jitter * breathe * (1 + sweepBoost)) / 100
+          );
+
+          // exponential smoothing — eats per-frame noise + step changes in
+          // scroll progress, so the field always moves like a fluid
+          b.current += (target - b.current) * SMOOTH;
+          b.el.style.transform = 'scaleY(' + b.current + ')';
         }
 
-        ticking = false;
+        requestAnimationFrame(frame);
       }
 
-      function onScroll() {
-        if (!ticking) {
-          requestAnimationFrame(update);
-          ticking = true;
-        }
-      }
-
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onScroll);
-
-      // shimmer loop — keeps bars alive even when not scrolling
-      function tick() {
-        if (!ticking) {
-          requestAnimationFrame(update);
-          ticking = true;
-        }
-        requestAnimationFrame(tick);
-      }
-      tick();
+      requestAnimationFrame(frame);
     })();
 
     // ============================================

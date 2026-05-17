@@ -1,7 +1,7 @@
 {
-  "name": "opendev",
-  "version": "0.4.0",
-  "description": "Visual transaction debugger and CU profiler for Solana — turn any signature into a fully decoded execution profile",
+  "name": "opendevtool",
+  "version": "0.5.0",
+  "description": "Visual transaction debugger and CU profiler for Solana — turn any signature into a fully decoded execution profile. Installs as `opendev`.",
   "bin": {
     "opendev": "dist/open.js"
   },

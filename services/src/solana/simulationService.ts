@@ -9,8 +9,15 @@ import {
 } from '@solana/web3.js';
 import { getConnection, withRetry } from './connection.js';
 import type { RawTransactionBundle, RawInstruction } from '../analysis/types.js';
+import {
+  detectSourceKind,
+  runSourceFile,
+  type SourceKind,
+  type SourceRunnerMeta,
+  type RunSourceOptions,
+} from './sourceRunner.js';
 
-export type SimulationInputKind = 'base64' | 'path';
+export type SimulationInputKind = 'base64' | 'path' | SourceKind;
 
 export interface SimulatedAccountChange {
   pubkey: string;
@@ -31,6 +38,7 @@ export interface SimulationMeta {
   rawResponse: SimulatedTransactionResponse;
   accountChanges: SimulatedAccountChange[];
   isSimulated: true;
+  runnerMeta?: SourceRunnerMeta;
 }
 
 export interface SimulationOutput {
@@ -43,6 +51,9 @@ export interface SimulateOptions {
   rpcUrl?: string;
   replaceRecentBlockhash?: boolean;
   sigVerify?: boolean;
+  allowExec?: boolean;
+  execTimeoutMs?: number;
+  onRunnerProgress?: RunSourceOptions['onProgress'];
 }
 
 const BASE58_REGEX = /^[1-9A-HJ-NP-Za-km-z]+$/;
@@ -53,8 +64,14 @@ function truncate(s: string, max: number): string {
 }
 
 export function detectInputKind(input: string): SimulationInputKind {
-  if (fs.existsSync(input) && fs.statSync(input).isFile()) {
-    return 'path';
+  if (fs.existsSync(input)) {
+    const sourceKind = detectSourceKind(input);
+    if (sourceKind) return sourceKind;
+    if (fs.statSync(input).isFile()) return 'path';
+    throw new Error(
+      `"${truncate(input, 64)}" is a directory but doesn't contain a Cargo.toml. ` +
+        `Pass a .b64/.json file, a .ts/.js source file, a .rs file, or a Rust project root.`
+    );
   }
   const trimmed = input.trim();
   if ((trimmed.length === 87 || trimmed.length === 88) && BASE58_REGEX.test(trimmed)) {
@@ -69,7 +86,7 @@ export function detectInputKind(input: string): SimulationInputKind {
   }
   throw new Error(
     `Unable to detect input kind for "${truncate(input, 32)}". ` +
-      `Expected a base64 transaction blob or a file path.`
+      `Expected a base64 transaction blob, a file path, or a source file (.rs/.ts/.js).`
   );
 }
 
@@ -234,13 +251,27 @@ export async function simulateTransactionInput(
   const connection = getConnection(options.rpcUrl, network);
 
   let tx: VersionedTransaction | Transaction;
+  let runnerMeta: SourceRunnerMeta | undefined;
   const source = rawInput;
 
   if (kind === 'base64') {
     tx = deserializeTx(rawInput.trim());
-  } else {
+  } else if (kind === 'path') {
     const base64 = readBase64FromPath(rawInput);
     tx = deserializeTx(base64);
+  } else {
+    if (options.allowExec === false) {
+      throw new Error(
+        `Refusing to execute source file "${rawInput}" because --no-exec is set. ` +
+          `Pass a base64 blob or a .b64/.json file instead.`
+      );
+    }
+    const result = await runSourceFile(rawInput, {
+      timeoutMs: options.execTimeoutMs,
+      onProgress: options.onRunnerProgress,
+    });
+    runnerMeta = result.meta;
+    tx = deserializeTx(result.base64);
   }
 
   const { accountKeys, instructions, recentBlockhash } = buildCompiledMessage(tx);
@@ -322,6 +353,7 @@ export async function simulateTransactionInput(
     rawResponse: value,
     accountChanges,
     isSimulated: true,
+    runnerMeta,
   };
 
   return { bundle, meta };

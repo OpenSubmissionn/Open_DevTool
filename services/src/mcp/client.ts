@@ -175,10 +175,13 @@ async function callMcpEndpoint(url: string, payload: MCPPayload): Promise<MCPIns
 function warnNoKey(): void {
   console.warn(
     '[MCP] No AI key configured. Rendering rule-based insights only.\n' +
-      '       Option 1 (free):  Groq        ->  https://console.groq.com/keys (Llama 3.3 70B, ~30 req/min)\n' +
-      '       Option 2 (paid):  Anthropic   ->  https://console.anthropic.com (Claude Sonnet, ~$0.003/run)\n' +
-      '       Save it once:     opendev config set-key groq <KEY>      # or anthropic\n' +
-      '       Inspect:          opendev config get-key'
+      '       Quickest:         opendev login              # browser-assisted, ~30s\n' +
+      '       Or pass directly: opendev config set-key groq <KEY>      # or anthropic\n' +
+      '       Inspect:          opendev config get-key\n' +
+      '\n' +
+      '       Providers:\n' +
+      '         Groq (free)        Llama 3.3 70B, ~30 req/min   console.groq.com/keys\n' +
+      '         Anthropic (paid)   Claude Sonnet, ~$0.003/run   console.anthropic.com'
   );
 }
 

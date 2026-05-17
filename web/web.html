@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OPEN — Web Version</title>
+  <link rel="icon" type="image/svg+xml" href="open-symbol.svg" />
+  <link rel="alternate icon" href="open-symbol.svg" />
+  <link rel="apple-touch-icon" href="open-symbol.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -79,23 +82,51 @@
       min-width: 4px;
       background: linear-gradient(
         to top,
-        rgba(37, 99, 235, 0.45) 0%,
-        rgba(96, 165, 250, 0.30) 50%,
-        rgba(20, 241, 149, 0.20) 100%
+        rgba(37, 99, 235, 0.50) 0%,
+        rgba(96, 165, 250, 0.32) 50%,
+        rgba(20, 241, 149, 0.22) 100%
       );
       border-radius: 3px 3px 0 0;
-      height: 6%;
+      height: 100%;
+      transform: scaleY(0.03);
       transform-origin: bottom;
-      transition: height 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+      will-change: transform, opacity;
+      backface-visibility: hidden;
+      box-shadow:
+        0 0 10px rgba(37, 99, 235, 0.22),
+        inset 0 0 1px rgba(255, 255, 255, 0.06);
+      position: relative;
+      animation: barIntro 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+      animation-delay: calc(var(--bar-i, 0) * 14ms);
+    }
+
+    .cu-bar::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 3px;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.55), transparent);
+      border-radius: 3px 3px 0 0;
+      opacity: 0.7;
+      pointer-events: none;
     }
 
     .cu-bar.high {
       background: linear-gradient(
         to top,
-        rgba(255, 77, 109, 0.5) 0%,
-        rgba(255, 200, 87, 0.40) 60%,
-        rgba(20, 241, 149, 0.20) 100%
+        rgba(255, 77, 109, 0.55) 0%,
+        rgba(255, 200, 87, 0.45) 60%,
+        rgba(20, 241, 149, 0.22) 100%
       );
+      box-shadow: 0 0 16px rgba(255, 77, 109, 0.30);
+    }
+
+    /* opacity-only entrance — JS owns transform from frame 1 */
+    @keyframes barIntro {
+      0%   { opacity: 0; }
+      100% { opacity: 1; }
     }
 
     .cu-bg::before {
@@ -404,6 +435,11 @@
       padding: 0 12px;
       overflow-x: auto;
       scrollbar-width: none;
+      position: relative;
+      /* right-edge fade hints that there are more tabs to scroll to.
+         Mask is purely visual; doesn't intercept clicks. */
+      -webkit-mask-image: linear-gradient(to right, black calc(100% - 32px), transparent 100%);
+      mask-image:         linear-gradient(to right, black calc(100% - 32px), transparent 100%);
     }
 
     .demo-tabs::-webkit-scrollbar { display: none; }
@@ -1547,6 +1583,8 @@
       .demo-input-row { flex-direction: column; }
       .demo-analyze { padding: 14px 22px; }
       .demo-panels { padding: 18px; }
+      .demo-hero { padding: 40px 0 28px; }
+      .demo-card { margin-bottom: 48px; }
       .prog-row {
         grid-template-columns: 110px 1fr 70px;
         gap: 8px;
@@ -1557,6 +1595,69 @@
       .diff-header span:nth-child(2) { display: none; }
       .model-wrap { grid-template-columns: 1fr; height: auto; }
       .model-canvas { height: 380px; }
+    }
+
+    @media (max-width: 540px) {
+      .container { padding: 0 18px; }
+      .nav-inner { padding: 14px 18px; }
+      .nav-links { gap: 10px; }
+      .back-link { font-size: 13px; }
+      .nav-cta { padding: 7px 12px; font-size: 12.5px; }
+
+      .demo-hero { padding: 28px 0 22px; }
+      .demo-hero h1 { font-size: clamp(28px, 8vw, 36px); }
+      .demo-hero p {
+        font-size: 14.5px;
+        line-height: 1.5;
+        margin-bottom: 24px;
+      }
+      .demo-hero .eyebrow { font-size: 11px; margin-bottom: 10px; }
+
+      /* trim the banner to the leading status word + hide the rest */
+      .preview-banner {
+        font-size: 11px;
+        padding: 5px 12px;
+        margin-bottom: 18px;
+      }
+      .preview-banner .banner-rest { display: none; }
+
+      .demo-input-row { gap: 10px; margin-bottom: 14px; }
+      .demo-input { padding: 12px 14px; font-size: 13px; border-radius: 10px; }
+      /* slim analyze button so it doesn't dominate the viewport — height
+         around 40px reads as a button, not a banner */
+      .demo-analyze {
+        padding: 11px 18px;
+        font-size: 13.5px;
+        border-radius: 10px;
+        box-shadow: 0 4px 14px -6px rgba(37, 99, 235, 0.5);
+      }
+
+      .demo-samples { font-size: 12px; margin-bottom: 22px; }
+      .sample-chip { padding: 6px 10px; font-size: 11.5px; }
+
+      .demo-card { margin-bottom: 36px; border-radius: 12px; }
+      .demo-tabs { padding: 0 8px; }
+      .demo-tab { padding: 13px 14px; font-size: 13px; }
+      .demo-tab.active::after { left: 12px; right: 12px; }
+      .demo-panels { padding: 14px; min-height: 320px; }
+
+      /* tighten the program row — and keep the name column wide enough so
+         "Orca Whirlpool" isn't squeezed out by the BOTTLENECK pill */
+      .prog-row {
+        grid-template-columns: 110px 1fr 58px;
+        gap: 6px;
+        font-size: 11.5px;
+      }
+      .prog-cu { font-size: 11px; }
+      .prog-bar-track { height: 22px; }
+
+      /* on phones, the orange bar + the callout below already say
+         "bottleneck" loud enough — hide the pill so the program name
+         actually fits in its column */
+      .bottleneck-pill { display: none; }
+
+      .bottleneck-callout { padding: 12px 14px; font-size: 12.5px; }
+      .cu-total { font-size: 11px; gap: 8px; }
     }
 
     /* Transaction-flow card — sits at the top of the Explanation tab and
@@ -1744,7 +1845,7 @@
   <header class="demo-hero container">
     <div class="preview-banner live">
       <span class="dot"></span>
-      <span>live · sample data loaded · paste a signature to analyze yours</span>
+      <span>live<span class="banner-rest"> · sample data loaded</span></span>
     </div>
     <div class="eyebrow">// Web Version</div>
     <h1>Try open <span class="accent">right now</span></h1>
@@ -1759,6 +1860,8 @@
         class="demo-input"
         id="demoInput"
         placeholder="paste a real Solana transaction signature (87–88 chars) for live analysis..."
+        data-placeholder-desktop="paste a real Solana transaction signature (87–88 chars) for live analysis..."
+        data-placeholder-mobile="paste a Solana tx signature..."
         spellcheck="false"
         autocomplete="off"
         autocapitalize="off"
@@ -2110,6 +2213,7 @@
       for (let i = 0; i < BAR_COUNT; i++) {
         const bar = document.createElement('div');
         bar.className = 'cu-bar';
+        bar.style.setProperty('--bar-i', i);
         if (seeded(i + 100) > 0.78) bar.classList.add('high');
         container.appendChild(bar);
         bars.push({
@@ -2117,47 +2221,47 @@
           peak: 22 + seeded(i) * 50,
           phase: seeded(i + 50) * 1.2,
           jitter: 0.85 + seeded(i + 7) * 0.3,
+          breatheFreq: 0.6 + seeded(i + 200) * 0.9,
+          breatheOff:  seeded(i + 300) * Math.PI * 2,
+          current: 0.03,
         });
       }
 
       const docEl = document.documentElement;
-      let ticking = false;
+      const SMOOTH = 0.22;
 
-      function update() {
+      function frame() {
         const scrollTop = window.scrollY || docEl.scrollTop;
         const scrollMax = docEl.scrollHeight - window.innerHeight;
         const progress = scrollMax > 0 ? Math.min(1, scrollTop / scrollMax) : 0;
-        const t = performance.now() * 0.0006;
+
+        const idleFloor = 0.22;
+        const now = performance.now();
+        const t   = now * 0.001;
+        const sweepPos = ((now * 0.00025) % 1) * bars.length;
 
         for (let i = 0; i < bars.length; i++) {
           const b = bars[i];
           const localProgress = Math.max(0, Math.min(1, (progress * 1.6) - b.phase * 0.5));
-          const eased = 1 - Math.pow(1 - localProgress, 3);
-          const shimmer = 1 + Math.sin(t + i * 0.4) * 0.05 * eased;
-          const heightPct = Math.max(2, eased * b.peak * b.jitter * shimmer);
-          b.el.style.height = heightPct + '%';
+          const scrollEased = 1 - Math.pow(1 - localProgress, 3);
+          const activity = idleFloor + (1 - idleFloor) * scrollEased;
+          const breathe = 1 + Math.sin(t * b.breatheFreq + b.breatheOff) * 0.14;
+          const dist = Math.abs(i - sweepPos);
+          const wrap = Math.min(dist, bars.length - dist);
+          const sweepBoost = Math.exp(-Math.pow(wrap / 5.5, 2)) * 0.32;
+
+          const target = Math.max(
+            0.03,
+            (activity * b.peak * b.jitter * breathe * (1 + sweepBoost)) / 100
+          );
+          b.current += (target - b.current) * SMOOTH;
+          b.el.style.transform = 'scaleY(' + b.current + ')';
         }
-        ticking = false;
+
+        requestAnimationFrame(frame);
       }
 
-      function onScroll() {
-        if (!ticking) {
-          requestAnimationFrame(update);
-          ticking = true;
-        }
-      }
-
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onScroll);
-
-      function tick() {
-        if (!ticking) {
-          requestAnimationFrame(update);
-          ticking = true;
-        }
-        requestAnimationFrame(tick);
-      }
-      tick();
+      requestAnimationFrame(frame);
     })();
 
     // demo interactions — tabs, samples, /api/analyze wiring, account model
@@ -2326,13 +2430,29 @@
       }
 
       // ───────── status banner ─────────
+      // Text is split on the first " · " separator so mobile CSS can hide
+      // the secondary half while keeping the leading status word visible.
       function setBanner(text, kind) {
         if (!banner) return;
         banner.classList.remove('live', 'error');
         if (kind === 'live')  banner.classList.add('live');
         if (kind === 'error') banner.classList.add('error');
         const label = banner.querySelector('span:not(.dot)');
-        if (label) label.textContent = text;
+        if (!label) return;
+        const sepIdx = text.indexOf(' · ');
+        if (sepIdx === -1) {
+          label.innerHTML = '';
+          label.appendChild(document.createTextNode(text));
+        } else {
+          const head = text.slice(0, sepIdx);
+          const tail = text.slice(sepIdx);
+          label.innerHTML = '';
+          label.appendChild(document.createTextNode(head));
+          const rest = document.createElement('span');
+          rest.className = 'banner-rest';
+          rest.textContent = tail;
+          label.appendChild(rest);
+        }
       }
 
       // ───────── analyze: hit /api/analyze when we have a real signature,
@@ -3083,6 +3203,21 @@
         div.textContent = String(s ?? '');
         return div.innerHTML;
       }
+
+      // ───────── responsive placeholder ─────────
+      // The desktop placeholder is verbose by design ("paste a real Solana
+      // transaction signature..."), but it overflows on narrow viewports.
+      // Swap to a short version under 560px.
+      (function syncPlaceholder() {
+        const desktop = input.getAttribute('data-placeholder-desktop');
+        const mobile  = input.getAttribute('data-placeholder-mobile');
+        if (!desktop || !mobile) return;
+        const apply = () => {
+          input.placeholder = window.innerWidth < 560 ? mobile : desktop;
+        };
+        apply();
+        window.addEventListener('resize', apply, { passive: true });
+      })();
 
       // ───────── boot ─────────
       // Build the account model up-front so it's ready when the tab is clicked.
