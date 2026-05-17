@@ -670,22 +670,63 @@
       border-color: var(--blue-bright);
     }
 
-    a.version-card.available:hover {
-      border-color: var(--green);
-    }
-
     .version-card.available {
-      border-color: rgba(20, 241, 149, 0.25);
+      border-color: rgba(59, 158, 255, 0.55);
+      background:
+        linear-gradient(180deg, rgba(30, 127, 255, 0.12) 0%, rgba(30, 127, 255, 0) 55%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 60%),
+        var(--bg-soft);
+      box-shadow:
+        0 12px 32px -18px var(--blue-glow),
+        inset 0 1px 0 rgba(96, 165, 250, 0.25),
+        inset 0 0 0 1px rgba(30, 127, 255, 0.06);
     }
 
+    a.version-card.available:hover {
+      border-color: #6db2ff;
+      box-shadow:
+        0 22px 50px -16px rgba(30, 127, 255, 0.55),
+        0 0 0 1px rgba(109, 178, 255, 0.45),
+        inset 0 1px 0 rgba(96, 165, 250, 0.35);
+    }
+
+    /* The static top-edge accent line lives on .version-card::after.
+       For .available cards we override it to be brighter blue. */
+    .version-card.available::after {
+      background: linear-gradient(90deg, transparent, #6db2ff, transparent);
+      opacity: 0.85;
+    }
+
+    /* Hover shine — a diagonal light sweep that races across the card */
     .version-card.available::before {
       content: '';
       position: absolute;
       top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      left: -75%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        115deg,
+        transparent 0%,
+        rgba(109, 178, 255, 0.10) 40%,
+        rgba(109, 178, 255, 0.30) 50%,
+        rgba(109, 178, 255, 0.10) 60%,
+        transparent 100%
+      );
+      pointer-events: none;
+      transform: skewX(-12deg);
+      opacity: 0;
+    }
+
+    a.version-card.available:hover::before {
+      animation: cardShine 1.1s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    @keyframes cardShine {
+      0%   { left: -75%; opacity: 0; }
+      15%  { opacity: 1; }
+      85%  { opacity: 1; }
+      100% { left: 125%; opacity: 0; }
     }
 
     .version-badge {
@@ -702,9 +743,11 @@
     }
 
     .version-badge.live {
-      background: rgba(20, 241, 149, 0.12);
-      color: var(--green);
-      border: 1px solid rgba(20, 241, 149, 0.3);
+      background: linear-gradient(135deg, rgba(59, 158, 255, 0.18), rgba(30, 127, 255, 0.10));
+      color: #6db2ff;
+      border: 1px solid rgba(109, 178, 255, 0.5);
+      text-shadow: 0 0 10px rgba(59, 158, 255, 0.45);
+      box-shadow: 0 0 14px rgba(30, 127, 255, 0.25);
     }
 
     .version-badge.soon {
