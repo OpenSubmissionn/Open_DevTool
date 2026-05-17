@@ -213,7 +213,14 @@
       color: var(--fg-dim);
     }
 
-    .nav-links a:hover { color: var(--fg); }
+    .nav-links a {
+      transition: color 0.18s ease, text-shadow 0.18s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--blue-soft);
+      text-shadow: 0 0 14px rgba(59, 158, 255, 0.55);
+    }
 
     .back-link {
       display: inline-flex;
@@ -221,11 +228,18 @@
       gap: 6px;
       color: var(--fg-dim);
       font-size: 14px;
+      transition: color 0.18s ease, text-shadow 0.18s ease, transform 0.18s ease;
     }
 
-    .back-link:hover { color: var(--fg); }
+    .back-link:hover {
+      color: var(--blue-soft);
+      text-shadow: 0 0 14px rgba(59, 158, 255, 0.55);
+      transform: translateX(-2px);
+    }
 
     .nav-cta {
+      position: relative;
+      overflow: hidden;
       padding: 8px 14px;
       border-radius: 8px;
       border: 1px solid var(--border-bright);
@@ -233,13 +247,56 @@
       color: var(--fg);
       font-size: 13px;
       font-weight: 500;
-      transition: all 0.15s;
+      transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        box-shadow 0.25s ease,
+        transform 0.18s ease;
+    }
+
+    .nav-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -75%;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(
+        115deg,
+        transparent 0%,
+        rgba(109, 178, 255, 0.18) 40%,
+        rgba(155, 200, 255, 0.55) 50%,
+        rgba(109, 178, 255, 0.18) 60%,
+        transparent 100%
+      );
+      pointer-events: none;
+      transform: skewX(-14deg);
+      opacity: 0;
     }
 
     .nav-cta:hover {
-      background: rgba(30, 127, 255, 0.10);
-      border-color: var(--blue-bright);
-      color: var(--blue-soft);
+      background: rgba(30, 127, 255, 0.14);
+      border-color: #6db2ff;
+      color: #cfe3ff;
+      transform: translateY(-1px);
+      box-shadow:
+        0 0 0 1px rgba(109, 178, 255, 0.45),
+        0 0 18px rgba(30, 127, 255, 0.45),
+        0 8px 22px -10px rgba(30, 127, 255, 0.6),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+      text-shadow: 0 0 12px rgba(59, 158, 255, 0.55);
+    }
+
+    .nav-cta:hover::before {
+      animation: navShine 0.85s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    @keyframes navShine {
+      0%   { left: -75%; opacity: 0; }
+      15%  { opacity: 1; }
+      85%  { opacity: 1; }
+      100% { left: 130%; opacity: 0; }
     }
 
     /* hero (compact) */
