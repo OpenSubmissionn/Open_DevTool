@@ -28,8 +28,10 @@
       --green-soft: #4dffba;
       --yellow: #ffc857;
       --red: #ff4d6d;
-      --blue: #2563eb;
+      --blue: #1e7fff;
+      --blue-bright: #3b9eff;
       --blue-soft: #60a5fa;
+      --blue-glow: rgba(30, 127, 255, 0.45);
       --orange: #f59e0b;
       --radius: 14px;
     }
@@ -305,8 +307,9 @@
     }
 
     .nav-cta:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: var(--purple);
+      background: rgba(30, 127, 255, 0.10);
+      border-color: var(--blue-bright);
+      color: var(--blue-soft);
     }
 
     /* ============================================
@@ -435,9 +438,9 @@
       gap: 8px;
       padding: 6px 14px;
       border-radius: 999px;
-      border: 1px solid var(--border-bright);
-      background: rgba(153, 69, 255, 0.08);
-      color: var(--purple-soft);
+      border: 1px solid rgba(30, 127, 255, 0.35);
+      background: rgba(30, 127, 255, 0.10);
+      color: var(--blue-bright);
       font-size: 13px;
       font-weight: 500;
       margin-bottom: 28px;
@@ -462,11 +465,12 @@
     }
 
     .tagline .accent {
-      background: linear-gradient(90deg, var(--purple-soft), var(--green-soft));
+      background: linear-gradient(90deg, var(--blue-bright) 0%, var(--blue-soft) 55%, #93c5fd 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
       font-weight: 900;
+      text-shadow: 0 0 38px rgba(30, 127, 255, 0.25);
     }
 
     .subtitle {
@@ -501,18 +505,20 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--purple) 0%, #7a2eff 100%);
+      background: linear-gradient(135deg, var(--blue-bright) 0%, var(--blue) 55%, #1463d6 100%);
       color: white;
       box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
-        0 8px 24px rgba(153, 69, 255, 0.35);
+        0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+        0 0 0 1px rgba(96, 165, 250, 0.25),
+        0 10px 28px var(--blue-glow);
     }
 
     .btn-primary:hover {
       transform: translateY(-1px);
       box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.12) inset,
-        0 12px 32px rgba(153, 69, 255, 0.5);
+        0 0 0 1px rgba(255, 255, 255, 0.18) inset,
+        0 0 0 1px rgba(96, 165, 250, 0.45),
+        0 16px 38px rgba(30, 127, 255, 0.6);
     }
 
     .btn-ghost {
@@ -522,8 +528,9 @@
     }
 
     .btn-ghost:hover {
-      background: rgba(255, 255, 255, 0.07);
-      border-color: var(--purple);
+      background: rgba(30, 127, 255, 0.08);
+      border-color: var(--blue-bright);
+      color: var(--blue-soft);
     }
 
     .install-hint {
@@ -551,7 +558,8 @@
     }
 
     .install-line:hover {
-      border-color: var(--purple);
+      border-color: var(--blue-bright);
+      box-shadow: 0 0 0 3px rgba(30, 127, 255, 0.12);
     }
 
     .install-line .prompt {
@@ -582,7 +590,7 @@
     .section-eyebrow {
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
-      color: var(--purple-soft);
+      color: var(--blue-soft);
       text-transform: uppercase;
       letter-spacing: 0.12em;
       margin-bottom: 14px;
